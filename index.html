@@ -183,7 +183,7 @@ a { color: inherit; }
 /* Bulle de chat — animation wiggle toutes les 10 s */
 .topbar-icon-chat svg {
   transform-origin: 50% 85%; /* pivote par le bas de la bulle */
-  animation: chatWiggle 10s ease-in-out infinite;
+  animation: chatWiggle 6s ease-in-out infinite;
 }
 .topbar-icon-chat:hover svg { animation-play-state: paused; }
 @keyframes chatWiggle {
@@ -209,7 +209,7 @@ a { color: inherit; }
   justify-self: start;
   cursor: pointer;
 }
-.logo .dot { display: inline-block; color: #0a0a08; font-weight: 400; font-size: 1.4em; line-height: 0.6; vertical-align: baseline; }
+.logo .dot { display: inline-block; color: #3c5674; font-weight: 400; font-size: 1.4em; line-height: 0.6; vertical-align: baseline; }
 .top-nav {
   display: flex; gap: 24px; justify-self: center;
   font-size: 13px;
@@ -423,8 +423,141 @@ a { color: inherit; }
   height: calc(100vh - var(--topbar-h) - 80px);
   min-height: calc(100vh - var(--topbar-h) - 80px);
   display: flex; align-items: center; justify-content: center;
-  background: var(--bg); position: relative; overflow: hidden;
+  /* Dégradé doux dans notre gris d'origine (palette warm uniquement) */
+  background: linear-gradient(180deg,
+    #8f8d88 0%,
+    #a8a6a1 35%,
+    #a8a6a1 70%,
+    #b6b4af 100%);
+  color: var(--ink);
+  position: relative; overflow: hidden;
   padding: 40px 40px 300px;
+}
+/* Disque gris dégradé (éclipse) — maintenant un vrai élément cliquable/glissable */
+.hero-grey-ball {
+  position: absolute;
+  width: clamp(260px, 32vw, 460px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Dégradé gris dans notre palette — coeur dense, bord fondu */
+  background: radial-gradient(circle at 40% 38%,
+    #b6b4af 0%,
+    #95938e 35%,
+    #7c7a76 60%,
+    rgba(124,122,118,0.55) 80%,
+    transparent 100%);
+  top: -15%; left: -25%;
+  z-index: 2;
+  filter: blur(14px);
+  animation: eclipse 30s linear infinite;
+}
+/* Toutes les boules sont saisissables à la souris et au tactile */
+.hero-draggable {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hero-draggable.dragging {
+  cursor: grabbing;
+  animation: none !important;
+  transition: none !important;
+  z-index: 4 !important;
+}
+@keyframes eclipse {
+  from { transform: translate(0, 0); }
+  50%  { transform: translate(70vw, 40vh); }
+  to   { transform: translate(140vw, 85vh); }
+}
+/* Contenu au-dessus du dégradé + disque */
+.hero-content { position: relative; z-index: 5; }
+/* Boule bleue faded qui traverse le hero lentement (trajet diagonal) */
+.hero-blue-ball {
+  position: absolute;
+  width: clamp(180px, 24vw, 340px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Bleu faded Passéist (visible sur gris) */
+  background: radial-gradient(circle at center,
+    rgba(110,148,175,0.78) 0%,
+    rgba(60,86,116,0.50) 35%,
+    rgba(36,52,74,0.22) 65%,
+    transparent 100%);
+  top: 40%; left: -30%;
+  z-index: 3;
+  filter: blur(14px);
+  animation: blueBallCross 22s ease-in-out infinite;
+}
+@keyframes blueBallCross {
+  0%   { transform: translate(0, 0)        scale(1);   opacity: 0; }
+  12%  { opacity: 1; }
+  50%  { transform: translate(70vw, -28vh) scale(1.15); opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate(140vw, -6vh) scale(0.9); opacity: 0; }
+}
+/* Petite boule bleue faded — trajet opposé (haut-droite → bas-gauche) */
+.hero-blue-ball-small {
+  position: absolute;
+  width: clamp(110px, 15vw, 210px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    rgba(110,148,175,0.72) 0%,
+    rgba(60,86,116,0.45) 35%,
+    rgba(36,52,74,0.20) 65%,
+    transparent 100%);
+  top: -10%; right: -20%;
+  z-index: 3;
+  filter: blur(12px);
+  animation: blueBallCrossReverse 26s ease-in-out infinite;
+  animation-delay: -9s; /* décalage pour éviter qu'elles se croisent au même moment */
+}
+@keyframes blueBallCrossReverse {
+  0%   { transform: translate(0, 0)          scale(0.95); opacity: 0; }
+  12%  { opacity: 1; }
+  50%  { transform: translate(-55vw, 40vh)   scale(1.1);  opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate(-120vw, 10vh)  scale(0.85); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-blue-ball,
+  .hero-blue-ball-small { animation: none; opacity: 0.5; }
+}
+/* Sur mobile : les 3 boules convergent toutes sur le logo au milieu de leur cycle */
+@media (max-width: 880px) {
+  .hero::after {
+    top: 50%; left: 50%; margin: 0;
+    animation: eclipseMobile 24s ease-in-out infinite;
+  }
+  @keyframes eclipseMobile {
+    0%   { transform: translate(-50%, -50%) translate(-70vw, -60vh); }
+    50%  { transform: translate(-50%, -50%) translate(0, 0); }
+    100% { transform: translate(-50%, -50%) translate(70vw, 60vh); }
+  }
+  .hero-blue-ball {
+    top: 50%; left: 50%; right: auto;
+    animation: blueBallMobile 20s ease-in-out infinite;
+  }
+  @keyframes blueBallMobile {
+    0%   { transform: translate(-50%, -50%) translate(-65vw, 55vh) scale(0.95); opacity: 0; }
+    15%  { opacity: 1; }
+    50%  { transform: translate(-50%, -50%) translate(0, 0) scale(1.1); opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) translate(65vw, -55vh) scale(0.85); opacity: 0; }
+  }
+  .hero-blue-ball-small {
+    top: 50%; left: 50%; right: auto;
+    animation: blueBallSmallMobile 24s ease-in-out infinite;
+    animation-delay: -9s;
+  }
+  @keyframes blueBallSmallMobile {
+    0%   { transform: translate(-50%, -50%) translate(60vw, -50vh) scale(0.9); opacity: 0; }
+    15%  { opacity: 1; }
+    50%  { transform: translate(-50%, -50%) translate(0, 0) scale(1.05); opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) translate(-60vw, 50vh) scale(0.85); opacity: 0; }
+  }
 }
 
 /* Accueil plein écran sans scroll — footer visible */
@@ -462,9 +595,10 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   letter-spacing: -0.045em; line-height: 0.86;
   margin-bottom: 20px;
   color: var(--ink);
-  opacity: 0; animation: heroIn 1.3s var(--ease-out) 0.3s forwards;
+  opacity: 0;
+  animation: heroIn 1.3s var(--ease-out) 0.3s forwards;
 }
-.hero-logo .dot { display: inline-block; color: #0a0a08; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
+.hero-logo .dot { display: inline-block; color: #3c5674; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .hero-sub {
   font-size: clamp(14px, 1.1vw, 16px);
   color: var(--text-dim); max-width: 520px;
@@ -472,7 +606,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   opacity: 0; animation: heroIn 1.1s var(--ease-out) 0.45s forwards;
   text-align: center;
 }
-/* Tagline "Curation japonaise, vintage." — typo inspirée du mockup alt-jacquemus */
+/* Tagline "Curation japonaise, vintage." */
 .hero-tagline {
   font-family: var(--font-sans); font-weight: 200;
   font-size: clamp(20px, 2.2vw, 32px);
@@ -482,6 +616,10 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   max-width: 640px;
   text-align: center;
   opacity: 0; animation: heroIn 1.1s var(--ease-out) 0.45s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo, .hero-tagline { animation: none; opacity: 1; }
+  .hero::after { animation: none !important; }
 }
 .hero-tagline em { font-style: italic; font-weight: 300; }
 .hero-cta {
@@ -785,6 +923,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 }
 .product-card {
   cursor: pointer; background: transparent; border: none;
+  color: inherit; text-decoration: none; /* neutralise les styles par défaut de <a> */
   transition: transform 0.45s var(--ease-out);
   display: flex; flex-direction: column; position: relative;
   opacity: 0;
@@ -898,10 +1037,9 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .product-body { padding: 22px 0 0; line-height: 1.45; }
 .product-brand {
   font-family: var(--font-sans);
-  font-size: 13px; color: var(--ink);
+  font-size: 14px; color: var(--ink);
   margin-bottom: 12px; font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   display: flex; align-items: center; gap: 10px;
 }
 .product-brand .brand-name { flex: 1; min-width: 0; }
@@ -918,9 +1056,9 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 }
 .product-name {
   font-family: var(--font-sans);
-  font-size: 14px; color: var(--text-dim); font-weight: 300;
-  line-height: 1.5;
-  letter-spacing: 0;
+  font-size: 17px; color: var(--text-dim); font-weight: 300;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   font-style: italic;
 }
 .product-meta {
@@ -939,19 +1077,21 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 }
 .product-price-wrap {
   position: relative; isolation: isolate;
-  padding: 7px 16px;
+  padding: 4px 12px;
   display: inline-flex; align-items: center;
   background: var(--ink);
+  /* Coin inférieur-gauche biseauté (8px) — effet étiquette */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
-/* On masque la tache rugueuse : carré noir net à la place */
+/* Masque l'ancienne tache rugueuse */
 .product-price-wrap .nav-ink { display: none !important; }
 .product-price {
   position: relative; z-index: 1;
-  font-family: var(--font-mono);
-  font-size: 12px; font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 11px; font-weight: 600;
   color: #f4f1ec;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
@@ -1020,6 +1160,9 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 }
 .detail-back:hover { gap: 16px; }
 .detail-back:hover::before { width: 32px; }
+@media (max-width: 880px) {
+  .detail-back { display: none !important; }
+}
 .detail-header .logo { justify-self: center; }
 .detail-header .cart-btn { justify-self: end; }
 .detail-main {
@@ -1070,16 +1213,31 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   font-size: 40px;
   color: var(--ink); margin-bottom: 12px;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1.02;
-  display: flex; align-items: center; gap: 10px;
+  margin-left: 0;
+  padding-left: 0;
+  /* Petite marque noire devant le nom de la marque — cohérente avec les cartes grille */
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.detail-brand::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 30px; height: 4px;
+  background: var(--ink);
+  align-self: center;
+  /* Remet la marque visuellement au milieu de la hauteur du texte */
+  transform: translateY(2px);
 }
 .detail-name {
   font-family: var(--font-sans);
-  font-size: 14px; font-weight: 300;
-  margin-bottom: 28px; line-height: 1.3;
-  color: var(--ink); letter-spacing: 0.02em;
+  font-size: 20px; font-weight: 300;
+  margin: 0 0 28px; padding: 0;
+  line-height: 1.3;
+  color: var(--ink); letter-spacing: -0.01em;
+  font-style: italic;
 }
 /* Ligne prix + panier : deux taches d'encre côte à côte */
 .detail-price-row {
@@ -1090,11 +1248,14 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .detail-price-wrap {
   position: relative; isolation: isolate;
   display: inline-flex; align-items: center;
-  padding: 12px 24px;
+  height: 38px;
+  padding: 0 20px;
   margin: 0;
   background: var(--ink);
+  /* Coin inférieur-gauche biseauté (12px) — effet étiquette, proportionnel à la hauteur */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
-/* Carré noir net à la place de la tache rugueuse */
+/* Remplace la tache rugueuse par l'étiquette biseautée */
 .detail-price-wrap .nav-ink { display: none !important; }
 .detail-price-wrap .detail-price { cursor: pointer; }
 /* Bouton + Panier : tache d'encre séparée */
@@ -1142,11 +1303,11 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .topbar-icon.cart-bump svg { animation: cartBump 0.55s var(--ease-out); }
 .detail-price {
   position: relative; z-index: 1;
-  font-family: var(--font-mono);
-  font-size: 16px; font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 17px; font-weight: 600;
   color: #f4f1ec;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 .detail-attrs {
@@ -1411,7 +1572,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   color: var(--ink); letter-spacing: -0.04em;
   text-align: center; margin-bottom: 48px;
 }
-.about-logo-top .dot { color: #0a0a08; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
+.about-logo-top .dot { color: #3c5674; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
   font-family: var(--font-sans);
   font-size: clamp(36px, 5vw, 60px); font-weight: 300;
@@ -1866,21 +2027,19 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
     margin-top: 32px;
   }
   .product-brand { font-size: 10px; letter-spacing: 0.1em; }
-  .product-name { font-size: 12px; }
+  .product-name { font-size: 14px; }
   .product-price { font-size: 11px; }
   .product-size { font-size: 9px; }
   .product-body { padding: 18px 0 0; }
 
-  .detail-header {
-    padding: 0 16px; height: var(--topbar-h-mobile);
-    grid-template-columns: auto 1fr auto;
-  }
-  .detail-header .logo { display: none; }
+  /* Sur mobile on cache entièrement le bandeau de fiche produit :
+     le retour se fait via le swipe back iOS ou le bouton retour navigateur */
+  .detail-header { display: none !important; }
   .detail-main { grid-template-columns: 1fr; padding: 40px 18px; gap: 44px; }
   .detail-gallery { grid-template-columns: 1fr 1fr; }
   .detail-info { position: static; }
   .detail-brand { font-size: 28px; letter-spacing: -0.01em; }
-  .detail-name { font-size: 10px; }
+  .detail-name { font-size: 15px; }
   .detail-price { font-size: 14px; }
   .detail-attrs { grid-template-columns: 1fr 1fr; }
 
@@ -2015,9 +2174,12 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 
 <!-- HOME -->
 <section class="hero" id="home-page">
+  <div class="hero-grey-ball hero-draggable" aria-hidden="true"></div>
+  <div class="hero-blue-ball hero-draggable" aria-hidden="true"></div>
+  <div class="hero-blue-ball-small hero-draggable" aria-hidden="true"></div>
   <div class="hero-content">
     <h1 class="hero-logo">Passéist<span class="dot">.</span></h1>
-    <p class="hero-tagline">Curation <em>japonaise</em>, vintage.</p>
+    <p class="hero-tagline"><em>Mode d'Auteur</em> japonaise.</p>
     <button class="hero-cta" onclick="goPage('shop')"><span>Explorer</span><span class="arrow-symbol">→</span></button>
   </div>
   <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
@@ -2041,7 +2203,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
         <label class="filter-label" for="search-input" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
         </label>
-        <input class="filter-input" id="search-input" type="text" placeholder="Rechercher une marque, un type…" autocomplete="off">
+        <input class="filter-input" id="search-input" type="text" placeholder="Recherche" autocomplete="off">
       </div>
       <div class="filter-field filter-desktop-hidden">
         <label class="filter-label" for="gender-select">Genre</label>
@@ -2096,7 +2258,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
       </div>
       <div class="filter-field">
         <label class="filter-label" for="m-search-input">Recherche</label>
-        <input class="filter-input" id="m-search-input" type="text" placeholder="Marque, type, taille, matière…" autocomplete="off">
+        <input class="filter-input" id="m-search-input" type="text" placeholder="Recherche" autocomplete="off">
       </div>
       <button class="filter-sheet-apply" id="filter-sheet-apply" type="button">Voir les résultats</button>
       <button class="filter-sheet-close" id="filter-sheet-reset" type="button" style="display:block;margin:8px auto 0;padding:4px 10px;font-weight:700;">Réinitialiser</button>
@@ -2503,7 +2665,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 </div>
 
 <footer class="footer">
-  <div>© Passeist — Curation de mode japonaise · Paris 2026</div>
+  <div>© Passeist — Curation mode d'auteur japonaise · Paris 2026</div>
   <nav class="footer-nav">
     <a data-page="cgv">CGV</a>
     <a data-page="privacy">Confidentialité</a>
@@ -3709,8 +3871,9 @@ function renderGrid() {
     const genderTxt = getGender(p);
     const sizeLine = p.size + (genderTxt ? ' · ' + genderTxt : '');
     const fav = isFavorite(p.id);
+    const slug = (typeof productSlug === 'function') ? productSlug(p) : p.id;
     return `
-    <div class="product-card ${sold ? 'sold' : ''}" data-id="${p.id}">
+    <a class="product-card ${sold ? 'sold' : ''}" href="#product/${slug}" data-id="${p.id}">
       <button class="fav-btn ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>
@@ -3726,9 +3889,15 @@ function renderGrid() {
           <div class="product-size">${sizeLine}</div>
         </div>
       </div>
-    </div>`;
+    </a>`;
   }).join('');
-  document.querySelectorAll('.product-card').forEach(c => c.addEventListener('click', () => openDetail(c.dataset.id)));
+  // Clic normal = ouverture SPA. Cmd/Ctrl/Shift-clic ou clic-molette = nouvel onglet natif du navigateur
+  // (fonctionne aussi avec long-press mobile puisque l'élément est un vrai <a href>).
+  document.querySelectorAll('.product-card').forEach(c => c.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    openDetail(c.dataset.id);
+  }));
 }
 
 // Wire dropdown events once (selects are re-populated but the elements persist)
@@ -3794,20 +3963,30 @@ function openDetail(id) {
     return `<div class="thumb" data-idx="${i}"><img src="${src}" data-idx="${i}" loading="lazy" decoding="async" onerror="this.parentElement.remove()" alt="${p.type} photo ${i+1}"></div>`;
   }).join('');
   gal.querySelectorAll('img').forEach(img => img.addEventListener('click', () => openLB(parseInt(img.dataset.idx))));
-  // Sauvegarde la position de scroll actuelle pour la restaurer à la fermeture
+  // Sauvegarde la position de scroll actuelle pour la restaurer à la fermeture.
+  // Pattern iOS-safe : position: fixed sur body pour empêcher iOS Safari
+  // de reset le scroll à la réouverture (bug connu avec overflow:hidden sur iOS).
   window.__savedScrollY = window.scrollY || window.pageYOffset || 0;
   document.getElementById('detail').classList.add('open');
-  window.scrollTo(0, 0);
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + window.__savedScrollY + 'px';
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
   document.body.style.overflow = 'hidden';
 }
 function closeDetail() {
   document.getElementById('detail').classList.remove('open');
-  document.body.style.overflow = '';
-  // Restaure la position de scroll exacte pour retrouver le produit visible
   const savedY = window.__savedScrollY || 0;
-  requestAnimationFrame(() => {
-    window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
-  });
+  // Retire les styles de verrouillage dans l'ordre — évite le clignotement iOS
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
+  // Restaure immédiatement — pas de rAF qui laisse iOS gagner la course
+  window.scrollTo(0, savedY);
 }
 
 // ============ LIGHTBOX ============
@@ -4894,11 +5073,19 @@ window.updateSEO = function(p) {
   // Décore openDetail : URL = #product/{brand-type-id}, met à jour les méta
   if (_od) {
     window.openDetail = function(id, fromHistory) {
+      // Si on vient de l'accueil (ex : carrousel), on interpose un state 'shop'
+      // dans l'historique AVANT d'ouvrir la fiche. Comme ça, le back natif du
+      // navigateur (ou swipe iOS) ramène sur la Boutique, pas sur l'accueil.
+      const cameFromHome = !fromHistory && document.body.dataset.page === 'home';
       _od.call(window, id);
       document.body.classList.add('detail-open');
       const prod = (typeof PRODUCTS !== 'undefined') ? PRODUCTS.find(x => x.id === id) : null;
       updateSEO(prod);
       if (!fromHistory) {
+        if (cameFromHome) {
+          try { history.pushState({ t:'page', p:'shop' }, '', '#shop'); } catch(e){}
+          document.body.dataset.page = 'shop';
+        }
         const slug = prod ? productSlug(prod) : id;
         try { history.pushState({ t:'detail', id: String(id) }, '', '#product/' + slug); } catch(e){}
       }
@@ -4913,8 +5100,13 @@ window.updateSEO = function(p) {
       const cameFromHome = document.body.dataset.page === 'home';
       _cdOrig.apply(this, arguments);
       document.body.classList.remove('detail-open');
-      // Safety : garantir que le scroll est restauré après fermeture
+      // Safety : tous les styles de verrouillage retirés (au cas où)
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
       document.documentElement.style.overflow = '';
       if (cameFromHome) {
         _gp.call(window, 'shop');
@@ -5000,6 +5192,92 @@ renderFilters();
 renderGrid();
 renderCart();
 renderHeroMarquee();
+
+// ============ DRAG & THROW sur les boules animées du hero ============
+// Souris + tactile + stylet unifiés via Pointer Events.
+// Au relâchement, la boule continue selon sa vélocité (inertie + rebonds sur les bords).
+(function initDraggableBalls(){
+  document.querySelectorAll('.hero-draggable').forEach(ball => {
+    let state = null;
+    let inertiaRAF = null;
+
+    function stopInertia() { if (inertiaRAF) cancelAnimationFrame(inertiaRAF); inertiaRAF = null; }
+
+    ball.addEventListener('pointerdown', (e) => {
+      stopInertia();
+      const rect = ball.getBoundingClientRect();
+      // Fige la boule à sa position visuelle courante, sort de l'animation
+      ball.classList.add('dragging');
+      ball.style.animation = 'none';
+      ball.style.transform = 'none';
+      ball.style.top = rect.top + 'px';
+      ball.style.left = rect.left + 'px';
+      ball.style.right = 'auto';
+      ball.style.bottom = 'auto';
+      ball.style.position = 'fixed';
+      try { ball.setPointerCapture(e.pointerId); } catch(err){}
+      const now = performance.now();
+      state = {
+        pointerId: e.pointerId,
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top,
+        lastX: e.clientX, lastY: e.clientY, lastT: now,
+        vx: 0, vy: 0
+      };
+      e.preventDefault();
+    });
+
+    ball.addEventListener('pointermove', (e) => {
+      if (!state || e.pointerId !== state.pointerId) return;
+      const now = performance.now();
+      const dt = Math.max(1, now - state.lastT);
+      // Vélocité en px/ms — on la reconvertira en px/frame au lancement
+      state.vx = (e.clientX - state.lastX) / dt;
+      state.vy = (e.clientY - state.lastY) / dt;
+      state.lastX = e.clientX; state.lastY = e.clientY; state.lastT = now;
+      ball.style.left = (e.clientX - state.offsetX) + 'px';
+      ball.style.top  = (e.clientY - state.offsetY) + 'px';
+    });
+
+    const end = (e) => {
+      if (!state || e.pointerId !== state.pointerId) return;
+      try { ball.releasePointerCapture(state.pointerId); } catch(err){}
+      const vx0 = state.vx, vy0 = state.vy;
+      state = null;
+      ball.classList.remove('dragging');
+      // Lance une animation d'inertie si la vélocité de lâcher est significative
+      const speed = Math.hypot(vx0, vy0);
+      if (speed > 0.15) {
+        const MAX = 38;
+        // px/ms → px/frame à ~60fps (× 16). On cap pour éviter des lancers trop violents.
+        let vx = Math.max(-MAX, Math.min(MAX, vx0 * 16));
+        let vy = Math.max(-MAX, Math.min(MAX, vy0 * 16));
+        const friction = 0.965;
+        const bounce = 0.72;
+        let x = parseFloat(ball.style.left) || 0;
+        let y = parseFloat(ball.style.top)  || 0;
+        const tick = () => {
+          vx *= friction; vy *= friction;
+          x += vx; y += vy;
+          const rect = ball.getBoundingClientRect();
+          const W = window.innerWidth, H = window.innerHeight;
+          // Rebonds aux bords du viewport
+          if (x < -rect.width * 0.35) { x = -rect.width * 0.35; vx = Math.abs(vx) * bounce; }
+          if (x + rect.width > W + rect.width * 0.35) { x = W - rect.width + rect.width * 0.35; vx = -Math.abs(vx) * bounce; }
+          if (y < -rect.height * 0.35) { y = -rect.height * 0.35; vy = Math.abs(vy) * bounce; }
+          if (y + rect.height > H + rect.height * 0.35) { y = H - rect.height + rect.height * 0.35; vy = -Math.abs(vy) * bounce; }
+          ball.style.left = x + 'px';
+          ball.style.top  = y + 'px';
+          if (Math.hypot(vx, vy) < 0.4) { inertiaRAF = null; return; }
+          inertiaRAF = requestAnimationFrame(tick);
+        };
+        inertiaRAF = requestAnimationFrame(tick);
+      }
+    };
+    ball.addEventListener('pointerup', end);
+    ball.addEventListener('pointercancel', end);
+  });
+})();
 </script>
 <!-- Tawk.to (la bulle par défaut est cachée — on utilise l'icône dans la topbar) -->
 <script>
