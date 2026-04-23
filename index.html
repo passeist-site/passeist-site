@@ -2121,6 +2121,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
           <option value="newest">Nouveautés</option>
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
+          <option value="random">Aléatoire</option>
         </select>
       </div>
       <button class="filter-reset" id="filter-reset" hidden>Réinitialiser</button>
@@ -2152,6 +2153,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
           <option value="newest">Nouveautés</option>
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
+          <option value="random">Aléatoire</option>
         </select>
       </div>
       <div class="filter-field">
@@ -3765,12 +3767,21 @@ function renderGrid() {
     matchesSearch(p, activeSearch)
   );
   // Tri selon activeSort
-  filtered = filtered.slice().sort((a, b) => {
-    if (activeSort === 'price-asc')  return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
-    if (activeSort === 'price-desc') return (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
-    // 'newest' : id numérique décroissant (les IDs plus élevés = mis en ligne plus récemment)
-    return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
-  });
+  if (activeSort === 'random') {
+    // Mélange aléatoire de Fisher-Yates — nouveau shuffle à chaque render
+    filtered = filtered.slice();
+    for (let i = filtered.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+    }
+  } else {
+    filtered = filtered.slice().sort((a, b) => {
+      if (activeSort === 'price-asc')  return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
+      if (activeSort === 'price-desc') return (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
+      // 'newest' : id numérique décroissant (les IDs plus élevés = mis en ligne plus récemment)
+      return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
+    });
+  }
   const parts = [];
   if (activeGender !== 'all') parts.push(activeGender || 'Accessoires');
   if (activeBrand !== 'all') parts.push(activeBrand);
