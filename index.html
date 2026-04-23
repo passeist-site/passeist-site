@@ -1962,18 +1962,23 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
     <div class="checkout-eyebrow">Finalisation de commande</div>
     <h2 class="checkout-title" id="checkout-title">Votre commande</h2>
     <div class="checkout-summary" id="checkout-summary"></div>
-    <form class="checkout-form" id="checkout-form" onsubmit="submitOrder(event)">
+    <form class="checkout-form" id="checkout-form" name="panier" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitOrder(event)">
+      <input type="hidden" name="form-name" value="panier">
+      <p style="display:none"><label>Ne pas remplir : <input name="bot-field"></label></p>
+      <input type="hidden" name="reference" id="hidden-ref">
+      <textarea name="details" id="hidden-details" style="display:none"></textarea>
+      <input type="hidden" name="total" id="hidden-total">
       <div class="checkout-row-split split-even">
-        <label>Prénom<input type="text" required></label>
-        <label>Nom<input type="text" required></label>
+        <label>Prénom<input type="text" name="prenom" required></label>
+        <label>Nom<input type="text" name="nom" required></label>
       </div>
-      <div class="checkout-row"><label>Email<input type="email" required></label></div>
-      <div class="checkout-row"><label>Adresse de livraison<input type="text" required></label></div>
+      <div class="checkout-row"><label>Email<input type="email" name="email" required></label></div>
+      <div class="checkout-row"><label>Adresse de livraison<input type="text" name="adresse" required></label></div>
       <div class="checkout-row-split">
-        <label>Code postal<input type="text" required></label>
-        <label>Ville<input type="text" required></label>
+        <label>Code postal<input type="text" name="code_postal" required></label>
+        <label>Ville<input type="text" name="ville" required></label>
       </div>
-      <div class="checkout-row"><label>Pays<select id="checkout-country" required>
+      <div class="checkout-row"><label>Pays<select id="checkout-country" name="pays" required>
         <option value="France" selected>France</option>
         <option value="Afghanistan">Afghanistan</option>
         <option value="Afrique du Sud">Afrique du Sud</option>
@@ -2182,7 +2187,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
           <input type="hidden" name="ship" id="ship-input" value="15" data-label="France">
         </div>
       </div>
-      <div class="checkout-row"><label>Message (facultatif)<textarea id="checkout-msg" rows="3" placeholder="Questions, demande d'essayage, préférence de paiement…"></textarea></label></div>
+      <div class="checkout-row"><label>Message (facultatif)<textarea id="checkout-msg" name="message" rows="3" placeholder="Questions, demande d'essayage, préférence de paiement…"></textarea></label></div>
       <button type="submit" class="btn btn-primary checkout-submit">Envoyer ma demande</button>
       <div class="checkout-note">Nous vous répondons sous 24&nbsp;h avec un IBAN ou un lien de paiement sécurisé. Aucune donnée bancaire ne transite par le site. En envoyant, vous acceptez nos CGV.</div>
     </form>
@@ -2203,10 +2208,13 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
     <div class="checkout-eyebrow">Renseignement</div>
     <h2 class="checkout-title">Poser une question</h2>
     <p class="contact-lead" id="contact-lead"></p>
-    <form class="checkout-form" onsubmit="submitContact(event)">
-      <div class="checkout-row"><label>Nom<input type="text" required></label></div>
-      <div class="checkout-row"><label>Email<input type="email" required></label></div>
-      <div class="checkout-row"><label>Message<textarea rows="4"></textarea></label></div>
+    <form class="checkout-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitContact(event)">
+      <input type="hidden" name="form-name" value="contact">
+      <input type="hidden" name="produit" id="contact-produit">
+      <p style="display:none"><label>Ne pas remplir : <input name="bot-field"></label></p>
+      <div class="checkout-row"><label>Nom<input type="text" name="nom" required></label></div>
+      <div class="checkout-row"><label>Email<input type="email" name="email" required></label></div>
+      <div class="checkout-row"><label>Message<textarea name="message" rows="4" required></textarea></label></div>
       <button type="submit" class="btn btn-primary">Envoyer la demande</button>
     </form>
   </div>
@@ -3627,14 +3635,6 @@ function closeCheckout() { document.getElementById('checkout-overlay').classList
 function submitOrder(e) {
   e.preventDefault();
   const form = document.getElementById('checkout-form');
-  const inputs = form.querySelectorAll('input, select, textarea');
-  const values = {};
-  inputs.forEach(el => {
-    if (el.type === 'hidden' || el.type === 'submit') return;
-    const labelEl = el.closest('label');
-    const label = (labelEl ? (labelEl.childNodes[0]?.nodeValue || labelEl.textContent || '').trim() : (el.placeholder || el.name || ''));
-    if (label) values[label] = el.value || '';
-  });
   const ref = 'PSST-' + Math.random().toString(36).slice(2, 8).toUpperCase();
   const items = cart.map(p => '• ' + p.brand + ' — ' + p.type + ' (' + p.size + ') — ' + p.price + ' EUR').join('\n');
   const shipEl = document.getElementById('ship-input');
@@ -3643,27 +3643,37 @@ function submitOrder(e) {
   const shipCost = cart.length <= 2 ? shipBase : Math.ceil(shipBase * 1.2);
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const total = subtotal + shipCost;
-  const coords = Object.entries(values).map(([k, v]) => k + ' : ' + v).join('\n');
-  const subject = '[Passeist] Nouvelle demande ' + ref + ' — ' + cart.length + ' pièce(s), ' + total + ' €';
-  const body = 'RÉFÉRENCE : ' + ref + '\n\n'
+  const details = 'RÉFÉRENCE : ' + ref + '\n\n'
     + '— PIÈCES DEMANDÉES —\n' + items + '\n\n'
     + 'Sous-total : ' + subtotal + ' EUR\n'
     + 'Livraison (' + shipZone + ') : ' + shipCost + ' EUR\n'
-    + 'TOTAL : ' + total + ' EUR\n\n'
-    + '— COORDONNÉES CLIENT —\n' + coords + '\n\n'
-    + '—\nGénéré depuis passeist.com';
-  const mailto = 'mailto:info@passeist.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  // Ouvre le client mail
-  window.location.href = mailto;
-  // Affiche l'écran de succès derrière
-  setTimeout(() => {
+    + 'TOTAL : ' + total + ' EUR';
+  // Remplit les champs cachés Netlify Forms
+  document.getElementById('hidden-ref').value = ref;
+  document.getElementById('hidden-details').value = details;
+  document.getElementById('hidden-total').value = total + ' EUR (' + cart.length + ' pièce(s))';
+  // Submit via fetch vers Netlify Forms endpoint
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+  const fd = new FormData(form);
+  const body = new URLSearchParams();
+  for (const [k, v] of fd.entries()) body.append(k, v);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  }).then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     form.style.display = 'none';
     document.getElementById('checkout-title').textContent = 'Demande envoyée';
     document.getElementById('checkout-success').classList.add('open');
     document.getElementById('checkout-ref').textContent = 'Référence : ' + ref;
     cart = [];
     renderCart();
-  }, 400);
+  }).catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer ma demande'; }
+    alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com (référence ' + ref + ').');
+  });
 }
 function openContact() {
   document.getElementById('contact-lead').textContent = currentProduct
@@ -3674,8 +3684,33 @@ function openContact() {
 function closeContact() { document.getElementById('contact-overlay').classList.remove('open'); }
 function submitContact(e) {
   e.preventDefault();
-  closeContact();
-  alert('Merci, votre demande a été envoyée. Vous recevrez un email de confirmation sous peu.');
+  const form = document.getElementById('contact-form');
+  // Renseigne le produit si la question est posée depuis une fiche
+  const prodEl = document.getElementById('contact-produit');
+  if (prodEl) {
+    prodEl.value = currentProduct
+      ? currentProduct.brand + ' — ' + currentProduct.type + ' (' + currentProduct.size + ', ref ' + currentProduct.id + ')'
+      : '';
+  }
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+  const fd = new FormData(form);
+  const body = new URLSearchParams();
+  for (const [k, v] of fd.entries()) body.append(k, v);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  }).then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer la demande'; }
+    form.reset();
+    closeContact();
+    alert('Merci, votre demande a bien été envoyée. Nous vous répondons sous 24 h.');
+  }).catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer la demande'; }
+    alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com.');
+  });
 }
 
 document.getElementById('d-cart').addEventListener('click', () => { if (currentProduct) addToCart(currentProduct.id); });
