@@ -2122,6 +2122,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
           <option value="random">Aléatoire</option>
+          <option value="alt-tone">Aléatoire · foncé × coloré</option>
         </select>
       </div>
       <button class="filter-reset" id="filter-reset" hidden>Réinitialiser</button>
@@ -2154,6 +2155,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
           <option value="random">Aléatoire</option>
+          <option value="alt-tone">Aléatoire · foncé × coloré</option>
         </select>
       </div>
       <div class="filter-field">
@@ -3351,7 +3353,7 @@ let activeView = 'shop';          // 'shop' = available only  |  'archive' = sol
 let activeBrand = 'all';
 let activeCat = 'all';
 let activeGender = 'all';
-let activeSort = 'newest';
+let activeSort = 'alt-tone';
 let activeSearch = '';
 let cart = [];
 let currentProduct = null;
@@ -3616,7 +3618,7 @@ function matchesSearch(p, q) {
 // ============ NAV ============
 let currentPage = 'home';
 // Chaque vue (boutique / archive / favoris) a son propre état de filtres
-const DEFAULT_FILTERS = { brand: 'all', cat: 'all', gender: 'all', sort: 'newest', search: '' };
+const DEFAULT_FILTERS = { brand: 'all', cat: 'all', gender: 'all', sort: 'alt-tone', search: '' };
 const savedFilters = {
   shop: { ...DEFAULT_FILTERS },
   archive: { ...DEFAULT_FILTERS },
@@ -3766,14 +3768,37 @@ function renderGrid() {
     (activeGender === 'all' || getGender(p) === activeGender) &&
     matchesSearch(p, activeSearch)
   );
+  // Helper Fisher-Yates shuffle (muté en place)
+  const shuffle = (arr) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+  // Classifie un produit en 'dark' ou 'color' depuis les mots-clés de type/desc
+  const DARK_KWS = ['noir', 'anthracite', 'marine', 'bordeaux', 'encre', 'indigo', 'kaki foncé'];
+  const LIGHT_KWS = ['blanc', 'beige', 'écru', 'ecru', 'camel', 'crème', 'ivoire', 'jaune', 'gris clair'];
+  const productTone = (p) => {
+    const s = ((p.type || '') + ' ' + (p.desc || '')).toLowerCase();
+    for (const k of DARK_KWS) if (s.includes(k)) return 'dark';
+    for (const k of LIGHT_KWS) if (s.includes(k)) return 'color';
+    return 'color';
+  };
   // Tri selon activeSort
   if (activeSort === 'random') {
-    // Mélange aléatoire de Fisher-Yates — nouveau shuffle à chaque render
-    filtered = filtered.slice();
-    for (let i = filtered.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+    filtered = shuffle(filtered.slice());
+  } else if (activeSort === 'alt-tone') {
+    // Alternance foncé × coloré avec mélange aléatoire dans chaque groupe
+    const darks = shuffle(filtered.filter(p => productTone(p) === 'dark'));
+    const colors = shuffle(filtered.filter(p => productTone(p) !== 'dark'));
+    const out = [];
+    const n = Math.max(darks.length, colors.length);
+    for (let i = 0; i < n; i++) {
+      if (i < darks.length) out.push(darks[i]);
+      if (i < colors.length) out.push(colors[i]);
     }
+    filtered = out;
   } else {
     filtered = filtered.slice().sort((a, b) => {
       if (activeSort === 'price-asc')  return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
@@ -3858,7 +3883,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
   }
 })();
 document.getElementById('filter-reset').addEventListener('click', () => {
-  activeBrand = 'all'; activeCat = 'all'; activeGender = 'all'; activeSort = 'newest';
+  activeBrand = 'all'; activeCat = 'all'; activeGender = 'all'; activeSort = 'alt-tone';
   activeSearch = '';
   const si = document.getElementById('search-input'); if (si) { si.value = ''; si.classList.remove('active'); }
   const msi = document.getElementById('m-search-input'); if (msi) { msi.value = ''; }
