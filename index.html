@@ -165,15 +165,20 @@ a { color: inherit; }
 .topbar-icon .nav-ink,
 .topbar-icon .cart-label { display: none !important; }
 .topbar-icon .cart-count {
-  position: absolute; top: -2px; right: -6px;
+  position: absolute; top: -6px; right: -8px;
   font-family: var(--font-mono); font-size: 9px;
-  color: var(--ink); opacity: 0.8;
+  color: var(--bg); opacity: 1;
   font-variant-numeric: tabular-nums;
-  background: var(--bg);
-  padding: 0 3px; min-width: 14px; text-align: center;
-  line-height: 13px; height: 13px;
+  background: var(--ink);
+  padding: 0 4px; min-width: 14px; text-align: center;
+  line-height: 14px; height: 14px;
+  border-radius: 999px;
   margin: 0;
+  box-shadow: 0 0 0 2px var(--bg);
 }
+/* Cache le badge quand le compteur est à 0 */
+.topbar-icon .cart-count:empty,
+.topbar-icon .cart-count[data-zero="true"] { display: none; }
 @media (max-width: 880px) {
   .topbar-icons { gap: 10px; }
   .topbar-icon { width: 26px; height: 26px; }
@@ -423,142 +428,13 @@ a { color: inherit; }
   height: calc(100vh - var(--topbar-h) - 80px);
   min-height: calc(100vh - var(--topbar-h) - 80px);
   display: flex; align-items: center; justify-content: center;
-  /* Dégradé doux dans notre gris d'origine (palette warm uniquement) */
-  background: linear-gradient(180deg,
-    #8f8d88 0%,
-    #a8a6a1 35%,
-    #a8a6a1 70%,
-    #b6b4af 100%);
-  color: var(--ink);
+  background: var(--bg); color: var(--ink);
   position: relative; overflow: hidden;
   padding: 40px 40px 300px;
 }
-/* Disque gris dégradé (éclipse) — maintenant un vrai élément cliquable/glissable */
-.hero-grey-ball {
-  position: absolute;
-  width: clamp(260px, 32vw, 460px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  /* Dégradé gris dans notre palette — coeur dense, bord fondu */
-  background: radial-gradient(circle at 40% 38%,
-    #b6b4af 0%,
-    #95938e 35%,
-    #7c7a76 60%,
-    rgba(124,122,118,0.55) 80%,
-    transparent 100%);
-  top: -15%; left: -25%;
-  z-index: 2;
-  filter: blur(14px);
-  animation: eclipse 30s linear infinite;
-}
-/* Toutes les boules sont saisissables à la souris et au tactile */
-.hero-draggable {
-  pointer-events: auto;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-.hero-draggable.dragging {
-  cursor: grabbing;
-  animation: none !important;
-  transition: none !important;
-  z-index: 4 !important;
-}
-@keyframes eclipse {
-  from { transform: translate(0, 0); }
-  50%  { transform: translate(70vw, 40vh); }
-  to   { transform: translate(140vw, 85vh); }
-}
-/* Contenu au-dessus du dégradé + disque */
 .hero-content { position: relative; z-index: 5; }
-/* Boule bleue faded qui traverse le hero lentement (trajet diagonal) */
-.hero-blue-ball {
-  position: absolute;
-  width: clamp(180px, 24vw, 340px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  /* Bleu faded Passéist (visible sur gris) */
-  background: radial-gradient(circle at center,
-    rgba(110,148,175,0.78) 0%,
-    rgba(60,86,116,0.50) 35%,
-    rgba(36,52,74,0.22) 65%,
-    transparent 100%);
-  top: 40%; left: -30%;
-  z-index: 3;
-  filter: blur(14px);
-  animation: blueBallCross 22s ease-in-out infinite;
-}
-@keyframes blueBallCross {
-  0%   { transform: translate(0, 0)        scale(1);   opacity: 0; }
-  12%  { opacity: 1; }
-  50%  { transform: translate(70vw, -28vh) scale(1.15); opacity: 1; }
-  88%  { opacity: 1; }
-  100% { transform: translate(140vw, -6vh) scale(0.9); opacity: 0; }
-}
-/* Petite boule bleue faded — trajet opposé (haut-droite → bas-gauche) */
-.hero-blue-ball-small {
-  position: absolute;
-  width: clamp(110px, 15vw, 210px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at center,
-    rgba(110,148,175,0.72) 0%,
-    rgba(60,86,116,0.45) 35%,
-    rgba(36,52,74,0.20) 65%,
-    transparent 100%);
-  top: -10%; right: -20%;
-  z-index: 3;
-  filter: blur(12px);
-  animation: blueBallCrossReverse 26s ease-in-out infinite;
-  animation-delay: -9s; /* décalage pour éviter qu'elles se croisent au même moment */
-}
-@keyframes blueBallCrossReverse {
-  0%   { transform: translate(0, 0)          scale(0.95); opacity: 0; }
-  12%  { opacity: 1; }
-  50%  { transform: translate(-55vw, 40vh)   scale(1.1);  opacity: 1; }
-  88%  { opacity: 1; }
-  100% { transform: translate(-120vw, 10vh)  scale(0.85); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-blue-ball,
-  .hero-blue-ball-small { animation: none; opacity: 0.5; }
-}
-/* Sur mobile : les 3 boules convergent toutes sur le logo au milieu de leur cycle */
-@media (max-width: 880px) {
-  .hero::after {
-    top: 50%; left: 50%; margin: 0;
-    animation: eclipseMobile 24s ease-in-out infinite;
-  }
-  @keyframes eclipseMobile {
-    0%   { transform: translate(-50%, -50%) translate(-70vw, -60vh); }
-    50%  { transform: translate(-50%, -50%) translate(0, 0); }
-    100% { transform: translate(-50%, -50%) translate(70vw, 60vh); }
-  }
-  .hero-blue-ball {
-    top: 50%; left: 50%; right: auto;
-    animation: blueBallMobile 20s ease-in-out infinite;
-  }
-  @keyframes blueBallMobile {
-    0%   { transform: translate(-50%, -50%) translate(-65vw, 55vh) scale(0.95); opacity: 0; }
-    15%  { opacity: 1; }
-    50%  { transform: translate(-50%, -50%) translate(0, 0) scale(1.1); opacity: 1; }
-    85%  { opacity: 1; }
-    100% { transform: translate(-50%, -50%) translate(65vw, -55vh) scale(0.85); opacity: 0; }
-  }
-  .hero-blue-ball-small {
-    top: 50%; left: 50%; right: auto;
-    animation: blueBallSmallMobile 24s ease-in-out infinite;
-    animation-delay: -9s;
-  }
-  @keyframes blueBallSmallMobile {
-    0%   { transform: translate(-50%, -50%) translate(60vw, -50vh) scale(0.9); opacity: 0; }
-    15%  { opacity: 1; }
-    50%  { transform: translate(-50%, -50%) translate(0, 0) scale(1.05); opacity: 1; }
-    85%  { opacity: 1; }
-    100% { transform: translate(-50%, -50%) translate(-60vw, 50vh) scale(0.85); opacity: 0; }
-  }
-}
+/* Contenu au-dessus du dégradé */
+.hero-content { position: relative; z-index: 5; }
 
 /* Accueil plein écran sans scroll — footer visible */
 body[data-page="home"] { overflow: hidden; height: 100vh; }
@@ -622,6 +498,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   .hero::after { animation: none !important; }
 }
 .hero-tagline em { font-style: italic; font-weight: 300; }
+
 .hero-cta {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 18px 32px;
@@ -678,8 +555,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .hero-marquee-card img {
   height: 100%; width: auto; display: block;
   transition: opacity 0.4s var(--ease-out), filter 0.4s var(--ease-out);
-  opacity: 0.72;
-  filter: contrast(0.94);
+  opacity: 0.86;
+  filter: contrast(0.97);
 }
 .hero-marquee-card:hover img { opacity: 1; filter: contrast(1); }
 
@@ -2026,9 +1903,11 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
     gap: 56px 14px;
     margin-top: 32px;
   }
-  .product-brand { font-size: 10px; letter-spacing: 0.1em; }
-  .product-name { font-size: 14px; }
-  .product-price { font-size: 11px; }
+  .product-brand { font-size: 9px; letter-spacing: 0; gap: 6px; margin-bottom: 8px; }
+  .product-brand .brand-mark { width: 10px; height: 2px; }
+  .product-name { font-size: 13px; }
+  .product-price-wrap { padding: 3px 9px; }
+  .product-price { font-size: 9.5px; }
   .product-size { font-size: 9px; }
   .product-body { padding: 18px 0 0; }
 
@@ -2043,8 +1922,30 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   .detail-price { font-size: 14px; }
   .detail-attrs { grid-template-columns: 1fr 1fr; }
 
-  .about { padding: 72px 24px 100px; }
-  .about-info-grid { grid-template-columns: 1fr; gap: 28px; }
+  /* Page À propos en 1 seul écran sans défilement (mobile) */
+  .about {
+    padding: 16px 20px 20px;
+    height: calc(100dvh - var(--topbar-h-mobile));
+    min-height: auto;
+    max-width: 100%;
+    display: none; flex-direction: column;
+  }
+  .about.open { display: flex; }
+  /* Logo centré dans l'espace libre au-dessus du texte */
+  .about-logo-top {
+    font-size: clamp(40px, 14vw, 60px);
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  .about-intro { margin: 0 auto; width: 100%; }
+  .about-intro .about-body { margin-bottom: 8px; font-size: 12.5px; line-height: 1.5; }
+  .about-body { font-size: 12.5px; line-height: 1.5; margin-bottom: 10px; }
+  /* Mentions légales collées en bas */
+  .about-section { margin-top: auto; }
+  .about-section-title { font-size: 9px; margin-bottom: 10px; padding-bottom: 6px; }
+  .about-info-grid { grid-template-columns: repeat(2, 1fr); gap: 10px 16px; }
+  .about-info-label { font-size: 8.5px; margin-bottom: 2px; }
+  .about-info-value { font-size: 11px; line-height: 1.35; }
 
   .cart-panel { width: 100%; }
 
@@ -2174,9 +2075,6 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 
 <!-- HOME -->
 <section class="hero" id="home-page">
-  <div class="hero-grey-ball hero-draggable" aria-hidden="true"></div>
-  <div class="hero-blue-ball hero-draggable" aria-hidden="true"></div>
-  <div class="hero-blue-ball-small hero-draggable" aria-hidden="true"></div>
   <div class="hero-content">
     <h1 class="hero-logo">Passéist<span class="dot">.</span></h1>
     <p class="hero-tagline"><em>Mode d'Auteur</em> japonaise.</p>
@@ -2271,8 +2169,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 <section class="about" id="about-page">
   <div class="about-logo-top">Passéist<span class="dot">.</span></div>
   <div class="about-intro">
-  <p class="about-body">Passeist découvre, authentifie et propose des pièces de créateurs japonais vintage&nbsp;— traceur de style et d'histoire.</p>
-  <p class="about-body">La proposition est faite au travers de nombreuses marques emblématiques comme&nbsp;: Issey Miyake, Yohji Yamamoto, Comme des Garçons et d'autres plus confidentielles à l'instar de 45RPM, Yoshiki Hishinuma…</p>
+  <p class="about-body">Passeist découvre, authentifie et vous propose des pièces de mode d'auteur japonaise, comme un modeste traceur de style et d'histoire.</p>
+  <p class="about-body">La proposition est faite au travers de nombreuses marques emblématiques comme&nbsp;: Issey Miyake, Yohji Yamamoto, Comme des Garçons et d'autres plus confidentielles à l'instar de 45RPM, Yoshiki Hishinuma, Junko Koshino…</p>
   <p class="about-body">Chaque pièce est photographiée en détail, mesurée, et décrite honnêtement.</p>
   </div>
 
@@ -2702,7 +2600,7 @@ const PRODUCTS = [
   {"id": "65603590", "brand": "45RPM", "type": "Jean large", "size": "36 FR", "price": "180", "gender": "Femme", "path": "/vetements-femme/jeans/45rpm/jean-45rpm-en-denim-marine-65603590.shtml", "slug": "jean-45rpm-en-denim-marine-65603590", "n": 15, "desc": "45RPM\n\nTrès beau jean en toile de coton 100% à effet usé.\n\nTaille indiquée 29 mais fait plus un 27\n\nTaille 37cm\nLongueur jambes 103cm et 78cm depuis l'entre-jambe\nOuverture chevilles 22cm\nHanches 49cm\nFourche avant 26cm"},
   {"id": "65565480", "brand": "45RPM", "type": "Veste denim hickory", "size": "S International", "price": "220", "gender": "Homme", "path": "/vetements-homme/vestes-blousons/45rpm/vesteblouson-45rpm-en-coton-marine-65565480.shtml", "slug": "vesteblouson-45rpm-en-coton-marine-65565480", "n": 15, "desc": "45rpm\n\nSuperbe veste en denim hickory blanc et marine. À effet patiné d'origine.\n\nParfait état quasiment jamais portée.\n\nConvient à un S homme ou M femme.\n\nDimensions :\n- épaule à épaule : 42cm\n- aisselle à aisselle : 52cm\n- longueur dos depuis bas du col : 57cm\n- longueur manche depuis épaule 48cm et depuis aisselle :46cm\n- ouverture bas :55cm"},
   {"id": "66151456", "brand": "MAISON MIHARA YASUHIRO", "type": "Pull en laine", "size": "S International", "price": "200", "gender": "Homme", "path": "/vetements-homme/pulls-gilets-sweats/maison-mihara-yasuhiro/pullgiletsweat-maison-mihara-yasuhiro-en-laine-bordeaux-66151456.shtml", "slug": "pullgiletsweat-maison-mihara-yasuhiro-en-laine-bordeaux-66151456", "n": 15, "desc": "Mihara Yasuhiro\n\nTrès beau pull en laine 100% à rayures bordeaux et blanc. Effet déchirures.\n\nParfait état global.\n\nTaille indiquée M convient à un S ample à l'homme et à un M/L à la femme.\n\nDimensions :\n- épaule à épaule : 45cm\n- aisselle à aisselle : 53cm\n- longueur dos depuis bas du col : 78cm\n- longueur manche depuis épaule 78cm et depuis aisselle :54cm\n- ouverture bas :54cm"},
-  {"id": "66151497", "brand": "ISSEY MIYAKE", "type": "Top plissé cactus (vintage)", "size": "M International", "price": "220", "gender": "Femme", "path": "/vetements-femme/tops/issey-miyake/haut-issey-miyake-en-polyester-camel-66151497.shtml", "slug": "haut-issey-miyake-en-polyester-camel-66151497", "n": 15, "desc": "Issey Miyake\n\nCollection mainline probablement 1990.\n\nRare top plissé cactus en polyester marron clair 100%.\n\nParfait état global.\n\nTaille indiquée M paraît tailler petit, il est en tout cas très compact.\n\nDimensions non étiré :\n- épaule à épaule : 28cm\n- aisselle à aisselle : 33cm\n- longueur dos depuis bas du col : 40cm\n- longueur manche depuis épaule 39cm et depuis aisselle :36cm\n- ouverture bas :32cm"},
+  {"id": "66151497", "brand": "ISSEY MIYAKE", "type": "Top plissé cactus", "size": "M International", "price": "220", "gender": "Femme", "path": "/vetements-femme/tops/issey-miyake/haut-issey-miyake-en-polyester-camel-66151497.shtml", "slug": "haut-issey-miyake-en-polyester-camel-66151497", "n": 15, "desc": "Issey Miyake\n\nCollection mainline probablement 1990.\n\nRare top plissé cactus en polyester marron clair 100%.\n\nParfait état global.\n\nTaille indiquée M paraît tailler petit, il est en tout cas très compact.\n\nDimensions non étiré :\n- épaule à épaule : 28cm\n- aisselle à aisselle : 33cm\n- longueur dos depuis bas du col : 40cm\n- longueur manche depuis épaule 39cm et depuis aisselle :36cm\n- ouverture bas :32cm"},
   {"id": "66132730", "brand": "ISSEY MIYAKE", "type": "Sac cartable", "size": "Taille unique", "price": "270", "gender": "", "path": "/sacs-homme/sacs/issey-miyake/sac-issey-miyake-en-synthetique-gris-66132730.shtml", "slug": "sac-issey-miyake-en-synthetique-gris-66132730", "n": 15, "desc": "Issey Miyake\n\nTrès beau sac à empiècements de cuir grainé noir et toile sans doute en nylon. Bandoulière réglable et jolis détails de fermoirs de grande qualité en métal en forme de manilles.\n\nParfait état général, un petit renfort sur le coin de la anse main.\n\nHauteur 42cm · Largeur 33cm · Profondeur 21cm"},
   {"id": "66067467", "brand": "YOHJI YAMAMOTO", "type": "T-shirt manches longues crâne", "size": "M International", "price": "220", "gender": "Homme", "path": "/vetements-homme/tee-shirts/yohji-yamamoto/tee-shirt-yohji-yamamoto-en-coton-noir-66067467.shtml", "slug": "tee-shirt-yohji-yamamoto-en-coton-noir-66067467", "n": 15, "desc": "Yohji Yamamoto\n\nCollection automne-hiver 2017.\n\nT-shirt manches longues en coton noir 100% à décor d'un crâne noir en projection de velours.\n\nTrès bon état.\n\nTaille indiquée 3 convient du M au L\n\nDimensions :\n- épaule à épaule : 51cm\n- aisselle à aisselle : 65cm\n- longueur dos depuis bas du col : 85cm\n- longueur manche depuis épaule 66cm et depuis aisselle :52cm\n- ouverture bas :65cm"},
   {"id": "66133496", "brand": "ISSEY MIYAKE", "type": "Mini jupe plissée Me", "size": "Taille unique", "price": "190", "gender": "Femme", "path": "/vetements-femme/jupes/issey-miyake/jupe-issey-miyake-en-coton-marine-66133496.shtml", "slug": "jupe-issey-miyake-en-coton-marine-66133496", "n": 15, "desc": "Issey Miyake\n\nCollection Me.\n\nComme je le dis souvent, pour moi c'est l'un des plus beaux plissés de Issey Miyake et notamment au toucher car composé à 97% de coton : un toucher naturel et stretch en même temps.\n\nTrès belle jupe courte en plissé cauliflower marine composée à 97% de coton et 3% de polyester. Jolis détails de côtes verticales.\n\nTaille indiquée « - » pour taille unique.\n\nTaille élastiquée de 31 à 44 cm\nLongueur 56 cm\nAmplitude bas 96 cm"},
@@ -3420,7 +3318,22 @@ const PRODUCTS = [
   {"id": "63621936", "brand": "YOHJI YAMAMOTO", "type": "Pull en laine", "size": "M International", "price": "407", "gender": "Homme", "path": "/vetements-homme/pulls-gilets-sweats/yohji-yamamoto/pullgiletsweat-yohji-yamamoto-en-laine-noir-63621936.shtml", "slug": "pullgiletsweat-yohji-yamamoto-en-laine-noir-63621936", "n": 15, "desc": "Yohji Yamamoto\n\nCollection pour homme Automne hiver 2013\n\nMagnifique cardigan 4 boutons en laine 70%, nylon 25% et cachemire 5%. Grand col\n\nParfait état\n\nTaille indiquée 3 convient parfaitement à un bon M\n\nDimensions :\n\n- épaule à épaule : 46cm\n- aisselle à aisselle : 58cm\n- longueur dos depuis bas du col : 81cm\n- longueur manche depuis épaule 69cm et depuis aisselle :52cm\n- ouverture bas :58cm"},
   {"id": "64222595", "brand": "YOHJI YAMAMOTO", "type": "Veste", "size": "M International", "price": "339", "gender": "Homme", "path": "/vetements-homme/vestes-blousons/yohji-yamamoto/vesteblouson-yohji-yamamoto-en-coton-marine-64222595.shtml", "slug": "vesteblouson-yohji-yamamoto-en-coton-marine-64222595", "n": 15, "desc": "Yohji Yamamoto \n\nCollection Y’s for men shirts des années 90 \n\nTrès belle veste en coton 100% couleur marine (presque anthracite) coupe assez relax matière très agréable. Boutons ronds en cuir tressé \n\nParfait état vintage \n\nTaille indiquée M plutôt ample\n\nDimensions :\n\n- épaule à épaule : 51cm\n- aisselle à aisselle : 61cm\n- longueur dos depuis bas du col : 76cm \n- longueur manche depuis épaule 65cm et depuis aisselle :47cm\n- ouverture bas :60cm"},
   {"id": "65416294", "brand": "YOHJI YAMAMOTO", "type": "Pantalon large", "size": "Taille Unique International", "price": "334", "gender": "Femme", "path": "/vetements-femme/pantalons/yohji-yamamoto/pantalon-yohji-yamamoto-en-polyester-noir-65416294.shtml", "slug": "pantalon-yohji-yamamoto-en-polyester-noir-65416294", "n": 15, "desc": "Yohji Yamamoto\n\nCollection B\n\nIncroyable pantalon en triacetate 57% et polyester 43%. \n\nAlors pour essayer de vous expliquez cette pièce nous dirons qu'il est composé d'une pantalon classique et que depuis la taille il y a trois bandes sur chaque jambe qui rejoignent les chevilles. Donnant un peu de volume, du mouvement et de la légèreté.\n\nIl est vraiment magnifique\n\nTaille indiquée 1 mais c'est pour taille unique.\nTaille élastiquée et cordon de serrage de 36 à 44cm\nLongueur jambes 90cm et 60cm depuis l'entrejambe"},
-  {"id": "65416485", "brand": "YOHJI YAMAMOTO", "type": "Pantalon en laine", "size": "L International", "price": "294", "gender": "Homme", "path": "/vetements-homme/pantalons/yohji-yamamoto/pantalon-yohji-yamamoto-en-laine-gris-65416485.shtml", "slug": "pantalon-yohji-yamamoto-en-laine-gris-65416485", "n": 15, "desc": "Yohji Yamamoto\n\nCollection S'yte automne hiver 2022\n\nTrès beau pantalon jambes larges en laine 70%, polyester 15%, acrylique 10% et nylon 5%\n\nComme neuf\n\nTaille élastiquée et cordon de serrage\n\nConvient du M au L\n\nTaille de 37 à 50cm\nLongueur jambes 106cm et 78cm depuis l'entre jambes\nOuverture chevilles 25cm"}
+  {"id": "65416485", "brand": "YOHJI YAMAMOTO", "type": "Pantalon en laine", "size": "L International", "price": "294", "gender": "Homme", "path": "/vetements-homme/pantalons/yohji-yamamoto/pantalon-yohji-yamamoto-en-laine-gris-65416485.shtml", "slug": "pantalon-yohji-yamamoto-en-laine-gris-65416485", "n": 15, "desc": "Yohji Yamamoto\n\nCollection S'yte automne hiver 2022\n\nTrès beau pantalon jambes larges en laine 70%, polyester 15%, acrylique 10% et nylon 5%\n\nComme neuf\n\nTaille élastiquée et cordon de serrage\n\nConvient du M au L\n\nTaille de 37 à 50cm\nLongueur jambes 106cm et 78cm depuis l'entre jambes\nOuverture chevilles 25cm"},
+  {"id": "8702852670", "brand": "KIJIMA TAKAYUKI", "type": "Bob nylon", "size": "55", "price": "110", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-bob-nylon-8702852670.shtml", "slug": "kijima-takayuki-bob-nylon-8702852670", "n": 5, "desc": "Kijima Takayuki bob noir rivets bonnet chapeau casquette nylon été - Kijima Takayuki \n\nPhotos portée disponible par message pour celui ci \n\nRavissant bob en nylon 100% (toucher coton) \n\nCouleur noir et joli décor de 6 rivets metal. \n\nCirconférence 55/56"},
+  {"id": "8702769864", "brand": "KIJIMA TAKAYUKI", "type": "Chapeau soie", "size": "56", "price": "105", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-chapeau-soie-8702769864.shtml", "slug": "kijima-takayuki-chapeau-soie-8702769864", "n": 5, "desc": "Kijima Takayuki chapeau bonnet beret bob noir soie noir mixte homme femme - Kijima Takayuki \n\nMade in Japan \n\nRavissante bob noir, 100% soie monté sur une base en nylon 100% et doublure intérieure en cupro. \n\nParfait état quelques traces d’usage. \n\nTaille indiquée 2 \n\nTour de tête 56 Max"},
+  {"id": "8670554748", "brand": "YOSHIKI HISHINUMA", "type": "Blouse plissée", "size": "Taille unique", "price": "180", "gender": "Femme", "path": "/vetements-femme/tops/yoshiki-hishinuma/yoshiki-hishinuma-blouse-plissee-8670554748.shtml", "slug": "yoshiki-hishinuma-blouse-plissee-8670554748", "n": 5, "desc": "Peplum Annees 90 Yoshiki hishinuma chemisier cardigan gilet blouse top femme plissé noir polyester - Yoshiki Hishinuma \n\nCollection Peplum des années 90 \n\nMagnifique chemisier en polyester noir 100% et boutons de nacre. Très stretch \n\nTaille 2 indiquée convient à un S/M \n\nDimensions non étiré  :\n\n- épaule à épaule : 33cm\n- aisselle à aisselle : 42cm\n- longueur dos depuis bas du col : 55cm \n- longueur manche depuis épaule 56cm et depuis aisselle :47cm\n- ouverture bas :42cm"},
+  {"id": "8647550486", "brand": "KIJIMA TAKAYUKI", "type": "Casquette velours", "size": "S International", "price": "95", "gender": "Femme", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-casquette-velours-8647550486.shtml", "slug": "kijima-takayuki-casquette-velours-8647550486", "n": 5, "desc": "Kijima Takayuki velours noir casquette femme taille ajustable scratch été chapeau béret - Kijima Takayuki \n\nCasquette peau de pêche noir. \n\nBel état général \n\nTaille indiquée 1 avec scratch d’ajustement. Petite hauteur idéal petite tête"},
+  {"id": "8645852960", "brand": "YOSHIKI HISHINUMA", "type": "Top plissé", "size": "Taille unique", "price": "160", "gender": "Femme", "path": "/vetements-femme/tops/yoshiki-hishinuma/yoshiki-hishinuma-top-plisse-8645852960.shtml", "slug": "yoshiki-hishinuma-top-plisse-8645852960", "n": 5, "desc": "Yoshiki Hishinuma top blouse rose tie and dye plissé organique taille 2 S - Yoshiki Hishinuma \n\nCollection Peplum \n\nSuperbe Blouse en polyester 100% (toucher un peu comme du chanvre). Plissage organique fait au fil. Les parties plissées sont stretch \n\nTaille indiquée 2 convient à un S \n\nDimensions :\n\n- épaule à épaule : 36cm\n- aisselle à aisselle : 50cm\n- longueur dos depuis bas du col : 56cm \n- longueur manche depuis épaule 61cm et depuis aisselle :51cm\n- ouverture bas :46cm"},
+  {"id": "8627030594", "brand": "KIJIMA TAKAYUKI", "type": "Cagoule laine", "size": "Taille unique", "price": "115", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-cagoule-laine-8627030594.shtml", "slug": "kijima-takayuki-cagoule-laine-8627030594", "n": 5, "desc": "Kijima Takayuki cagoule bonnet maxi capuche balaclava laine noir taille unique mixte homme femme - Kijima Takayuki \n\nTres belle capuche en grosse maille de laine 100% \n\nCouleur noir comme neuf \n\nTaille unique"},
+  {"id": "8593368553", "brand": "KIJIMA TAKAYUKI", "type": "Chapeau washi", "size": "56", "price": "115", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-chapeau-washi-8593368553.shtml", "slug": "kijima-takayuki-chapeau-washi-8593368553", "n": 5, "desc": "Kijima Takayuki chapeau bob beret washi papier homme femme mixte - Kijima Takayuki \n\nTres beau Bob brun gris en superbe fin tressage de fils Washi 83% et polyester 17%. \n\nWashi ( wa = Japon et shi =papier) Classé par l&#x27;Unesco comme patrimoine culturel immatériel de l&#x27;humanité, le washi est un tissu naturel venu du Japon et conçu à base de papier. Léger, souple et absorbant, il offre une intéressante alternative au coton.\n\nTaille indiquée 2 \nCirconférence 56"},
+  {"id": "8565870486", "brand": "KIJIMA TAKAYUKI", "type": "Casquette lin", "size": "Taille unique", "price": "90", "gender": "Femme", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-casquette-lin-8565870486.shtml", "slug": "kijima-takayuki-casquette-lin-8565870486", "n": 5, "desc": "Kijima Takayuki Été 2020 casquette chapeau beige naturel lin taille unique femme - Kijima Takayuki \n\nCollection été 2020\n\nSuperbe casquette en lin 100% \n\nParfait état \n\nTaille indiquée F pour free (unique)"},
+  {"id": "8565683002", "brand": "KIJIMA TAKAYUKI", "type": "Casquette lin × Clang", "size": "Taille unique", "price": "105", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-casquette-lin-clang-8565683002.shtml", "slug": "kijima-takayuki-casquette-lin-clang-8565683002", "n": 5, "desc": "Kijima Takayuki collaboration clang casquette noir lin écharpe foulard été femme mixte - Kijima Takayuki \n\nEn collaboration pour la marque Clane \n\nCasquette foulard amovible en chanvre/polyester 50/50% et doublure coton 100%. Couleur noir \n\nComme neuve \n\nTaille F pour unique"},
+  {"id": "8549477943", "brand": "KIJIMA TAKAYUKI", "type": "Cagoule laine jaune", "size": "Taille unique", "price": "135", "gender": "Femme", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-cagoule-laine-jaune-8549477943.shtml", "slug": "kijima-takayuki-cagoule-laine-jaune-8549477943", "n": 5, "desc": "Kijima Takayuki cagoule balaclava bonnet laine femme jaune clair - Kijima Takayuki\n\nMade in Japan \n\nTres belle balaclava ample en matière douce et effet nuage. En laine 84%, polyester 13%, nylon 2% et polyuréthane 1%. \n\nNeuve avec étiquettes"},
+  {"id": "8169049663", "brand": "YOSHIKI HISHINUMA", "type": "Veste plissée Peplum", "size": "Taille unique", "price": "225", "gender": "Femme", "path": "/vetements-femme/vestes-blousons/yoshiki-hishinuma/yoshiki-hishinuma-veste-plissee-peplum-8169049663.shtml", "slug": "yoshiki-hishinuma-veste-plissee-peplum-8169049663", "n": 5, "desc": "Yoshiki Hishinuma Peplum veste plissé froissé organique manteau parka cardigan sweat taille L noir - Yoshiki Hishinuma \n\nCollection Peplum \n\nRare et magnifique veste noire zippée en polyester 100%. Plissé organique \n\nParfait état vintage \n\nTaille L / XL\n\nDimensions non étiré  :\n\n- épaule à épaule : 50cm\n- aisselle à aisselle : 57cm\n- longueur dos depuis bas du col : 88cm \n- longueur manche depuis épaule 60cm et depuis aisselle :50cm\n- ouverture bas :56cm\n\n\n\n\n\n\n\n\n\n\n\n\n#isseymiyake #plantation #junyawatanabe #commedesgarçons #pleatsplease #sacai #yohjiyamamoto #japan #japon #japonais #japanese #rickowens #jules #haisportinggear #y’s #francoismarithegirbaud #bikkembergs #maisonmartinmargiela #margiela #kansaiyamamoto #plissehomme #driesvannoten\n#japonia #japanesefashion #ys #japanstyle\n#japanesestyle #madeinjapan"},
+  {"id": "8167691811", "brand": "YOSHIKI HISHINUMA", "type": "Jupe plissée grise", "size": "Taille unique", "price": "150", "gender": "Femme", "path": "/vetements-femme/jupes/yoshiki-hishinuma/yoshiki-hishinuma-jupe-plissee-grise-8167691811.shtml", "slug": "yoshiki-hishinuma-jupe-plissee-grise-8167691811", "n": 5, "desc": "Yoshiki Hishinuma jupe grise quadrillage côtes plissé taille unique - Yoshiki hishinuma \n\nTrès belle jupe en rayonne 90% et polyuréthane 10%. Un toucher laine très doux. \n\nParfait état vintage \n\nTaille indiquée 1, taille élastiquée donc assez adaptable du XS au S voir M \n\nTaille de 31 à 39 cm\nLongueur 72cm"},
+  {"id": "7749222259", "brand": "YOSHIKI HISHINUMA", "type": "Blouse plissée butter", "size": "S International", "price": "160", "gender": "Femme", "path": "/vetements-femme/tops/yoshiki-hishinuma/yoshiki-hishinuma-blouse-plissee-butter-7749222259.shtml", "slug": "yoshiki-hishinuma-blouse-plissee-butter-7749222259", "n": 5, "desc": "Yoshiki hishinuma peplum chemisier cardigan blouse plissé butter taille s - Yohshiki Hishinuma \n\nCollection peplum des années 90 \n\nRavissant cardigan en polyester 100%. Les manches en plissé larges par coutures asymétriques le corps lui en fin plissé gauffré. \n\nParfait état vintage \n\nTaille conseillée S \n\nDimensions non étiré :\n\n- épaule à épaule : raglan\n- aisselle à aisselle : 39cm\n- longueur dos depuis bas du col : 45cm \n- longueur manche depuis épaule 61cm et depuis aisselle :44cm\n- ouverture bas :38cm\n\n\n\n\n\n\n\n\n\n\n\n\n#isseymiyake #plantation #junyawatanabe #commedesgarçons #pleatsplease #sacai #yohjiyamamoto #japan #japon #japonais #japanese #rickowens #jules #haisportinggear #y’s #francoismarithegirbaud #bikkembergs #maisonmartinmargiela #margiela #kansaiyamamoto #plissehomme #driesvannoten\n#japonia #japanesefashion #ys #japanstyle\n#japanesestyle #madeinjapan"},
+  {"id": "7349319626", "brand": "YOSHIKI HISHINUMA", "type": "Jupe plissée Peplum", "size": "Taille unique", "price": "170", "gender": "Femme", "path": "/vetements-femme/jupes/yoshiki-hishinuma/yoshiki-hishinuma-jupe-plissee-peplum-7349319626.shtml", "slug": "yoshiki-hishinuma-jupe-plissee-peplum-7349319626", "n": 5, "desc": "Yoshiki hishinuma péplum jupe plissé noir taille unique femme - Yoshiki Hishinuma \n\nCollection peplum des années 80\n\nTrès jolie jupe en plissé de polyester 100%. Plissé froissé piqué pour la majeur et ensuite bord côté en patchwork de bandes transparentes et semi transparentes. \n\n\nDans son emballage tubulaire d’origine et son fond de jupe amovible d’origine \n\nParfait état, quelques trace d’usage \n\nTaille élastiquée de 29 à 46cm\nLongueur 82cm"},
+  {"id": "7080140189", "brand": "KIJIMA TAKAYUKI", "type": "Bonnet large", "size": "Taille unique", "price": "90", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-bonnet-large-7080140189.shtml", "slug": "kijima-takayuki-bonnet-large-7080140189", "n": 5, "desc": "Kijima Takayuki bonnet coton acrylique large ample camel made in Japan - Kijima Takayuki \n\nBonnet made in Japan en coton 50% et acrylique 50%. \nMaille souple. \n\nParfait état comme neuf"}
 ];
 
 // Prices that weren't already round get a -5% discount, then floored to the nearest ten
@@ -3449,6 +3362,21 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "8702852670",
+  "8702769864",
+  "8670554748",
+  "8647550486",
+  "8645852960",
+  "8627030594",
+  "8593368553",
+  "8565870486",
+  "8565683002",
+  "8549477943",
+  "8169049663",
+  "8167691811",
+  "7749222259",
+  "7349319626",
+  "7080140189",
   "54721523",
   "66133047",
   // Ajouter ici les IDs de produits dont les photos HQ self-hostées ont été validées.
@@ -4188,7 +4116,10 @@ function flyToFavorites() {
   }, 650);
 }
 function renderFavCount() {
-  document.querySelectorAll('.fav-count').forEach(el => el.textContent = favorites.length);
+  document.querySelectorAll('.fav-count').forEach(el => {
+    el.textContent = favorites.length;
+    el.dataset.zero = favorites.length === 0 ? 'true' : 'false';
+  });
 }
 function openFavorites() {
   if (typeof goPage === 'function') {
@@ -4203,7 +4134,9 @@ if (document.readyState === 'loading') {
   renderFavCount();
 }
 function renderCart() {
-  document.getElementById('cart-count').textContent = cart.length;
+  const cc = document.getElementById('cart-count');
+  cc.textContent = cart.length;
+  cc.dataset.zero = cart.length === 0 ? 'true' : 'false';
   const cdet = document.getElementById('cart-count-detail');
   if (cdet) cdet.textContent = cart.length;
   const srCount = document.getElementById('side-rail-cart-count');
@@ -5193,91 +5126,6 @@ renderGrid();
 renderCart();
 renderHeroMarquee();
 
-// ============ DRAG & THROW sur les boules animées du hero ============
-// Souris + tactile + stylet unifiés via Pointer Events.
-// Au relâchement, la boule continue selon sa vélocité (inertie + rebonds sur les bords).
-(function initDraggableBalls(){
-  document.querySelectorAll('.hero-draggable').forEach(ball => {
-    let state = null;
-    let inertiaRAF = null;
-
-    function stopInertia() { if (inertiaRAF) cancelAnimationFrame(inertiaRAF); inertiaRAF = null; }
-
-    ball.addEventListener('pointerdown', (e) => {
-      stopInertia();
-      const rect = ball.getBoundingClientRect();
-      // Fige la boule à sa position visuelle courante, sort de l'animation
-      ball.classList.add('dragging');
-      ball.style.animation = 'none';
-      ball.style.transform = 'none';
-      ball.style.top = rect.top + 'px';
-      ball.style.left = rect.left + 'px';
-      ball.style.right = 'auto';
-      ball.style.bottom = 'auto';
-      ball.style.position = 'fixed';
-      try { ball.setPointerCapture(e.pointerId); } catch(err){}
-      const now = performance.now();
-      state = {
-        pointerId: e.pointerId,
-        offsetX: e.clientX - rect.left,
-        offsetY: e.clientY - rect.top,
-        lastX: e.clientX, lastY: e.clientY, lastT: now,
-        vx: 0, vy: 0
-      };
-      e.preventDefault();
-    });
-
-    ball.addEventListener('pointermove', (e) => {
-      if (!state || e.pointerId !== state.pointerId) return;
-      const now = performance.now();
-      const dt = Math.max(1, now - state.lastT);
-      // Vélocité en px/ms — on la reconvertira en px/frame au lancement
-      state.vx = (e.clientX - state.lastX) / dt;
-      state.vy = (e.clientY - state.lastY) / dt;
-      state.lastX = e.clientX; state.lastY = e.clientY; state.lastT = now;
-      ball.style.left = (e.clientX - state.offsetX) + 'px';
-      ball.style.top  = (e.clientY - state.offsetY) + 'px';
-    });
-
-    const end = (e) => {
-      if (!state || e.pointerId !== state.pointerId) return;
-      try { ball.releasePointerCapture(state.pointerId); } catch(err){}
-      const vx0 = state.vx, vy0 = state.vy;
-      state = null;
-      ball.classList.remove('dragging');
-      // Lance une animation d'inertie si la vélocité de lâcher est significative
-      const speed = Math.hypot(vx0, vy0);
-      if (speed > 0.15) {
-        const MAX = 38;
-        // px/ms → px/frame à ~60fps (× 16). On cap pour éviter des lancers trop violents.
-        let vx = Math.max(-MAX, Math.min(MAX, vx0 * 16));
-        let vy = Math.max(-MAX, Math.min(MAX, vy0 * 16));
-        const friction = 0.965;
-        const bounce = 0.72;
-        let x = parseFloat(ball.style.left) || 0;
-        let y = parseFloat(ball.style.top)  || 0;
-        const tick = () => {
-          vx *= friction; vy *= friction;
-          x += vx; y += vy;
-          const rect = ball.getBoundingClientRect();
-          const W = window.innerWidth, H = window.innerHeight;
-          // Rebonds aux bords du viewport
-          if (x < -rect.width * 0.35) { x = -rect.width * 0.35; vx = Math.abs(vx) * bounce; }
-          if (x + rect.width > W + rect.width * 0.35) { x = W - rect.width + rect.width * 0.35; vx = -Math.abs(vx) * bounce; }
-          if (y < -rect.height * 0.35) { y = -rect.height * 0.35; vy = Math.abs(vy) * bounce; }
-          if (y + rect.height > H + rect.height * 0.35) { y = H - rect.height + rect.height * 0.35; vy = -Math.abs(vy) * bounce; }
-          ball.style.left = x + 'px';
-          ball.style.top  = y + 'px';
-          if (Math.hypot(vx, vy) < 0.4) { inertiaRAF = null; return; }
-          inertiaRAF = requestAnimationFrame(tick);
-        };
-        inertiaRAF = requestAnimationFrame(tick);
-      }
-    };
-    ball.addEventListener('pointerup', end);
-    ball.addEventListener('pointercancel', end);
-  });
-})();
 </script>
 <!-- Tawk.to (la bulle par défaut est cachée — on utilise l'icône dans la topbar) -->
 <script>
