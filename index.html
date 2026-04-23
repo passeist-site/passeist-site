@@ -179,6 +179,27 @@ a { color: inherit; }
   .topbar-icon { width: 26px; height: 26px; }
   .topbar-icon svg { width: 18px; height: 18px; }
 }
+
+/* Bulle de chat — animation wiggle toutes les 10 s */
+.topbar-icon-chat svg {
+  transform-origin: 50% 85%; /* pivote par le bas de la bulle */
+  animation: chatWiggle 10s ease-in-out infinite;
+}
+.topbar-icon-chat:hover svg { animation-play-state: paused; }
+@keyframes chatWiggle {
+  /* 94 % du temps immobile, puis petite secousse rapide */
+  0%, 92% { transform: rotate(0deg) scale(1); }
+  93% { transform: rotate(-14deg) scale(1.08); }
+  94% { transform: rotate(12deg) scale(1.08); }
+  95% { transform: rotate(-10deg) scale(1.08); }
+  96% { transform: rotate(8deg) scale(1.06); }
+  97% { transform: rotate(-6deg) scale(1.04); }
+  98% { transform: rotate(4deg) scale(1.02); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topbar-icon-chat svg { animation: none; }
+}
 .logo {
   font-family: var(--font-sans);
   font-size: 36px; font-weight: 200;
@@ -303,21 +324,41 @@ a { color: inherit; }
   /* Masque aussi le bouton Panier sur l'accueil mobile,
      SAUF quand une fiche produit est ouverte (body.detail-open). */
   body[data-page="home"]:not(.detail-open) .topbar .cart-btn { display: none !important; }
-  /* Fenêtre Tawk.to : compacte sur mobile */
-  iframe[title*="chat" i],
-  iframe[id*="tawk" i],
-  iframe[src*="tawk.to"],
-  .widget-visible iframe,
-  [id^="tawk-"] iframe {
-    max-height: 38dvh !important;
-    height: 38dvh !important;
-    max-width: 88vw !important;
-    width: 88vw !important;
-    bottom: 16px !important;
-    right: 6vw !important;
-    top: auto !important;
-    left: auto !important;
-  }
+}
+/* (Tentative de repositionnement Tawk retirée — laisse la fenêtre s'afficher
+   à son emplacement natif en bas-droite) */
+/* Backdrop cliquable pour fermer le chat en touchant hors de la fenêtre.
+   z-index > topbar/overlays mais < iframe Tawk (qui monte à ~999999999). */
+.chat-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(30, 29, 27, 0.28);
+  z-index: 600;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+.chat-backdrop.open { opacity: 1; pointer-events: auto; }
+/* Croix de fermeture custom — flotte en haut-gauche de l'écran (toujours visible) */
+.chat-close-x {
+  position: fixed;
+  z-index: 2147483646; /* juste sous l'iframe Tawk (max int) */
+  top: 84px; left: 24px;
+  width: 36px; height: 36px;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  cursor: pointer;
+  display: none;
+  align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 15px; line-height: 1;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  padding: 0;
+  box-shadow: 0 6px 16px rgba(10,10,8,0.22);
+}
+.chat-close-x:hover { background: var(--ink); color: var(--bg); transform: scale(1.08); }
+.chat-close-x.open { display: flex; }
+@media (max-width: 880px) {
+  .chat-close-x { top: 72px; left: 16px; width: 34px; height: 34px; }
 }
 
 /* Hamburger (mobile) */
@@ -1187,8 +1228,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   position: relative; z-index: 2;
 }
 .lightbox img.zoomed {
-  transform: scale(2.4);
   cursor: zoom-out;
+  touch-action: none; /* indispensable pour pan tactile */
 }
 @keyframes lbIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 .lb-close {
@@ -1944,6 +1985,9 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   </nav>
   <div class="topbar-right">
     <div class="topbar-icons" aria-label="Accès rapides">
+      <button class="topbar-icon topbar-icon-chat" id="chat-launcher-top" type="button" onclick="if(window.Tawk_API&&Tawk_API.maximize){Tawk_API.maximize();if(typeof __showChatBackdrop==='function')__showChatBackdrop();}" aria-label="Ouvrir le chat" title="Chat">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
+      </button>
       <button class="topbar-icon" onclick="openSearchFromRail()" aria-label="Recherche" title="Recherche">
         <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
@@ -4599,25 +4643,121 @@ function startMarqueeLoop(track) {
 (function(){
   const img = document.getElementById('lb-img');
   if (!img) return;
-  let zoomed = false;
-  function resetZoom() {
-    zoomed = false;
-    img.classList.remove('zoomed');
-    img.style.transformOrigin = '';
+  const MAX_SCALE = 4;
+  const MIN_SCALE = 1;
+  const DOUBLE_SCALE = 2.4;
+  let scale = 1, tx = 0, ty = 0;
+  let dragStart = null;
+  let pinchStart = null;
+  let lastTapTime = 0;
+
+  function apply() {
+    // Contraintes : empêche l'image de sortir entièrement de l'écran quand zoomée
+    const r = img.getBoundingClientRect();
+    const maxX = Math.max(0, (r.width  * (scale - 1)) / 2);
+    const maxY = Math.max(0, (r.height * (scale - 1)) / 2);
+    if (scale <= 1) { tx = 0; ty = 0; }
+    else {
+      tx = Math.max(-maxX, Math.min(maxX, tx));
+      ty = Math.max(-maxY, Math.min(maxY, ty));
+    }
+    img.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+    img.classList.toggle('zoomed', scale > 1);
   }
+  function resetZoom() {
+    scale = 1; tx = 0; ty = 0;
+    img.style.transform = '';
+    img.classList.remove('zoomed');
+  }
+
+  // CLICK desktop — zoom/dézoom centré sur le point cliqué
   img.addEventListener('click', (e) => {
-    e.stopPropagation(); // empêche la fermeture via le handler #lightbox
-    if (!zoomed) {
+    e.stopPropagation();
+    // Ignore les clicks qui viennent d'un drag (sinon reset involontaire)
+    if (img.dataset.justDragged === '1') { img.dataset.justDragged = '0'; return; }
+    if (scale <= 1) {
       const r = img.getBoundingClientRect();
-      const ox = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
-      const oy = Math.max(0, Math.min(100, ((e.clientY - r.top)  / r.height) * 100));
-      img.style.transformOrigin = ox + '% ' + oy + '%';
-      img.classList.add('zoomed');
-      zoomed = true;
+      const offsetX = (e.clientX - r.left) - r.width / 2;
+      const offsetY = (e.clientY - r.top)  - r.height / 2;
+      scale = DOUBLE_SCALE;
+      tx = -offsetX * (scale - 1);
+      ty = -offsetY * (scale - 1);
+      apply();
     } else {
       resetZoom();
     }
   });
+
+  // TOUCH — pan (1 doigt) quand zoomé, pinch (2 doigts) pour zoomer, double-tap pour toggler
+  img.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStart = { dist: Math.hypot(dx, dy), scale: scale };
+      dragStart = null;
+    } else if (e.touches.length === 1) {
+      // Double-tap detection
+      const now = Date.now();
+      if (now - lastTapTime < 300) {
+        if (scale <= 1) {
+          const r = img.getBoundingClientRect();
+          const offsetX = (e.touches[0].clientX - r.left) - r.width / 2;
+          const offsetY = (e.touches[0].clientY - r.top)  - r.height / 2;
+          scale = DOUBLE_SCALE;
+          tx = -offsetX * (scale - 1);
+          ty = -offsetY * (scale - 1);
+          apply();
+        } else {
+          resetZoom();
+        }
+        lastTapTime = 0;
+        return;
+      }
+      lastTapTime = now;
+      if (scale > 1) {
+        dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, tx: tx, ty: ty };
+      }
+    }
+  }, { passive: true });
+
+  img.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && pinchStart) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      const ratio = dist / pinchStart.dist;
+      scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, pinchStart.scale * ratio));
+      apply();
+    } else if (e.touches.length === 1 && dragStart && scale > 1) {
+      e.preventDefault();
+      tx = dragStart.tx + (e.touches[0].clientX - dragStart.x);
+      ty = dragStart.ty + (e.touches[0].clientY - dragStart.y);
+      apply();
+      img.dataset.justDragged = '1';
+    }
+  }, { passive: false });
+
+  img.addEventListener('touchend', () => {
+    dragStart = null;
+    pinchStart = null;
+  });
+
+  // MOUSE drag desktop — pan quand zoomé
+  img.addEventListener('mousedown', (e) => {
+    if (scale <= 1) return;
+    dragStart = { x: e.clientX, y: e.clientY, tx: tx, ty: ty };
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragStart || e.buttons === 0) return;
+    tx = dragStart.tx + (e.clientX - dragStart.x);
+    ty = dragStart.ty + (e.clientY - dragStart.y);
+    apply();
+    img.dataset.justDragged = '1';
+  });
+  window.addEventListener('mouseup', () => { dragStart = null; });
+
   // Reset du zoom à chaque changement d'image ou fermeture
   const _openLB = window.openLB, _closeLB = window.closeLB, _navLB = window.navLB;
   if (typeof _openLB === 'function') window.openLB  = function(){ resetZoom(); return _openLB.apply(this, arguments); };
@@ -4861,22 +5001,66 @@ renderGrid();
 renderCart();
 renderHeroMarquee();
 </script>
-<!-- Bouton chat custom + Tawk.to (bulle par défaut cachée) -->
-<button class="chat-launcher" id="chat-launcher" type="button" onclick="if(window.Tawk_API&&Tawk_API.maximize)Tawk_API.maximize();" aria-label="Ouvrir le chat">
-  <svg class="chat-bubble" viewBox="0 0 24 24" fill="none" stroke="#0a0a08" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
-    <path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/>
-  </svg>
-</button>
+<!-- Tawk.to (la bulle par défaut est cachée — on utilise l'icône dans la topbar) -->
 <script>
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+
+// Backdrop cliquable + croix pour fermer le chat
+var __chatBackdrop = null;
+var __chatCloseX = null;
+function __closeChatWidget() {
+  try { Tawk_API.minimize(); } catch(e){}
+  __hideChatBackdrop();
+}
+function __ensureChatBackdrop() {
+  if (!__chatBackdrop) {
+    __chatBackdrop = document.createElement('div');
+    __chatBackdrop.className = 'chat-backdrop';
+    __chatBackdrop.setAttribute('aria-hidden', 'true');
+    __chatBackdrop.addEventListener('click', __closeChatWidget);
+    document.body.appendChild(__chatBackdrop);
+  }
+  if (!__chatCloseX) {
+    __chatCloseX = document.createElement('button');
+    __chatCloseX.className = 'chat-close-x';
+    __chatCloseX.setAttribute('aria-label', 'Fermer le chat');
+    __chatCloseX.setAttribute('type', 'button');
+    __chatCloseX.textContent = '✕';
+    __chatCloseX.addEventListener('click', __closeChatWidget);
+    document.body.appendChild(__chatCloseX);
+  }
+  return __chatBackdrop;
+}
+function __showChatBackdrop() {
+  __ensureChatBackdrop();
+  requestAnimationFrame(() => {
+    __chatBackdrop.classList.add('open');
+    __chatCloseX.classList.add('open');
+  });
+}
+function __hideChatBackdrop() {
+  if (__chatBackdrop) __chatBackdrop.classList.remove('open');
+  if (__chatCloseX) __chatCloseX.classList.remove('open');
+}
+// ESC ferme aussi le chat
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && __chatBackdrop && __chatBackdrop.classList.contains('open')) {
+    __closeChatWidget();
+  }
+});
+
+// (Repositionnement de la fenêtre Tawk abandonné — l'iframe est en sandbox
+// cross-origin et Tawk écrase systématiquement toute tentative de déplacement.
+// On laisse la fenêtre à son emplacement natif et on garde les UX de fermeture.)
+
 Tawk_API.onLoad = function(){
   try { Tawk_API.hideWidget(); } catch(e){}
-  // Au cas où un trigger / welcome message re-affiche le widget, on le recache plusieurs fois
   [500, 1500, 3000, 6000].forEach(t => setTimeout(() => { try { Tawk_API.hideWidget(); } catch(e){} }, t));
 };
 Tawk_API.onStatusChange = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
-Tawk_API.onChatMinimized = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
-Tawk_API.onChatEnded = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
+Tawk_API.onChatMaximized = function(){ __showChatBackdrop(); };
+Tawk_API.onChatMinimized = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
+Tawk_API.onChatEnded = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
 Tawk_API.onBeforeLoad = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
