@@ -1245,9 +1245,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   letter-spacing: 0;
 }
 
-/* Archive / sold — cacher desc, attrs, note */
-.detail.detail-sold .detail-attrs,
-.detail.detail-sold .detail-desc,
+/* Archive / sold — on garde les attributs + description visibles (Tom 25/04).
+   Seule la note de réservation/négo disparaît. */
 .detail.detail-sold .detail-note { display: none; }
 
 /* ============ LIGHTBOX ============ */
@@ -1432,11 +1431,15 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 /* ============ ABOUT ============ */
 .about {
   display: none; margin-top: var(--topbar-h);
-  padding: 120px 32px 140px;
+  padding: 32px 32px 24px;
   max-width: 800px; margin-left: auto; margin-right: auto;
   position: relative;
+  height: calc(100dvh - var(--topbar-h));
+  min-height: calc(100dvh - var(--topbar-h));
+  overflow: hidden;
+  display: none; flex-direction: column;
 }
-.about.open { display: block; }
+.about.open { display: flex; }
 .about-eyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -1447,37 +1450,37 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 /* Logo Passeist en haut de la page À propos (remplace l'eyebrow "À propos") */
 .about-logo-top {
   font-family: var(--font-sans);
-  font-size: clamp(56px, 9vw, 108px);
+  font-size: clamp(48px, 7vw, 84px);
   font-weight: 200; line-height: 1;
   color: var(--ink); letter-spacing: -0.04em;
-  text-align: center; margin-bottom: 48px;
+  text-align: center; margin: auto 0 24px;
 }
 .about-logo-top .dot { color: #3c5674; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
   font-family: var(--font-sans);
-  font-size: clamp(36px, 5vw, 60px); font-weight: 300;
-  margin-bottom: 64px; line-height: 1.1; text-align: center;
+  font-size: clamp(28px, 3.5vw, 42px); font-weight: 300;
+  margin-bottom: 24px; line-height: 1.1; text-align: center;
   color: var(--ink); letter-spacing: -0.03em;
 }
 .about-body {
-  font-size: 15px; line-height: 1.9;
-  color: var(--text-dim); margin-bottom: 22px; font-weight: 300;
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-dim); margin-bottom: 12px; font-weight: 300;
 }
 .about-intro { max-width: 720px; margin: 0 auto; text-align: center; }
-.about-intro .about-body { margin-bottom: 18px; }
+.about-intro .about-body { margin-bottom: 10px; }
 .about-intro .about-body:last-child { margin-bottom: 0; }
-.about-section { margin-top: 96px; }
+.about-section { margin-top: auto; padding-top: 24px; }
 .about-section-title {
   font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--ink); margin-bottom: 28px; font-weight: 500;
-  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+  font-size: 9px;
+  color: var(--ink); margin-bottom: 14px; font-weight: 500;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
 .about-info-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 36px; padding: 0;
+  gap: 14px 24px; padding: 0;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -1917,7 +1920,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
+  /* Photo principale alignée juste sous la topbar (accueil/boutique/archive) */
+  .detail-main { grid-template-columns: 1fr; padding: var(--topbar-h-mobile) 0 32px; gap: 18px; }
   .detail-info { position: static; padding: 0 18px; }
 
   /* Mobile : grosse photo principale + bandeau scrollable horizontal sous elle (style Centre Commercial) */
@@ -1974,18 +1978,24 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   }
   .detail-gallery .thumb:hover img { transform: none; }
 
-  /* Tag "VENDU" en bas à droite de la photo principale (uniquement en archive) */
-  .detail.detail-sold .detail-gallery .main-photo + .vendu-badge,
+  /* Tag "VENDU" identique à celui de la vue grille archive,
+     positionné en BAS-DROIT de la photo principale (uniquement en archive). */
   .detail.detail-sold .vendu-badge { display: block; }
   .vendu-badge {
     display: none;
     position: absolute;
-    bottom: 84px;  /* au-dessus du bandeau de thumbs (64+10+padding) */
+    bottom: calc(64px + 10px + 12px);  /* au-dessus du bandeau de thumbs */
     right: 12px;
-    background: #000; color: #fff;
-    font-family: var(--font-mono, monospace);
-    font-size: 10px; letter-spacing: 0.16em;
-    padding: 6px 10px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 5px 10px;
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-narrow);
     z-index: 5;
     pointer-events: none;
   }
@@ -4954,8 +4964,11 @@ function startMarqueeLoop(track) {
   }
 
   // CLICK desktop — zoom/dézoom centré sur le point cliqué
+  // SUR MOBILE TACTILE : on désactive le toggle de zoom au tap simple ; seul le pinch à 2 doigts zoome.
   img.addEventListener('click', (e) => {
     e.stopPropagation();
+    // Skip sur mobile tactile (pointer:coarse) : le tap simple ne zoom plus
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     // Ignore les clicks qui viennent d'un drag (sinon reset involontaire)
     if (img.dataset.justDragged === '1') { img.dataset.justDragged = '0'; return; }
     if (scale <= 1) {
@@ -4971,7 +4984,8 @@ function startMarqueeLoop(track) {
     }
   });
 
-  // TOUCH — pan (1 doigt) quand zoomé, pinch (2 doigts) pour zoomer, double-tap pour toggler
+  // TOUCH — pan (1 doigt) quand zoomé, pinch (2 doigts) pour zoomer
+  // (Pas de double-tap sur mobile : Tom veut UNIQUEMENT le pinch à 2 doigts.)
   img.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -4979,24 +4993,7 @@ function startMarqueeLoop(track) {
       pinchStart = { dist: Math.hypot(dx, dy), scale: scale };
       dragStart = null;
     } else if (e.touches.length === 1) {
-      // Double-tap detection
-      const now = Date.now();
-      if (now - lastTapTime < 300) {
-        if (scale <= 1) {
-          const r = img.getBoundingClientRect();
-          const offsetX = (e.touches[0].clientX - r.left) - r.width / 2;
-          const offsetY = (e.touches[0].clientY - r.top)  - r.height / 2;
-          scale = DOUBLE_SCALE;
-          tx = -offsetX * (scale - 1);
-          ty = -offsetY * (scale - 1);
-          apply();
-        } else {
-          resetZoom();
-        }
-        lastTapTime = 0;
-        return;
-      }
-      lastTapTime = now;
+      // Pan à 1 doigt quand l'image est déjà zoomée (sinon le tap simple fait rien)
       if (scale > 1) {
         dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, tx: tx, ty: ty };
       }
@@ -5174,37 +5171,37 @@ window.updateSEO = function(p) {
       try { history.pushState({ t:'page', p: p }, '', '#' + p); } catch(e){}
     }
   };
-  // Décore openDetail : URL = #product/{brand-type-id}, met à jour les méta
+  // Décore openDetail : URL = #product/{brand-type-id}, met à jour les méta.
+  // Si l'utilisateur clique sur une carte du carrousel accueil, on capture
+  // l'ID source pour pouvoir restaurer la position du carrousel au retour.
   if (_od) {
     window.openDetail = function(id, fromHistory) {
-      // Si on vient de l'accueil (ex : carrousel), on interpose un state 'shop'
-      // dans l'historique AVANT d'ouvrir la fiche. Comme ça, le back natif du
-      // navigateur (ou swipe iOS) ramène sur la Boutique, pas sur l'accueil.
       const cameFromHome = !fromHistory && document.body.dataset.page === 'home';
+      if (cameFromHome) {
+        // Mémorise l'ID cliqué pour restauration carrousel + scroll homepage
+        window.__homeCarouselScrollId = String(id);
+        const tr = document.getElementById('hero-marquee-track');
+        if (tr) window.__homeCarouselScrollLeft = tr.scrollLeft || 0;
+      }
       _od.call(window, id);
       document.body.classList.add('detail-open');
       const prod = (typeof PRODUCTS !== 'undefined') ? PRODUCTS.find(x => x.id === id) : null;
       updateSEO(prod);
       if (!fromHistory) {
-        if (cameFromHome) {
-          try { history.pushState({ t:'page', p:'shop' }, '', '#shop'); } catch(e){}
-          document.body.dataset.page = 'shop';
-        }
         const slug = prod ? productSlug(prod) : id;
-        try { history.pushState({ t:'detail', id: String(id) }, '', '#product/' + slug); } catch(e){}
+        try { history.pushState({ t:'detail', id: String(id), fromHome: cameFromHome }, '', '#product/' + slug); } catch(e){}
       }
     };
   }
-  // Décore closeDetail : retire la classe detail-open, et si l'utilisateur
-  // est arrivé depuis l'accueil (carrousel), redirige vers la boutique
-  // — cohérent avec le libellé du bouton "Retour à la boutique".
+  // Décore closeDetail : si on venait de l'accueil, on RESTE sur l'accueil
+  // et on restaure la position du carrousel sur la carte cliquée.
   if (_cd) {
     const _cdOrig = _cd;
     window.closeDetail = function() {
-      const cameFromHome = document.body.dataset.page === 'home';
+      const histState = (history && history.state) || {};
+      const cameFromHome = histState.fromHome === true || document.body.dataset.page === 'home';
       _cdOrig.apply(this, arguments);
       document.body.classList.remove('detail-open');
-      // Safety : tous les styles de verrouillage retirés (au cas où)
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
@@ -5213,9 +5210,24 @@ window.updateSEO = function(p) {
       document.body.style.width = '';
       document.documentElement.style.overflow = '';
       if (cameFromHome) {
-        _gp.call(window, 'shop');
-        document.body.dataset.page = 'shop';
-        try { history.pushState({ t:'page', p:'shop' }, '', '#shop'); } catch(e){}
+        _gp.call(window, 'home');
+        document.body.dataset.page = 'home';
+        try { history.pushState({ t:'page', p:'home' }, '', '#'); } catch(e){}
+        // Restaure la position du carrousel sur la carte cliquée
+        requestAnimationFrame(() => {
+          const tr = document.getElementById('hero-marquee-track');
+          if (!tr) return;
+          if (window.__homeCarouselScrollId) {
+            const card = tr.querySelector('[data-id="' + window.__homeCarouselScrollId + '"]');
+            if (card && card.scrollIntoView) {
+              card.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+              return;
+            }
+          }
+          if (typeof window.__homeCarouselScrollLeft === 'number') {
+            tr.scrollLeft = window.__homeCarouselScrollLeft;
+          }
+        });
       }
     };
   }
@@ -5366,6 +5378,58 @@ s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
 s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!-- Pull-to-refresh mobile : swipe haut → bas en haut de page = reload -->
+<script>
+(function(){
+  if (!('ontouchstart' in window)) return;
+  let startY = 0, lastY = 0, tracking = false, indicator = null;
+  const THRESHOLD = 90;
+  function ensureIndicator() {
+    if (indicator) return indicator;
+    indicator = document.createElement('div');
+    indicator.id = 'ptr-indicator';
+    indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;height:0;background:rgba(168,166,161,0.9);' +
+      'color:#0a0a08;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.16em;' +
+      'display:flex;align-items:center;justify-content:center;text-transform:uppercase;' +
+      'overflow:hidden;transition:height 0.15s ease,opacity 0.2s;opacity:0;z-index:9998;pointer-events:none;';
+    indicator.textContent = 'Relâchez pour rafraîchir';
+    document.body.appendChild(indicator);
+    return indicator;
+  }
+  document.addEventListener('touchstart', (e) => {
+    if (window.scrollY > 0) return;
+    if (document.body.classList.contains('detail-open')) return;
+    startY = e.touches[0].clientY;
+    lastY = startY;
+    tracking = true;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!tracking) return;
+    lastY = e.touches[0].clientY;
+    const dy = lastY - startY;
+    if (dy > 0) {
+      const ind = ensureIndicator();
+      const h = Math.min(THRESHOLD * 1.4, dy);
+      ind.style.height = h + 'px';
+      ind.style.opacity = Math.min(1, dy / THRESHOLD);
+      ind.textContent = dy >= THRESHOLD ? 'Relâchez pour rafraîchir' : 'Tirer pour rafraîchir';
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', () => {
+    if (!tracking) return;
+    tracking = false;
+    const dy = lastY - startY;
+    const ind = indicator;
+    if (dy >= THRESHOLD) {
+      if (ind) { ind.textContent = 'Rafraîchissement…'; ind.style.height = '36px'; }
+      setTimeout(() => location.reload(), 120);
+    } else if (ind) {
+      ind.style.height = '0px';
+      ind.style.opacity = '0';
+    }
+  });
 })();
 </script>
 </body>
