@@ -1920,8 +1920,11 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  /* Photo principale alignée juste sous la topbar (accueil/boutique/archive) */
-  .detail-main { grid-template-columns: 1fr; padding: var(--topbar-h-mobile) 0 32px; gap: 18px; }
+  /* Le conteneur .detail commence pile sous la topbar mobile (54px). */
+  .detail { top: var(--topbar-h-mobile); }
+  /* Padding-top à 0 pour que le haut de la photo se cale exactement
+     sur la ligne basse de la topbar. */
+  .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
   .detail-info { position: static; padding: 0 18px; }
 
   /* Mobile : grosse photo principale + bandeau scrollable horizontal sous elle (style Centre Commercial) */
@@ -1978,24 +1981,25 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   }
   .detail-gallery .thumb:hover img { transform: none; }
 
-  /* Tag "VENDU" identique à celui de la vue grille archive,
-     positionné en BAS-DROIT de la photo principale (uniquement en archive). */
-  .detail.detail-sold .vendu-badge { display: block; }
+  /* Tag "VENDU" identique à l'encart prix des cartes archive :
+     full black avec coin biseauté, texte clair, en bas à droite de la principale. */
+  .detail.detail-sold .vendu-badge { display: inline-flex; }
   .vendu-badge {
     display: none;
     position: absolute;
-    bottom: calc(64px + 10px + 12px);  /* au-dessus du bandeau de thumbs */
+    bottom: calc(64px + 10px + 12px);
     right: 12px;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-mono);
-    font-size: 9px;
-    padding: 5px 10px;
-    border: 1px solid var(--ink);
-    border-radius: 0;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-narrow);
+    background: var(--ink);
+    color: #f4f1ec;
+    font-family: var(--font-sans);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 12px;
+    align-items: center;
+    border: none;
+    /* Coin inférieur-gauche biseauté 8px — identique à .product-price-wrap */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    text-transform: none;
+    letter-spacing: 0;
     z-index: 5;
     pointer-events: none;
   }
