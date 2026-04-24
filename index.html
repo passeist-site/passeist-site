@@ -1088,6 +1088,63 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .detail-gallery .thumb:hover img { transform: scale(1.03); }
 .detail-gallery img:hover { transform: translateY(-2px); }
 .detail-info { position: sticky; top: 112px; align-self: start; }
+
+/* ============ SIMILAR PRODUCTS CAROUSEL ============ */
+.similar-section {
+  border-top: 1px solid var(--line);
+  padding: 32px 24px 48px;
+  max-width: 100%;
+}
+.similar-title {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  margin-bottom: 18px;
+}
+.similar-track {
+  display: flex; gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.similar-track::-webkit-scrollbar { display: none; }
+.similar-card {
+  flex: 0 0 180px;
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.similar-card img {
+  width: 100%; aspect-ratio: 1; object-fit: cover;
+  background: #fff; display: block;
+  transition: transform 0.4s var(--ease-out);
+}
+.similar-card:hover img { transform: translateY(-2px); }
+.similar-card-brand {
+  font-family: var(--font-mono);
+  font-size: 9px; color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-narrow);
+}
+.similar-card-name {
+  font-family: var(--font-sans);
+  font-size: 12px; color: var(--ink);
+  line-height: 1.3;
+}
+.similar-card-price {
+  font-family: var(--font-sans);
+  font-size: 11px; color: var(--ink); font-weight: 500;
+  margin-top: 2px;
+}
+@media (max-width: 880px) {
+  .similar-section { padding: 24px 18px 36px; }
+  .similar-card { flex: 0 0 130px; }
+  .similar-card-brand { font-size: 8.5px; }
+  .similar-card-name { font-size: 11px; }
+  .similar-card-price { font-size: 10.5px; }
+}
 .detail-brand {
   font-family: var(--font-sans);
   font-size: 40px;
@@ -2369,6 +2426,11 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
       </div>
     </div>
   </div>
+  <!-- Carrousel articles similaires -->
+  <section class="similar-section" id="d-similar" hidden>
+    <div class="similar-title">Articles similaires</div>
+    <div class="similar-track" id="d-similar-track"></div>
+  </section>
 </div>
 
 <!-- LIGHTBOX -->
@@ -4054,6 +4116,63 @@ function openDetail(id) {
     `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`
   ).join('');
   gal.innerHTML = `${mainHtml}<div class="thumbs-row">${thumbsHtml}</div><span class="vendu-badge">VENDU</span>`;
+
+  // ===== Articles similaires =====
+  try {
+    const simSection = document.getElementById('d-similar');
+    const simTrack = document.getElementById('d-similar-track');
+    if (simSection && simTrack) {
+      const cur = p;
+      const isVintedId = (id) => String(id || '').length >= 10;
+      // Score : marque +5, catégorie +3, couleur +2, genre +1
+      const curCat = (typeof getCategory === 'function') ? getCategory(cur.type) : '';
+      const curGender = (typeof getGender === 'function') ? getGender(cur) : (cur.gender || '');
+      const curColor = cur.color || '';
+      const candidates = PRODUCTS
+        .filter(x => x.id !== cur.id)
+        .filter(x => !isVintedId(x.id))
+        .filter(x => !(typeof isSold === 'function' && isSold(x))) // pièces dispo seulement
+        .map(x => {
+          let s = 0;
+          if (x.brand === cur.brand) s += 5;
+          const xc = (typeof getCategory === 'function') ? getCategory(x.type) : '';
+          if (xc === curCat && curCat) s += 3;
+          if ((x.color || '') === curColor && curColor) s += 2;
+          const xg = (typeof getGender === 'function') ? getGender(x) : (x.gender || '');
+          if (xg === curGender && curGender) s += 1;
+          return { x, s };
+        })
+        .filter(o => o.s > 0)
+        .sort((a, b) => b.s - a.s);
+      const top = candidates.slice(0, 8).map(o => o.x);
+      if (top.length > 0) {
+        simTrack.innerHTML = top.map(x => {
+          const src = imgUrl(x, 0);
+          return `<div class="similar-card" data-id="${x.id}">
+            <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'">
+            <div class="similar-card-brand">${x.brand}</div>
+            <div class="similar-card-name">${x.type}</div>
+            <div class="similar-card-price">${x.price} €</div>
+          </div>`;
+        }).join('');
+        simTrack.querySelectorAll('.similar-card').forEach(c => {
+          c.addEventListener('click', () => {
+            const id = c.dataset.id;
+            if (id && typeof openDetail === 'function') {
+              // Reset scroll then open new detail
+              const detailEl = document.getElementById('detail');
+              if (detailEl) detailEl.scrollTop = 0;
+              openDetail(id);
+            }
+          });
+        });
+        simSection.hidden = false;
+      } else {
+        simSection.hidden = true;
+        simTrack.innerHTML = '';
+      }
+    }
+  } catch (e) { console.warn('Similar products err:', e); }
   // Click handlers
   const mainEl = gal.querySelector('.main-photo');
   const thumbs = gal.querySelectorAll('.thumb');
