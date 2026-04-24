@@ -1982,11 +1982,14 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  /* Le conteneur .detail commence pile sous la topbar mobile (54px). */
-  .detail { top: var(--topbar-h-mobile); }
-  /* Padding-top à 0 pour que le haut de la photo se cale exactement
-     sur la ligne basse de la topbar. */
+  /* La topbar mobile fait 82px (logo + tabs sur 2 lignes) — le .detail
+     commence pile en dessous, et la photo principale colle au bord. */
+  .detail { top: 82px; }
   .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
+
+  /* Topbar opaque sur mobile pour que la photo qui scrolle ne soit pas
+     visible en flou derrière la barre. */
+  .topbar { background: var(--bg) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   .detail-info { position: static; padding: 0 18px; }
 
   /* Mobile : grosse photo principale + bandeau scrollable horizontal sous elle (style Centre Commercial) */
@@ -5529,9 +5532,20 @@ s0.parentNode.insertBefore(s1,s0);
     document.body.appendChild(indicator);
     return indicator;
   }
+  function activeScrollEl() {
+    // Si la fiche détail est ouverte, le scroll est sur .detail
+    if (document.body.classList.contains('detail-open')) {
+      return document.getElementById('detail');
+    }
+    return null; // sinon : window/document
+  }
+  function activeScrollTop() {
+    const el = activeScrollEl();
+    if (el) return el.scrollTop || 0;
+    return window.scrollY || window.pageYOffset || 0;
+  }
   document.addEventListener('touchstart', (e) => {
-    if (window.scrollY > 0) return;
-    if (document.body.classList.contains('detail-open')) return;
+    if (activeScrollTop() > 0) return;
     startY = e.touches[0].clientY;
     lastY = startY;
     tracking = true;
