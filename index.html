@@ -1306,6 +1306,11 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
    Seule la note de réservation/négo disparaît. */
 .detail.detail-sold .detail-note { display: none; }
 
+/* Tag VENDU caché par défaut (toutes plateformes) ; affiché seulement
+   quand la fiche a la classe .detail-sold */
+.vendu-badge { display: none !important; }
+.detail.detail-sold .vendu-badge { display: inline-flex !important; }
+
 /* ============ LIGHTBOX ============ */
 .lightbox {
   display: none; position: fixed; inset: 0;
