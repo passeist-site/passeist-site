@@ -3339,6 +3339,9 @@ const PRODUCTS = [
   {"id": "7749222259", "brand": "YOSHIKI HISHINUMA", "type": "Blouse plissée butter", "size": "S International", "price": "160", "gender": "Femme", "path": "/vetements-femme/tops/yoshiki-hishinuma/yoshiki-hishinuma-blouse-plissee-butter-7749222259.shtml", "slug": "yoshiki-hishinuma-blouse-plissee-butter-7749222259", "n": 15, "desc": "Yoshiki hishinuma peplum chemisier cardigan blouse plissé butter taille s - Yohshiki Hishinuma \n\nCollection peplum des années 90 \n\nRavissant cardigan en polyester 100%. Les manches en plissé larges par coutures asymétriques le corps lui en fin plissé gauffré. \n\nParfait état vintage \n\nTaille conseillée S \n\nDimensions non étiré :\n\n- épaule à épaule : raglan\n- aisselle à aisselle : 39cm\n- longueur dos depuis bas du col : 45cm \n- longueur manche depuis épaule 61cm et depuis aisselle :44cm\n- ouverture bas :38cm\n\n\n\n\n\n\n\n\n\n\n\n\n#isseymiyake #plantation #junyawatanabe #commedesgarçons #pleatsplease #sacai #yohjiyamamoto #japan #japon #japonais #japanese #rickowens #jules #haisportinggear #y’s #francoismarithegirbaud #bikkembergs #maisonmartinmargiela #margiela #kansaiyamamoto #plissehomme #driesvannoten\n#japonia #japanesefashion #ys #japanstyle\n#japanesestyle #madeinjapan"},
   {"id": "7349319626", "brand": "YOSHIKI HISHINUMA", "type": "Jupe plissée Peplum", "size": "Taille unique", "price": "170", "gender": "Femme", "path": "/vetements-femme/jupes/yoshiki-hishinuma/yoshiki-hishinuma-jupe-plissee-peplum-7349319626.shtml", "slug": "yoshiki-hishinuma-jupe-plissee-peplum-7349319626", "n": 12, "desc": "Yoshiki hishinuma péplum jupe plissé noir taille unique femme - Yoshiki Hishinuma \n\nCollection peplum des années 80\n\nTrès jolie jupe en plissé de polyester 100%. Plissé froissé piqué pour la majeur et ensuite bord côté en patchwork de bandes transparentes et semi transparentes. \n\n\nDans son emballage tubulaire d’origine et son fond de jupe amovible d’origine \n\nParfait état, quelques trace d’usage \n\nTaille élastiquée de 29 à 46cm\nLongueur 82cm"},
   {"id": "7080140189", "brand": "KIJIMA TAKAYUKI", "type": "Bonnet large", "size": "Taille unique", "price": "90", "gender": "", "path": "/accessoires-femme/chapeaux-bonnets/kijima-takayuki/kijima-takayuki-bonnet-large-7080140189.shtml", "slug": "kijima-takayuki-bonnet-large-7080140189", "n": 13, "desc": "Kijima Takayuki bonnet coton acrylique large ample camel made in Japan - Kijima Takayuki \n\nBonnet made in Japan en coton 50% et acrylique 50%. \nMaille souple. \n\nParfait état comme neuf"}
+
+  {"id": "66339518", "brand": "ISSEY MIYAKE", "type": "Blazer", "size": "M", "price": "320", "gender": "Femme", "path": "/vetements-femme/vestes/issey-miyake/vesteblouson-issey-miyake-en-polyester-noir-66339518.shtml", "slug": "vesteblouson-issey-miyake-en-polyester-noir-66339518", "n": 15, "desc": "Issey Miyake \n\nCollection probablement de 2005 \n\nVeste longue dans un plissé épais de très grande qualité (plus épais que les pleats please) en polyester 65% et triacétate 35%. Joli com a Dey plissé à l’avant et finissant en légère pointe dans le dos. Deux poches latérales invisibles\n\nComme neuf \n\nTrès agréable au toucher et à porter \n\nDimensions non étiré  :\n\n- épaule à épaule : 42cm\n- aisselle à aisselle : 46cm\n- longueur dos depuis bas du col : 85cm \n- longueur manche depuis épaule 56cm et depuis aisselle :40cm\n- ouverture bas :54cm"},
+  {"id": "66339426", "brand": "ISSEY MIYAKE", "type": "Pantalon en cuir", "size": "S", "price": "490", "gender": "Homme", "path": "/vetements-homme/pantalons/issey-miyake/pantalon-issey-miyake-en-cuir-noir-66339426.shtml", "slug": "pantalon-issey-miyake-en-cuir-noir-66339426", "n": 15, "desc": "Issey Miyake \n\nCollection men des années 80 \n\nRarissime pantalon parachute dans un magnifique cuir grainé noir de très grande qualité. \n\nDans un état parfait \n\nPlutôt taille haute. \n\nTaille indiquée M mais convient à un S \n\nTaille 37cm\nHanches 49cm\nLongueur jambes 104cm et 77cm depuis l’entre jambes \nOuverture chevilles 15 à 19cm"},
 ];
 
 // Prices that weren't already round get a -5% discount, then floored to the nearest ten
@@ -3354,7 +3357,7 @@ let activeView = 'shop';          // 'shop' = available only  |  'archive' = sol
 let activeBrand = 'all';
 let activeCat = 'all';
 let activeGender = 'all';
-let activeSort = 'alt-tone';
+let activeSort = 'newest';
 let activeSearch = '';
 let cart = [];
 let currentProduct = null;
@@ -3367,6 +3370,8 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "66339426",
+  "66339518",
   "8702852670",
   "8702769864",
   "8670554748",
@@ -3627,7 +3632,7 @@ function matchesSearch(p, q) {
 // ============ NAV ============
 let currentPage = 'home';
 // Chaque vue (boutique / archive / favoris) a son propre état de filtres
-const DEFAULT_FILTERS = { brand: 'all', cat: 'all', gender: 'all', sort: 'alt-tone', search: '' };
+const DEFAULT_FILTERS = { brand: 'all', cat: 'all', gender: 'all', sort: 'newest', search: '' };
 const savedFilters = {
   shop: { ...DEFAULT_FILTERS },
   archive: { ...DEFAULT_FILTERS },
@@ -3809,7 +3814,13 @@ function renderGrid() {
     }
     filtered = out;
   } else {
+    // Vinted (IDs à 10 chiffres) sont toujours relégués en fin de liste, peu importe le tri
+    const isVinted = (p) => String(p.id || '').length >= 10;
     filtered = filtered.slice().sort((a, b) => {
+      const av = isVinted(a), bv = isVinted(b);
+      if (av && !bv) return 1;   // a Vinted → après b
+      if (!av && bv) return -1;  // b Vinted → après a
+      // Même catégorie (tous Vestiaire ou tous Vinted), on applique le tri choisi
       if (activeSort === 'price-asc')  return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
       if (activeSort === 'price-desc') return (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
       // 'newest' : id numérique décroissant (les IDs plus élevés = mis en ligne plus récemment)
@@ -3892,7 +3903,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
   }
 })();
 document.getElementById('filter-reset').addEventListener('click', () => {
-  activeBrand = 'all'; activeCat = 'all'; activeGender = 'all'; activeSort = 'alt-tone';
+  activeBrand = 'all'; activeCat = 'all'; activeGender = 'all'; activeSort = 'newest';
   activeSearch = '';
   const si = document.getElementById('search-input'); if (si) { si.value = ''; si.classList.remove('active'); }
   const msi = document.getElementById('m-search-input'); if (msi) { msi.value = ''; }
