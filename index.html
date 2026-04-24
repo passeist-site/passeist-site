@@ -4046,9 +4046,12 @@ function openDetail(id) {
   const photos = [];
   for (let i = 0; i < p.n; i++) photos.push(imgUrl(p, i));
   lbPhotos = photos;
-  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${p.type} photo 1">`;
+  // Note : onerror enlève le thumb cassé (404) pour qu'il ne reste pas un slot vide.
+  // Pour la principale, fallback sur la première photo qui charge — on retire aussi
+  // tous les thumbs qui ne chargent pas pour aligner le compteur.
+  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${p.type} photo 1" onerror="this.style.display='none'">`;
   const thumbsHtml = photos.map((src, i) =>
-    `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}"></div>`
+    `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`
   ).join('');
   gal.innerHTML = `${mainHtml}<div class="thumbs-row">${thumbsHtml}</div><span class="vendu-badge">VENDU</span>`;
   // Click handlers
