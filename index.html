@@ -3686,7 +3686,7 @@ function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
   if (VALIDATED_LOCAL.has(product.id)) {
-    return './img/' + product.id + '-' + i + '-' + size + '.webp';
+    return '/img/' + product.id + '-' + i + '-' + size + '.webp';
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
@@ -3694,7 +3694,7 @@ function imgUrl(product, i, opts) {
 function imgSrcset(product, i) {
   if (!product.n) return '';
   if (VALIDATED_LOCAL.has(product.id)) {
-    const base = './img/' + product.id + '-' + i + '-';
+    const base = '/img/' + product.id + '-' + i + '-';
     return base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w';
   }
   return _vestiaireUrl(product, i, 400) + ' 400w, ' +
