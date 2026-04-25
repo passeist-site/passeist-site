@@ -4159,7 +4159,7 @@ function openDetail(id) {
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';
   document.getElementById('d-size').textContent = p.size;
   document.getElementById('d-gender').textContent = (window.tGender ? window.tGender(p) : (getGender(p) || 'Accessoire'));
-  document.getElementById('d-desc').textContent = p.desc;
+  document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
   document.getElementById('d-availability').style.display = sold ? 'none' : '';
@@ -6000,13 +6000,15 @@ s0.parentNode.insertBefore(s1,s0);
     // Re-render grid + filters pour propager les traductions sur les options ALL/options dynamiques
     if (typeof renderFilters === 'function') renderFilters();
     if (typeof renderGrid === 'function') renderGrid();
-    // Re-render le détail courant si ouvert (met à jour le nom + genre selon lang)
+    // Re-render le détail courant si ouvert (met à jour nom + genre + desc selon lang)
     if (window.currentProduct && document.body.classList.contains('detail-open')) {
       const p = window.currentProduct;
       const dn = document.getElementById('d-name');
       const dg = document.getElementById('d-gender');
+      const dd = document.getElementById('d-desc');
       if (dn) dn.textContent = window.tType ? window.tType(p) : p.type;
       if (dg) dg.textContent = window.tGender ? window.tGender(p) : (p.gender || '');
+      if (dd) dd.textContent = (lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
     }
 
     // Meta hreflang canonical
