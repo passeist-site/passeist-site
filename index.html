@@ -5564,9 +5564,17 @@ s0.parentNode.insertBefore(s1,s0);
     lastY = startY;
     tracking = true;
   }, { passive: true });
-  function pageEl() {
-    // Élément qui se translate pour suivre le doigt
-    return document.body;
+  // Éléments translatés pour suivre le doigt : body ET topbar (fixed)
+  // pour que le HAUT de la page descende aussi avec le geste.
+  function applyTranslate(y, useTransition) {
+    const t = 'translate3d(0,' + y + 'px,0)';
+    document.body.style.transform = t;
+    document.body.style.transition = useTransition ? 'transform 0.32s cubic-bezier(.2,.8,.25,1)' : 'none';
+    const tb = document.querySelector('.topbar');
+    if (tb) {
+      tb.style.transform = t;
+      tb.style.transition = useTransition ? 'transform 0.32s cubic-bezier(.2,.8,.25,1)' : 'none';
+    }
   }
   document.addEventListener('touchmove', (e) => {
     if (!tracking) return;
@@ -5574,10 +5582,9 @@ s0.parentNode.insertBefore(s1,s0);
     const dy = lastY - startY;
     if (dy > 0) {
       const ind = ensureIndicator();
-      // La page suit le doigt avec un effet de résistance (rubber-band)
+      // La page (body + topbar) suit le doigt avec résistance rubber-band
       const pulled = Math.min(dy * 0.55, 220);
-      pageEl().style.transform = 'translate3d(0,' + pulled + 'px,0)';
-      pageEl().style.transition = 'none';
+      applyTranslate(pulled, false);
       // Spinner — apparaît au fur et à mesure
       const progress = Math.min(1.2, dy / THRESHOLD);
       const sc = Math.min(1, 0.4 + progress * 0.6);
@@ -5590,18 +5597,19 @@ s0.parentNode.insertBefore(s1,s0);
     tracking = false;
     const dy = lastY - startY;
     const ind = indicator;
-    const pe = pageEl();
     if (dy >= THRESHOLD) {
       if (ind) { ind.classList.add('spinning'); ind.style.opacity = '1'; }
-      // Garde la page un peu translatée pendant le reload
-      pe.style.transition = 'transform 0.18s cubic-bezier(.2,.8,.25,1)';
-      pe.style.transform = 'translate3d(0,60px,0)';
+      applyTranslate(60, true);
       setTimeout(() => location.reload(), 200);
     } else {
-      // Rappel élastique
-      pe.style.transition = 'transform 0.32s cubic-bezier(.2,.8,.25,1)';
-      pe.style.transform = '';
-      setTimeout(() => { pe.style.transition = ''; }, 350);
+      // Rappel élastique vers position 0
+      applyTranslate(0, true);
+      setTimeout(() => {
+        document.body.style.transition = '';
+        document.body.style.transform = '';
+        const tb = document.querySelector('.topbar');
+        if (tb) { tb.style.transition = ''; tb.style.transform = ''; }
+      }, 350);
       if (ind) {
         ind.style.opacity = '0';
         ind.style.transform = 'translate3d(-50%,-22px,0) scale(0.4)';
