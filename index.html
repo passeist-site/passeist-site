@@ -2433,7 +2433,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 <!-- PRODUCT DETAIL -->
 <div class="detail" id="detail">
   <div class="detail-header">
-    <button class="detail-back" onclick="closeDetail()">← Retour à la boutique</button>
+    <button class="detail-back" id="detail-back-btn" onclick="closeDetail()">← Retour à la boutique</button>
   </div>
   <div class="detail-main">
     <div class="detail-gallery" id="detail-gallery"></div>
@@ -3650,6 +3650,17 @@ function getCategory(type) {
 function getGender(p) {
   return p.gender || '';
 }
+// Helpers d'affichage internationalisé : type produit (utilise type_en si lang === 'en')
+// et genre (utilise i18n gender.X) — évite de toucher chaque render.
+window.tType = function(p) {
+  if (!p) return '';
+  return (window.__lang === 'en' && p.type_en) ? p.type_en : (p.type || '');
+};
+window.tGender = function(p) {
+  const g = (typeof getGender === 'function') ? getGender(p) : (p.gender || '');
+  if (typeof t === 'function') return t('gender.' + (g || ''));
+  return g || 'Accessoires';
+};
 
 // IDs des pièces vendues — à compléter au fur et à mesure
 const SOLD_IDS = new Set([
@@ -4090,7 +4101,7 @@ function renderGrid() {
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? 'Vendu' : `${p.price} €`}</span></div></div>
         <div class="product-name-row">
-          <div class="product-name">${p.type}</div>
+          <div class="product-name">${(window.tType ? window.tType(p) : p.type)}</div>
         </div>
         <div class="product-meta">
           <div class="product-size">${sizeLine}</div>
@@ -4143,12 +4154,12 @@ function openDetail(id) {
   const detailEl = document.getElementById('detail');
   detailEl.classList.toggle('detail-sold', sold);
   document.getElementById('d-brand').textContent = p.brand;
-  document.getElementById('d-name').textContent = p.type;
+  document.getElementById('d-name').textContent = (window.tType ? window.tType(p) : p.type);
   const priceEl = document.getElementById('d-price');
   priceEl.textContent = sold ? '' : (p.price + ' €');
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';
   document.getElementById('d-size').textContent = p.size;
-  document.getElementById('d-gender').textContent = getGender(p) || 'Accessoire';
+  document.getElementById('d-gender').textContent = (window.tGender ? window.tGender(p) : (getGender(p) || 'Accessoire'));
   document.getElementById('d-desc').textContent = p.desc;
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
@@ -4207,7 +4218,7 @@ function openDetail(id) {
           return `<div class="similar-card" data-id="${x.id}">
             <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.parentElement.style.display='none'">
             <div class="similar-card-brand">${x.brand}</div>
-            <div class="similar-card-name">${x.type}</div>
+            <div class="similar-card-name">${(window.tType ? window.tType(x) : x.type)}</div>
             <div class="similar-card-price">${x.price} €</div>
           </div>`;
         }).join('');
@@ -4595,7 +4606,7 @@ function renderCart() {
         <img src="${imgUrl(p, 0)}" alt="" loading="lazy" decoding="async">
         <div class="cart-item-info">
           <div class="cart-item-brand">${p.brand}</div>
-          <div class="cart-item-name">${p.type}</div>
+          <div class="cart-item-name">${(window.tType ? window.tType(p) : p.type)}</div>
           <div class="cart-item-price">${p.price} €</div>
           <button class="cart-item-remove" onclick="removeFromCart('${p.id}')">Retirer</button>
         </div>
@@ -5816,6 +5827,7 @@ s0.parentNode.insertBefore(s1,s0);
       'sort.newest': 'Nouveautés', 'sort.price_asc': 'Prix croissant',
       'sort.price_desc': 'Prix décroissant', 'sort.random': 'Aléatoire',
       'cart.title': 'Panier', 'cart.total': 'Total',
+      'detail.back': '← Retour à la boutique',
       'sold': 'Vendu', 'vendu.badge': 'VENDU',
       // Termes filtre dynamiques (genre, catégorie) — passés tels quels en FR
       'gender.Femme': 'Femme', 'gender.Homme': 'Homme', 'gender.': 'Accessoires',
@@ -5857,6 +5869,7 @@ s0.parentNode.insertBefore(s1,s0);
       'sort.newest': 'Newest', 'sort.price_asc': 'Price low to high',
       'sort.price_desc': 'Price high to low', 'sort.random': 'Random',
       'cart.title': 'Cart', 'cart.total': 'Total',
+      'detail.back': '← Back to shop',
       'sold': 'Sold', 'vendu.badge': 'SOLD',
       'gender.Femme': 'Women', 'gender.Homme': 'Men', 'gender.': 'Accessories',
       'cat.Hauts': 'Tops', 'cat.Bas': 'Bottoms', 'cat.Vestes': 'Jackets',
@@ -5940,6 +5953,8 @@ s0.parentNode.insertBefore(s1,s0);
     if (simT) simT.textContent = t('detail.similar');
     const venduBadge = document.querySelector('.vendu-badge');
     if (venduBadge) venduBadge.textContent = t('vendu.badge');
+    const backBtn = document.getElementById('detail-back-btn');
+    if (backBtn) backBtn.textContent = t('detail.back');
 
     // Filter labels desktop
     const labelMap = {
@@ -5985,6 +6000,15 @@ s0.parentNode.insertBefore(s1,s0);
 
     // Re-render grid + filters pour propager les traductions sur les options ALL/options dynamiques
     if (typeof renderFilters === 'function') renderFilters();
+    if (typeof renderGrid === 'function') renderGrid();
+    // Re-render le détail courant si ouvert (met à jour le nom + genre selon lang)
+    if (window.currentProduct && document.body.classList.contains('detail-open')) {
+      const p = window.currentProduct;
+      const dn = document.getElementById('d-name');
+      const dg = document.getElementById('d-gender');
+      if (dn) dn.textContent = window.tType ? window.tType(p) : p.type;
+      if (dg) dg.textContent = window.tGender ? window.tGender(p) : (p.gender || '');
+    }
 
     // Meta hreflang canonical
     const baseUrl = 'https://passeist.com' + (location.pathname || '/');
