@@ -5524,13 +5524,21 @@ s0.parentNode.insertBefore(s1,s0);
     if (indicator) return indicator;
     indicator = document.createElement('div');
     indicator.id = 'ptr-indicator';
-    indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;height:0;background:rgba(168,166,161,0.9);' +
-      'color:#0a0a08;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.16em;' +
-      'display:flex;align-items:center;justify-content:center;text-transform:uppercase;' +
-      'overflow:hidden;transition:height 0.15s ease,opacity 0.2s;opacity:0;z-index:9998;pointer-events:none;';
-    indicator.textContent = 'Relâchez pour rafraîchir';
+    // Petit anneau ultra-discret, hardware-accelerated
+    indicator.style.cssText = 'position:fixed;top:88px;left:50%;width:18px;height:18px;border-radius:50%;' +
+      'background:transparent;border:1px solid rgba(10,10,8,0.35);border-top-color:transparent;' +
+      'transform:translate3d(-50%,-22px,0) scale(0.5);transform-origin:center;' +
+      'transition:transform 0.22s cubic-bezier(.2,.8,.25,1), opacity 0.22s ease;' +
+      'opacity:0;z-index:9998;pointer-events:none;will-change:transform,opacity;';
     document.body.appendChild(indicator);
     return indicator;
+  }
+  // Spin en boucle fluide quand le rafraîchissement se déclenche
+  if (!document.getElementById('ptr-style')) {
+    const st = document.createElement('style');
+    st.id = 'ptr-style';
+    st.textContent = '@keyframes ptr-spin { from { transform: translate3d(-50%, 0, 0) rotate(0deg); } to { transform: translate3d(-50%, 0, 0) rotate(360deg); } } #ptr-indicator.spinning { animation: ptr-spin 0.65s linear infinite; transition: none; }';
+    document.head.appendChild(st);
   }
   function activeScrollEl() {
     // Si la fiche détail est ouverte, le scroll est sur .detail
@@ -5556,10 +5564,11 @@ s0.parentNode.insertBefore(s1,s0);
     const dy = lastY - startY;
     if (dy > 0) {
       const ind = ensureIndicator();
-      const h = Math.min(THRESHOLD * 1.4, dy);
-      ind.style.height = h + 'px';
-      ind.style.opacity = Math.min(1, dy / THRESHOLD);
-      ind.textContent = dy >= THRESHOLD ? 'Relâchez pour rafraîchir' : 'Tirer pour rafraîchir';
+      const progress = Math.min(1.2, dy / THRESHOLD);
+      const ty = -22 + Math.min(28, dy * 0.32);
+      const sc = Math.min(1, 0.5 + progress * 0.5);
+      ind.style.transform = 'translate3d(-50%,' + ty + 'px,0) scale(' + sc + ')';
+      ind.style.opacity = String(Math.min(0.85, dy / 60));
     }
   }, { passive: true });
   document.addEventListener('touchend', () => {
@@ -5568,11 +5577,11 @@ s0.parentNode.insertBefore(s1,s0);
     const dy = lastY - startY;
     const ind = indicator;
     if (dy >= THRESHOLD) {
-      if (ind) { ind.textContent = 'Rafraîchissement…'; ind.style.height = '36px'; }
+      if (ind) { ind.classList.add('spinning'); ind.style.opacity = '1'; }
       setTimeout(() => location.reload(), 120);
     } else if (ind) {
-      ind.style.height = '0px';
       ind.style.opacity = '0';
+      ind.style.transform = 'translate3d(-50%,-22px,0) scale(0.5)';
     }
   });
 })();
