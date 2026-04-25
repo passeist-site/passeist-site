@@ -22,6 +22,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Passéist — Mode japonaise vintage & archive">
 <meta name="twitter:description" content="Yohji Yamamoto, Comme des Garçons, Issey Miyake — vintage japonais authentifié à Paris.">
+<!-- Hreflang alternates pour le SEO multilingue -->
+<link rel="alternate" hreflang="fr" href="https://passeist.com/">
+<link rel="alternate" hreflang="en" href="https://passeist.com/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://passeist.com/">
 <!-- Favicon inline SVG -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23a8a6a1'/%3E%3Ctext x='32' y='46' font-family='system-ui,sans-serif' font-size='46' font-weight='100' text-anchor='middle' fill='%230a0a08'%3Ep%3C/text%3E%3Ccircle cx='50' cy='48' r='5' fill='%230a0a08'/%3E%3C/svg%3E">
 <!-- Structured data -->
@@ -181,6 +185,25 @@ a { color: inherit; }
 /* Cache le badge quand le compteur est à 0 */
 .topbar-icon .cart-count:empty,
 .topbar-icon .cart-count[data-zero="true"] { display: none; }
+
+/* ============ LANG TOGGLE FR/EN ============ */
+.lang-toggle {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: transparent; border: 1px solid var(--line);
+  padding: 5px 10px; cursor: pointer; border-radius: 0;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: var(--tracking-wide); color: var(--ink);
+  transition: border-color 0.2s, color 0.2s;
+}
+.lang-toggle:hover { border-color: var(--ink); }
+.lang-toggle .lang-sep { opacity: 0.5; }
+html[lang="fr"] .lang-toggle .lang-fr { color: var(--ink); font-weight: 700; }
+html[lang="fr"] .lang-toggle .lang-en { color: var(--text-mute); }
+html[lang="en"] .lang-toggle .lang-en { color: var(--ink); font-weight: 700; }
+html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
+@media (max-width: 880px) {
+  .lang-toggle { padding: 4px 7px; font-size: 9px; }
+}
 @media (max-width: 880px) {
   .topbar-icons { gap: 10px; }
   .topbar-icon { width: 26px; height: 26px; }
@@ -2237,6 +2260,9 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
       <button class="topbar-icon cart-btn" onclick="toggleCart()" aria-label="Panier" title="Panier">
         <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 12H6.5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="cart-count" id="cart-count">0</span>
+      </button>
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Changer la langue / Change language" title="FR / EN">
+        <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
       </button>
     </div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
@@ -5768,6 +5794,208 @@ s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
 s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!-- ============ I18N FR/EN ============ -->
+<script>
+(function(){
+  const I18N = {
+    fr: {
+      title: 'Passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      desc: 'Passéist — friperie de luxe à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — pièces archive et avant-garde chinées et authentifiées.',
+      'nav.home': 'Accueil', 'nav.shop': 'Boutique', 'nav.archive': 'Archive', 'nav.about': 'À propos',
+      'hero.tagline.html': "<em>Mode d'Auteur</em> japonaise.",
+      'hero.keywords': 'Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
+      'hero.cta': 'Explorer',
+      'shop.title': 'Tous les articles',
+      'archive.title': 'Archive · Pièces vendues',
+      'favorites.title': 'Favoris',
+      'detail.size': 'Taille', 'detail.gender': 'Genre', 'detail.condition': 'État',
+      'detail.condition.value': 'Très bon état',
+      'detail.cart': 'Ajouter au panier',
+      'detail.contact': 'Demander un renseignement',
+      'detail.availability': "Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.",
+      'detail.similar': 'Articles similaires',
+      'filter.gender': 'Genre', 'filter.brand': 'Marque', 'filter.category': 'Catégorie',
+      'filter.color': 'Couleur', 'filter.sort': 'Trier par', 'filter.search': 'Recherche',
+      'filter.reset': 'Réinitialiser', 'filter.results': 'Voir les résultats',
+      'filter.title': 'Filtres & tri', 'filter.close': 'Fermer',
+      'filter.all_genders': 'Tous genres', 'filter.all_brands': 'Toutes marques',
+      'filter.all_cats': 'Toutes catégories', 'filter.all_colors': 'Toutes couleurs',
+      'sort.newest': 'Nouveautés', 'sort.price_asc': 'Prix croissant',
+      'sort.price_desc': 'Prix décroissant', 'sort.random': 'Aléatoire',
+      'cart.title': 'Panier', 'cart.total': 'Total',
+      'sold': 'Vendu', 'vendu.badge': 'VENDU',
+    },
+    en: {
+      title: 'Passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      desc: 'Passéist — luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — authenticated archive and avant-garde fashion.',
+      'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.archive': 'Archive', 'nav.about': 'About',
+      'hero.tagline.html': "Japanese <em>auteur</em> fashion.",
+      'hero.keywords': 'Japanese vintage · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
+      'hero.cta': 'Explore',
+      'shop.title': 'All items',
+      'archive.title': 'Archive · Sold pieces',
+      'favorites.title': 'Favorites',
+      'detail.size': 'Size', 'detail.gender': 'Gender', 'detail.condition': 'Condition',
+      'detail.condition.value': 'Very good condition',
+      'detail.cart': 'Add to cart',
+      'detail.contact': 'Ask a question',
+      'detail.availability': 'Each piece is unique and listed on multiple platforms — your order will be confirmed after a quick availability check.',
+      'detail.similar': 'Similar items',
+      'filter.gender': 'Gender', 'filter.brand': 'Brand', 'filter.category': 'Category',
+      'filter.color': 'Color', 'filter.sort': 'Sort by', 'filter.search': 'Search',
+      'filter.reset': 'Reset', 'filter.results': 'View results',
+      'filter.title': 'Filters & sort', 'filter.close': 'Close',
+      'filter.all_genders': 'All genders', 'filter.all_brands': 'All brands',
+      'filter.all_cats': 'All categories', 'filter.all_colors': 'All colors',
+      'sort.newest': 'Newest', 'sort.price_asc': 'Price low to high',
+      'sort.price_desc': 'Price high to low', 'sort.random': 'Random',
+      'cart.title': 'Cart', 'cart.total': 'Total',
+      'sold': 'Sold', 'vendu.badge': 'SOLD',
+    }
+  };
+
+  // Détecte la langue : 1) URL ?lang=, 2) localStorage, 3) navigator.language
+  function detectLang() {
+    try {
+      const params = new URLSearchParams(location.search);
+      const fromUrl = params.get('lang');
+      if (fromUrl && I18N[fromUrl]) return fromUrl;
+      const stored = localStorage.getItem('passeist_lang');
+      if (stored && I18N[stored]) return stored;
+      const nav = (navigator.language || 'fr').toLowerCase();
+      if (nav.startsWith('en')) return 'en';
+    } catch(e){}
+    return 'fr';
+  }
+
+  const t = (key) => (I18N[window.__lang || 'fr'][key] || I18N.fr[key] || key);
+  window.t = t;
+
+  function setMeta(sel, attr, val) {
+    const el = document.head.querySelector(sel);
+    if (el) el.setAttribute(attr, val);
+  }
+  function applyI18n(lang) {
+    window.__lang = lang;
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('passeist_lang', lang); } catch(e){}
+    // Meta
+    if (!document.querySelector('.detail.detail-open') && !document.body.classList.contains('detail-open')) {
+      document.title = t('title');
+      setMeta('meta[name="description"]', 'content', t('desc'));
+      setMeta('meta[property="og:description"]', 'content', t('desc'));
+    }
+
+    // Top nav
+    document.querySelectorAll('.top-nav a').forEach(a => {
+      const p = a.dataset.page;
+      const span = a.querySelector('span');
+      if (span && p) span.textContent = t('nav.' + p);
+    });
+    // Mobile nav
+    document.querySelectorAll('.mobile-nav a').forEach(a => {
+      const p = a.dataset.page;
+      if (p) a.textContent = t('nav.' + p);
+    });
+    // Hero
+    const ht = document.querySelector('.hero-tagline');
+    if (ht) ht.innerHTML = t('hero.tagline.html');
+    const hk = document.querySelector('.hero-keywords');
+    if (hk) hk.textContent = t('hero.keywords');
+    const hcta = document.querySelector('.hero-cta span:not(.arrow-symbol)');
+    if (hcta) hcta.textContent = t('hero.cta');
+    // Detail static
+    const sizeLab = document.querySelector('.detail-attrs > div:nth-child(1) .attr-label');
+    const genLab  = document.querySelector('.detail-attrs > div:nth-child(2) .attr-label');
+    const condLab = document.querySelector('.detail-attrs > div:nth-child(3) .attr-label');
+    const condVal = document.querySelector('.detail-attrs > div:nth-child(3) .attr-value');
+    if (sizeLab) sizeLab.textContent = t('detail.size');
+    if (genLab)  genLab.textContent  = t('detail.gender');
+    if (condLab) condLab.textContent = t('detail.condition');
+    if (condVal) condVal.textContent = t('detail.condition.value');
+    const cartBtn = document.getElementById('d-cart');
+    if (cartBtn) cartBtn.textContent = t('detail.cart');
+    const contactBtn = document.getElementById('d-contact');
+    if (contactBtn) contactBtn.textContent = t('detail.contact');
+    const avail = document.getElementById('d-availability');
+    if (avail) avail.textContent = t('detail.availability');
+    const simT = document.querySelector('.similar-title');
+    if (simT) simT.textContent = t('detail.similar');
+    const venduBadge = document.querySelector('.vendu-badge');
+    if (venduBadge) venduBadge.textContent = t('vendu.badge');
+
+    // Filter labels desktop
+    const labelMap = {
+      'sort-select': 'filter.sort', 'm-sort-select': 'filter.sort',
+      'gender-select': 'filter.gender', 'm-gender-select': 'filter.gender',
+      'brand-select': 'filter.brand', 'm-brand-select': 'filter.brand',
+      'cat-select': 'filter.category', 'm-cat-select': 'filter.category',
+      'color-select': 'filter.color', 'm-color-select': 'filter.color',
+      'search-input': 'filter.search', 'm-search-input': 'filter.search',
+    };
+    Object.entries(labelMap).forEach(([id, key]) => {
+      const lbl = document.querySelector('label[for="' + id + '"]');
+      if (lbl) lbl.textContent = t(key);
+      const ph = document.getElementById(id);
+      if (ph && (ph.tagName === 'INPUT')) ph.placeholder = t(key);
+    });
+    const reset = document.getElementById('filter-reset');
+    if (reset) reset.textContent = t('filter.reset');
+    const apply = document.getElementById('filter-sheet-apply');
+    if (apply) apply.textContent = t('filter.results');
+    const fsTitle = document.querySelector('.filter-sheet-title');
+    if (fsTitle) fsTitle.textContent = t('filter.title');
+    const fsClose = document.getElementById('filter-sheet-close');
+    if (fsClose) fsClose.textContent = t('filter.close');
+    // Sort options
+    document.querySelectorAll('#sort-select option, #m-sort-select option').forEach(opt => {
+      const v = opt.value;
+      const map = { newest: 'sort.newest', 'price-asc': 'sort.price_asc',
+                    'price-desc': 'sort.price_desc', random: 'sort.random' };
+      if (map[v]) opt.textContent = t(map[v]);
+    });
+    // Cart panel
+    const cartTitle = document.querySelector('.cart-panel .cart-title');
+    if (cartTitle) cartTitle.textContent = t('cart.title');
+    const cartTotalLabel = document.querySelector('.cart-total > span:first-child');
+    if (cartTotalLabel) cartTotalLabel.textContent = t('cart.total');
+    // Shop title — laisse renderGrid réécrire ensuite
+    const shopTitle = document.getElementById('shop-title');
+    if (shopTitle) {
+      const isArchive = document.body.dataset.page === 'archive';
+      shopTitle.textContent = isArchive ? t('archive.title') : t('shop.title');
+    }
+
+    // Re-render grid + filters pour propager les traductions sur les options ALL/options dynamiques
+    if (typeof renderFilters === 'function') renderFilters();
+
+    // Meta hreflang canonical
+    const baseUrl = 'https://passeist.com' + (location.pathname || '/');
+    const canonUrl = lang === 'en' ? baseUrl + (baseUrl.includes('?') ? '&' : '?') + 'lang=en' : baseUrl;
+    setMeta('link[rel="canonical"]', 'href', canonUrl);
+  }
+
+  // Init au load
+  const initialLang = detectLang();
+  applyI18n(initialLang);
+  // Bouton toggle
+  const toggle = document.getElementById('lang-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const next = (window.__lang === 'fr') ? 'en' : 'fr';
+      // Met à jour l'URL avec le nouveau ?lang=
+      try {
+        const url = new URL(location.href);
+        if (next === 'fr') url.searchParams.delete('lang');
+        else url.searchParams.set('lang', 'en');
+        history.replaceState(history.state || {}, '', url.toString());
+      } catch(e){}
+      applyI18n(next);
+    });
+  }
+  window.applyI18n = applyI18n;
 })();
 </script>
 </body>
