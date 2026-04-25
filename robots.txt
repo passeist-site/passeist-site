@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /favorites
+Disallow: /cart
+Disallow: /checkout
 Crawl-delay: 1
 
 Sitemap: https://passeist.com/sitemap.xml

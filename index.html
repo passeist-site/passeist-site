@@ -4,22 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<title>Passeist — Curation de vêtements japonais</title>
-<meta name="description" content="Passeist — curation de mode japonaise vintage à Paris 11ᵉ. Yohji Yamamoto, Issey Miyake, Comme des Garçons, 45rpm et autres pièces rares, chinées et authentifiées.">
-<meta name="keywords" content="mode japonaise vintage, Yohji Yamamoto, Issey Miyake, Comme des Garçons, 45rpm, archive, Paris, pre-loved, avant-garde">
-<meta name="author" content="Passeist">
+<title>Passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake</title>
+<meta name="description" content="Passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm — pièces rares chinées et authentifiées, livrées en 24-48h.">
+<meta name="keywords" content="vintage japonais, mode japonaise, archive japonais, Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Pleats Please, Kansai Yamamoto, 45rpm, Kijima Takayuki, Yoshiki Hishinuma, mode vintage Paris, archive fashion, avant-garde japonaise">
+<meta name="robots" content="index,follow">
+<meta name="author" content="Passéist">
 <link rel="canonical" href="https://passeist.com/">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Passeist">
-<meta property="og:title" content="Passeist — Curation de vêtements japonais">
-<meta property="og:description" content="Curation de mode japonaise vintage à Paris 11ᵉ. Yohji Yamamoto, Issey Miyake, Comme des Garçons et autres pièces rares.">
+<meta property="og:site_name" content="Passéist">
+<meta property="og:title" content="Passéist — Mode japonaise vintage & archive">
+<meta property="og:description" content="Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe — pièces vintage et archive japonaises chinées et authentifiées, à Paris.">
 <meta property="og:url" content="https://passeist.com/">
+<meta property="og:image" content="https://passeist.com/og.jpg">
 <meta property="og:locale" content="fr_FR">
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Passeist — Curation de vêtements japonais">
-<meta name="twitter:description" content="Curation de mode japonaise vintage à Paris 11ᵉ.">
+<meta name="twitter:title" content="Passéist — Mode japonaise vintage & archive">
+<meta name="twitter:description" content="Yohji Yamamoto, Comme des Garçons, Issey Miyake — vintage japonais authentifié à Paris.">
 <!-- Favicon inline SVG -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23a8a6a1'/%3E%3Ctext x='32' y='46' font-family='system-ui,sans-serif' font-size='46' font-weight='100' text-anchor='middle' fill='%230a0a08'%3Ep%3C/text%3E%3Ccircle cx='50' cy='48' r='5' fill='%230a0a08'/%3E%3C/svg%3E">
 <!-- Structured data -->
@@ -4041,7 +4043,7 @@ function renderGrid() {
     const fav = isFavorite(p.id);
     const slug = (typeof productSlug === 'function') ? productSlug(p) : p.id;
     return `
-    <a class="product-card ${sold ? 'sold' : ''}" href="#product/${slug}" data-id="${p.id}">
+    <a class="product-card ${sold ? 'sold' : ''}" href="/product/${slug}" data-id="${p.id}">
       <button class="fav-btn ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>
@@ -4428,7 +4430,7 @@ function openSearchFromRail() {
   // Navigue vers la boutique si nécessaire
   if (typeof goPage === 'function' && document.body.dataset.page !== 'shop' && document.body.dataset.page !== 'archive' && document.body.dataset.page !== 'favorites') {
     goPage('shop');
-    try { history.pushState({ t:'page', p:'shop' }, '', '#shop'); } catch(e){}
+    try { history.pushState({ t:'page', p:'shop' }, '', '/shop'); } catch(e){}
   }
   // Détecte si on est en mobile (filter-mobile-toggle visible)
   const mobileToggle = document.getElementById('filter-mobile-toggle');
@@ -4530,7 +4532,7 @@ function renderFavCount() {
 function openFavorites() {
   if (typeof goPage === 'function') {
     goPage('favorites');
-    try { history.pushState({ t:'page', p:'favorites' }, '', '#favorites'); } catch(e){}
+    try { history.pushState({ t:'page', p:'favorites' }, '', '/favorites'); } catch(e){}
   }
 }
 // Affiche le compteur dès le chargement
@@ -5446,10 +5448,14 @@ window.updateSEO = function(p) {
   if (p) {
     const gender = (typeof getGender === 'function') ? (getGender(p) || 'Mode') : 'Mode';
     const img = (typeof imgUrl === 'function') ? imgUrl(p, 0) : '';
-    const url = BASE + '/#product/' + productSlug(p);
-    const title = p.brand + ' · ' + p.type + ' · ' + p.size + ' — Passeist';
+    const url = BASE + '/product/' + productSlug(p);
+    const title = p.brand + ' · ' + p.type + ' · ' + p.size + ' · Vintage japonais — Passéist';
     const short = (p.desc || '').replace(/\s+/g, ' ').trim().slice(0, 155);
-    const desc = short || ('Pièce vintage ' + p.brand + ' — ' + p.type + ' taille ' + p.size + '. Authentifiée par Passeist.');
+    const desc = short || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + ' taille ' + p.size + '. Archive mode authentifiée par Passéist.');
+    // Mots-clés produit ciblés SEO
+    const kw = [p.brand, p.type, p.color || '', 'vintage japonais', 'archive', 'mode',
+                'Yohji Yamamoto', 'Comme des Garçons', 'Issey Miyake'].filter(Boolean).join(', ');
+    setMeta('meta[name="keywords"]', 'content', kw);
     document.title = title;
     setMeta('meta[name="description"]', 'content', desc);
     setLink('canonical', url);
@@ -5488,15 +5494,17 @@ window.updateSEO = function(p) {
     s.textContent = JSON.stringify(ld);
     head.appendChild(s);
   } else {
-    document.title = 'Passeist — Curation de vêtements japonais';
-    setMeta('meta[name="description"]', 'content', 'Passeist — curation de mode japonaise vintage à Paris 11ᵉ. Yohji Yamamoto, Issey Miyake, Comme des Garçons, 45rpm et autres pièces rares, chinées et authentifiées.');
+    const t = 'Passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
+    const d = 'Passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm — pièces rares chinées et authentifiées.';
+    document.title = t;
+    setMeta('meta[name="description"]', 'content', d);
     setLink('canonical', BASE + '/');
     setMeta('meta[property="og:type"]', 'content', 'website');
-    setMeta('meta[property="og:title"]', 'content', 'Passeist — Curation de vêtements japonais');
-    setMeta('meta[property="og:description"]', 'content', 'Curation de mode japonaise vintage à Paris 11ᵉ. Yohji Yamamoto, Issey Miyake, Comme des Garçons et autres pièces rares.');
+    setMeta('meta[property="og:title"]', 'content', 'Passéist — Mode japonaise vintage & archive');
+    setMeta('meta[property="og:description"]', 'content', d);
     setMeta('meta[property="og:url"]', 'content', BASE + '/');
-    setMeta('meta[name="twitter:title"]', 'content', 'Passeist — Curation de vêtements japonais');
-    setMeta('meta[name="twitter:description"]', 'content', 'Curation de mode japonaise vintage à Paris 11ᵉ.');
+    setMeta('meta[name="twitter:title"]', 'content', 'Passéist — Mode japonaise vintage & archive');
+    setMeta('meta[name="twitter:description"]', 'content', 'Yohji Yamamoto, Comme des Garçons, Issey Miyake — vintage japonais authentifié à Paris.');
   }
 };
 
@@ -5521,7 +5529,8 @@ window.updateSEO = function(p) {
     document.body.dataset.page = p;
     updateSEO(null);
     if (!fromHistory) {
-      try { history.pushState({ t:'page', p: p }, '', '#' + p); } catch(e){}
+      const path = (p === 'home') ? '/' : ('/' + p);
+      try { history.pushState({ t:'page', p: p }, '', path); } catch(e){}
     }
   };
   // Décore openDetail : URL = #product/{brand-type-id}, met à jour les méta.
@@ -5542,7 +5551,7 @@ window.updateSEO = function(p) {
       updateSEO(prod);
       if (!fromHistory) {
         const slug = prod ? productSlug(prod) : id;
-        try { history.pushState({ t:'detail', id: String(id), fromHome: cameFromHome }, '', '#product/' + slug); } catch(e){}
+        try { history.pushState({ t:'detail', id: String(id), fromHome: cameFromHome }, '', '/product/' + slug); } catch(e){}
       }
     };
   }
@@ -5565,7 +5574,7 @@ window.updateSEO = function(p) {
       if (cameFromHome) {
         _gp.call(window, 'home');
         document.body.dataset.page = 'home';
-        try { history.pushState({ t:'page', p:'home' }, '', '#'); } catch(e){}
+        try { history.pushState({ t:'page', p:'home' }, '', '/'); } catch(e){}
         // Restaure la position du carrousel sur la carte cliquée
         requestAnimationFrame(() => {
           const tr = document.getElementById('hero-marquee-track');
@@ -5594,38 +5603,46 @@ window.updateSEO = function(p) {
     } else {
       const detail = document.getElementById('detail');
       if (detail && detail.classList.contains('open') && _cd) _cd.call(window);
-      const p = (s && s.p) || (location.hash.replace(/^#/, '').split('/')[0]) || 'home';
+      // Page courante = pathname (URL propre) avec fallback hash legacy
+      const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
+      const legacyHash = location.hash.replace(/^#/, '').split('/')[0];
+      const p = (s && s.p) || (path && !path.startsWith('product/') ? path.split('/')[0] : null) || legacyHash || 'home';
       _gp.call(window, p);
       document.body.dataset.page = p;
       updateSEO(null);
     }
   });
-  // État initial (au chargement)
-  const h = location.hash.replace(/^#/, '');
-  if (h.startsWith('product/')) {
-    const slug = h.slice('product/'.length);
-    const id = idFromSlug(slug);
+  // État initial (au chargement) — supporte les URLs propres /shop, /archive, /product/{slug}
+  // ET les anciens liens hash #shop, #product/{slug} pour rétrocompatibilité
+  function parseInitialRoute() {
+    const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
+    if (path.startsWith('product/')) return { type: 'detail', slug: path.slice('product/'.length) };
+    const hash = location.hash.replace(/^#/, '');
+    if (hash.startsWith('product/')) return { type: 'detail', slug: hash.slice('product/'.length) };
+    if (path && path !== 'home') return { type: 'page', name: path.split('/')[0] };
+    if (hash && hash !== 'home') return { type: 'page', name: hash };
+    return { type: 'page', name: 'home' };
+  }
+  const route = parseInitialRoute();
+  if (route.type === 'detail') {
+    const id = idFromSlug(route.slug);
     setTimeout(() => {
       if (_od) _od.call(window, id);
       const prod = (typeof PRODUCTS !== 'undefined') ? PRODUCTS.find(x => x.id === id) : null;
       updateSEO(prod);
-      // Rewrite de l'URL avec le slug canonique si nécessaire
       if (prod) {
         const canon = productSlug(prod);
-        if (canon && slug !== canon) {
-          try { history.replaceState({ t:'detail', id }, '', '#product/' + canon); } catch(e){}
-        } else {
-          try { history.replaceState({ t:'detail', id }, '', '#product/' + slug); } catch(e){}
-        }
+        const target = '/product/' + (canon || route.slug);
+        try { history.replaceState({ t:'detail', id }, '', target); } catch(e){}
       }
     }, 50);
-  } else if (h && h !== 'home') {
-    _gp.call(window, h);
-    document.body.dataset.page = h;
-    try { history.replaceState({ t:'page', p: h }, '', '#' + h); } catch(e){}
+  } else if (route.name && route.name !== 'home') {
+    _gp.call(window, route.name);
+    document.body.dataset.page = route.name;
+    try { history.replaceState({ t:'page', p: route.name }, '', '/' + route.name); } catch(e){}
   } else {
     document.body.dataset.page = 'home';
-    try { history.replaceState({ t:'page', p: 'home' }, '', location.pathname); } catch(e){}
+    try { history.replaceState({ t:'page', p: 'home' }, '', '/'); } catch(e){}
   }
 })();
 

@@ -1,0 +1,6 @@
+# SPA fallback : toutes les routes non-fichier renvoyées vers index.html
+# avec status 200 (pas 301) pour préserver l'URL côté client.
+/sitemap.xml      /sitemap.xml      200
+/robots.txt       /robots.txt       200
+/img/*            /img/:splat       200
+/*                /index.html       200
