@@ -4253,8 +4253,15 @@ function openDetail(id) {
     if (loupeActive) return;
     openLB(curIdx);
   });
+  // Désactive le menu contextuel iOS sur appui long sur l'image (sinon
+   // Safari intercepte avec "Enregistrer / Copier l'image" et notre loupe ne
+   // se déclenche jamais).
+  mainEl.style.webkitTouchCallout = 'none';
+  mainEl.style.webkitUserSelect = 'none';
+  mainEl.style.userSelect = 'none';
+  let touchStartX = 0, touchStartY = 0;
+  const MOVE_TOLERANCE = 12;  // px : tolérance de jitter avant de cancel l'appui long
   mainEl.addEventListener('touchstart', (e) => {
-    // Pinch (2 doigts) → on bascule vers le lightbox plein écran
     if (e.touches.length >= 2) {
       if (loupeTimer) { clearTimeout(loupeTimer); loupeTimer = null; }
       hideLoupe(); loupeActive = false;
@@ -4263,8 +4270,8 @@ function openDetail(id) {
     }
     if (e.touches.length === 1) {
       const t = e.touches[0];
+      touchStartX = t.clientX; touchStartY = t.clientY;
       const x = t.clientX, y = t.clientY;
-      // Démarre un timer ; si l'utilisateur maintient → loupe
       loupeTimer = setTimeout(() => {
         loupeActive = true;
         loupeAtPoint(x, y);
@@ -4275,9 +4282,14 @@ function openDetail(id) {
     if (loupeActive && e.touches.length === 1) {
       e.preventDefault();
       loupeAtPoint(e.touches[0].clientX, e.touches[0].clientY);
-    } else if (loupeTimer) {
-      // Le doigt a bougé avant le délai → c'est un swipe/scroll, pas un appui long
-      clearTimeout(loupeTimer); loupeTimer = null;
+    } else if (loupeTimer && e.touches.length === 1) {
+      // Cancel le timer SEULEMENT si le doigt a vraiment bougé > tolerance
+      const t = e.touches[0];
+      const dx = Math.abs(t.clientX - touchStartX);
+      const dy = Math.abs(t.clientY - touchStartY);
+      if (Math.hypot(dx, dy) > MOVE_TOLERANCE) {
+        clearTimeout(loupeTimer); loupeTimer = null;
+      }
     }
   }, { passive: false });
   function endLoupe() {
