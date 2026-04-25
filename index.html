@@ -1338,7 +1338,13 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .detail.detail-sold .detail-note { display: none; }
 
 /* Tag VENDU/SOLD : full black avec coin biseauté, identique à l'encart prix
-   des cartes archive. Caché par défaut, affiché quand .detail.detail-sold. */
+   des cartes archive. Caché par défaut, affiché quand .detail.detail-sold.
+   Ancré à la photo principale via .main-photo-wrap. */
+.detail-gallery .main-photo-wrap {
+  position: relative;
+  display: block;
+  grid-column: 1 / -1;  /* prend toute la largeur de la grille 2-col */
+}
 .vendu-badge {
   display: none;
   position: absolute;
@@ -1358,7 +1364,6 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   z-index: 5;
   pointer-events: none;
 }
-.detail-gallery { position: relative; }
 .detail.detail-sold .vendu-badge { display: inline-flex; }
 
 /* ============ LIGHTBOX ============ */
@@ -2100,9 +2105,10 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   }
   .detail-gallery .thumb:hover img { transform: none; }
 
-  /* Mobile : positionne le badge VENDU au-dessus du bandeau de thumbs (64px) */
+  /* Mobile : badge VENDU sur la photo principale, en bas à droite */
+  .detail-gallery .main-photo-wrap { grid-column: auto; }
   .vendu-badge {
-    bottom: calc(64px + 10px + 12px) !important;
+    bottom: 12px !important;
     right: 12px !important;
     pointer-events: none;
   }
@@ -4257,7 +4263,9 @@ function openDetail(id) {
   const thumbsHtml = photos.map((src, i) =>
     `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`
   ).join('');
-  gal.innerHTML = `${mainHtml}<div class="thumbs-row">${thumbsHtml}</div><span class="vendu-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>`;
+  // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
+  // soit ancré sur la photo principale (et non sur l'ensemble de la galerie).
+  gal.innerHTML = `<div class="main-photo-wrap">${mainHtml}<span class="vendu-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span></div><div class="thumbs-row">${thumbsHtml}</div>`;
 
   // ===== Articles similaires =====
   try {
