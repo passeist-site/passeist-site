@@ -6104,19 +6104,18 @@ s0.parentNode.insertBefore(s1,s0);
   // Init au load
   const initialLang = detectLang();
   applyI18n(initialLang);
-  // Bouton toggle
+  // Bouton toggle — full reload pour garantir que TOUT bascule (incluant
+  // les sections About FR/EN dupliquées + meta + JSON-LD).
   const toggle = document.getElementById('lang-toggle');
   if (toggle) {
     toggle.addEventListener('click', () => {
       const next = (window.__lang === 'fr') ? 'en' : 'fr';
-      // Met à jour l'URL avec le nouveau ?lang=
-      try {
-        const url = new URL(location.href);
-        if (next === 'fr') url.searchParams.delete('lang');
-        else url.searchParams.set('lang', 'en');
-        history.replaceState(history.state || {}, '', url.toString());
-      } catch(e){}
-      applyI18n(next);
+      try { localStorage.setItem('passeist_lang', next); } catch(e){}
+      const url = new URL(location.href);
+      if (next === 'fr') url.searchParams.delete('lang');
+      else url.searchParams.set('lang', 'en');
+      // Rechargement complet
+      location.href = url.toString();
     });
   }
   window.applyI18n = applyI18n;
