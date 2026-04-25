@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <title>Passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake</title>
-<meta name="description" content="Passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm — pièces rares chinées et authentifiées, livrées en 24-48h.">
-<meta name="keywords" content="vintage japonais, mode japonaise, archive japonais, Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Pleats Please, Kansai Yamamoto, 45rpm, Kijima Takayuki, Yoshiki Hishinuma, mode vintage Paris, archive fashion, avant-garde japonaise">
+<meta name="description" content="Passéist — friperie de luxe à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — pièces archive et avant-garde chinées et authentifiées.">
+<meta name="keywords" content="vintage, japonais, japon, archive, mode, avant-garde, Yohji Yamamoto, Yohji Yamamoto Pour Homme, Comme des Garçons, Comme des Garçons Homme Plus, Issey Miyake, Junya Watanabe, Junya Watanabe MAN, Rei Kawakubo, Sacai, Kenzo, Pleats Please, Homme Plissé, Bao Bao, 132 5. Issey Miyake, Kansai Yamamoto, Junko Koshino, Tsumori Chisato, Y-3, Y's, Ground Y, Limi Feu, Plantation, Tao, 45rpm, Kijima Takayuki, Yoshiki Hishinuma, Maison Margiela, friperie paris, friperie de luxe, friperie marais, frip paris, vetements vintage homme, vetements vintage femme, vetements japonais, marque japonaise vetement, mode vintage Paris, vintage japonais, mode japonaise, archive japonais, archive fashion, archival, archival fashion, archive piece, runway piece, pièce de défilé, preloved, seconde main, second-hand de luxe, dépôt vente, pièce collector, pièces rares, collection capsule, intemporel, timeless, conceptual fashion, mode conceptuelle, déconstruit, deconstructed, minimalisme, minimal, silhouette, iconique, Made in Japan, Tokyo, mode 90s, mode 2000s, Y2K, streetwear japonais, avant-garde japonaise">
 <meta name="robots" content="index,follow">
 <meta name="author" content="Passéist">
 <link rel="canonical" href="https://passeist.com/">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Passéist">
 <meta property="og:title" content="Passéist — Mode japonaise vintage & archive">
-<meta property="og:description" content="Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe — pièces vintage et archive japonaises chinées et authentifiées, à Paris.">
+<meta property="og:description" content="Friperie de luxe à Paris : vêtements vintage de designers japonais — Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai. Archive et avant-garde authentifiées.">
 <meta property="og:url" content="https://passeist.com/">
 <meta property="og:image" content="https://passeist.com/og.jpg">
 <meta property="og:locale" content="fr_FR">
@@ -500,6 +500,25 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   .hero::after { animation: none !important; }
 }
 .hero-tagline em { font-style: italic; font-weight: 300; }
+
+/* Bandeau mots-clés SEO sous la tagline (discret, monospace) */
+.hero-keywords {
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 1vw, 11px);
+  font-weight: 400;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-mute);
+  margin: -32px auto 36px;
+  max-width: 720px;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1.6;
+  opacity: 0; animation: heroIn 1.1s var(--ease-out) 0.65s forwards;
+}
+@media (prefers-reduced-motion: reduce) { .hero-keywords { animation: none; opacity: 1; } }
+@media (max-width: 700px) {
+  .hero-keywords { margin: -24px auto 28px; font-size: 8.5px; line-height: 1.7; padding: 0 18px; }
+}
 
 .hero-cta {
   display: inline-flex; align-items: center; gap: 10px;
@@ -2238,6 +2257,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   <div class="hero-content">
     <h1 class="hero-logo">Passéist<span class="dot">.</span></h1>
     <p class="hero-tagline"><em>Mode d'Auteur</em> japonaise.</p>
+    <p class="hero-keywords" aria-hidden="false">Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake</p>
     <button class="hero-cta" onclick="goPage('shop')"><span>Explorer</span><span class="arrow-symbol">→</span></button>
   </div>
   <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
