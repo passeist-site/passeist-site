@@ -5558,17 +5558,25 @@ s0.parentNode.insertBefore(s1,s0);
     lastY = startY;
     tracking = true;
   }, { passive: true });
+  function pageEl() {
+    // Élément qui se translate pour suivre le doigt
+    return document.body;
+  }
   document.addEventListener('touchmove', (e) => {
     if (!tracking) return;
     lastY = e.touches[0].clientY;
     const dy = lastY - startY;
     if (dy > 0) {
       const ind = ensureIndicator();
+      // La page suit le doigt avec un effet de résistance (rubber-band)
+      const pulled = Math.min(dy * 0.55, 220);
+      pageEl().style.transform = 'translate3d(0,' + pulled + 'px,0)';
+      pageEl().style.transition = 'none';
+      // Spinner — apparaît au fur et à mesure
       const progress = Math.min(1.2, dy / THRESHOLD);
-      const ty = -22 + Math.min(28, dy * 0.32);
-      const sc = Math.min(1, 0.5 + progress * 0.5);
-      ind.style.transform = 'translate3d(-50%,' + ty + 'px,0) scale(' + sc + ')';
-      ind.style.opacity = String(Math.min(0.85, dy / 60));
+      const sc = Math.min(1, 0.4 + progress * 0.6);
+      ind.style.transform = 'translate3d(-50%,0,0) scale(' + sc + ')';
+      ind.style.opacity = String(Math.min(0.9, dy / 50));
     }
   }, { passive: true });
   document.addEventListener('touchend', () => {
@@ -5576,12 +5584,22 @@ s0.parentNode.insertBefore(s1,s0);
     tracking = false;
     const dy = lastY - startY;
     const ind = indicator;
+    const pe = pageEl();
     if (dy >= THRESHOLD) {
       if (ind) { ind.classList.add('spinning'); ind.style.opacity = '1'; }
-      setTimeout(() => location.reload(), 120);
-    } else if (ind) {
-      ind.style.opacity = '0';
-      ind.style.transform = 'translate3d(-50%,-22px,0) scale(0.5)';
+      // Garde la page un peu translatée pendant le reload
+      pe.style.transition = 'transform 0.18s cubic-bezier(.2,.8,.25,1)';
+      pe.style.transform = 'translate3d(0,60px,0)';
+      setTimeout(() => location.reload(), 200);
+    } else {
+      // Rappel élastique
+      pe.style.transition = 'transform 0.32s cubic-bezier(.2,.8,.25,1)';
+      pe.style.transform = '';
+      setTimeout(() => { pe.style.transition = ''; }, 350);
+      if (ind) {
+        ind.style.opacity = '0';
+        ind.style.transform = 'translate3d(-50%,-22px,0) scale(0.4)';
+      }
     }
   });
 })();
