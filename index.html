@@ -1091,7 +1091,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 .detail-gallery img:hover { transform: translateY(-2px); }
 .detail-info { position: sticky; top: 112px; align-self: start; }
 
-/* ============ SIMILAR PRODUCTS CAROUSEL ============ */
+/* ============ SIMILAR PRODUCTS CAROUSEL — boucle infinie type hero-marquee ============ */
 .similar-section {
   border-top: 1px solid var(--line);
   padding: 32px 24px 48px;
@@ -1104,14 +1104,18 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   letter-spacing: var(--tracking-wide);
   margin-bottom: 18px;
 }
+.similar-marquee {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+.similar-marquee.dragging { cursor: grabbing; }
 .similar-track {
   display: flex; gap: 12px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-bottom: 8px;
+  will-change: transform;
 }
-.similar-track::-webkit-scrollbar { display: none; }
 .similar-card {
   flex: 0 0 180px;
   cursor: pointer;
@@ -1984,9 +1988,10 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  /* La topbar mobile fait 82px (logo + tabs sur 2 lignes) — le .detail
-     commence pile en dessous, et la photo principale colle au bord. */
-  .detail { top: 82px; }
+  /* La topbar mobile a une hauteur dynamique (logo + tabs sur 2 lignes) —
+     le .detail commence pile en dessous via la variable --actual-topbar-h
+     calculée par JS au layout. */
+  .detail { top: var(--actual-topbar-h, 82px); }
   .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
 
   /* Topbar opaque sur mobile pour que la photo qui scrolle ne soit pas
@@ -2436,10 +2441,12 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
       </div>
     </div>
   </div>
-  <!-- Carrousel articles similaires -->
+  <!-- Carrousel articles similaires (boucle infinie + tactile type hero-marquee) -->
   <section class="similar-section" id="d-similar" hidden>
     <div class="similar-title">Articles similaires</div>
-    <div class="similar-track" id="d-similar-track"></div>
+    <div class="similar-marquee" id="d-similar-marquee">
+      <div class="similar-track" id="d-similar-track"></div>
+    </div>
   </section>
 </div>
 
@@ -4154,22 +4161,27 @@ function openDetail(id) {
         })
         .filter(o => o.s > 0)
         .sort((a, b) => b.s - a.s);
-      const top = candidates.slice(0, 8).map(o => o.x);
+      const top = candidates.slice(0, 12).map(o => o.x);
       if (top.length > 0) {
-        simTrack.innerHTML = top.map(x => {
+        const cardsHtml = top.map(x => {
           const src = imgUrl(x, 0);
           return `<div class="similar-card" data-id="${x.id}">
-            <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none'">
+            <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.parentElement.style.display='none'">
             <div class="similar-card-brand">${x.brand}</div>
             <div class="similar-card-name">${x.type}</div>
             <div class="similar-card-price">${x.price} €</div>
           </div>`;
         }).join('');
+        // Duplique les cards pour boucle infinie sans saut visible
+        simTrack.innerHTML = cardsHtml + cardsHtml;
         simTrack.querySelectorAll('.similar-card').forEach(c => {
-          c.addEventListener('click', () => {
+          c.addEventListener('click', (e) => {
+            // N'ouvre pas la fiche si l'utilisateur a vraiment fait un drag
+            if (window.__simMarqueeState && window.__simMarqueeState.dragged) {
+              e.preventDefault(); e.stopPropagation(); return;
+            }
             const id = c.dataset.id;
             if (id && typeof openDetail === 'function') {
-              // Reset scroll then open new detail
               const detailEl = document.getElementById('detail');
               if (detailEl) detailEl.scrollTop = 0;
               openDetail(id);
@@ -4177,6 +4189,10 @@ function openDetail(id) {
           });
         });
         simSection.hidden = false;
+        // Lance la boucle infinie + drag (fonction définie ailleurs)
+        if (typeof window.startSimilarMarqueeLoop === 'function') {
+          requestAnimationFrame(() => window.startSimilarMarqueeLoop());
+        }
       } else {
         simSection.hidden = true;
         simTrack.innerHTML = '';
@@ -4187,7 +4203,93 @@ function openDetail(id) {
   const mainEl = gal.querySelector('.main-photo');
   const thumbs = gal.querySelectorAll('.thumb');
   let curIdx = 0;
-  mainEl.addEventListener('click', () => openLB(curIdx));
+  // Loupe sur appui long mobile (option B) : maintenir 1 doigt → loupe ronde ×2.5
+  // qui suit le doigt et révèle un détail zoomé. Relâcher = la loupe disparaît.
+  let loupeEl = null, loupeTimer = null, loupeActive = false;
+  const LOUPE_DELAY = 280;     // ms d'appui avant déclenchement
+  const LOUPE_SCALE = 2.5;
+  const LOUPE_SIZE = 180;      // diamètre px
+  function ensureLoupe() {
+    if (loupeEl) return loupeEl;
+    loupeEl = document.createElement('div');
+    loupeEl.className = 'loupe';
+    loupeEl.style.cssText = 'position:fixed;width:' + LOUPE_SIZE + 'px;height:' + LOUPE_SIZE + 'px;' +
+      'border-radius:50%;border:1px solid rgba(10,10,8,0.35);box-shadow:0 8px 24px rgba(0,0,0,0.18);' +
+      'background-color:#fff;background-repeat:no-repeat;pointer-events:none;z-index:9990;' +
+      'opacity:0;transform:translate3d(0,0,0) scale(0.6);' +
+      'transition:opacity 0.16s ease,transform 0.16s cubic-bezier(.2,.8,.25,1);' +
+      'will-change:transform,opacity,background-position;';
+    document.body.appendChild(loupeEl);
+    return loupeEl;
+  }
+  function loupeAtPoint(clientX, clientY) {
+    const r = mainEl.getBoundingClientRect();
+    const x = clientX - r.left;
+    const y = clientY - r.top;
+    if (x < 0 || y < 0 || x > r.width || y > r.height) return false;
+    const lp = ensureLoupe();
+    // Background = la photo principale ; affichage en taille r.width × LOUPE_SCALE
+    const bgW = r.width * LOUPE_SCALE;
+    const bgH = r.height * LOUPE_SCALE;
+    lp.style.backgroundImage = 'url("' + mainEl.src + '")';
+    lp.style.backgroundSize = bgW + 'px ' + bgH + 'px';
+    // Position dans le bg pour que le centre de la loupe = point doigt zoomé
+    const bgX = -(x * LOUPE_SCALE - LOUPE_SIZE / 2);
+    const bgY = -(y * LOUPE_SCALE - LOUPE_SIZE / 2);
+    lp.style.backgroundPosition = bgX + 'px ' + bgY + 'px';
+    // Position de la loupe : décalée vers le haut pour ne pas être cachée par le doigt
+    const lx = clientX - LOUPE_SIZE / 2;
+    const ly = clientY - LOUPE_SIZE - 20;
+    lp.style.transform = 'translate3d(' + lx + 'px, ' + ly + 'px, 0) scale(1)';
+    lp.style.opacity = '1';
+    return true;
+  }
+  function hideLoupe() {
+    if (!loupeEl) return;
+    loupeEl.style.opacity = '0';
+    loupeEl.style.transform = loupeEl.style.transform.replace('scale(1)', 'scale(0.6)');
+  }
+  mainEl.addEventListener('click', () => {
+    if (loupeActive) return;
+    openLB(curIdx);
+  });
+  mainEl.addEventListener('touchstart', (e) => {
+    // Pinch (2 doigts) → on bascule vers le lightbox plein écran
+    if (e.touches.length >= 2) {
+      if (loupeTimer) { clearTimeout(loupeTimer); loupeTimer = null; }
+      hideLoupe(); loupeActive = false;
+      e.preventDefault(); openLB(curIdx);
+      return;
+    }
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      const x = t.clientX, y = t.clientY;
+      // Démarre un timer ; si l'utilisateur maintient → loupe
+      loupeTimer = setTimeout(() => {
+        loupeActive = true;
+        loupeAtPoint(x, y);
+      }, LOUPE_DELAY);
+    }
+  }, { passive: true });
+  mainEl.addEventListener('touchmove', (e) => {
+    if (loupeActive && e.touches.length === 1) {
+      e.preventDefault();
+      loupeAtPoint(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (loupeTimer) {
+      // Le doigt a bougé avant le délai → c'est un swipe/scroll, pas un appui long
+      clearTimeout(loupeTimer); loupeTimer = null;
+    }
+  }, { passive: false });
+  function endLoupe() {
+    if (loupeTimer) { clearTimeout(loupeTimer); loupeTimer = null; }
+    if (loupeActive) {
+      hideLoupe();
+      // Bloque le click qui suivrait le touchend
+      setTimeout(() => { loupeActive = false; }, 100);
+    }
+  }
+  mainEl.addEventListener('touchend', endLoupe);
+  mainEl.addEventListener('touchcancel', endLoupe);
   thumbs.forEach(t => {
     t.addEventListener('click', (e) => {
       const idx = parseInt(t.dataset.idx);
@@ -4829,7 +4931,131 @@ function startMarqueeLoop(track) {
   requestAnimationFrame(step);
 }
 
+// ============ SIMILAR PRODUCTS MARQUEE — même drift + drag + inertie + boucle infinie ============
+window.__simMarqueeState = {
+  offset: 0, baseSpeed: -22, half: 0, lastT: 0,
+  dragging: false, dragged: false, dragStartX: 0, dragStartOffset: 0,
+  inertia: 0, _lastX: 0, _lastT: 0, _velocity: 0,
+  rafId: null, attached: false,
+};
+window.startSimilarMarqueeLoop = function() {
+  const track = document.getElementById('d-similar-track');
+  const marquee = document.getElementById('d-similar-marquee');
+  if (!track || !marquee) return;
+  const st = window.__simMarqueeState;
+  // Reset offset à chaque ouverture (nouvelle fiche = nouveaux items)
+  st.offset = 0; st.inertia = 0;
 
+  const measure = () => { st.half = track.scrollWidth / 2; };
+  measure();
+  // Recompute après load images
+  track.querySelectorAll('img').forEach(img => {
+    if (img.complete) { measure(); return; }
+    img.addEventListener('load', measure, { once: true });
+  });
+
+  if (!st.attached) {
+    // Mouse drag
+    marquee.addEventListener('mousedown', (e) => {
+      st.dragging = true; st.dragged = false;
+      st.dragStartX = e.clientX; st.dragStartOffset = st.offset;
+      marquee.classList.add('dragging');
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!st.dragging) return;
+      const x = e.clientX;
+      const dx = (x - st.dragStartX) * 1.9;
+      if (Math.abs(dx) > 4) st.dragged = true;
+      st.offset = st.dragStartOffset + dx;
+      const now = performance.now();
+      if (st._lastT && now > st._lastT) {
+        st._velocity = (x - (st._lastX || x)) * 1.9 / ((now - st._lastT) / 1000);
+      }
+      st._lastX = x; st._lastT = now;
+    });
+    window.addEventListener('mouseup', () => {
+      if (!st.dragging) return;
+      st.dragging = false;
+      marquee.classList.remove('dragging');
+      st.inertia = st._velocity || 0;
+      st._velocity = 0; st._lastT = 0;
+      setTimeout(() => { st.dragged = false; }, 50);
+    });
+    // Touch
+    marquee.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      st.dragging = true; st.dragged = false;
+      st.dragStartX = e.touches[0].clientX; st.dragStartOffset = st.offset;
+    }, { passive: true });
+    marquee.addEventListener('touchmove', (e) => {
+      if (!st.dragging) return;
+      const x = e.touches[0].clientX;
+      const dx = (x - st.dragStartX) * 1.9;
+      if (Math.abs(dx) > 4) st.dragged = true;
+      st.offset = st.dragStartOffset + dx;
+      const now = performance.now();
+      if (st._lastT && now > st._lastT) {
+        st._velocity = (x - (st._lastX || x)) * 1.9 / ((now - st._lastT) / 1000);
+      }
+      st._lastX = x; st._lastT = now;
+    }, { passive: true });
+    marquee.addEventListener('touchend', () => {
+      if (!st.dragging) return;
+      st.dragging = false;
+      st.inertia = st._velocity || 0;
+      st._velocity = 0; st._lastT = 0;
+      setTimeout(() => { st.dragged = false; }, 50);
+    });
+    // Wheel horizontal
+    marquee.addEventListener('wheel', (e) => {
+      const dx = e.deltaX, dy = e.deltaY;
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+      e.preventDefault();
+      st.offset -= dx;
+    }, { passive: false });
+    st.attached = true;
+  }
+
+  // RAF loop
+  function simStep(t) {
+    if (!st.lastT) st.lastT = t;
+    const dt = (t - st.lastT) / 1000;
+    st.lastT = t;
+    if (!st.dragging) {
+      st.offset += st.baseSpeed * dt;
+    }
+    if (!st.dragging && Math.abs(st.inertia || 0) > 2) {
+      st.offset += (st.inertia || 0) * dt;
+      st.inertia *= 0.94;
+    } else if (st.inertia) { st.inertia = 0; }
+    if (st.half > 0) {
+      if (st.offset <= -st.half) st.offset += st.half;
+      else if (st.offset > 0) st.offset -= st.half;
+    }
+    track.style.transform = `translate3d(${st.offset}px, 0, 0)`;
+    st.rafId = requestAnimationFrame(simStep);
+  }
+  if (st.rafId) cancelAnimationFrame(st.rafId);
+  st.lastT = 0;
+  st.rafId = requestAnimationFrame(simStep);
+};
+
+// ============ MESURE HAUTEUR TOPBAR MOBILE — bind sur --actual-topbar-h ============
+(function(){
+  const tb = document.querySelector('.topbar');
+  if (!tb) return;
+  function updateVar() {
+    const h = Math.round(tb.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--actual-topbar-h', h + 'px');
+  }
+  updateVar();
+  window.addEventListener('resize', updateVar);
+  // Re-mesure une fois les images du topbar / fonts chargées
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateVar);
+  setTimeout(updateVar, 300);
+  setTimeout(updateVar, 1200);
+})();
 
 // ============ MOBILE NAV TOGGLE ============
 (function(){
