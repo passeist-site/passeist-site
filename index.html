@@ -1060,19 +1060,15 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   display: block;
   transition: transform 0.4s var(--ease-out);
 }
-/* Photo principale : taille naturelle, sticky sous la topbar pour rester
-   visible quand on scrolle (desktop). */
+/* Photo principale : taille naturelle, pas de crop. Scroll libre :
+   en haut de page elle est alignée sous la topbar, et passe sous la
+   barre quand on descend (comportement scroll normal). */
 .detail-gallery > img:first-child,
 .detail-gallery .main-photo {
   grid-column: 1 / -1;
   aspect-ratio: auto;
   height: auto;
   object-fit: initial;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--bg);
-  align-self: start;
 }
 /* Photos secondaires : bordures blanches rognées server-side (wsrv.nl?trim=10).
    L'image s'affiche dans sa proportion naturelle — en général portrait ~1070x1600
@@ -5518,104 +5514,6 @@ s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
 s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!-- Pull-to-refresh mobile : swipe haut → bas en haut de page = reload -->
-<script>
-(function(){
-  if (!('ontouchstart' in window)) return;
-  let startY = 0, lastY = 0, tracking = false, indicator = null;
-  const THRESHOLD = 150;
-  function ensureIndicator() {
-    if (indicator) return indicator;
-    indicator = document.createElement('div');
-    indicator.id = 'ptr-indicator';
-    // Petit anneau ultra-discret, hardware-accelerated
-    indicator.style.cssText = 'position:fixed;top:12px;left:50%;width:18px;height:18px;border-radius:50%;' +
-      'background:transparent;border:1px solid rgba(10,10,8,0.35);border-top-color:transparent;' +
-      'transform:translate3d(-50%,-22px,0) scale(0.5);transform-origin:center;' +
-      'transition:transform 0.22s cubic-bezier(.2,.8,.25,1), opacity 0.22s ease;' +
-      'opacity:0;z-index:9999;pointer-events:none;will-change:transform,opacity;';
-    document.body.appendChild(indicator);
-    return indicator;
-  }
-  // Spin en boucle fluide quand le rafraîchissement se déclenche
-  if (!document.getElementById('ptr-style')) {
-    const st = document.createElement('style');
-    st.id = 'ptr-style';
-    st.textContent = '@keyframes ptr-spin { from { transform: translate3d(-50%, 0, 0) rotate(0deg); } to { transform: translate3d(-50%, 0, 0) rotate(360deg); } } #ptr-indicator.spinning { animation: ptr-spin 0.65s linear infinite; transition: none; }';
-    document.head.appendChild(st);
-  }
-  function activeScrollEl() {
-    // Si la fiche détail est ouverte, le scroll est sur .detail
-    if (document.body.classList.contains('detail-open')) {
-      return document.getElementById('detail');
-    }
-    return null; // sinon : window/document
-  }
-  function activeScrollTop() {
-    const el = activeScrollEl();
-    if (el) return el.scrollTop || 0;
-    return window.scrollY || window.pageYOffset || 0;
-  }
-  document.addEventListener('touchstart', (e) => {
-    if (activeScrollTop() > 0) return;
-    startY = e.touches[0].clientY;
-    lastY = startY;
-    tracking = true;
-  }, { passive: true });
-  // Éléments translatés pour suivre le doigt : body ET topbar (fixed)
-  // pour que le HAUT de la page descende aussi avec le geste.
-  function applyTranslate(y, useTransition) {
-    const t = 'translate3d(0,' + y + 'px,0)';
-    document.body.style.transform = t;
-    document.body.style.transition = useTransition ? 'transform 0.32s cubic-bezier(.2,.8,.25,1)' : 'none';
-    const tb = document.querySelector('.topbar');
-    if (tb) {
-      tb.style.transform = t;
-      tb.style.transition = useTransition ? 'transform 0.32s cubic-bezier(.2,.8,.25,1)' : 'none';
-    }
-  }
-  document.addEventListener('touchmove', (e) => {
-    if (!tracking) return;
-    lastY = e.touches[0].clientY;
-    const dy = lastY - startY;
-    if (dy > 0) {
-      const ind = ensureIndicator();
-      // La page (body + topbar) suit le doigt avec résistance rubber-band
-      const pulled = Math.min(dy * 0.55, 220);
-      applyTranslate(pulled, false);
-      // Spinner — apparaît au fur et à mesure
-      const progress = Math.min(1.2, dy / THRESHOLD);
-      const sc = Math.min(1, 0.4 + progress * 0.6);
-      ind.style.transform = 'translate3d(-50%,0,0) scale(' + sc + ')';
-      ind.style.opacity = String(Math.min(0.9, dy / 50));
-    }
-  }, { passive: true });
-  document.addEventListener('touchend', () => {
-    if (!tracking) return;
-    tracking = false;
-    const dy = lastY - startY;
-    const ind = indicator;
-    if (dy >= THRESHOLD) {
-      if (ind) { ind.classList.add('spinning'); ind.style.opacity = '1'; }
-      applyTranslate(60, true);
-      setTimeout(() => location.reload(), 200);
-    } else {
-      // Rappel élastique vers position 0
-      applyTranslate(0, true);
-      setTimeout(() => {
-        document.body.style.transition = '';
-        document.body.style.transform = '';
-        const tb = document.querySelector('.topbar');
-        if (tb) { tb.style.transition = ''; tb.style.transform = ''; }
-      }, 350);
-      if (ind) {
-        ind.style.opacity = '0';
-        ind.style.transform = 'translate3d(-50%,-22px,0) scale(0.4)';
-      }
-    }
-  });
 })();
 </script>
 </body>
