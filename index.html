@@ -3973,12 +3973,13 @@ function renderFilters() {
   catCounts.__allTotal    = totalCat;
   colorCounts.__allTotal  = totalColor;
 
-  // Sync ALL desktop + mobile selects (gender/brand/cat/color)
+  // Sync ALL desktop + mobile selects (gender/brand/cat/color) — labels traduits via i18n
+  const _t = (typeof window.t === 'function') ? window.t : ((k) => k);
   const dimensions = [
-    ['gender-select',  'm-gender-select',  genderList, activeGender, 'Tous genres',     genderCounts, g => g === '' ? 'Accessoires' : g],
-    ['brand-select',   'm-brand-select',   brandList,  activeBrand,  'Toutes marques',  brandCounts,  null],
-    ['cat-select',     'm-cat-select',     catList,    activeCat,    'Toutes catégories', catCounts,  null],
-    ['color-select',   'm-color-select',   colorList,  activeColor,  'Toutes couleurs', colorCounts,  null],
+    ['gender-select',  'm-gender-select',  genderList, activeGender, _t('filter.all_genders'),  genderCounts, g => _t('gender.' + (g || ''))],
+    ['brand-select',   'm-brand-select',   brandList,  activeBrand,  _t('filter.all_brands'),   brandCounts,  null],
+    ['cat-select',     'm-cat-select',     catList,    activeCat,    _t('filter.all_cats'),     catCounts,    c => _t('cat.' + c)],
+    ['color-select',   'm-color-select',   colorList,  activeColor,  _t('filter.all_colors'),   colorCounts,  c => _t('color.' + c)],
   ];
   dimensions.forEach(([dId, mId, list, active, allLabel, counts, labelMap]) => {
     const html = optionsHTML(list, active, allLabel, counts, labelMap);
@@ -5821,6 +5822,15 @@ s0.parentNode.insertBefore(s1,s0);
       'cat.Hauts': 'Hauts', 'cat.Bas': 'Bas', 'cat.Vestes': 'Vestes',
       'cat.Maille': 'Maille', 'cat.Robes': 'Robes', 'cat.Chaussures': 'Chaussures',
       'cat.Accessoires': 'Accessoires',
+      // Couleurs
+      'color.Noir': 'Noir', 'color.Anthracite': 'Anthracite', 'color.Marine': 'Marine',
+      'color.Indigo': 'Indigo', 'color.Bleu': 'Bleu', 'color.Gris': 'Gris',
+      'color.Blanc': 'Blanc', 'color.Beige': 'Beige', 'color.Camel': 'Camel',
+      'color.Écru': 'Écru', 'color.Ivoire': 'Ivoire', 'color.Crème': 'Crème',
+      'color.Marron': 'Marron', 'color.Bordeaux': 'Bordeaux', 'color.Rouge': 'Rouge',
+      'color.Rose': 'Rose', 'color.Violet': 'Violet', 'color.Vert': 'Vert',
+      'color.Kaki': 'Kaki', 'color.Jaune': 'Jaune', 'color.Orange': 'Orange',
+      'color.Métal': 'Métal', 'color.Multicolore': 'Multicolore', 'color.Autre': 'Autre',
     },
     en: {
       title: 'Passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
@@ -5852,6 +5862,14 @@ s0.parentNode.insertBefore(s1,s0);
       'cat.Hauts': 'Tops', 'cat.Bas': 'Bottoms', 'cat.Vestes': 'Jackets',
       'cat.Maille': 'Knits', 'cat.Robes': 'Dresses', 'cat.Chaussures': 'Shoes',
       'cat.Accessoires': 'Accessories',
+      'color.Noir': 'Black', 'color.Anthracite': 'Charcoal', 'color.Marine': 'Navy',
+      'color.Indigo': 'Indigo', 'color.Bleu': 'Blue', 'color.Gris': 'Grey',
+      'color.Blanc': 'White', 'color.Beige': 'Beige', 'color.Camel': 'Camel',
+      'color.Écru': 'Ecru', 'color.Ivoire': 'Ivory', 'color.Crème': 'Cream',
+      'color.Marron': 'Brown', 'color.Bordeaux': 'Burgundy', 'color.Rouge': 'Red',
+      'color.Rose': 'Pink', 'color.Violet': 'Purple', 'color.Vert': 'Green',
+      'color.Kaki': 'Khaki', 'color.Jaune': 'Yellow', 'color.Orange': 'Orange',
+      'color.Métal': 'Metal', 'color.Multicolore': 'Multicolour', 'color.Autre': 'Other',
     }
   };
 
