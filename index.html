@@ -1060,13 +1060,19 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   display: block;
   transition: transform 0.4s var(--ease-out);
 }
-/* Photo principale : taille naturelle, pas de crop */
+/* Photo principale : taille naturelle, sticky sous la topbar pour rester
+   visible quand on scrolle (desktop). */
 .detail-gallery > img:first-child,
 .detail-gallery .main-photo {
   grid-column: 1 / -1;
   aspect-ratio: auto;
   height: auto;
   object-fit: initial;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
+  align-self: start;
 }
 /* Photos secondaires : bordures blanches rognées server-side (wsrv.nl?trim=10).
    L'image s'affiche dans sa proportion naturelle — en général portrait ~1070x1600
