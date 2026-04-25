@@ -239,7 +239,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   justify-self: start;
   cursor: pointer;
 }
-.logo .dot { display: inline-block; color: #3c5674; font-weight: 400; font-size: 1.4em; line-height: 0.6; vertical-align: baseline; }
+.logo .dot { display: inline-block; color: #5a7593; font-weight: 400; font-size: 1.4em; line-height: 0.6; vertical-align: baseline; }
 .top-nav {
   display: flex; gap: 24px; justify-self: center;
   font-size: 13px;
@@ -499,7 +499,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   opacity: 0;
   animation: heroIn 1.3s var(--ease-out) 0.3s forwards;
 }
-.hero-logo .dot { display: inline-block; color: #3c5674; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
+.hero-logo .dot { display: inline-block; color: #5a7593; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .hero-sub {
   font-size: clamp(14px, 1.1vw, 16px);
   color: var(--text-dim); max-width: 520px;
@@ -523,25 +523,6 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   .hero::after { animation: none !important; }
 }
 .hero-tagline em { font-style: italic; font-weight: 300; }
-
-/* Bandeau mots-clés SEO sous la tagline (discret, monospace) */
-.hero-keywords {
-  font-family: var(--font-mono);
-  font-size: clamp(9px, 1vw, 11px);
-  font-weight: 400;
-  letter-spacing: var(--tracking-wide);
-  color: var(--text-mute);
-  margin: -32px auto 36px;
-  max-width: 720px;
-  text-align: center;
-  text-transform: uppercase;
-  line-height: 1.6;
-  opacity: 0; animation: heroIn 1.1s var(--ease-out) 0.65s forwards;
-}
-@media (prefers-reduced-motion: reduce) { .hero-keywords { animation: none; opacity: 1; } }
-@media (max-width: 700px) {
-  .hero-keywords { margin: -24px auto 28px; font-size: 8.5px; line-height: 1.7; padding: 0 18px; }
-}
 
 .hero-cta {
   display: inline-flex; align-items: center; gap: 10px;
@@ -1567,7 +1548,7 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   color: var(--ink); letter-spacing: -0.04em;
   text-align: center; margin: auto 0 24px;
 }
-.about-logo-top .dot { color: #3c5674; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
+.about-logo-top .dot { color: #5a7593; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
   font-family: var(--font-sans);
   font-size: clamp(28px, 3.5vw, 42px); font-weight: 300;
@@ -2283,7 +2264,6 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   <div class="hero-content">
     <h1 class="hero-logo">Passéist<span class="dot">.</span></h1>
     <p class="hero-tagline"><em>Mode d'Auteur</em> japonaise.</p>
-    <p class="hero-keywords" aria-hidden="false">Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake</p>
     <button class="hero-cta" onclick="goPage('shop')"><span>Explorer</span><span class="arrow-symbol">→</span></button>
   </div>
   <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
@@ -4059,13 +4039,23 @@ function renderGrid() {
       return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
     });
   }
-  const parts = [];
+  let parts = [];
   if (activeGender !== 'all') parts.push(activeGender || 'Accessoires');
   if (activeBrand !== 'all') parts.push(activeBrand);
   if (activeCat !== 'all') parts.push(activeCat);
-  const defaultTitle = activeView === 'archive' ? 'Archive · Pièces vendues'
-    : activeView === 'favorites' ? 'Mes favoris'
-    : 'Tous les articles';
+  const _t = (typeof window.t === 'function') ? window.t : null;
+  const _tx = (key, fallback) => _t ? _t(key) : fallback;
+  // Re-traduit les parts (genre, catégorie) selon la langue active
+  parts = parts.map(part => {
+    if (part === 'Femme' || part === 'Homme' || part === 'Accessoires') return _tx('gender.' + (part === 'Accessoires' ? '' : part), part);
+    if (['Hauts','Bas','Vestes','Maille','Robes','Chaussures','Accessoires'].includes(part)) return _tx('cat.' + part, part);
+    return part;
+  });
+  const defaultTitle = activeView === 'archive'
+      ? _tx('archive.title', 'Archive · Pièces vendues')
+    : activeView === 'favorites'
+      ? _tx('favorites.title', 'Mes favoris')
+      : _tx('shop.title', 'Tous les articles');
   const baseTitle = parts.length ? parts.join(' · ') : defaultTitle;
   const showCount = parts.length > 0 || !!activeSearch;
   document.getElementById('shop-title').textContent = showCount
@@ -5809,7 +5799,7 @@ s0.parentNode.insertBefore(s1,s0);
       'hero.cta': 'Explorer',
       'shop.title': 'Tous les articles',
       'archive.title': 'Archive · Pièces vendues',
-      'favorites.title': 'Favoris',
+      'favorites.title': 'Mes favoris',
       'detail.size': 'Taille', 'detail.gender': 'Genre', 'detail.condition': 'État',
       'detail.condition.value': 'Très bon état',
       'detail.cart': 'Ajouter au panier',
@@ -5826,6 +5816,11 @@ s0.parentNode.insertBefore(s1,s0);
       'sort.price_desc': 'Prix décroissant', 'sort.random': 'Aléatoire',
       'cart.title': 'Panier', 'cart.total': 'Total',
       'sold': 'Vendu', 'vendu.badge': 'VENDU',
+      // Termes filtre dynamiques (genre, catégorie) — passés tels quels en FR
+      'gender.Femme': 'Femme', 'gender.Homme': 'Homme', 'gender.': 'Accessoires',
+      'cat.Hauts': 'Hauts', 'cat.Bas': 'Bas', 'cat.Vestes': 'Vestes',
+      'cat.Maille': 'Maille', 'cat.Robes': 'Robes', 'cat.Chaussures': 'Chaussures',
+      'cat.Accessoires': 'Accessoires',
     },
     en: {
       title: 'Passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
@@ -5836,7 +5831,7 @@ s0.parentNode.insertBefore(s1,s0);
       'hero.cta': 'Explore',
       'shop.title': 'All items',
       'archive.title': 'Archive · Sold pieces',
-      'favorites.title': 'Favorites',
+      'favorites.title': 'My favorites',
       'detail.size': 'Size', 'detail.gender': 'Gender', 'detail.condition': 'Condition',
       'detail.condition.value': 'Very good condition',
       'detail.cart': 'Add to cart',
@@ -5853,6 +5848,10 @@ s0.parentNode.insertBefore(s1,s0);
       'sort.price_desc': 'Price high to low', 'sort.random': 'Random',
       'cart.title': 'Cart', 'cart.total': 'Total',
       'sold': 'Sold', 'vendu.badge': 'SOLD',
+      'gender.Femme': 'Women', 'gender.Homme': 'Men', 'gender.': 'Accessories',
+      'cat.Hauts': 'Tops', 'cat.Bas': 'Bottoms', 'cat.Vestes': 'Jackets',
+      'cat.Maille': 'Knits', 'cat.Robes': 'Dresses', 'cat.Chaussures': 'Shoes',
+      'cat.Accessoires': 'Accessories',
     }
   };
 
@@ -5902,8 +5901,6 @@ s0.parentNode.insertBefore(s1,s0);
     // Hero
     const ht = document.querySelector('.hero-tagline');
     if (ht) ht.innerHTML = t('hero.tagline.html');
-    const hk = document.querySelector('.hero-keywords');
-    if (hk) hk.textContent = t('hero.keywords');
     const hcta = document.querySelector('.hero-cta span:not(.arrow-symbol)');
     if (hcta) hcta.textContent = t('hero.cta');
     // Detail static
