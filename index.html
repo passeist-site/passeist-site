@@ -1325,14 +1325,14 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   cursor: zoom-in;
   transition: transform 0.45s cubic-bezier(.4, 0, .2, 1);
   will-change: transform;
-  /* L'image passe AU-DESSUS des bandes de navigation (z-index:2).
-     → clic au centre de l'image = zoom ; clic sur les côtés (hors image) = nav. */
+  /* L'image passe AU-DESSUS des bandes de navigation (z-index:2). */
   position: relative; z-index: 2;
+  /* touch-action: none pour que notre JS gère le pinch (sinon le navigateur
+     intercepte et zoome toute la page au lieu de l'image). */
+  touch-action: none;
+  -ms-touch-action: none;
 }
-.lightbox img.zoomed {
-  cursor: zoom-out;
-  touch-action: none; /* indispensable pour pan tactile */
-}
+.lightbox img.zoomed { cursor: zoom-out; }
 @keyframes lbIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 .lb-close {
   position: absolute; top: 28px; right: 32px;
@@ -5519,17 +5519,17 @@ s0.parentNode.insertBefore(s1,s0);
 (function(){
   if (!('ontouchstart' in window)) return;
   let startY = 0, lastY = 0, tracking = false, indicator = null;
-  const THRESHOLD = 90;
+  const THRESHOLD = 150;
   function ensureIndicator() {
     if (indicator) return indicator;
     indicator = document.createElement('div');
     indicator.id = 'ptr-indicator';
     // Petit anneau ultra-discret, hardware-accelerated
-    indicator.style.cssText = 'position:fixed;top:88px;left:50%;width:18px;height:18px;border-radius:50%;' +
+    indicator.style.cssText = 'position:fixed;top:12px;left:50%;width:18px;height:18px;border-radius:50%;' +
       'background:transparent;border:1px solid rgba(10,10,8,0.35);border-top-color:transparent;' +
       'transform:translate3d(-50%,-22px,0) scale(0.5);transform-origin:center;' +
       'transition:transform 0.22s cubic-bezier(.2,.8,.25,1), opacity 0.22s ease;' +
-      'opacity:0;z-index:9998;pointer-events:none;will-change:transform,opacity;';
+      'opacity:0;z-index:9999;pointer-events:none;will-change:transform,opacity;';
     document.body.appendChild(indicator);
     return indicator;
   }
