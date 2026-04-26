@@ -242,9 +242,11 @@ async def main():
             print(f'    new_id={e["id"]}  stem={e["stem"]}{tag}')
             print(f'      {e["url"]}')
 
-    # Write report to disk
-    os.makedirs('/sessions/sharp-vibrant-turing/sync_reports', exist_ok=True)
-    report_path = f'/sessions/sharp-vibrant-turing/sync_reports/test_manual_{int(time.time())}.json'
+    # Write report to disk — utilise SYNC_REPORT_DIR si défini (GitHub Actions),
+    # sinon /sessions/.../sync_reports/ pour les runs Cowork
+    REPORT_DIR = os.environ.get('SYNC_REPORT_DIR', '/sessions/sharp-vibrant-turing/sync_reports')
+    os.makedirs(REPORT_DIR, exist_ok=True)
+    report_path = os.path.join(REPORT_DIR, f'sync_{int(time.time())}.json')
     with open(report_path, 'w') as f:
         json.dump({
             'timestamp': time.time(),

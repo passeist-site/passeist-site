@@ -50,11 +50,14 @@ jobs:
 
       - name: Run sync
         id: sync
+        env:
+          SYNC_REPORT_DIR: /tmp/sync_reports
         run: |
           python tools/synchro_vestiaire.py | tee /tmp/sync.log
           # Extrait la dernière ligne "Rapport enregistré → /path/to/json"
           REPORT=$(grep -oP 'Rapport enregistré → \K\S+' /tmp/sync.log | tail -1)
           echo "report=$REPORT" >> $GITHUB_OUTPUT
+          echo "Report file: $REPORT"
 
       - name: Upload report artifact
         if: steps.sync.outputs.report
