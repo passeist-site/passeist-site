@@ -175,6 +175,9 @@ def main():
     vc_brand = (meta.get('brand') or {}).get('name', '')
     ptype = (meta.get('name') or '').strip()
     size = (meta.get('size') or {}).get('size', '')
+    # Retire "International" et variantes (suffixe Vestiaire inutile, cf TASKS.md 26/04)
+    import re as _re
+    size = _re.sub(r'\s*International(e|s)?\b\s*', '', size, flags=_re.IGNORECASE).strip()
     color = (meta.get('color') or {}).get('name', '')
     price_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = price_cents // 100
