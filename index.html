@@ -4546,12 +4546,8 @@ function openDetail(id) {
       mDidSwipe = false;
     }
   });
-  mainEl.addEventListener('click', (e) => {
-    // Ignore le click si on vient juste de pincher OU swiper
-    if (mDidPinch) { mDidPinch = false; e.preventDefault(); return; }
-    if (mScale > 1) { e.preventDefault(); return; }
-    openLB(curIdx);
-  });
+  // Pas de handler click qui ouvre la lightbox — Tom veut le zoom direct
+  // (pinch ×4) sans le déploiement par clic. Le clic est neutre maintenant.
   thumbs.forEach(t => {
     t.addEventListener('click', (e) => {
       const idx = parseInt(t.dataset.idx);
