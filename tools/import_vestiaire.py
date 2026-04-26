@@ -230,6 +230,30 @@ def main():
         print(f'{item_id}: aucune photo téléchargeable → EXIT 3', file=sys.stderr)
         sys.exit(3)
 
+    # === Traduction FR → EN automatique (Google Translate via deep-translator) ===
+    # Si deep-translator dispo, traduit type/desc/size en EN. Sinon laisse vide
+    # (sera traduit en batch plus tard via translate_descs.py / translate_types_sizes.py).
+    type_en, desc_en, size_en = '', '', ''
+    try:
+        from deep_translator import GoogleTranslator
+        tr = GoogleTranslator(source='fr', target='en')
+        if ptype:
+            try: type_en = tr.translate(ptype) or ''
+            except: pass
+        if desc:
+            try: desc_en = tr.translate(desc) or ''
+            except: pass
+        # Size : pas la peine de traduire les tokens courts (ils restent identiques en EN)
+        # Mais on remplace "Taille unique" → "One size"
+        if size:
+            if 'taille unique' in size.lower():
+                size_en = re.sub(r'taille unique', 'One size', size, flags=re.IGNORECASE)
+            else:
+                size_en = size  # XS/S/M/L/XL/XXL/numériques sont identiques EN
+        print(f'  traduction EN : type_en={type_en[:40]}... desc_en={desc_en[:40]}...')
+    except ImportError:
+        print('  ⚠ deep-translator pas installé, type_en/desc_en restent vides')
+
     # === Build PRODUCTS entry ===
     new_entry = {
         'id': item_id,
@@ -243,6 +267,9 @@ def main():
         'slug': site_slug,
         'n': good,
         'desc': desc,
+        'desc_en': desc_en,
+        'type_en': type_en,
+        'size_en': size_en,
     }
 
     # Insère au début de PRODUCTS (pour qu'il soit listé en premier)

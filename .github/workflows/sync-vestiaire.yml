@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Playwright + deps
         run: |
-          pip install playwright cloudscraper pillow
+          pip install playwright cloudscraper pillow deep-translator
           playwright install --with-deps chromium
 
       - name: Patch script with secrets
