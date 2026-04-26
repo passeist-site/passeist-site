@@ -3766,6 +3766,22 @@ function getGender(p) {
   if (g === 'f') return 'Femme';
   return g;
 }
+
+// Map abréviations tailles vers le nom complet (XS→Extra Small, etc.)
+// Préserve les tokens numériques et autres mots (ex: "M International" → "Medium International")
+window.formatSize = function(size) {
+  if (!size) return size || '';
+  const map = {
+    'XXL': 'Extra Extra Large',
+    'XL': 'Extra Large',
+    'XS': 'Extra Small',
+    'S': 'Small',
+    'M': 'Medium',
+    'L': 'Large'
+  };
+  // Important : tester XXL/XL/XS avant X, S, M, L (longest match d'abord)
+  return size.replace(/\b(XXL|XL|XS|S|M|L)\b/g, (m) => map[m] || m);
+};
 // Helpers d'affichage internationalisé : type produit (utilise type_en si lang === 'en')
 // et genre (utilise i18n gender.X) — évite de toucher chaque render.
 window.tType = function(p) {
@@ -4231,7 +4247,7 @@ function renderGrid() {
   grid.innerHTML = filtered.map(p => {
     const sold = isSold(p);
     const genderTxt = getGender(p);
-    const sizeLine = p.size + (genderTxt ? ' · ' + genderTxt : '');
+    const sizeLine = (window.formatSize ? window.formatSize(p.size) : p.size) + (genderTxt ? ' · ' + genderTxt : '');
     const fav = isFavorite(p.id);
     const slug = (typeof productSlug === 'function') ? productSlug(p) : p.id;
     return `
@@ -4302,7 +4318,7 @@ function openDetail(id) {
   const priceEl = document.getElementById('d-price');
   priceEl.textContent = sold ? '' : (p.price + ' €');
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';
-  document.getElementById('d-size').textContent = p.size;
+  document.getElementById('d-size').textContent = (window.formatSize ? window.formatSize(p.size) : p.size);
   document.getElementById('d-gender').textContent = (window.tGender ? window.tGender(p) : (getGender(p) || 'Accessoire'));
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
