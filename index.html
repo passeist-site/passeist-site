@@ -3753,7 +3753,18 @@ function getCategory(type) {
   return 'Autres';
 }
 function getGender(p) {
-  return p.gender || '';
+  // Map h/f → "Homme"/"Femme" (FR) ou "Men"/"Women" (EN selon i18n).
+  // Garde une chaîne lisible (pas la lettre brute).
+  const g = (p.gender || '').toLowerCase();
+  if (!g) return '';
+  if (window.__lang === 'en') {
+    if (g === 'h') return 'Men';
+    if (g === 'f') return 'Women';
+    return g;
+  }
+  if (g === 'h') return 'Homme';
+  if (g === 'f') return 'Femme';
+  return g;
 }
 // Helpers d'affichage internationalisé : type produit (utilise type_en si lang === 'en')
 // et genre (utilise i18n gender.X) — évite de toucher chaque render.
