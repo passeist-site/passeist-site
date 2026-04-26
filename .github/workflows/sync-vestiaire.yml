@@ -1,0 +1,155 @@
+name: Sync Vestiaire
+
+on:
+  schedule:
+    # Toutes les 4h (UTC). En heure Paris : 0h, 4h, 8h, 12h, 16h, 20h.
+    - cron: '0 */4 * * *'
+  workflow_dispatch: {}  # permet aussi le déclenchement manuel via l'UI GitHub
+
+permissions:
+  contents: write   # pour commit/push les bascules SOLD
+  issues: write     # pour ouvrir des issues si D1 ou E détectés
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Playwright + deps
+        run: |
+          pip install playwright cloudscraper pillow
+          playwright install --with-deps chromium
+
+      - name: Patch script with secrets
+        env:
+          DECODO_USER: ${{ secrets.DECODO_USER }}
+          DECODO_PASS: ${{ secrets.DECODO_PASS }}
+        run: |
+          # Override les credentials Decodo (codés en dur dans le script)
+          # pour utiliser les secrets GitHub à la place
+          python -c "
+          import re
+          with open('tools/synchro_vestiaire.py') as f: src = f.read()
+          src = re.sub(r\"'username':\s*'[^']+'\", f\"'username': '${DECODO_USER}'\", src)
+          src = re.sub(r\"'password':\s*'[^']+'\", f\"'password': '${DECODO_PASS}'\", src)
+          with open('tools/synchro_vestiaire.py', 'w') as f: f.write(src)
+          "
+
+      - name: Run sync
+        id: sync
+        run: |
+          python tools/synchro_vestiaire.py | tee /tmp/sync.log
+          # Extrait la dernière ligne "Rapport enregistré → /path/to/json"
+          REPORT=$(grep -oP 'Rapport enregistré → \K\S+' /tmp/sync.log | tail -1)
+          echo "report=$REPORT" >> $GITHUB_OUTPUT
+
+      - name: Upload report artifact
+        if: steps.sync.outputs.report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-report-${{ github.run_id }}
+          path: ${{ steps.sync.outputs.report }}
+          retention-days: 30
+
+      - name: Auto-bascule SOLD pour B (vendus VC, dispo site)
+        id: bascule
+        run: |
+          python << 'PYEOF'
+          import json, re, os, sys
+          rep_path = "${{ steps.sync.outputs.report }}"
+          if not rep_path or not os.path.exists(rep_path):
+              print("Pas de rapport, skip"); sys.exit(0)
+          with open(rep_path) as f: r = json.load(f)
+          B = r.get('B', [])
+          if not B:
+              print("B vide, rien à basculer")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('count=0\n')
+              sys.exit(0)
+          print(f'B = {len(B)} items à basculer en SOLD')
+          # Read index.html
+          with open('index.html') as f: html = f.read()
+          # Parse SOLD_IDS Set (cf TASKS.md règle suppression d'ID — pipeline propre)
+          m = re.search(r'(const SOLD_IDS = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
+          ids = set(re.findall(r'"(\d+)"', m.group(2)))
+          for pid in B: ids.add(pid)
+          inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in sorted(ids, reverse=True)) + '\n'
+          html = html.replace(m.group(0), m.group(1) + inside + m.group(3))
+          # Validation : aucune paire d'IDs sans virgule
+          test = re.search(r'(const SOLD_IDS = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
+          if re.search(r'"\d+"\s*\n\s*"\d+"', test.group(2)):
+              print('ERREUR : virgule manquante détectée, abort')
+              sys.exit(1)
+          with open('index.html', 'w') as f: f.write(html)
+          print(f'OK : {len(B)} ids ajoutés à SOLD_IDS')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'count={len(B)}\n')
+              f.write(f'ids={" ".join(B)}\n')
+          PYEOF
+
+      - name: Commit + push si bascule
+        if: steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != ''
+        run: |
+          git config user.name "passeist-bot"
+          git config user.email "bot@passeist.com"
+          git add index.html
+          git commit -m "auto-sold: ${{ steps.bascule.outputs.count }} ventes confirmées Vestiaire (sync auto)
+
+          IDs : ${{ steps.bascule.outputs.ids }}
+
+          🤖 Généré automatiquement par GitHub Actions sync-vestiaire"
+          git push
+
+      - name: Ouvre Issue si D1 ou E détectés (validation manuelle nécessaire)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = "${{ steps.sync.outputs.report }}";
+            if (!reportPath || !fs.existsSync(reportPath)) {
+              console.log('Pas de rapport, skip issue');
+              return;
+            }
+            const r = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            const D1 = r.D1 || [];
+            const E = r.E || [];
+            if (D1.length === 0 && E.length === 0) {
+              console.log('Rien à signaler');
+              return;
+            }
+            let body = `# Sync Vestiaire — détections nécessitant validation\n\n`;
+            body += `Date : ${new Date().toISOString()}\n\n`;
+            body += `**Stats** :\n- Site : ${r.site_stats.all} produits, ${r.site_stats.sold} SOLD, ${r.site_stats.available} dispo\n`;
+            body += `- VC : ${r.vc_stats.for_sale} for-sale (target ${r.vc_stats.target_fs}), ${r.vc_stats.sold} vendus visibles (target ${r.vc_stats.target_sold})\n\n`;
+            if (D1.length > 0) {
+              body += `## 🔴 D1 — Items absents du profil VC (à vérifier puis bascule SOLD)\n\n`;
+              body += `${D1.length} items :\n\n`;
+              D1.forEach(id => body += `- \`${id}\`\n`);
+              body += `\n→ Pour basculer en SOLD : à vérifier manuellement (scan vendus public limité à 60), puis dans une session Cowork dire à Claude de basculer.\n\n`;
+            }
+            if (E.length > 0) {
+              body += `## 🟢 E — Nouvelles pièces à importer\n\n`;
+              body += `${E.length} items :\n\n`;
+              E.forEach(e => body += `- \`${e.id}\` — ${e.url}${e.unsigned ? ' ⚠ NON SIGNÉ → brand detection requise' : ''}\n`);
+              body += `\n→ Importer via Claude dans une session Cowork.\n\n`;
+            }
+            body += `\n---\n_Généré automatiquement par GitHub Actions sync-vestiaire_`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔄 Sync ${new Date().toISOString().slice(0,16)} — ${D1.length} D1, ${E.length} E`,
+              body: body,
+              labels: ['sync-auto']
+            });
+            console.log('Issue créée');
