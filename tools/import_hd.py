@@ -33,6 +33,26 @@ for p in PHOTOS_DIRS_CANDIDATES:
         break
 
 QUALITIES = [('xl', 1600, 99), ('md', 800, 96), ('sm', 400, 92)]
+# Ratio FIXE pour toutes les photos HD : 3:4 portrait (w/h = 0.75)
+# Garantit l'uniformité de la galerie fiche produit (zéro décalage).
+TARGET_RATIO = 3 / 4
+
+def crop_to_ratio(im, target_ratio=TARGET_RATIO):
+    """Crop centré pour atteindre exactement target_ratio (w/h).
+    Si la photo est plus large → crop gauche/droite. Plus haute → crop top/bottom."""
+    w, h = im.size
+    current = w / h
+    if abs(current - target_ratio) < 0.005: return im  # déjà bon
+    if current > target_ratio:
+        # Trop large : crop largeur
+        new_w = int(round(h * target_ratio))
+        left = (w - new_w) // 2
+        return im.crop((left, 0, left + new_w, h))
+    else:
+        # Trop haut : crop hauteur
+        new_h = int(round(w / target_ratio))
+        top = (h - new_h) // 2
+        return im.crop((0, top, w, top + new_h))
 
 def pad_square(im, target):
     w, h = im.size
@@ -94,14 +114,18 @@ def process_one(item_id):
     for idx, src in enumerate(photos):
         try:
             im = ImageOps.exif_transpose(Image.open(src)).convert('RGB')
+            # Force ratio 3:4 portrait via crop centré (uniformité galerie)
+            im_cropped = crop_to_ratio(im, TARGET_RATIO)
+            if im_cropped.size != im.size:
+                print(f'  [{idx}] crop {im.size} → {im_cropped.size} (ratio 3:4)')
             for sn, target, q in QUALITIES:
-                resize_max(im, target).save(
+                resize_max(im_cropped, target).save(
                     os.path.join(OUT_IMG, f'{item_id}-{idx}-{sn}.webp'),
                     'WEBP', quality=q, method=6)
-                pad_square(im, target).save(
+                pad_square(im_cropped, target).save(
                     os.path.join(OUT_IMG, f'{item_id}-{idx}-sq-{sn}.webp'),
                     'WEBP', quality=q, method=6)
-            im.close()
+            im.close(); im_cropped.close()
             good += 1
         except Exception as e:
             print(f'  ERR [{idx}]: {e}')
