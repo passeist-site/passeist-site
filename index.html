@@ -3698,11 +3698,16 @@ function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
   const wantSquare = !!(opts && opts.square);
+  // Si on demande SQUARE et que l'ID est Vestiaire (< 10 chiffres) :
+  // toujours utiliser la photo Vestiaire CDN originale (déjà détourée fond blanc
+  // carré, qualité homogène). Garantit l'uniformité visuelle des grilles
+  // boutique/archive/carrousels même quand Tom a uploadé des HD pour la fiche.
+  if (wantSquare && product.id && product.id.length < 10) {
+    return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
+  }
+  // Sinon (fiche détail, ou produit Vinted 10 chiffres) : version locale si dispo
   if (VALIDATED_LOCAL.has(product.id)) {
-    // Si product.sq=true ET on demande square → version pad blanc carrée (-sq)
-    // Sinon (anciens sans -sq, ou demande native pour fiche) → version sans suffix
-    const sqSuffix = (wantSquare && product.sq) ? '-sq' : '';
-    return '/img/' + product.id + '-' + i + sqSuffix + '-' + size + '.webp';
+    return '/img/' + product.id + '-' + i + '-' + size + '.webp';
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
@@ -3710,9 +3715,14 @@ function imgUrl(product, i, opts) {
 function imgSrcset(product, i, opts) {
   if (!product.n) return '';
   const wantSquare = !!(opts && opts.square);
+  // Square + Vestiaire ID → CDN Vestiaire (uniformité grilles)
+  if (wantSquare && product.id && product.id.length < 10) {
+    return _vestiaireUrl(product, i, 400) + ' 400w, ' +
+           _vestiaireUrl(product, i, 800) + ' 800w, ' +
+           _vestiaireUrl(product, i, 1600) + ' 1600w';
+  }
   if (VALIDATED_LOCAL.has(product.id)) {
-    const sqSuffix = (wantSquare && product.sq) ? '-sq' : '';
-    const base = '/img/' + product.id + '-' + i + sqSuffix + '-';
+    const base = '/img/' + product.id + '-' + i + '-';
     return base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w';
   }
   return _vestiaireUrl(product, i, 400) + ' 400w, ' +
