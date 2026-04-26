@@ -4292,9 +4292,11 @@ function openDetail(id) {
   // Pour la principale, fallback sur la première photo qui charge — on retire aussi
   // tous les thumbs qui ne chargent pas pour aligner le compteur.
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${p.type} photo 1" onerror="this.style.display='none'">`;
-  const thumbsHtml = photos.map((src, i) =>
-    `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`
-  ).join('');
+  // Thumbs : skip la photo 0 puisqu'elle est déjà affichée en main (évite le doublon)
+  const thumbsHtml = photos.slice(1).map((src, idx) => {
+    const i = idx + 1;
+    return `<div class="thumb" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`;
+  }).join('');
   // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
   // soit ancré sur la photo principale (et non sur l'ensemble de la galerie).
   gal.innerHTML = `<div class="main-photo-wrap">${mainHtml}<span class="vendu-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span></div><div class="thumbs-row">${thumbsHtml}</div>`;
