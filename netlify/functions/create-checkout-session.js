@@ -111,8 +111,8 @@ exports.handler = async (event) => {
       billing_address_collection: 'required',
       phone_number_collection: { enabled: true },
       locale: lang,
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel`,
+      success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cancel.html`,
       metadata: {
         passeist_ids: items.map(i => i.id).join(','),
       },
