@@ -96,6 +96,8 @@ exports.handler = async (event) => {
   }
 
   // On traite uniquement le succès de paiement
+  let basculeStatus = 'skipped (no_passeist_ids)';
+  let basculeError = null;
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     console.log('✓ Paiement réussi :', session.id, session.amount_total, session.currency);
@@ -105,14 +107,19 @@ exports.handler = async (event) => {
     if (productIds.length > 0) {
       try {
         await basculeSoldIdsOnGitHub(productIds);
+        basculeStatus = `ok: ${productIds.join(',')}`;
       } catch (err) {
         console.error('Erreur bascule SOLD :', err.message);
-        // On ne fait pas échouer le webhook pour ça (le paiement reste valide)
+        basculeStatus = 'failed';
+        basculeError = err.message;
       }
     }
-    // Stripe envoie déjà un email de confirmation au client (configurable dans Dashboard)
-    // Pour notifier Tom : un email "Nouveau paiement" est envoyé par Stripe à l'admin du compte.
   }
 
-  return { statusCode: 200, body: JSON.stringify({ received: true }) };
+  // On retourne 200 pour Stripe (ne pas re-envoyer le webhook), mais on inclut
+  // le détail bascule dans le body pour debug visible dans Dashboard Stripe.
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ received: true, bascule: basculeStatus, error: basculeError }),
+  };
 };
