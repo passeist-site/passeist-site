@@ -1350,6 +1350,38 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   display: block;
   grid-column: 1 / -1;  /* prend toute la largeur de la grille 2-col */
 }
+/* Flèches discrètes prev/next sur main photo — desktop only (hover) */
+.detail-gallery .main-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 22px; line-height: 1;
+  color: #1a1a1a;
+  font-weight: 300;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.15s, transform 0.15s;
+  z-index: 5;
+  padding: 0;
+  user-select: none;
+}
+.detail-gallery .main-photo-wrap:hover .main-arrow { opacity: 0.7; }
+.detail-gallery .main-arrow:hover {
+  opacity: 1 !important;
+  background: rgba(255,255,255,0.95);
+}
+.detail-gallery .main-arrow.prev { left: 14px; }
+.detail-gallery .main-arrow.next { right: 14px; }
+.detail-gallery .main-arrow:active { transform: translateY(-50%) scale(0.94); }
+@media (max-width: 920px) {
+  /* Mobile : pas de flèches (swipe à la place) */
+  .detail-gallery .main-arrow { display: none; }
+}
 .vendu-badge {
   display: none;
   position: absolute;
@@ -4554,8 +4586,32 @@ function openDetail(id) {
       mDidSwipe = false;
     }
   });
-  // Pas de handler click qui ouvre la lightbox — Tom veut le zoom direct
-  // (pinch ×4) sans le déploiement par clic. Le clic est neutre maintenant.
+  // Desktop uniquement : clic main photo → ouvre lightbox pour zoom plein écran.
+  // Sur mobile (pinch zoom direct dispo), le clic ne fait rien (Tom veut pas la lightbox au tap).
+  mainEl.addEventListener('click', (e) => {
+    if (mDidPinch) { mDidPinch = false; e.preventDefault(); return; }
+    if (mScale > 1) { e.preventDefault(); return; }
+    // Seulement desktop (>920px) — mobile garde zoom direct via pinch
+    if (window.innerWidth > 920) openLB(curIdx);
+  });
+  // Flèches navigation discrètes sur main photo (desktop only — mobile a swipe)
+  if (photos.length > 1) {
+    const wrap = gal.querySelector('.main-photo-wrap');
+    if (wrap) {
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'main-arrow prev';
+      prevBtn.innerHTML = '‹';
+      prevBtn.setAttribute('aria-label', 'Photo précédente');
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'main-arrow next';
+      nextBtn.innerHTML = '›';
+      nextBtn.setAttribute('aria-label', 'Photo suivante');
+      prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateMainPhoto(-1); });
+      nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateMainPhoto(1); });
+      wrap.appendChild(prevBtn);
+      wrap.appendChild(nextBtn);
+    }
+  }
   thumbs.forEach(t => {
     t.addEventListener('click', (e) => {
       const idx = parseInt(t.dataset.idx);
