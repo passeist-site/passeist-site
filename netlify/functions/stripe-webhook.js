@@ -101,18 +101,26 @@ exports.handler = async (event) => {
   let basculeError = null;
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
-    console.log('✓ Paiement réussi :', session.id, session.amount_total, session.currency);
+    const isLive = session.livemode === true;
+    console.log(`✓ Paiement ${isLive ? 'LIVE' : 'TEST'} :`, session.id, session.amount_total, session.currency);
 
     // Récupère les IDs des produits achetés depuis metadata
     const productIds = (session.metadata && session.metadata.passeist_ids || '').split(',').filter(Boolean);
     if (productIds.length > 0) {
-      try {
-        await basculeSoldIdsOnGitHub(productIds);
-        basculeStatus = `ok: ${productIds.join(',')}`;
-      } catch (err) {
-        console.error('Erreur bascule SOLD :', err.message);
-        basculeStatus = 'failed';
-        basculeError = err.message;
+      // SÉCURITÉ : on bascule SOLD_IDS UNIQUEMENT pour les paiements LIVE.
+      // Les paiements TEST (carte 4242, etc.) ne touchent pas au catalogue.
+      if (!isLive) {
+        basculeStatus = `skipped (test mode): ${productIds.join(',')}`;
+        console.log('Mode TEST détecté → pas de bascule SOLD');
+      } else {
+        try {
+          await basculeSoldIdsOnGitHub(productIds);
+          basculeStatus = `ok: ${productIds.join(',')}`;
+        } catch (err) {
+          console.error('Erreur bascule SOLD :', err.message);
+          basculeStatus = 'failed';
+          basculeError = err.message;
+        }
       }
     }
   }
