@@ -30,7 +30,8 @@ async function basculeSoldIdsOnGitHub(productIds) {
   };
   // 1a. Récupère le SHA du fichier (l'endpoint /contents ne renvoie pas le content
   //     pour les fichiers > 1 MB, mais le sha est toujours présent)
-  const metaUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/index.html?ref=main`;
+  const fileUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/index.html`;
+  const metaUrl = `${fileUrl}?ref=main`;
   const metaRes = await fetch(metaUrl, { headers });
   if (!metaRes.ok) throw new Error(`GitHub meta fetch fail: ${metaRes.status}`);
   const metaData = await metaRes.json();
