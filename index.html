@@ -909,10 +909,13 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 
 .product-img {
   position: relative;
-  background: transparent;
+  background: #fff;
   overflow: hidden; border-radius: 0;
   display: block;
   border: none;
+  /* Force le carré pour uniformité visuelle des cards boutique/archive
+     peu importe le ratio source (Vestiaire CDN peut renvoyer portrait/paysage selon item). */
+  aspect-ratio: 1 / 1;
 }
 .product-img::before {
   content: ''; position: absolute; inset: 0;
@@ -929,7 +932,8 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   to   { background-position: 120% 0; }
 }
 .product-img-primary {
-  width: 100%; height: auto; display: block;
+  width: 100%; height: 100%; display: block;
+  object-fit: contain;  /* Letterbox blanc auto si photo non-carrée (le bg du parent est blanc) */
   opacity: 0;
   transition: opacity 0.4s var(--ease-out);
   filter: none;
