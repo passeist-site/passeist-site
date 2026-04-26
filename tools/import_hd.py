@@ -33,9 +33,9 @@ for p in PHOTOS_DIRS_CANDIDATES:
         break
 
 QUALITIES = [('xl', 2000, 99), ('md', 800, 96), ('sm', 400, 92)]
-# Ratio FIXE pour toutes les photos HD : 3:4 portrait (w/h = 0.75)
+# Ratio FIXE pour toutes les photos HD : 2:3 portrait (w/h ≈ 0.667 = Leica M natif)
 # Garantit l'uniformité de la galerie fiche produit (zéro décalage).
-TARGET_RATIO = 3 / 4
+TARGET_RATIO = 2 / 3
 # UnsharpMask appliqué après resize pour compenser le softening du downscale
 SHARPEN = ImageFilter.UnsharpMask(radius=1.2, percent=120, threshold=3)
 
