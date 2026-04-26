@@ -4291,9 +4291,11 @@ function openDetail(id) {
   }
   // Gallery — main photo + thumb row (style Centre Commercial sur mobile, grille 2-col sur desktop)
   // Photos en taille XL (1600px) pour qualité optimale en main photo retina/HDPI.
+  // Règle SOLD : 1 seule photo affichée (la principale), pas de thumbs (économie visuelle).
   const gal = document.getElementById('detail-gallery');
   const photos = [];
-  for (let i = 0; i < p.n; i++) photos.push(imgUrl(p, i, {size: 'xl'}));
+  const numPhotos = isSold(p) ? 1 : p.n;
+  for (let i = 0; i < numPhotos; i++) photos.push(imgUrl(p, i, {size: 'xl'}));
   lbPhotos = photos;
   // Note : onerror enlève le thumb cassé (404) pour qu'il ne reste pas un slot vide.
   // Pour la principale, fallback sur la première photo qui charge — on retire aussi
