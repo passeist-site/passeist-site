@@ -4433,6 +4433,7 @@ function openDetail(id) {
   let mScale = 1, mTx = 0, mTy = 0;
   let mPinchStart = null, mDragStart = null;
   let mLastTap = 0, mDidPinch = false;
+  let mSwipeStart = null, mDidSwipe = false;
   mainEl.style.transformOrigin = 'center center';
   mainEl.style.willChange = 'transform';
   mainEl.style.touchAction = 'none';
@@ -4455,12 +4456,21 @@ function openDetail(id) {
     mScale = 1; mTx = 0; mTy = 0;
     applyMainTransform(animate !== false);
   }
+  // Helper : passe à la photo suivante/précédente (utilisé par swipe + thumbs)
+  function navigateMainPhoto(direction) {
+    if (photos.length < 2) return;
+    curIdx = (curIdx + direction + photos.length) % photos.length;
+    mainEl.src = photos[curIdx];
+    mainEl.dataset.idx = curIdx;
+    thumbs.forEach((x, i) => x.classList.toggle('is-active', parseInt(x.dataset.idx) === curIdx));
+    resetMainZoom(false);
+  }
   mainEl.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       mPinchStart = { dist: Math.hypot(dx, dy), scale: mScale };
-      mDragStart = null;
+      mDragStart = null; mSwipeStart = null;
       mDidPinch = true;
       e.preventDefault();
     } else if (e.touches.length === 1) {
@@ -4475,6 +4485,10 @@ function openDetail(id) {
       mLastTap = now;
       if (mScale > 1) {
         mDragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, tx: mTx, ty: mTy };
+      } else {
+        // Photo non zoomée → init swipe pour changer de photo
+        mSwipeStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+        mDidSwipe = false;
       }
     }
   }, { passive: false });
@@ -4492,15 +4506,48 @@ function openDetail(id) {
       mTx = mDragStart.tx + (e.touches[0].clientX - mDragStart.x);
       mTy = mDragStart.ty + (e.touches[0].clientY - mDragStart.y);
       applyMainTransform(false);
+    } else if (e.touches.length === 1 && mSwipeStart && mScale === 1) {
+      // Swipe horizontal pour changer de photo
+      const dx = e.touches[0].clientX - mSwipeStart.x;
+      const dy = e.touches[0].clientY - mSwipeStart.y;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        // Feedback visuel : décale l'image pendant le drag
+        e.preventDefault();
+        mainEl.style.transition = 'none';
+        mainEl.style.transform = 'translateX(' + (dx * 0.6) + 'px)';
+        mDidSwipe = true;
+      }
     }
   }, { passive: false });
   mainEl.addEventListener('touchend', (e) => {
     mPinchStart = null; mDragStart = null;
     // Si la pince a fini sous scale 1, snap back à 1
     if (mScale < 1.05) resetMainZoom(true);
+    // Gestion du swipe horizontal terminé
+    if (mSwipeStart && mDidSwipe) {
+      const t = (e.changedTouches && e.changedTouches[0]) || null;
+      const dx = t ? t.clientX - mSwipeStart.x : 0;
+      const dy = t ? t.clientY - mSwipeStart.y : 0;
+      const dt = Date.now() - mSwipeStart.t;
+      // Snap back de la transform
+      mainEl.style.transition = 'transform 0.25s cubic-bezier(.2,.8,.25,1)';
+      mainEl.style.transform = '';
+      setTimeout(() => { mainEl.style.transition = 'none'; }, 260);
+      // Seuil : 50px horizontal dominant en moins de 700ms
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 700) {
+        // dx < 0 (swipe gauche) → photo SUIVANTE | dx > 0 (swipe droite) → précédente
+        navigateMainPhoto(dx < 0 ? 1 : -1);
+      }
+    }
+    mSwipeStart = null;
+    // Marqueur pour empêcher le click qui suit le swipe d'ouvrir lightbox
+    if (mDidSwipe) {
+      mDidPinch = true;  // réutilise le flag (=ignore le click suivant)
+      mDidSwipe = false;
+    }
   });
   mainEl.addEventListener('click', (e) => {
-    // Ignore le click si on vient juste de pincher
+    // Ignore le click si on vient juste de pincher OU swiper
     if (mDidPinch) { mDidPinch = false; e.preventDefault(); return; }
     if (mScale > 1) { e.preventDefault(); return; }
     openLB(curIdx);
