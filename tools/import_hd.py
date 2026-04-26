@@ -12,7 +12,7 @@ Codes retour :
   1  erreur (dossier manquant, photos illisibles, etc.)
 """
 import sys, os, re, json, glob
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFilter
 Image.MAX_IMAGE_PIXELS = 200_000_000
 
 # Permet d'utiliser ce script depuis le repo cloné OU depuis Cowork
@@ -32,10 +32,12 @@ for p in PHOTOS_DIRS_CANDIDATES:
         PHOTOS_DIR = p
         break
 
-QUALITIES = [('xl', 1600, 99), ('md', 800, 96), ('sm', 400, 92)]
+QUALITIES = [('xl', 2000, 99), ('md', 800, 96), ('sm', 400, 92)]
 # Ratio FIXE pour toutes les photos HD : 3:4 portrait (w/h = 0.75)
 # Garantit l'uniformité de la galerie fiche produit (zéro décalage).
 TARGET_RATIO = 3 / 4
+# UnsharpMask appliqué après resize pour compenser le softening du downscale
+SHARPEN = ImageFilter.UnsharpMask(radius=1.2, percent=120, threshold=3)
 
 def crop_to_ratio(im, target_ratio=TARGET_RATIO):
     """Crop centré pour atteindre exactement target_ratio (w/h).
@@ -119,12 +121,14 @@ def process_one(item_id):
             if im_cropped.size != im.size:
                 print(f'  [{idx}] crop {im.size} → {im_cropped.size} (ratio 3:4)')
             for sn, target, q in QUALITIES:
-                resize_max(im_cropped, target).save(
-                    os.path.join(OUT_IMG, f'{item_id}-{idx}-{sn}.webp'),
-                    'WEBP', quality=q, method=6)
-                pad_square(im_cropped, target).save(
-                    os.path.join(OUT_IMG, f'{item_id}-{idx}-sq-{sn}.webp'),
-                    'WEBP', quality=q, method=6)
+                # Native 3:4 + sharpen post-resize (compense softening downscale)
+                native = resize_max(im_cropped, target).filter(SHARPEN)
+                native.save(os.path.join(OUT_IMG, f'{item_id}-{idx}-{sn}.webp'),
+                           'WEBP', quality=q, method=6)
+                # Square pad blanc + sharpen
+                square = pad_square(im_cropped, target).filter(SHARPEN)
+                square.save(os.path.join(OUT_IMG, f'{item_id}-{idx}-sq-{sn}.webp'),
+                           'WEBP', quality=q, method=6)
             im.close(); im_cropped.close()
             good += 1
         except Exception as e:
