@@ -36,8 +36,8 @@ QUALITIES = [('xl', 2000, 99), ('md', 800, 96), ('sm', 400, 92)]
 # Ratio FIXE pour toutes les photos HD : 2:3 portrait (w/h ≈ 0.667 = Leica M natif)
 # Garantit l'uniformité de la galerie fiche produit (zéro décalage).
 TARGET_RATIO = 2 / 3
-# UnsharpMask appliqué après resize pour compenser le softening du downscale
-SHARPEN = ImageFilter.UnsharpMask(radius=1.2, percent=120, threshold=3)
+# Pas de sharpen — Tom préfère le rendu naturel Lanczos sans accentuation
+# (test 26/04 : sharpen donnait un look "crispy" pas naturel sur Leica HD)
 
 def crop_to_ratio(im, target_ratio=TARGET_RATIO):
     """Crop centré pour atteindre exactement target_ratio (w/h).
@@ -121,14 +121,14 @@ def process_one(item_id):
             if im_cropped.size != im.size:
                 print(f'  [{idx}] crop {im.size} → {im_cropped.size} (ratio 3:4)')
             for sn, target, q in QUALITIES:
-                # Native 3:4 + sharpen post-resize (compense softening downscale)
-                native = resize_max(im_cropped, target).filter(SHARPEN)
-                native.save(os.path.join(OUT_IMG, f'{item_id}-{idx}-{sn}.webp'),
-                           'WEBP', quality=q, method=6)
-                # Square pad blanc + sharpen
-                square = pad_square(im_cropped, target).filter(SHARPEN)
-                square.save(os.path.join(OUT_IMG, f'{item_id}-{idx}-sq-{sn}.webp'),
-                           'WEBP', quality=q, method=6)
+                # Native 2:3 (resize Lanczos sans post-traitement)
+                resize_max(im_cropped, target).save(
+                    os.path.join(OUT_IMG, f'{item_id}-{idx}-{sn}.webp'),
+                    'WEBP', quality=q, method=6)
+                # Square pad blanc
+                pad_square(im_cropped, target).save(
+                    os.path.join(OUT_IMG, f'{item_id}-{idx}-sq-{sn}.webp'),
+                    'WEBP', quality=q, method=6)
             im.close(); im_cropped.close()
             good += 1
         except Exception as e:
