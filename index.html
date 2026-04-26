@@ -3769,9 +3769,11 @@ function getGender(p) {
 
 // Map abréviations tailles vers le nom complet (XS→Extra Small, etc.)
 // Préserve les tokens numériques et autres mots (ex: "M International" → "Medium International")
-// Si pas de taille définie → "Free" (taille libre / one size)
+// Si pas de taille définie → "Taille unique" (FR) / "One size" (EN)
 window.formatSize = function(size) {
-  if (!size || !size.toString().trim()) return 'Free';
+  if (!size || !size.toString().trim()) {
+    return (window.__lang === 'en') ? 'One size' : 'Taille unique';
+  }
   const map = {
     'XXL': 'Extra Extra Large',
     'XL': 'Extra Large',
