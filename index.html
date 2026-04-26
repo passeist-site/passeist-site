@@ -2068,15 +2068,14 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     overflow: hidden;  /* le scroll est délégué au .thumbs-row */
   }
   .detail-gallery .main-photo {
-    width: 100%;
-    max-width: 100%;
+    /* Réduit la largeur pour que la photo soit plus petite et qu'on voie
+       un peu d'info produit en dessous sans devoir scroller. Pas de cadre
+       blanc parce qu'on ne touche pas à object-fit. */
+    width: 80%;
+    max-width: 80%;
     height: auto;
-    /* Limite la hauteur sur mobile pour qu'on voie un peu d'info produit
-       en dessous sans devoir scroller au max — la photo reste lisible. */
-    max-height: 70vh;
-    object-fit: contain;
     display: block;
-    margin: 0 0 10px;
+    margin: 0 auto 10px;
     background: #fff;
   }
   /* Bandeau horizontal scrollable de thumbs (force le débordement et le swipe) */
