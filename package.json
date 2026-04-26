@@ -1,0 +1,9 @@
+{
+  "name": "passeist-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Passeist — site Netlify Functions (Stripe checkout)",
+  "dependencies": {
+    "stripe": "^17.5.0"
+  }
+}

@@ -4892,11 +4892,57 @@ function renderCart() {
           <button class="cart-item-remove" onclick="removeFromCart('${p.id}')">Retirer</button>
         </div>
       </div>
-    `).join('') + `<div class="cart-cta-wrap"><button class="btn btn-primary cart-checkout" onclick="openCheckout()">Demande de disponibilité</button></div>`;
+    `).join('') + `<div class="cart-cta-wrap"><button class="btn btn-primary cart-checkout" onclick="checkoutWithStripe()">Procéder au paiement</button></div>`;
   }
   const total = cart.reduce((s, p) => s + parseInt(p.price), 0);
   document.getElementById('cart-total').textContent = total + ' €';
 }
+// === STRIPE CHECKOUT ===
+// Crée une session Stripe via Netlify Function et redirige vers Stripe Checkout.
+// Stripe gère ensuite : carte (3DS), Apple/Google Pay, adresse, frais port, factures.
+async function checkoutWithStripe() {
+  if (cart.length === 0) return;
+  const btn = document.querySelector('.cart-checkout');
+  const originalText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Redirection vers le paiement…'; }
+  try {
+    const items = cart.map(p => ({
+      id: p.id,
+      brand: p.brand,
+      type: p.type,
+      size: p.size,
+      price: p.price,
+      slug: p.slug,
+      // Image absolue (Stripe ne peut pas afficher des chemins relatifs)
+      image: 'https://passeist.com' + (typeof imgUrl === 'function'
+        ? imgUrl(p, 0, { square: true, size: 'md' }).replace(/^https?:\/\//, '').replace(/^[^/]+/, '')
+        : ''),
+    }));
+    const lang = (window.__lang === 'en') ? 'en' : 'fr';
+    const country = navigator.language && navigator.language.toLowerCase().includes('fr') ? 'FR' : '';
+
+    const res = await fetch('/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items, locale: lang, country }),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error('Stripe session error: ' + err);
+    }
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url; // → checkout.stripe.com
+    } else {
+      throw new Error('Pas de session Stripe dans la réponse');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erreur de paiement : ' + err.message + '\n\nMerci d\'écrire à bonjour@passeist.com.');
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
+  }
+}
+
 function renderCheckoutSummary() {
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const shipEl = document.getElementById('ship-input');
