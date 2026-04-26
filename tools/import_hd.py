@@ -73,21 +73,11 @@ def resize_max(im, target):
     return im.resize((nw, nh), Image.LANCZOS)
 
 def get_finder_order(d):
-    ds = os.path.join(d, '.DS_Store')
-    if not os.path.exists(ds): return None
-    try:
-        from ds_store import DSStore
-        with DSStore.open(ds, 'r+') as ds_:
-            entries = []
-            for entry in ds_:
-                if entry.code == b'Iloc':
-                    x, y = entry.value
-                    entries.append((y // 50, x, entry.filename))
-            if entries:
-                entries.sort()
-                return [n for _, _, n in entries]
-    except Exception as e: print(f'  DS_Store err: {e}', flush=True)
-    return None
+    """Tri alphanum simple — Tom utilise 'Tri par nom' dans Finder donc
+    sorted() correspond exactement à ce qu'il voit (1.jpg en premier car
+    les chiffres viennent avant les lettres en ASCII).
+    Convention recommandée : nommer la photo principale '1.jpg' / '1.JPG'."""
+    return None  # forcera sorted() en fallback
 
 def process_one(item_id):
     src_dir = os.path.join(PHOTOS_DIR, item_id)
