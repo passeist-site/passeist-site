@@ -103,7 +103,7 @@ jobs:
               f.write(f'ids={" ".join(B)}\n')
           PYEOF
 
-      - name: Auto-import des nouvelles pièces (E)
+      - name: Auto-import des nouvelles pièces (E + C)
         id: import_e
         env:
           DECODO_USER: ${{ secrets.DECODO_USER }}
@@ -115,9 +115,10 @@ jobs:
           if not rep_path or not os.path.exists(rep_path):
               print("Pas de rapport, skip"); sys.exit(0)
           with open(rep_path) as f: r = json.load(f)
-          E = r.get('E', [])
+          # Concatène E + C — relistings traités comme nouvelles pièces (autre exemplaire vintage)
+          E = (r.get('E', []) or []) + (r.get('C', []) or [])
           if not E:
-              print("E vide, rien à importer")
+              print("E + C vide, rien à importer")
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write('imported=0\n'); f.write('failed_unsigned=\n'); f.write('failed_other=\n')
               sys.exit(0)
