@@ -23,18 +23,23 @@ async function basculeSoldIdsOnGitHub(productIds) {
     console.warn('GITHUB_TOKEN absent — skip bascule SOLD_IDS auto');
     return;
   }
-  // 1. Get current index.html via GitHub API
   const headers = {
     Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
     'User-Agent': 'passeist-stripe-webhook',
     Accept: 'application/vnd.github+json',
   };
-  const fileUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/index.html`;
-  const fileRes = await fetch(fileUrl, { headers });
-  if (!fileRes.ok) throw new Error(`GitHub fetch fail: ${fileRes.status}`);
-  const fileData = await fileRes.json();
-  const sha = fileData.sha;
-  let html = Buffer.from(fileData.content, 'base64').toString('utf8');
+  // 1a. Récupère le SHA du fichier (l'endpoint /contents ne renvoie pas le content
+  //     pour les fichiers > 1 MB, mais le sha est toujours présent)
+  const metaUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/index.html?ref=main`;
+  const metaRes = await fetch(metaUrl, { headers });
+  if (!metaRes.ok) throw new Error(`GitHub meta fetch fail: ${metaRes.status}`);
+  const metaData = await metaRes.json();
+  const sha = metaData.sha;
+  // 1b. Récupère le content via raw.githubusercontent.com (pas de limite 1MB)
+  const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/index.html`;
+  const rawRes = await fetch(rawUrl, { headers });
+  if (!rawRes.ok) throw new Error(`GitHub raw fetch fail: ${rawRes.status}`);
+  let html = await rawRes.text();
 
   // 2. Parse SOLD_IDS et ajoute les ids
   const m = html.match(/(const SOLD_IDS = new Set\(\[)([\s\S]*?)(\]\);)/);
