@@ -100,20 +100,69 @@ jobs:
               f.write(f'ids={" ".join(B)}\n')
           PYEOF
 
-      - name: Commit + push si bascule
-        if: steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != ''
+      - name: Auto-import des nouvelles pièces (E)
+        id: import_e
+        env:
+          DECODO_USER: ${{ secrets.DECODO_USER }}
+          DECODO_PASS: ${{ secrets.DECODO_PASS }}
+        run: |
+          python << 'PYEOF'
+          import json, os, subprocess, sys
+          rep_path = "${{ steps.sync.outputs.report }}"
+          if not rep_path or not os.path.exists(rep_path):
+              print("Pas de rapport, skip"); sys.exit(0)
+          with open(rep_path) as f: r = json.load(f)
+          E = r.get('E', [])
+          if not E:
+              print("E vide, rien à importer")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('imported=0\n'); f.write('failed_unsigned=\n'); f.write('failed_other=\n')
+              sys.exit(0)
+          imported = []
+          failed_unsigned = []  # NON SIGNÉ sans brand détectable → Issue
+          failed_other = []     # autre erreur (proxy, photos, etc.) → Issue
+          for item in E:
+              pid = item['id']; url = item['url']
+              print(f'\n=== Import {pid} ===')
+              ret = subprocess.run(['python3', 'tools/import_vestiaire.py', pid, url],
+                                   capture_output=False)
+              if ret.returncode == 0:
+                  imported.append(pid)
+              elif ret.returncode == 2:
+                  failed_unsigned.append(item)
+              elif ret.returncode == 4:
+                  print(f'{pid} déjà présent, skip')
+              else:
+                  failed_other.append({'id': pid, 'url': url, 'code': ret.returncode})
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'imported={len(imported)}\n')
+              f.write(f'imported_ids={" ".join(imported)}\n')
+              f.write(f'failed_unsigned={json.dumps(failed_unsigned)}\n')
+              f.write(f'failed_other={json.dumps(failed_other)}\n')
+          print(f'\nRésumé : {len(imported)} importés, {len(failed_unsigned)} NON SIGNÉ skip, {len(failed_other)} autres erreurs')
+          PYEOF
+
+      - name: Commit + push (bascules SOLD + imports)
+        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          git add index.html
-          git commit -m "auto-sold: ${{ steps.bascule.outputs.count }} ventes confirmées Vestiaire (sync auto)
+          git add index.html img/
+          MSG="auto-sync $(date -u +%Y-%m-%d_%H:%M)"
+          if [ "${{ steps.bascule.outputs.count }}" != "0" ] && [ -n "${{ steps.bascule.outputs.count }}" ]; then
+            MSG="$MSG | sold: ${{ steps.bascule.outputs.count }}"
+          fi
+          if [ "${{ steps.import_e.outputs.imported }}" != "0" ] && [ -n "${{ steps.import_e.outputs.imported }}" ]; then
+            MSG="$MSG | imports: ${{ steps.import_e.outputs.imported }}"
+          fi
+          git commit -m "$MSG
 
-          IDs : ${{ steps.bascule.outputs.ids }}
-
-          🤖 Généré automatiquement par GitHub Actions sync-vestiaire"
+          🤖 Généré automatiquement par GitHub Actions sync-vestiaire
+          SOLD bascule IDs: ${{ steps.bascule.outputs.ids }}
+          Imports IDs: ${{ steps.import_e.outputs.imported_ids }}"
           git push
 
-      - name: Ouvre Issue si D1 ou E détectés (validation manuelle nécessaire)
+      - name: Ouvre Issue si D1, NON SIGNÉ sans brand, ou erreurs d'import
         if: always()
         uses: actions/github-script@v7
         with:
@@ -126,32 +175,63 @@ jobs:
             }
             const r = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
             const D1 = r.D1 || [];
-            const E = r.E || [];
-            if (D1.length === 0 && E.length === 0) {
+            const importedCount = parseInt("${{ steps.import_e.outputs.imported }}" || "0");
+            const importedIds = "${{ steps.import_e.outputs.imported_ids }}";
+            let failedUnsigned = [], failedOther = [];
+            try { failedUnsigned = JSON.parse(`${{ steps.import_e.outputs.failed_unsigned }}` || '[]'); } catch (e) {}
+            try { failedOther = JSON.parse(`${{ steps.import_e.outputs.failed_other }}` || '[]'); } catch (e) {}
+            const sold = parseInt("${{ steps.bascule.outputs.count }}" || "0");
+
+            // Si rien à signaler ET rien à reporter, skip
+            if (D1.length === 0 && failedUnsigned.length === 0 && failedOther.length === 0 && sold === 0 && importedCount === 0) {
               console.log('Rien à signaler');
               return;
             }
-            let body = `# Sync Vestiaire — détections nécessitant validation\n\n`;
-            body += `Date : ${new Date().toISOString()}\n\n`;
+
+            let body = `# Sync Vestiaire ${new Date().toISOString().slice(0,16)}\n\n`;
             body += `**Stats** :\n- Site : ${r.site_stats.all} produits, ${r.site_stats.sold} SOLD, ${r.site_stats.available} dispo\n`;
-            body += `- VC : ${r.vc_stats.for_sale} for-sale (target ${r.vc_stats.target_fs}), ${r.vc_stats.sold} vendus visibles (target ${r.vc_stats.target_sold})\n\n`;
-            if (D1.length > 0) {
-              body += `## 🔴 D1 — Items absents du profil VC (à vérifier puis bascule SOLD)\n\n`;
-              body += `${D1.length} items :\n\n`;
-              D1.forEach(id => body += `- \`${id}\`\n`);
-              body += `\n→ Pour basculer en SOLD : à vérifier manuellement (scan vendus public limité à 60), puis dans une session Cowork dire à Claude de basculer.\n\n`;
+            body += `- VC : ${r.vc_stats.for_sale} for-sale (target ${r.vc_stats.target_fs}), ${r.vc_stats.sold} vendus visibles\n\n`;
+
+            // Actions auto déjà effectuées
+            if (sold > 0 || importedCount > 0) {
+              body += `## ✅ Actions automatiques effectuées\n\n`;
+              if (sold > 0) body += `- **${sold} bascules SOLD** : ${("${{ steps.bascule.outputs.ids }}").split(' ').map(id => `\`${id}\``).join(', ')}\n`;
+              if (importedCount > 0) body += `- **${importedCount} nouvelles pièces importées** : ${importedIds.split(' ').map(id => `\`${id}\``).join(', ')}\n`;
+              body += `\n`;
             }
-            if (E.length > 0) {
-              body += `## 🟢 E — Nouvelles pièces à importer\n\n`;
-              body += `${E.length} items :\n\n`;
-              E.forEach(e => body += `- \`${e.id}\` — ${e.url}${e.unsigned ? ' ⚠ NON SIGNÉ → brand detection requise' : ''}\n`);
-              body += `\n→ Importer via Claude dans une session Cowork.\n\n`;
+
+            // Actions à valider manuellement
+            const needsAction = D1.length > 0 || failedUnsigned.length > 0 || failedOther.length > 0;
+            if (needsAction) {
+              body += `## ⚠ Actions à valider manuellement\n\n`;
+
+              if (D1.length > 0) {
+                body += `### 🔴 D1 — Items absents du profil VC (potentiellement vendus)\n\n`;
+                body += `${D1.length} items à vérifier (scan vendus public limité, peut être faux positif) :\n\n`;
+                D1.forEach(id => body += `- \`${id}\`\n`);
+                body += `\n→ Vérifier chaque fiche Vestiaire puis dire à Claude dans Cowork "bascule SOLD <ID>".\n\n`;
+              }
+
+              if (failedUnsigned.length > 0) {
+                body += `### 🟡 NON SIGNÉ sans brand détectable — import skippé\n\n`;
+                body += `${failedUnsigned.length} items où la marque n'a pas pu être extraite de la description :\n\n`;
+                failedUnsigned.forEach(e => body += `- \`${e.id}\` — ${e.url}\n`);
+                body += `\n→ Vérifier la fiche Vestiaire et importer manuellement avec brand correcte via Cowork.\n\n`;
+              }
+
+              if (failedOther.length > 0) {
+                body += `### 🔥 Erreurs d'import (proxy, photos, etc.)\n\n`;
+                failedOther.forEach(e => body += `- \`${e.id}\` (code ${e.code}) — ${e.url}\n`);
+                body += `\n→ Voir les logs du run : ${context.payload.repository.html_url}/actions/runs/${context.runId}\n\n`;
+              }
             }
+
             body += `\n---\n_Généré automatiquement par GitHub Actions sync-vestiaire_`;
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🔄 Sync ${new Date().toISOString().slice(0,16)} — ${D1.length} D1, ${E.length} E`,
+              title: `🔄 Sync ${new Date().toISOString().slice(0,16)} — ${sold} sold, ${importedCount} import, ${D1.length} D1${failedUnsigned.length > 0 ? `, ${failedUnsigned.length} non-signé` : ''}`,
               body: body,
               labels: ['sync-auto']
             });
