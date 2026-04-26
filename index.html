@@ -2865,7 +2865,7 @@ const IMG_SUFFIX = {
 const PRODUCTS = [
   {"id": "66437617", "brand": "ISSEY MIYAKE", "type": "Veste", "size": "M", "price": "230", "gender": "h", "color": "Noir", "path": "vetements-homme/vestes-blousons/issey-miyake", "slug": "vesteblouson-issey-miyake-en-polyester-noir-66437617", "n": 14, "desc": "Issey Miyake \n\nCollection men 1997\n\n\nRare gilet en polyester 100% en plissé large et organique pas complètement rectiligne plus mouvementé. Doublure satinée et extérieur plus mat dans une texture comme une crêpe. \n\nParfait état \n\nTaille indiquée M \n\nDimensions :\n\n- épaule à épaule : 39cm\n- aisselle à aisselle : 56cm\n- longueur dos depuis bas du col : 54cm \n- ouverture bas :58cm"},
   {"id": "66437139", "brand": "KIJIMA TAKAYUKI", "type": "Chapeau / bonnet", "size": "55", "price": "120", "gender": "h", "color": "Noir", "path": "accessoires-homme/chapeaux-bonnets/kijima-takayuki", "slug": "chapeaubonnet-kijima-takayuki-en-synthetique-noir-66437139", "n": 12, "desc": "Photos portée disponible par message pour celui ci\n\nRavissant bob en nylon 100% (toucher coton)\n\nCouleur noir et joli décor de 6 rivets metal.\n\nCirconférence 55/56"},
-  {"id": "66437502", "brand": "YOHJI YAMAMOTO", "type": "Echarpe en laine", "size": "", "price": "190", "gender": "h", "color": "Noir", "path": "accessoires-femme/foulards/yohji-yamamoto", "slug": "foulardecharpe-yohji-yamamoto-en-laine-noir-66437502", "n": 9, "desc": "Yohji Yamamoto\n\nCollection automne hiver 2003, célèbre défilé avec un thème général celui du motif pied de poule. Photos disponible par message.\n\nGrande écharpe en laine (sans doute 100%, absence de l’étiquette de composition).motif pied de poule noir et blanc.\n\nLongueur : 260cm\n\nLargeur : 50cm"},
+  {"id": "66437502", "brand": "YOHJI YAMAMOTO", "type": "Echarpe en laine", "size": "", "price": "190", "gender": "h", "color": "Noir", "path": "accessoires-femme/foulards/yohji-yamamoto", "slug": "foulardecharpe-yohji-yamamoto-en-laine-noir-66437502", "n": 8, "desc": "Yohji Yamamoto\n\nCollection automne hiver 2003, célèbre défilé avec un thème général celui du motif pied de poule. Photos disponible par message.\n\nGrande écharpe en laine (sans doute 100%, absence de l’étiquette de composition).motif pied de poule noir et blanc.\n\nLongueur : 260cm\n\nLargeur : 50cm", "sq": true},
   {"id": "66437685", "brand": "COMME DES GARCONS", "type": "Veste en laine", "size": "M", "price": "390", "gender": "h", "color": "Noir", "path": "vetements-homme/vestes-blousons/comme-des-garcons", "slug": "vesteblouson-comme-des-garcons-en-laine-noir-66437685", "n": 15, "desc": "Comme des garçons \n\nCollection homme printemps été 1994 (quasiment sûr). \n\nMagnifique blazer dans un tissu absolument remarquable en laine et lin 50/50%. Zip central\n\n\nParfait état comme neuf \n\nTaille indiquée S mais convient surtout à un M \n\nDimensions :\n\n- épaule à épaule : 50cm\n- aisselle à aisselle : 60cm\n- longueur dos depuis bas du col : 74cm \n- longueur manche depuis épaule 61cm et depuis aisselle :40cm\n- ouverture bas :61cm"},
   {"id": "66437332", "brand": "YOHJI YAMAMOTO", "type": "Gilet", "size": "M", "price": "240", "gender": "h", "color": "Gris", "path": "vetements-homme/pulls-gilets-sweats/yohji-yamamoto", "slug": "pullgiletsweat-yohji-yamamoto-en-coton-gris-66437332", "n": 14, "desc": "Yohji Yamamoto\n\nCollection pour homme probablement été 2016\n\nSuperbe cardigan léger en rayonne 49%, coton 34% et lin 17%.\n\nParfait état\n\nTaille indiquée 3\n\nDimensions :\n\n- épaule à épaule : 52cm\n- aisselle à aisselle : 60cm\n- longueur dos depuis bas du col : 78cm\n- longueur manche depuis épaule 65cm et depuis aisselle :59cm\n- ouverture bas :52cm"},
   {"id": "66437434", "brand": "MAISON MIHARA YASUHIRO", "type": "Gilet", "size": "S", "price": "140", "gender": "h", "color": "Noir", "path": "vetements-homme/pulls-gilets-sweats/maison-mihara-yasuhiro", "slug": "pullgiletsweat-maison-mihara-yasuhiro-en-coton-noir-66437434", "n": 15, "desc": "Mihara Yasuhiro \n\nAttention par souci d’honnêteté je tiens à signaler que ce pull a un effet usé avec un jeu de maille déchiré mais voulu, cependant il y a un trou en plein centre (1cm), on pourrai croire que c’est fait exprès mais je pense qu’il s’agit d’un vrai trou pour le coup car les fils sont rompus. Je l’ai laissé et je vous laisse soit le garder soit le faire réparer par vos soins. Le prix est revu à la baisse avec ce léger défaut. \n\nÀ part ça il est en parfait état \n\ngilet en coton 60% et acrylique 40%. \n\nTaille indiquée 44 convient à un L femme et S homme \n\nDimensions :\n\n- épaule à épaule : 42cm\n- aisselle à aisselle : 61cm\n- longueur dos depuis bas du col : 62cm \n- longueur manche depuis épaule 49cm et depuis aisselle :47cm\n- ouverture bas :42cm"},
@@ -3697,16 +3697,22 @@ function _vestiaireUrl(product, i, w) {
 function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
+  const wantSquare = !!(opts && opts.square);
   if (VALIDATED_LOCAL.has(product.id)) {
-    return '/img/' + product.id + '-' + i + '-' + size + '.webp';
+    // Si product.sq=true ET on demande square → version pad blanc carrée (-sq)
+    // Sinon (anciens sans -sq, ou demande native pour fiche) → version sans suffix
+    const sqSuffix = (wantSquare && product.sq) ? '-sq' : '';
+    return '/img/' + product.id + '-' + i + sqSuffix + '-' + size + '.webp';
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
 
-function imgSrcset(product, i) {
+function imgSrcset(product, i, opts) {
   if (!product.n) return '';
+  const wantSquare = !!(opts && opts.square);
   if (VALIDATED_LOCAL.has(product.id)) {
-    const base = '/img/' + product.id + '-' + i + '-';
+    const sqSuffix = (wantSquare && product.sq) ? '-sq' : '';
+    const base = '/img/' + product.id + '-' + i + sqSuffix + '-';
     return base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w';
   }
   return _vestiaireUrl(product, i, 400) + ' 400w, ' +
@@ -4209,7 +4215,7 @@ function renderGrid() {
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>
       <div class="product-img loading">
-        <img class="product-img-primary" src="${imgUrl(p, 0)}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="1066" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
+        <img class="product-img-primary" src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
       </div>
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
@@ -4331,7 +4337,7 @@ function openDetail(id) {
       const top = candidates.slice(0, 12).map(o => o.x);
       if (top.length > 0) {
         const cardsHtml = top.map(x => {
-          const src = imgUrl(x, 0);
+          const src = imgUrl(x, 0, {square: true});
           return `<div class="similar-card" data-id="${x.id}">
             <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.parentElement.style.display='none'">
             <div class="similar-card-brand">${x.brand}</div>
@@ -4720,7 +4726,7 @@ function renderCart() {
   } else {
     el.innerHTML = cart.map(p => `
       <div class="cart-item">
-        <img src="${imgUrl(p, 0)}" alt="" loading="lazy" decoding="async">
+        <img src="${imgUrl(p, 0, {square: true})}" alt="" loading="lazy" decoding="async">
         <div class="cart-item-info">
           <div class="cart-item-brand">${p.brand}</div>
           <div class="cart-item-name">${(window.tType ? window.tType(p) : p.type)}</div>
@@ -4948,7 +4954,7 @@ function renderHeroMarquee() {
   const order = pool.slice(0, target);
   const cards = order.map(p => `
     <div class="hero-marquee-card" data-id="${p.id}" title="${p.brand} — ${p.type}">
-      <img src="${imgUrl(p, 0)}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" fetchpriority="low">
     </div>
   `).join('');
   const track = document.getElementById('hero-marquee-track');
