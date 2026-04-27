@@ -2031,9 +2031,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 }
 
 @media (max-width: 900px) {
-  /* Sur mobile, accueil tient en un seul écran : topbar + hero + marquee + footer
-     dans 100dvh, aucun scroll. Le footer (CGV, etc.) reste visible. */
-  body[data-page="home"] { overflow: hidden; height: 100dvh; }
+  /* Sur mobile, hero plein écran (~100dvh) puis scroll vers la strip Marques */
+  body[data-page="home"] { overflow: auto; height: auto; }
   body[data-page="home"] .footer { display: flex; flex-shrink: 0; }
   /* Layout home mobile : body flex column, hero fills + footer naturel.
      (La topbar est position:fixed donc hors du flow.) */
