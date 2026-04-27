@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIJIMA TAKAYUKI — Passéist</title>
+<meta name="description" content="Takayuki Kijima, chapelier japonais, maître reconnu de la scène contemporaine. Initialement attiré par le design vêtement, il bifurque vers la chapellerie ">
+<style>
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
+    background: #f5f3ee;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 60px 30px 80px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 42px; font-weight: 600;
+    letter-spacing: -1.5px;
+    margin: 0 0 24px;
+    line-height: 1.05;
+  }
+  a { color: inherit; }
+  .back-home {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-home:hover { color: #1a1a1a; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { color: #1a1a1a; }
+  .brand-years {
+    font-size: 11px; color: #888;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .brand-name {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .brand-bio {
+    font-size: 15.5px; line-height: 1.75;
+    color: #2a2a2a;
+  }
+  .brand-bio p { margin: 0 0 16px; }
+  .brand-bio em { color: #555; }
+  .brand-timeline {
+    margin: 30px 0;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border-left: 2px solid #1a1a1a;
+    font-size: 13.5px;
+  }
+  .brand-timeline summary {
+    cursor: pointer; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-size: 11px; color: #555;
+  }
+  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline li {
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+    color: #444;
+  }
+  .brand-timeline li strong {
+    color: #1a1a1a; min-width: 110px; display: inline-block;
+  }
+  .brand-lines {
+    margin: 24px 0;
+    font-size: 13.5px;
+    color: #2a2a2a; line-height: 1.7;
+  }
+  .brand-lines strong {
+    color: #1a1a1a; text-transform: uppercase;
+    letter-spacing: 1px; font-size: 12px;
+  }
+  .brand-extra {
+    margin: 22px 0;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.04);
+    font-size: 13px; color: #555;
+    line-height: 1.65;
+  }
+  .carousel-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .carousel-title {
+    font-size: 18px; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .carousel-sub {
+    font-size: 12px; color: #888;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .carousel {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-card {
+    flex: 0 0 200px;
+    background: #fff;
+    text-decoration: none; color: #1a1a1a;
+    scroll-snap-align: start;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .carousel-card:hover { transform: translateY(-2px); }
+  .cc-img {
+    aspect-ratio: 1;
+    background: #fafafa;
+    overflow: hidden;
+  }
+  .cc-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cc-sold {
+    position: absolute; top: 8px; left: 8px;
+    background: #1a1a1a; color: #fff;
+    padding: 3px 8px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    font-size: 11px; color: #555;
+    padding: 10px 12px 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cc-price {
+    font-size: 12px; font-weight: 600;
+    padding: 0 12px 12px;
+  }
+  .cta-shop {
+    text-align: center; margin-top: 40px;
+  }
+  .cta-shop a {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #1a1a1a; color: #fff;
+    text-decoration: none;
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="brand-years">1995 —</div>
+  <h1 class="brand-name">KIJIMA TAKAYUKI</h1>
+  <div class="brand-bio"><p>Takayuki Kijima, chapelier japonais, maître reconnu de la scène contemporaine. Initialement attiré par le design vêtement, il bifurque vers la chapellerie au début des années 90 et entre comme protégé d'<strong>Akio Hirata</strong> — l'un des modistes les plus respectés au monde — pour qui il travaille de 1990 à 1994. Pendant cette période, il produit des chapeaux pour <em>Issey Miyake, Yohji Yamamoto et Comme des Garçons</em>.</p>
+        <p><strong>Positionnement.</strong> Deux logiques de production en parallèle : une ligne haute couture entièrement faite à la main dans l'atelier, et une ligne plus accessible produite en manufacture. Esthétique élégante mais décontractée, jamais <em>« party hat »</em> — Kijima refuse l'extravagance pour rester dans le réalisable, le portable.</p>
+        <p><strong>Collaborations.</strong> UNDERCOVER, FACETASM, TAKAHIROMIYASHITA TheSoloist., ART&SCIENCE, Sunspel, YLÈVE, FEIT. Lady Gaga et Madonna ont porté ses créations. Reconnu comme l'un des derniers grands maîtres modistes japonais, dans la lignée d'Akio Hirata.</p></div>
+  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1990 — 1994</strong> · formation auprès d'Akio Hirata, production pour Miyake / Yohji / CDG</li><li><strong>1995</strong> · installation de son propre atelier à Daikanyama, sous le label « coeur »</li><li><strong>1999</strong> · ouverture de sa première boutique</li><li><strong>2013</strong> · renommage de « coeur » en KIJIMA TAKAYUKI, élargissement aux lignes homme et femme</li><li><strong>2017</strong> · lancement de la High Line, ligne ultra-haut de gamme entièrement faite à la main</li><li><strong>Aujourd'hui</strong> · présentations bi-annuelles à Tokyo et Paris</li></ul></details>
+  
+  
+  
+    <section class="carousel-section">
+      <h2 class="carousel-title">Notre sélection KIJIMA TAKAYUKI</h2>
+      <div class="carousel-sub">Scroll horizontal</div>
+      <div class="carousel">
+        
+        <a class="carousel-card" href="/product/chapeaubonnet-kijima-takayuki-en-synthetique-noir-66437139">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chapeaubonnet-kijima-takayuki-en-synthetique-noir-66437139-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chapeau / bonnet</div>
+          <div class="cc-price">120 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chapeaubonnet-kijima-takayuki-en-soie-noir-66402515">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chapeaubonnet-kijima-takayuki-en-soie-noir-66402515-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chapeau / bonnet en soie</div>
+          <div class="cc-price">120 €</div>
+        </a>
+      </div>
+      <div class="cta-shop">
+        <a href="/shop?brand=KIJIMA%20TAKAYUKI">Voir toutes les pièces KIJIMA TAKAYUKI</a>
+      </div>
+    </section>
+</div>
+</body>
+</html>

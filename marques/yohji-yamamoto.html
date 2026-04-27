@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOHJI YAMAMOTO — Passéist</title>
+<meta name="description" content="Né à Tokyo en 1943, Yohji Yamamoto grandit auprès d'une mère couturière dans le Shinjuku d'après-guerre. Diplômé de droit à l'université Keio puis de Bunka">
+<style>
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
+    background: #f5f3ee;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 60px 30px 80px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 42px; font-weight: 600;
+    letter-spacing: -1.5px;
+    margin: 0 0 24px;
+    line-height: 1.05;
+  }
+  a { color: inherit; }
+  .back-home {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-home:hover { color: #1a1a1a; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { color: #1a1a1a; }
+  .brand-years {
+    font-size: 11px; color: #888;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .brand-name {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .brand-bio {
+    font-size: 15.5px; line-height: 1.75;
+    color: #2a2a2a;
+  }
+  .brand-bio p { margin: 0 0 16px; }
+  .brand-bio em { color: #555; }
+  .brand-timeline {
+    margin: 30px 0;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border-left: 2px solid #1a1a1a;
+    font-size: 13.5px;
+  }
+  .brand-timeline summary {
+    cursor: pointer; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-size: 11px; color: #555;
+  }
+  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline li {
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+    color: #444;
+  }
+  .brand-timeline li strong {
+    color: #1a1a1a; min-width: 110px; display: inline-block;
+  }
+  .brand-lines {
+    margin: 24px 0;
+    font-size: 13.5px;
+    color: #2a2a2a; line-height: 1.7;
+  }
+  .brand-lines strong {
+    color: #1a1a1a; text-transform: uppercase;
+    letter-spacing: 1px; font-size: 12px;
+  }
+  .brand-extra {
+    margin: 22px 0;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.04);
+    font-size: 13px; color: #555;
+    line-height: 1.65;
+  }
+  .carousel-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .carousel-title {
+    font-size: 18px; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .carousel-sub {
+    font-size: 12px; color: #888;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .carousel {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-card {
+    flex: 0 0 200px;
+    background: #fff;
+    text-decoration: none; color: #1a1a1a;
+    scroll-snap-align: start;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .carousel-card:hover { transform: translateY(-2px); }
+  .cc-img {
+    aspect-ratio: 1;
+    background: #fafafa;
+    overflow: hidden;
+  }
+  .cc-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cc-sold {
+    position: absolute; top: 8px; left: 8px;
+    background: #1a1a1a; color: #fff;
+    padding: 3px 8px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    font-size: 11px; color: #555;
+    padding: 10px 12px 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cc-price {
+    font-size: 12px; font-weight: 600;
+    padding: 0 12px 12px;
+  }
+  .cta-shop {
+    text-align: center; margin-top: 40px;
+  }
+  .cta-shop a {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #1a1a1a; color: #fff;
+    text-decoration: none;
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="brand-years">1943 —</div>
+  <h1 class="brand-name">YOHJI YAMAMOTO</h1>
+  <div class="brand-bio"><p>Né à Tokyo en 1943, Yohji Yamamoto grandit auprès d'une mère couturière dans le Shinjuku d'après-guerre. Diplômé de droit à l'université Keio puis de Bunka Fashion College, il fonde sa première marque en 1972.</p>
+        <p>Son défilé parisien de 1981, partagé avec Rei Kawakubo, déclenche le <em>« black shock »</em> — une rupture esthétique mondiale, faite de noir, d'asymétrie et de coupes déstructurées qui dialoguent avec le corps. À 82 ans, il reste l'un des derniers grands maîtres encore en activité de la révolution japonaise des années 80.</p></div>
+  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1943</strong> · naissance à Tokyo</li><li><strong>1966</strong> · diplôme de droit, université Keio</li><li><strong>1969</strong> · Soen Award, Bunka Fashion College</li><li><strong>1972</strong> · fondation de la maison Y's à Tokyo</li><li><strong>1979</strong> · lancement Y's for men, première ligne homme</li><li><strong>1981</strong> · débuts Paris — « black shock »</li><li><strong>1984</strong> · lancement Yohji Yamamoto POUR HOMME à Paris</li><li><strong>1999</strong> · lancement de LIMI feu par sa fille Limi Yamamoto</li><li><strong>2002</strong> · lancement Y-3 avec Adidas</li><li><strong>2014</strong> · lancement Ground Y et discord Yohji Yamamoto</li><li><strong>2022</strong> · lancement WILDSIDE YOHJI YAMAMOTO</li><li><strong>2023</strong> · relance de Y's for men à la Paris Fashion Week FW 2023-24</li></ul></details>
+  <div class="brand-lines"><strong>Lignes principales</strong><br>
+        <em>Y's</em> (1972) — première ligne, femme.<br>
+        <em>Y's for men</em> (1979 — 2010, relance 2023) — première ligne homme.<br>
+        <em>Yohji Yamamoto FEMME</em> (1981) — haute couture femme à Paris.<br>
+        <em>Yohji Yamamoto POUR HOMME</em> (1984) — haute couture homme à Paris.<br><br>
+        <strong>Lignes contemporaines</strong><br>
+        <em>Y-3</em> (2002) — collaboration historique avec Adidas.<br>
+        <em>LIMI feu</em> (1999) — marque de Limi Yamamoto, sa fille.<br>
+        <em>s'yte</em> (2011) — ligne casual web exclusive.<br>
+        <em>Ground Y</em> (2014) — ligne unisexe streetwear oversize.<br>
+        <em>discord Yohji Yamamoto</em> (2014) — accessoires et maroquinerie.<br>
+        <em>B Yohji Yamamoto / +NOIR</em> — ligne quotidienne femme.<br>
+        <em>WILDSIDE YOHJI YAMAMOTO</em> (2022) — concept-store et capsules.<br>
+        <em>BLACK Scandal Yohji Yamamoto</em> — ligne défilée à Paris.</div>
+  
+  
+    <section class="carousel-section">
+      <h2 class="carousel-title">Notre sélection YOHJI YAMAMOTO</h2>
+      <div class="carousel-sub">Scroll horizontal</div>
+      <div class="carousel">
+        
+        <a class="carousel-card" href="/product/foulardecharpe-yohji-yamamoto-en-laine-noir-66437502">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/foulardecharpe-yohji-yamamoto-en-laine-noir-66437502-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Echarpe en laine</div>
+          <div class="cc-price">190 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-yohji-yamamoto-en-coton-gris-66437332">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-yohji-yamamoto-en-coton-gris-66437332-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Gilet</div>
+          <div class="cc-price">240 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pantalon-yohji-yamamoto-en-coton-noir-66133047">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-yohji-yamamoto-en-coton-noir-66133047-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pantalon large S'yte</div>
+          <div class="cc-price">270 €</div>
+        </a>
+        <a class="carousel-card" href="/product/tee-shirt-yohji-yamamoto-en-coton-noir-66067467">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-yohji-yamamoto-en-coton-noir-66067467-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">T-shirt manches longues crâne</div>
+          <div class="cc-price">220 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-ys-en-coton-marine-54309982">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-ys-en-coton-marine-54309982-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Cardigan</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-ys-en-laine-noir-55346936">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-ys-en-laine-noir-55346936-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blazer en laine</div>
+          <div class="cc-price">340 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-ys-en-laine-noir-55347032">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-ys-en-laine-noir-55347032-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blazer en laine</div>
+          <div class="cc-price">350 €</div>
+        </a>
+        <a class="carousel-card" href="/product/sac-ys-en-synthetique-noir-55380887">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/sac-ys-en-synthetique-noir-55380887-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sac week-end</div>
+          <div class="cc-price">350 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-ys-en-coton-bleu-55690373">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-ys-en-coton-bleu-55690373-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste courte</div>
+          <div class="cc-price">190 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pantalon-ys-en-coton-anthracite-55692346">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-ys-en-coton-anthracite-55692346-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pantalon</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-ys-en-laine-ecru-56159932">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-ys-en-laine-ecru-56159932-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull-over en laine</div>
+          <div class="cc-price">110 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pantalon-ys-en-laine-noir-56368579">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-ys-en-laine-noir-56368579-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pantalon carotte en laine</div>
+          <div class="cc-price">120 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-ys-en-coton-beige-56368717">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-ys-en-coton-beige-56368717-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Cardigan</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-ys-en-coton-blanc-57232217">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-ys-en-coton-blanc-57232217-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/sac-ys-en-synthetique-noir-57237684">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/sac-ys-en-synthetique-noir-57237684-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Cartable</div>
+          <div class="cc-price">260 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-ys-en-coton-marine-57509685">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-marine-57509685-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tunique</div>
+          <div class="cc-price">190 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-ys-en-coton-noir-57509723">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-noir-57509723-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">160 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jupe-ys-en-laine-noir-57511129">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-ys-en-laine-noir-57511129-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jupe longue en laine</div>
+          <div class="cc-price">240 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-ys-en-laine-marine-57887057">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-laine-marine-57887057-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt en laine</div>
+          <div class="cc-price">160 €</div>
+        </a>
+        <a class="carousel-card" href="/product/polo-ys-en-coton-gris-57887895">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/polo-ys-en-coton-gris-57887895-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Polo</div>
+          <div class="cc-price">110 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-ys-en-coton-kaki-57891859">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-ys-en-coton-kaki-57891859-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste</div>
+          <div class="cc-price">210 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jupe-ys-en-coton-kaki-57986808">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-ys-en-coton-kaki-57986808-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jupe mi-longue</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-ys-en-coton-kaki-58130070">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-kaki-58130070-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-ys-en-coton-ecru-58176885">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-ecru-58176885-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Polo</div>
+          <div class="cc-price">180 €</div>
+        </a>
+      </div>
+      <div class="cta-shop">
+        <a href="/shop?brand=YOHJI%20YAMAMOTO">Voir toutes les pièces YOHJI YAMAMOTO</a>
+      </div>
+    </section>
+</div>
+</body>
+</html>

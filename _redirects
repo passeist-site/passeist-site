@@ -3,4 +3,8 @@
 /sitemap.xml      /sitemap.xml      200
 /robots.txt       /robots.txt       200
 /img/*            /img/:splat       200
-/*                /index.html       200
+# Pages marques (statiques, hors SPA)
+/marques          /marques.html         200
+/marques/         /marques.html         200
+/marques/*        /marques/:splat.html  200
+/*                /index.html           200

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>45RPM / 45R — Passéist</title>
+<meta name="description" content="Marque japonaise de denim et workwear premium, fondée à Tokyo en 1977 par Hiroshi Masuyama et Yasumi Inoue , rejoints en 1979 par Shinji Takahashi , l'actu">
+<style>
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
+    background: #f5f3ee;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 60px 30px 80px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 42px; font-weight: 600;
+    letter-spacing: -1.5px;
+    margin: 0 0 24px;
+    line-height: 1.05;
+  }
+  a { color: inherit; }
+  .back-home {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-home:hover { color: #1a1a1a; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { color: #1a1a1a; }
+  .brand-years {
+    font-size: 11px; color: #888;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .brand-name {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .brand-bio {
+    font-size: 15.5px; line-height: 1.75;
+    color: #2a2a2a;
+  }
+  .brand-bio p { margin: 0 0 16px; }
+  .brand-bio em { color: #555; }
+  .brand-timeline {
+    margin: 30px 0;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border-left: 2px solid #1a1a1a;
+    font-size: 13.5px;
+  }
+  .brand-timeline summary {
+    cursor: pointer; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-size: 11px; color: #555;
+  }
+  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline li {
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+    color: #444;
+  }
+  .brand-timeline li strong {
+    color: #1a1a1a; min-width: 110px; display: inline-block;
+  }
+  .brand-lines {
+    margin: 24px 0;
+    font-size: 13.5px;
+    color: #2a2a2a; line-height: 1.7;
+  }
+  .brand-lines strong {
+    color: #1a1a1a; text-transform: uppercase;
+    letter-spacing: 1px; font-size: 12px;
+  }
+  .brand-extra {
+    margin: 22px 0;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.04);
+    font-size: 13px; color: #555;
+    line-height: 1.65;
+  }
+  .carousel-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .carousel-title {
+    font-size: 18px; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .carousel-sub {
+    font-size: 12px; color: #888;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .carousel {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-card {
+    flex: 0 0 200px;
+    background: #fff;
+    text-decoration: none; color: #1a1a1a;
+    scroll-snap-align: start;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .carousel-card:hover { transform: translateY(-2px); }
+  .cc-img {
+    aspect-ratio: 1;
+    background: #fafafa;
+    overflow: hidden;
+  }
+  .cc-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cc-sold {
+    position: absolute; top: 8px; left: 8px;
+    background: #1a1a1a; color: #fff;
+    padding: 3px 8px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    font-size: 11px; color: #555;
+    padding: 10px 12px 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cc-price {
+    font-size: 12px; font-weight: 600;
+    padding: 0 12px 12px;
+  }
+  .cta-shop {
+    text-align: center; margin-top: 40px;
+  }
+  .cta-shop a {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #1a1a1a; color: #fff;
+    text-decoration: none;
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="brand-years">1977 —</div>
+  <h1 class="brand-name">45RPM / 45R</h1>
+  <div class="brand-bio"><p>Marque japonaise de denim et workwear premium, fondée à Tokyo en 1977 par <strong>Hiroshi Masuyama</strong> et <strong>Yasumi Inoue</strong>, rejoints en 1979 par <strong>Shinji Takahashi</strong>, l'actuel président. Le nom vient de la vitesse de rotation des disques vinyles 45 tours — clin d'œil pop culture des sixties-seventies.</p>
+        <p>Première maison à exporter du denim japonais haut de gamme à l'international dans les années 80, alors que le jean était en pleine massification mondiale. Spécialisée dans la teinture indigo naturelle, l'artisanat de fabrication et le savoir-faire textile japonais.</p>
+        <p>Boutiques à Tokyo, Paris rue Étienne Marcel, New York, Hong Kong, Singapour. La marque s'est progressivement renommée <strong>45R</strong> après 2010 pour son expansion internationale.</p></div>
+  
+  <div class="brand-lines"><strong>Lignes et sous-marques</strong><br>
+        <em>45rpm</em> (1977) — ligne principale, denim et workwear premium.<br>
+        <em>NORTH MARINE DRIVE</em> (1998 — 2000) — sous-ligne workwear/heritage japonais à la croisée du sportif et du quotidien (chemises hickory, vestes réversibles laine-coton, prints novelty). Fusionne avec 45rpm en 2000 pour former <strong>45rpm&</strong>. Pièces vintage très recherchées.<br>
+        <em>45rpm&</em> (2000 — années 2000) — ligne née de la fusion 45rpm + North Marine Drive.<br>
+        <em>Umii 908 / UMII908</em> (2005 —) — sous-ligne premium, la plus haut de gamme du groupe. Workwear japonais ultra-soigné : flanelles indigo, chemises à boutons nacre, vestes chore en moleskine, quilted outerwear. Évolution premium de l'ADN North Marine Drive. Toujours active.<br>
+        <em>R by 45rpm</em> — sous-ligne accessible, coupe contemporaine.<br>
+        <em>Dash Organic by 45rpm</em> — sous-ligne textile bio.<br>
+        <em>45R</em> — nom international actuel depuis les années 2010.</div>
+  <div class="brand-extra"><strong>UMII908 et NORTH MARINE DRIVE</strong> sont deux sous-lignes successives en filiation directe : NMD (1998-2000) → fusion 45rpm& → Umii 908 reprend l'esprit premium artisanal en 2005. Même ADN heritage workwear japonais haut de gamme, même fabricant, même atelier de teinture indigo. Pour un collectionneur, posséder une pièce NMD et une pièce Umii 908 = deux générations d'une même filiation.</div>
+  
+    <section class="carousel-section">
+      <h2 class="carousel-title">Notre sélection 45RPM / 45R</h2>
+      <div class="carousel-sub">Scroll horizontal</div>
+      <div class="carousel">
+        
+        <a class="carousel-card" href="/product/haut-45rpm-en-coton-blanc-66123208">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-45rpm-en-coton-blanc-66123208-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">100 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-45rpm-en-coton-marine-66133219">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-45rpm-en-coton-marine-66133219-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat à capuche</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-45rpm-en-coton-marine-65532912">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-45rpm-en-coton-marine-65532912-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Cardigan</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-45rpm-en-laine-rouge-66131370">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-45rpm-en-laine-rouge-66131370-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise en laine</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-45rpm-en-laine-marine-66122996">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-45rpm-en-laine-marine-66122996-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull-over en laine</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-45rpm-en-coton-marine-66130950">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-45rpm-en-coton-marine-66130950-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Gilet long</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-45rpm-en-coton-marine-66132603">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-45rpm-en-coton-marine-66132603-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste</div>
+          <div class="cc-price">230 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-45rpm-en-coton-vert-65413867">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-45rpm-en-coton-vert-65413867-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/foulardecharpe-45rpm-en-autre-marine-66122962">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/foulardecharpe-45rpm-en-autre-marine-66122962-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Étole indigo</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-45rpm-en-coton-marine-65415749">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-45rpm-en-coton-marine-65415749-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise indigo</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jean-45rpm-en-denim-marine-65603590">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jean-45rpm-en-denim-marine-65603590-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jean large</div>
+          <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-45rpm-en-coton-marine-65565480">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-45rpm-en-coton-marine-65565480-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste denim hickory</div>
+          <div class="cc-price">220 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-45rpm-en-coton-bleu-57231869">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-45rpm-en-coton-bleu-57231869-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/short-45rpm-en-coton-beige-57233026">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/short-45rpm-en-coton-beige-57233026-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Short</div>
+          <div class="cc-price">120 €</div>
+        </a>
+        <a class="carousel-card" href="/product/tee-shirt-45rpm-en-coton-marron-57233350">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-45rpm-en-coton-marron-57233350-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">80 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-45rpm-en-coton-marine-57237868">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-45rpm-en-coton-marine-57237868-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blouson</div>
+          <div class="cc-price">90 €</div>
+        </a>
+        <a class="carousel-card" href="/product/short-45rpm-en-coton-rose-57649283">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/short-45rpm-en-coton-rose-57649283-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Short</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/short-45rpm-en-coton-kaki-57986472">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/short-45rpm-en-coton-kaki-57986472-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Bermuda</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-45rpm-en-coton-marine-58325665">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-45rpm-en-coton-marine-58325665-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-45rpm-en-coton-marine-58816634">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-45rpm-en-coton-marine-58816634-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">100 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jupe-45rpm-en-coton-marine-59346313">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-45rpm-en-coton-marine-59346313-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jupe mi-longue</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-45rpm-en-coton-beige-59684294">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-45rpm-en-coton-beige-59684294-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">90 €</div>
+        </a>
+        <a class="carousel-card" href="/product/polo-45rpm-en-coton-marine-60066862">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/polo-45rpm-en-coton-marine-60066862-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Polo</div>
+          <div class="cc-price">120 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jean-45rpm-en-coton-marine-60871777">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jean-45rpm-en-coton-marine-60871777-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jean droit</div>
+          <div class="cc-price">120 €</div>
+        </a>
+      </div>
+      <div class="cta-shop">
+        <a href="/shop?brand=45RPM">Voir toutes les pièces 45RPM / 45R</a>
+      </div>
+    </section>
+</div>
+</body>
+</html>

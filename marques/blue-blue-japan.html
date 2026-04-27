@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLUE BLUE JAPAN — Passéist</title>
+<meta name="description" content="Marque du groupe Seilin & Co., fondée par Hideki Yoshioka. Spécialiste des textiles teints à l'indigo et des techniques traditionnelles japonaises — shibor">
+<style>
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
+    background: #f5f3ee;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 60px 30px 80px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 42px; font-weight: 600;
+    letter-spacing: -1.5px;
+    margin: 0 0 24px;
+    line-height: 1.05;
+  }
+  a { color: inherit; }
+  .back-home {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-home:hover { color: #1a1a1a; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { color: #1a1a1a; }
+  .brand-years {
+    font-size: 11px; color: #888;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .brand-name {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .brand-bio {
+    font-size: 15.5px; line-height: 1.75;
+    color: #2a2a2a;
+  }
+  .brand-bio p { margin: 0 0 16px; }
+  .brand-bio em { color: #555; }
+  .brand-timeline {
+    margin: 30px 0;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border-left: 2px solid #1a1a1a;
+    font-size: 13.5px;
+  }
+  .brand-timeline summary {
+    cursor: pointer; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-size: 11px; color: #555;
+  }
+  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline li {
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+    color: #444;
+  }
+  .brand-timeline li strong {
+    color: #1a1a1a; min-width: 110px; display: inline-block;
+  }
+  .brand-lines {
+    margin: 24px 0;
+    font-size: 13.5px;
+    color: #2a2a2a; line-height: 1.7;
+  }
+  .brand-lines strong {
+    color: #1a1a1a; text-transform: uppercase;
+    letter-spacing: 1px; font-size: 12px;
+  }
+  .brand-extra {
+    margin: 22px 0;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.04);
+    font-size: 13px; color: #555;
+    line-height: 1.65;
+  }
+  .carousel-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .carousel-title {
+    font-size: 18px; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .carousel-sub {
+    font-size: 12px; color: #888;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .carousel {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-card {
+    flex: 0 0 200px;
+    background: #fff;
+    text-decoration: none; color: #1a1a1a;
+    scroll-snap-align: start;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .carousel-card:hover { transform: translateY(-2px); }
+  .cc-img {
+    aspect-ratio: 1;
+    background: #fafafa;
+    overflow: hidden;
+  }
+  .cc-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cc-sold {
+    position: absolute; top: 8px; left: 8px;
+    background: #1a1a1a; color: #fff;
+    padding: 3px 8px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    font-size: 11px; color: #555;
+    padding: 10px 12px 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cc-price {
+    font-size: 12px; font-weight: 600;
+    padding: 0 12px 12px;
+  }
+  .cta-shop {
+    text-align: center; margin-top: 40px;
+  }
+  .cta-shop a {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #1a1a1a; color: #fff;
+    text-decoration: none;
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="brand-years">Circa 2000s —</div>
+  <h1 class="brand-name">BLUE BLUE JAPAN</h1>
+  <div class="brand-bio"><p>Marque du groupe Seilin & Co., fondée par Hideki Yoshioka. Spécialiste des textiles teints à l'indigo et des techniques traditionnelles japonaises — <em>shibori</em>, <em>sashiko</em>, <em>katazome</em> — appliquées à des coupes streetwear contemporaines.</p>
+        <p>Boutique principale OKURA à Daikanyama, Tokyo — devenue mythique chez les amateurs de mode japonaise traditionnelle revisitée. Tee-shirts indigo, hoodies, vestes workwear, bandanas : le Japan heritage modernisé.</p></div>
+  
+  
+  
+  
+    <section class="carousel-section">
+      <h2 class="carousel-title">Notre sélection BLUE BLUE JAPAN</h2>
+      <div class="carousel-sub">Scroll horizontal</div>
+      <div class="carousel">
+        
+        <a class="carousel-card" href="/product/vesteblouson-blue-blue-japan-en-coton-marine-65414486">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-blue-blue-japan-en-coton-marine-65414486-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste hickory</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-blue-blue-japan-en-coton-marine-63036892">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-blue-blue-japan-en-coton-marine-63036892-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat</div>
+          <div class="cc-price">100 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-blue-blue-japan-en-coton-marine-63093581">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-blue-blue-japan-en-coton-marine-63093581-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Cardigan</div>
+          <div class="cc-price">110 €</div>
+        </a>
+        <a class="carousel-card" href="/product/costume-blue-blue-japan-en-coton-marine-63549088">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/costume-blue-blue-japan-en-coton-marine-63549088-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Costume</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/tee-shirt-blue-blue-japan-en-coton-bleu-64219773">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-blue-blue-japan-en-coton-bleu-64219773-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">80 €</div>
+        </a>
+        <a class="carousel-card" href="/product/tee-shirt-blue-blue-japan-en-coton-marine-64219849">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-blue-blue-japan-en-coton-marine-64219849-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">80 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-blue-blue-japan-en-coton-marine-64872185">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-blue-blue-japan-en-coton-marine-64872185-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/polo-blue-blue-japan-en-coton-marine-65088539">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/polo-blue-blue-japan-en-coton-marine-65088539-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Polo</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-blue-blue-japan-en-coton-beige-65413978">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-blue-blue-japan-en-coton-beige-65413978-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Gilet</div>
+          <div class="cc-price">160 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-blue-blue-japan-en-coton-marine-65414579">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-blue-blue-japan-en-coton-marine-65414579-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull</div>
+          <div class="cc-price">110 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-blue-blue-japan-en-coton-beige-65568547">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-blue-blue-japan-en-coton-beige-65568547-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat</div>
+          <div class="cc-price">150 €</div>
+        </a>
+      </div>
+      <div class="cta-shop">
+        <a href="/shop?brand=BLUE%20BLUE%20JAPAN">Voir toutes les pièces BLUE BLUE JAPAN</a>
+      </div>
+    </section>
+</div>
+</body>
+</html>

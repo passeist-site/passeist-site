@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMME DES GARÇONS — Passéist</title>
+<meta name="description" content="Rei Kawakubo, née à Tokyo en 1942, diplômée de littérature et esthétique à Keio en 1964. Stylist freelance avant de fonder Comme des Garçons en 1969. Ses d">
+<style>
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
+    background: #f5f3ee;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 60px 30px 80px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 42px; font-weight: 600;
+    letter-spacing: -1.5px;
+    margin: 0 0 24px;
+    line-height: 1.05;
+  }
+  a { color: inherit; }
+  .back-home {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .back-home:hover { color: #1a1a1a; }
+
+  .breadcrumb {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .breadcrumb a { color: #888; text-decoration: none; }
+  .breadcrumb a:hover { color: #1a1a1a; }
+  .brand-years {
+    font-size: 11px; color: #888;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .brand-name {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .brand-bio {
+    font-size: 15.5px; line-height: 1.75;
+    color: #2a2a2a;
+  }
+  .brand-bio p { margin: 0 0 16px; }
+  .brand-bio em { color: #555; }
+  .brand-timeline {
+    margin: 30px 0;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border-left: 2px solid #1a1a1a;
+    font-size: 13.5px;
+  }
+  .brand-timeline summary {
+    cursor: pointer; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-size: 11px; color: #555;
+  }
+  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline li {
+    padding: 6px 0;
+    border-bottom: 1px dotted rgba(0,0,0,0.1);
+    color: #444;
+  }
+  .brand-timeline li strong {
+    color: #1a1a1a; min-width: 110px; display: inline-block;
+  }
+  .brand-lines {
+    margin: 24px 0;
+    font-size: 13.5px;
+    color: #2a2a2a; line-height: 1.7;
+  }
+  .brand-lines strong {
+    color: #1a1a1a; text-transform: uppercase;
+    letter-spacing: 1px; font-size: 12px;
+  }
+  .brand-extra {
+    margin: 22px 0;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.04);
+    font-size: 13px; color: #555;
+    line-height: 1.65;
+  }
+  .carousel-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .carousel-title {
+    font-size: 18px; font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .carousel-sub {
+    font-size: 12px; color: #888;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 30px;
+  }
+  .carousel {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-card {
+    flex: 0 0 200px;
+    background: #fff;
+    text-decoration: none; color: #1a1a1a;
+    scroll-snap-align: start;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .carousel-card:hover { transform: translateY(-2px); }
+  .cc-img {
+    aspect-ratio: 1;
+    background: #fafafa;
+    overflow: hidden;
+  }
+  .cc-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .cc-sold {
+    position: absolute; top: 8px; left: 8px;
+    background: #1a1a1a; color: #fff;
+    padding: 3px 8px;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .cc-name {
+    font-size: 11px; color: #555;
+    padding: 10px 12px 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .cc-price {
+    font-size: 12px; font-weight: 600;
+    padding: 0 12px 12px;
+  }
+  .cta-shop {
+    text-align: center; margin-top: 40px;
+  }
+  .cta-shop a {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #1a1a1a; color: #fff;
+    text-decoration: none;
+    font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="brand-years">1969 —</div>
+  <h1 class="brand-name">COMME DES GARÇONS</h1>
+  <div class="brand-bio"><p>Rei Kawakubo, née à Tokyo en 1942, diplômée de littérature et esthétique à Keio en 1964. Stylist freelance avant de fonder Comme des Garçons en 1969. Ses débuts parisiens en 1981, partagés avec Yohji Yamamoto, déclenchent le <em>« black shock »</em> — une révolution esthétique mondiale.</p>
+        <p>Anti-mode, asymétrie, déconstruction, monochrome : la collection <em>« Lumps and Bumps »</em> (1997) reste sa déclaration la plus célèbre. Mariée au PDG Adrian Joffe, elle est l'une des très rares créatrices à avoir eu une exposition solo au Met Costume Institute de son vivant (<em>« Art of the In-Between »</em>, 2017).</p></div>
+  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1969</strong> · fondation à Tokyo</li><li><strong>1973</strong> · incorporation de la société</li><li><strong>1975</strong> · premier défilé Tokyo</li><li><strong>1978</strong> · lancement Comme des Garçons HOMME</li><li><strong>1981</strong> · débuts Paris — « black shock »</li><li><strong>1985</strong> · HOMME PLUS, ligne homme défilée à Paris</li><li><strong>1992</strong> · lancement Junya Watanabe sous l'aile CDG</li><li><strong>1994</strong> · collection « Body Meets Dress, Dress Meets Body »</li><li><strong>2002</strong> · lancement PLAY (le cœur Filip Pagowski)</li><li><strong>2004</strong> · ouverture Dover Street Market Londres</li><li><strong>2008</strong> · lancement Ganryu Comme des Garçons</li><li><strong>2012</strong> · lancement Noir Kei Ninomiya</li><li><strong>2017</strong> · exposition solo au Met Costume Institute</li></ul></details>
+  <div class="brand-lines">Comme des Garçons (femme, défilée Paris), Comme des Garçons HOMME (1978), HOMME PLUS (1985), HOMME DEUX, Tricot Comme des Garçons, Robe de Chambre Comme des Garçons, Comme des Garçons SHIRT, Comme des Garçons SHIRT BOY, PLAY Comme des Garçons (2002), BLACK Comme des Garçons, Junya Watanabe Comme des Garçons (1992), Junya Watanabe Comme des Garçons MAN (2001), Noir Kei Ninomiya (2012). Anciennement : Ganryu (2008-2017), tao (2005-2011).</div>
+  <div class="brand-extra"><strong>Distribution.</strong> Dover Street Market — Londres (2004), New York (2013), Tokyo (2012), Singapour, Los Angeles, Pékin, Paris. Concept-store multimarque, vitrine philosophique du groupe.</div>
+  
+    <section class="carousel-section">
+      <h2 class="carousel-title">Notre sélection COMME DES GARÇONS</h2>
+      <div class="carousel-sub">Scroll horizontal</div>
+      <div class="carousel">
+        
+        <a class="carousel-card" href="/product/foulardecharpe-comme-des-garcons-en-laine-noir-66437374">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/foulardecharpe-comme-des-garcons-en-laine-noir-66437374-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Echarpe en laine</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-coton-noir-66437218">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-coton-noir-66437218-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-comme-des-garcons-en-laine-noir-66437685">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-comme-des-garcons-en-laine-noir-66437685-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste en laine</div>
+          <div class="cc-price">390 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-laine-noir-66437281">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-laine-noir-66437281-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt en laine</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-coton-autre-54708545">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-coton-autre-54708545-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-comme-des-garcons-en-coton-gris-57239404">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-comme-des-garcons-en-coton-gris-57239404-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-coton-noir-57239975">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-coton-noir-57239975-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">140 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jupe-comme-des-garcons-en-synthetique-noir-57240073">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-comme-des-garcons-en-synthetique-noir-57240073-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jupe mi-longue</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/robe-comme-des-garcons-en-laine-noir-57240240">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/robe-comme-des-garcons-en-laine-noir-57240240-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Mini robe en laine</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-polyester-blanc-57511078">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-polyester-blanc-57511078-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blouse</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pantalon-comme-des-garcons-en-synthetique-marine-57887479">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-comme-des-garcons-en-synthetique-marine-57887479-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pantalon</div>
+          <div class="cc-price">290 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-comme-des-garcons-en-laine-multicolore-57648900">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-comme-des-garcons-en-laine-multicolore-57648900-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull en laine</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/sac-comme-des-garcons-en-synthetique-noir-57887754">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/sac-comme-des-garcons-en-synthetique-noir-57887754-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sac</div>
+          <div class="cc-price">210 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pantalon-comme-des-garcons-en-coton-beige-57979052">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-comme-des-garcons-en-coton-beige-57979052-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pantalon large</div>
+          <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-coton-noir-58129624">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-coton-noir-58129624-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-comme-des-garcons-en-laine-multicolore-59077306">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-comme-des-garcons-en-laine-multicolore-59077306-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste en laine</div>
+          <div class="cc-price">330 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-comme-des-garcons-en-coton-multicolore-59346452">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-comme-des-garcons-en-coton-multicolore-59346452-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">120 €</div>
+        </a>
+        <a class="carousel-card" href="/product/costume-comme-des-garcons-en-laine-anthracite-59684388">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/costume-comme-des-garcons-en-laine-anthracite-59684388-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Costume en laine</div>
+          <div class="cc-price">540 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-comme-des-garcons-en-coton-blanc-60063779">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-comme-des-garcons-en-coton-blanc-60063779-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste</div>
+          <div class="cc-price">290 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-comme-des-garcons-en-synthetique-ecru-60065886">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-comme-des-garcons-en-synthetique-ecru-60065886-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull-over</div>
+          <div class="cc-price">160 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-comme-des-garcons-en-coton-multicolore-61440601">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-comme-des-garcons-en-coton-multicolore-61440601-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/tee-shirt-comme-des-garcons-en-polyester-multicolore-61441567">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-comme-des-garcons-en-polyester-multicolore-61441567-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Tee shirt</div>
+          <div class="cc-price">190 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-comme-des-garcons-en-coton-bordeaux-61610500">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-comme-des-garcons-en-coton-bordeaux-61610500-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">150 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgiletsweat-comme-des-garcons-en-laine-kaki-61610631">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-comme-des-garcons-en-laine-kaki-61610631-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Pull en laine</div>
+          <div class="cc-price">210 €</div>
+        </a>
+      </div>
+      <div class="cta-shop">
+        <a href="/shop?brand=COMME%20DES%20GARCONS">Voir toutes les pièces COMME DES GARÇONS</a>
+      </div>
+    </section>
+</div>
+</body>
+</html>
