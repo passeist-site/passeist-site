@@ -423,23 +423,24 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   z-index: 19;
   transform: translateY(-8px); opacity: 0; pointer-events: none;
   transition: transform 0.35s var(--ease), opacity 0.2s;
-  padding: 64px 32px 32px; flex-direction: column; gap: 0;
+  padding: 36px 28px 28px; flex-direction: column; gap: 0;
 }
 .mobile-nav.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
 .mobile-nav a {
-  color: #f4f1ec; text-decoration: none;
+  color: var(--ink); text-decoration: none;
   font-family: var(--font-sans);
-  font-size: 28px; font-weight: 600; letter-spacing: -0.015em;
-  padding: 22px 24px; margin-bottom: 14px;
-  position: relative; isolation: isolate;
+  font-size: 22px; font-weight: 600; letter-spacing: -0.01em;
+  padding: 8px 0; margin-bottom: 0;
+  position: relative;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   display: inline-flex; align-items: center;
   align-self: flex-start;
 }
 .mobile-nav a > span { position: relative; z-index: 1; }
-.mobile-nav a .nav-ink--mobile { opacity: 0.85; transition: opacity 0.25s; }
-.mobile-nav a.active .nav-ink--mobile { opacity: 1; }
+/* On masque l'encart d'encre sur mobile : juste le texte */
+.mobile-nav a .nav-ink--mobile { display: none !important; }
+.mobile-nav a.active { font-weight: 700; text-decoration: underline; text-underline-offset: 5px; }
 .mobile-nav .mobile-nav-sub {
   margin-top: auto; padding-top: 40px;
   font-family: var(--font-mono);
@@ -1731,6 +1732,13 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 .about-intro .about-body:last-child { margin-bottom: 0; }
 
 /* === MARQUES (page section dans le SPA) === */
+/* Surcharge .about : permet le scroll vertical (17 marques = trop pour 1 écran) */
+#marques-page {
+  height: auto !important;
+  min-height: calc(100dvh - var(--topbar-h));
+  overflow: visible !important;
+  max-width: 880px;
+}
 #marques-page .marques-inner {
   width: 100%;
   max-width: 880px;
