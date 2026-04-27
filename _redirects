@@ -6,5 +6,9 @@
 # Pages marques (statiques, hors SPA)
 /marques          /marques.html         200
 /marques/         /marques.html         200
+# Marques fusionnées (anciens slugs → nouveaux)
+/marques/ground-y /marques/yohji-yamamoto.html 301
+/marques/ganryu   /marques/fumito-ganryu.html  301
+/marques/hai      /marques/issey-miyake.html   301
 /marques/*        /marques/:splat.html  200
 /*                /index.html           200

@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,21 +279,27 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">1977 —</div>
   <h1 class="brand-name">45RPM / 45R</h1>
-  <div class="brand-bio"><p>Marque japonaise de denim et workwear premium, fondée à Tokyo en 1977 par <strong>Hiroshi Masuyama</strong> et <strong>Yasumi Inoue</strong>, rejoints en 1979 par <strong>Shinji Takahashi</strong>, l'actuel président. Le nom vient de la vitesse de rotation des disques vinyles 45 tours — clin d'œil pop culture des sixties-seventies.</p>
-        <p>Première maison à exporter du denim japonais haut de gamme à l'international dans les années 80, alors que le jean était en pleine massification mondiale. Spécialisée dans la teinture indigo naturelle, l'artisanat de fabrication et le savoir-faire textile japonais.</p>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Marque japonaise de denim et workwear premium, fondée à Tokyo en 1977 par <strong>Hiroshi Masuyama</strong> et <strong>Yasumi Inoue</strong>, rejoints en 1979 par <strong>Shinji Takahashi</strong>, l'actuel président. Le nom vient de la vitesse de rotation des disques vinyles 45 tours (45 rotations per minute) — clin d'œil pop culture des sixties-seventies.</p>
+        <p>Première maison à exporter du denim japonais haut de gamme à l'international dans les années 80, alors que le jean était en pleine massification mondiale. Spécialisée dans la teinture indigo naturelle, l'attention portée à chaque geste de fabrication et le savoir-faire textile japonais.</p>
         <p>Boutiques à Tokyo, Paris rue Étienne Marcel, New York, Hong Kong, Singapour. La marque s'est progressivement renommée <strong>45R</strong> après 2010 pour son expansion internationale.</p></div>
-  
-  <div class="brand-lines"><strong>Lignes et sous-marques</strong><br>
-        <em>45rpm</em> (1977) — ligne principale, denim et workwear premium.<br>
-        <em>NORTH MARINE DRIVE</em> (1998 — 2000) — sous-ligne workwear/heritage japonais à la croisée du sportif et du quotidien (chemises hickory, vestes réversibles laine-coton, prints novelty). Fusionne avec 45rpm en 2000 pour former <strong>45rpm&</strong>. Pièces vintage très recherchées.<br>
-        <em>45rpm&</em> (2000 — années 2000) — ligne née de la fusion 45rpm + North Marine Drive.<br>
-        <em>Umii 908 / UMII908</em> (2005 —) — sous-ligne premium, la plus haut de gamme du groupe. Workwear japonais ultra-soigné : flanelles indigo, chemises à boutons nacre, vestes chore en moleskine, quilted outerwear. Évolution premium de l'ADN North Marine Drive. Toujours active.<br>
-        <em>R by 45rpm</em> — sous-ligne accessible, coupe contemporaine.<br>
-        <em>Dash Organic by 45rpm</em> — sous-ligne textile bio.<br>
-        <em>45R</em> — nom international actuel depuis les années 2010.</div>
-  <div class="brand-extra"><strong>UMII908 et NORTH MARINE DRIVE</strong> sont deux sous-lignes successives en filiation directe : NMD (1998-2000) → fusion 45rpm& → Umii 908 reprend l'esprit premium artisanal en 2005. Même ADN heritage workwear japonais haut de gamme, même fabricant, même atelier de teinture indigo. Pour un collectionneur, posséder une pièce NMD et une pièce Umii 908 = deux générations d'une même filiation.</div>
+    
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes et déclinaisons</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1977</td><td class="lt-name">45rpm</td><td class="lt-desc">Ligne principale, denim et workwear premium.</td></tr>
+    <tr><td class="lt-year">1998<br>—2000</td><td class="lt-name">NORTH MARINE DRIVE</td><td class="lt-desc">Sous-ligne workwear et heritage japonais, à la croisée du sportif et du quotidien : chemises hickory, vestes réversibles laine-coton, prints novelty. Pièces vintage très recherchées.</td></tr>
+    <tr><td class="lt-year">2000</td><td class="lt-name">45rpm&</td><td class="lt-desc">Ligne née de la fusion 45rpm + North Marine Drive.</td></tr>
+    <tr><td class="lt-year">2005</td><td class="lt-name">Umii 908 / UMII908</td><td class="lt-desc">Sous-ligne premium, la plus haut de gamme du groupe. Workwear japonais ultra-soigné : flanelles indigo, chemises à boutons nacre, vestes chore en moleskine, quilted outerwear. Évolution premium de l'ADN North Marine Drive. Toujours active.</td></tr>
+    <tr><td class="lt-year">—</td><td class="lt-name">R by 45rpm</td><td class="lt-desc">Sous-ligne accessible, coupe contemporaine. Date de lancement non documentée publiquement.</td></tr>
+    <tr><td class="lt-year">—</td><td class="lt-name">Dash Organic by 45rpm</td><td class="lt-desc">Sous-ligne textile bio. Date de lancement non documentée publiquement.</td></tr>
+    <tr><td class="lt-year">~2010</td><td class="lt-name">45R</td><td class="lt-desc">Nom international actuel depuis les années 2010.</td></tr>
+  </table>
+</div></div><div class="brand-extra"><strong>UMII908 et NORTH MARINE DRIVE</strong> sont deux sous-lignes successives en filiation directe : NMD (1998-2000) → fusion 45rpm& → Umii 908 reprend l'esprit premium artisanal en 2005. Même ADN heritage workwear japonais haut de gamme, même fabricant, même atelier de teinture indigo. Pour un collectionneur, posséder une pièce NMD et une pièce Umii 908 = deux générations d'une même filiation.</div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection 45RPM / 45R</h2>

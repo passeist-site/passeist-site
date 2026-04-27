@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,18 +279,24 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">1998 —</div>
   <h1 class="brand-name">TIGRE BROCANTE</h1>
-  <div class="brand-bio"><p>Marque japonaise fondée en 1998 à <strong>Fukuoka</strong>, sur l'île de Kyushu. Le nom est un double clin d'œil franco-japonais : 1998 était l'année du Tigre dans le calendrier zodiacal japonais, combiné à <em>« brocante »</em> en référence aux antiquaires européens.</p>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Marque japonaise fondée en 1998 à <strong>Fukuoka</strong>, sur l'île de Kyushu. Le nom est un double clin d'œil franco-japonais : 1998 était l'année du Tigre dans le calendrier zodiacal japonais, combiné à <em>« brocante »</em> en référence aux antiquaires européens.</p>
         <p>Tigre Brocante incarne une fusion textile élargie : traditions japonaises de teinture indigo, teinture à la boue et tissages anciens sur métiers traditionnels, croisées avec des savoir-faire d'Inde, de Thaïlande et du Népal. Vocabulaire visuel : workwear européen revisité, patchworks, teintures naturelles, palette terreuse, esprit <em>« brocante »</em> — vêtements qui évoquent une nostalgie travaillée tout en restant portables au quotidien adulte.</p>
         <p>Représentative du mouvement japonais <em>slow fashion / heritage</em> de la fin des années 90, parallèle à 45rpm mais avec un ADN plus pan-asiatique. Toujours active aujourd'hui, à profil discret hors du Japon mais culte chez les amateurs de mode artisanale japonaise et asiatique.</p></div>
-  
-  <div class="brand-lines"><strong>Boutiques</strong><br>
-        <em>Magasin principal à Fukuoka</em> (siège historique).<br>
-        <em>Lapin Brocante</em> à la gare Hakata.<br>
-        <em>Dragon Brocante</em> à Kumamoto.<br>
-        Distribution dans plusieurs select shops japonais : TAKANNA, 6DIRECTIONS, t.m.p.coop, 3bre.</div>
-  
+    
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Boutiques</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">Fukuoka</td><td class="lt-name">Magasin principal</td><td class="lt-desc">Siège historique.</td></tr>
+    <tr><td class="lt-year">Hakata</td><td class="lt-name">Lapin Brocante</td><td class="lt-desc">Boutique en gare de Hakata.</td></tr>
+    <tr><td class="lt-year">Kumamoto</td><td class="lt-name">Dragon Brocante</td><td class="lt-desc">Boutique de Kumamoto.</td></tr>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:14px;line-height:1.55;">Distribution dans plusieurs select shops japonais : TAKANNA, 6DIRECTIONS, t.m.p.coop, 3bre.</p>
+</div></div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
 </div>
 </body>

@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,26 +279,48 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">1943 —</div>
   <h1 class="brand-name">YOHJI YAMAMOTO</h1>
-  <div class="brand-bio"><p>Né à Tokyo en 1943, Yohji Yamamoto grandit auprès d'une mère couturière dans le Shinjuku d'après-guerre. Diplômé de droit à l'université Keio puis de Bunka Fashion College, il fonde sa première marque en 1972.</p>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Né à Tokyo en 1943, Yohji Yamamoto grandit auprès d'une mère couturière dans le Shinjuku d'après-guerre. Diplômé de droit à l'université Keio puis de Bunka Fashion College, il fonde sa première marque en 1972.</p>
         <p>Son défilé parisien de 1981, partagé avec Rei Kawakubo, déclenche le <em>« black shock »</em> — une rupture esthétique mondiale, faite de noir, d'asymétrie et de coupes déstructurées qui dialoguent avec le corps. À 82 ans, il reste l'un des derniers grands maîtres encore en activité de la révolution japonaise des années 80.</p></div>
-  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1943</strong> · naissance à Tokyo</li><li><strong>1966</strong> · diplôme de droit, université Keio</li><li><strong>1969</strong> · Soen Award, Bunka Fashion College</li><li><strong>1972</strong> · fondation de la maison Y's à Tokyo</li><li><strong>1979</strong> · lancement Y's for men, première ligne homme</li><li><strong>1981</strong> · débuts Paris — « black shock »</li><li><strong>1984</strong> · lancement Yohji Yamamoto POUR HOMME à Paris</li><li><strong>1999</strong> · lancement de LIMI feu par sa fille Limi Yamamoto</li><li><strong>2002</strong> · lancement Y-3 avec Adidas</li><li><strong>2014</strong> · lancement Ground Y et discord Yohji Yamamoto</li><li><strong>2022</strong> · lancement WILDSIDE YOHJI YAMAMOTO</li><li><strong>2023</strong> · relance de Y's for men à la Paris Fashion Week FW 2023-24</li></ul></details>
-  <div class="brand-lines"><strong>Lignes principales</strong><br>
-        <em>Y's</em> (1972) — première ligne, femme.<br>
-        <em>Y's for men</em> (1979 — 2010, relance 2023) — première ligne homme.<br>
-        <em>Yohji Yamamoto FEMME</em> (1981) — haute couture femme à Paris.<br>
-        <em>Yohji Yamamoto POUR HOMME</em> (1984) — haute couture homme à Paris.<br><br>
-        <strong>Lignes contemporaines</strong><br>
-        <em>Y-3</em> (2002) — collaboration historique avec Adidas.<br>
-        <em>LIMI feu</em> (1999) — marque de Limi Yamamoto, sa fille.<br>
-        <em>s'yte</em> (2011) — ligne casual web exclusive.<br>
-        <em>Ground Y</em> (2014) — ligne unisexe streetwear oversize.<br>
-        <em>discord Yohji Yamamoto</em> (2014) — accessoires et maroquinerie.<br>
-        <em>B Yohji Yamamoto / +NOIR</em> — ligne quotidienne femme.<br>
-        <em>WILDSIDE YOHJI YAMAMOTO</em> (2022) — concept-store et capsules.<br>
-        <em>BLACK Scandal Yohji Yamamoto</em> — ligne défilée à Paris.</div>
-  
+    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1943</strong> · naissance à Tokyo</li><li><strong>1966</strong> · diplôme de droit, université Keio</li><li><strong>1969</strong> · Soen Award, Bunka Fashion College</li><li><strong>1972</strong> · fondation de la maison Y's à Tokyo</li><li><strong>1979</strong> · lancement Y's for men, première ligne homme</li><li><strong>1981</strong> · lancement Yohji Yamamoto FEMME à Paris — « black shock » partagé avec Rei Kawakubo</li><li><strong>1984</strong> · lancement Yohji Yamamoto POUR HOMME à Paris</li><li><strong>1999</strong> · lancement de LIMI feu par sa fille Limi Yamamoto</li><li><strong>2002</strong> · lancement Y-3 avec Adidas</li><li><strong>2014</strong> · lancement Ground Y et discord Yohji Yamamoto</li><li><strong>2022</strong> · lancement WILDSIDE YOHJI YAMAMOTO</li><li><strong>2023</strong> · relance de Y's for men à la Paris Fashion Week FW 2023-24</li></ul></details>
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes principales</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1972</td><td class="lt-name">Y's</td><td class="lt-desc">Première ligne, femme.</td></tr>
+    <tr><td class="lt-year">1979<br>↻ 2023</td><td class="lt-name">Y's for men</td><td class="lt-desc">Première ligne homme. Hiatus en 2010, relance FW 2023-24.</td></tr>
+    <tr><td class="lt-year">1981</td><td class="lt-name">Yohji Yamamoto FEMME</td><td class="lt-desc">Ligne femme défilée à Paris.</td></tr>
+    <tr><td class="lt-year">1984</td><td class="lt-name">Yohji Yamamoto POUR HOMME</td><td class="lt-desc">Ligne homme défilée à Paris.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes contemporaines</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1995</td><td class="lt-name">+NOIR Yohji Yamamoto</td><td class="lt-desc">Ligne femme formelle et soirée.</td></tr>
+    <tr><td class="lt-year">1999</td><td class="lt-name">LIMI feu</td><td class="lt-desc">Marque de Limi Yamamoto, sa fille.</td></tr>
+    <tr><td class="lt-year">2002</td><td class="lt-name">Y-3</td><td class="lt-desc">Collaboration historique avec Adidas.</td></tr>
+    <tr><td class="lt-year">2011</td><td class="lt-name">s'yte</td><td class="lt-desc">Ligne casual web exclusive, dessinée par l'équipe créative de la maison. Plus accessible, vise un public plus jeune. Connue pour ses collaborations manga avec Junji Ito (Tomie, Uzumaki) à partir de 2019.</td></tr>
+    <tr><td class="lt-year">2014</td><td class="lt-name">Ground Y</td><td class="lt-desc">Ligne unisexe streetwear oversize.</td></tr>
+    <tr><td class="lt-year">2014</td><td class="lt-name">discord Yohji Yamamoto</td><td class="lt-desc">Accessoires et maroquinerie.</td></tr>
+    <tr><td class="lt-year">2016</td><td class="lt-name">B Yohji Yamamoto</td><td class="lt-desc">Ligne femme quotidienne, silhouette sporty et big silhouette.</td></tr>
+    <tr><td class="lt-year">2018</td><td class="lt-name">BLACK Scandal Yohji Yamamoto</td><td class="lt-desc">Ligne défilée à Paris.</td></tr>
+    <tr><td class="lt-year">2022</td><td class="lt-name">WILDSIDE YOHJI YAMAMOTO</td><td class="lt-desc">Concept-store et capsules.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes diffusion et sous-labels vintage</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">~1980s<br>—fin 90s</td><td class="lt-name">Workshop</td><td class="lt-desc">Ligne diffusion leisurewear, l'une des plus anciennes sous-lignes de la maison.</td></tr>
+    <tr><td class="lt-year">~mid 80s<br>—mid 90s</td><td class="lt-name">LQ by Works &amp; Friends</td><td class="lt-desc">Sous-ligne diffusion vintage souvent co-brandée avec Y's for men. Particulièrement recherchée par les collectionneurs Yohji des années 80.</td></tr>
+    <tr><td class="lt-year">1992<br>—SS 2008<br>↻ 2012</td><td class="lt-name">A.A.R. Against All Risks</td><td class="lt-desc">Collaboration avec D'URBAN/Renown, relance 2012 comme PB Seibu.</td></tr>
+    <tr><td class="lt-year">2006</td><td class="lt-name">Y's for men Red Label</td><td class="lt-desc">Ligne diffusion en collaboration avec Michiko Suzuki, sur le principe « Yohji Yamamoto dessine les vêtements qu'il aimerait porter lui-même » — vestiaire personnel et pièces staple. Discontinuée.</td></tr>
+    <tr><td class="lt-year">—</td><td class="lt-name">Y's for men SHIRTS</td><td class="lt-desc">Sous-collection dédiée aux chemises au sein de Y's for men.</td></tr>
+    <tr><td class="lt-year">2019</td><td class="lt-name">Y's BANG ON!</td><td class="lt-desc">Collection seasonless, chaque pièce reprend un patron archive avec un numéro de modèle estampillé.</td></tr>
+  </table>
+</div></div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection YOHJI YAMAMOTO</h2>
@@ -221,6 +350,12 @@
           <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/tee-shirt-yohji-yamamoto-en-coton-noir-66067467-1_2.jpg" alt="" loading="lazy"></div>
           <div class="cc-name">T-shirt manches longues crâne</div>
           <div class="cc-price">220 €</div>
+        </a>
+        <a class="carousel-card" href="/product/short-ground-y-en-coton-rose-66132397">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/short-ground-y-en-coton-rose-66132397-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Bermuda</div>
+          <div class="cc-price">180 €</div>
         </a>
         <a class="carousel-card" href="/product/pullgilet-ys-en-coton-marine-54309982">
           
@@ -334,12 +469,6 @@
           
           <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-kaki-58130070-1_2.jpg" alt="" loading="lazy"></div>
           <div class="cc-name">Chemise</div>
-          <div class="cc-price">180 €</div>
-        </a>
-        <a class="carousel-card" href="/product/haut-ys-en-coton-ecru-58176885">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-ys-en-coton-ecru-58176885-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Polo</div>
           <div class="cc-price">180 €</div>
         </a>
       </div>

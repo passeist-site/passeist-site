@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,13 +279,49 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">1938 — 2022</div>
   <h1 class="brand-name">ISSEY MIYAKE</h1>
-  <div class="brand-bio"><p>Né à Hiroshima en 1938, survivant de la bombe atomique à 7 ans. Diplômé de Tama Art University en design graphique, il se forme à Paris (assistant chez Guy Laroche puis Givenchy, 1965-69) et à New York (Geoffrey Beene, 1969-70). Il fonde Miyake Design Studio à Tokyo en 1970 et défile à Paris dès 1973.</p>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Né à Hiroshima en 1938, survivant de la bombe atomique à 7 ans. Diplômé de Tama Art University en design graphique, il se forme à Paris (assistant chez Guy Laroche puis Givenchy, 1965-69) et à New York (Geoffrey Beene, 1969-70). Il fonde Miyake Design Studio à Tokyo en 1970 et défile à Paris dès 1973.</p>
         <p>Sa philosophie : <em>« A Piece of Cloth »</em> — un seul morceau de tissu pour habiller le corps. Théoricien autant que praticien, il bouleverse la relation entre vêtement, corps et matière. Le plissé thermique permanent de Pleats Please (1993) deviendra sa signature mondiale. Il s'éteint en août 2022.</p></div>
-  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1970</strong> · fondation Miyake Design Studio, Tokyo</li><li><strong>1971</strong> · première collection à Tokyo</li><li><strong>1973</strong> · débuts à Paris</li><li><strong>1976</strong> · lancement I.S. — Issey Sport</li><li><strong>Fin 70s</strong> · lancement Hai Sporting Gear</li><li><strong>1981</strong> · lancement Plantation, ligne quotidienne</li><li><strong>1992</strong> · parfum L'Eau d'Issey</li><li><strong>1993</strong> · lancement Pleats Please</li><li><strong>1999</strong> · Naoki Takizawa reprend la création principale</li><li><strong>2000</strong> · lancement A-POC avec Dai Fujiwara</li><li><strong>2010</strong> · lancement Bao Bao Issey Miyake et 132 5. ISSEY MIYAKE</li><li><strong>2022</strong> · décès d'Issey Miyake</li></ul></details>
-  <div class="brand-lines">Issey Miyake — ligne principale femme et homme. Pleats Please Issey Miyake — 1993. Homme Plissé Issey Miyake. Bao Bao Issey Miyake — 2010. 132 5. ISSEY MIYAKE — 2010. A-POC ABLE Issey Miyake — 2021. me ISSEY MIYAKE. 24 Issey Miyake. Plantation — 1981. I.S. / Issey Sport — 1976. Hai Sporting Gear — fin 70s à 90s. IM Men — 2021.</div>
-  
+    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1938</strong> · naissance à Hiroshima</li><li><strong>1964</strong> · diplôme de Tama Art University, Tokyo</li><li><strong>1965 — 1970</strong> · formation à Paris (Laroche, Givenchy) puis à New York (Geoffrey Beene)</li><li><strong>1970</strong> · fonde Miyake Design Studio à Tokyo</li><li><strong>Années 80</strong> · dessine les uniformes des employés des usines Sony</li><li><strong>1985</strong> · exposition « Bodyworks » à Los Angeles, Tokyo, San Francisco — le vêtement comme sculpture</li><li><strong>1988</strong> · lance ses recherches sur le plissé thermique permanent</li><li><strong>1992</strong> · parfum L'Eau d'Issey — succès planétaire</li><li><strong>1992</strong> · uniformes de l'équipe nationale lituanienne aux JO de Barcelone — l'iconique tenue de l'équipe de basket avec le « Slam Dunkin' Skeleton »</li><li><strong>Mid 90s</strong> · Steve Jobs lui commande une centaine de cols roulés noirs après avoir été marqué par les uniformes Sony — naissance de l'icône vestimentaire d'Apple</li><li><strong>1994</strong> · quitte la création homme pour se consacrer à la recherche et l'innovation textile</li><li><strong>1999</strong> · quitte aussi la création femme, transmet la direction artistique de la maison</li><li><strong>2010</strong> · expose à la Triennale di Milano</li><li><strong>2016</strong> · rétrospective majeure « Issey Miyake — The Work » au National Art Center, Tokyo</li></ul></details>
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes principales</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1971</td><td class="lt-name">Issey Miyake</td><td class="lt-desc">Ligne principale femme, première collection à Tokyo, débuts Paris en 1973. Directeurs créatifs successifs : <strong>Naoki Takizawa</strong> (SS 2000 — SS 2007), <strong>Dai Fujiwara</strong> (AW 2007 — AW 2011), <strong>Yoshiyuki Miyamae</strong> (SS 2012 — AW 2019), <strong>Satoshi Kondo</strong> (SS 2020 — actuel).</td></tr>
+    <tr><td class="lt-year">1976</td><td class="lt-name">Issey Miyake Men</td><td class="lt-desc">Ligne principale homme. Issey Miyake quitte la création homme en 1994.</td></tr>
+    <tr><td class="lt-year">déc. 1981</td><td class="lt-name">Plantation</td><td class="lt-desc">Lancée par Issey Miyake, ligne quotidienne unisexe en matières naturelles, dessinée par Naoki Takizawa à partir de 1983. Sous la filiale A-net Inc. depuis 1996.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Plissé et innovation textile</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1993</td><td class="lt-name">Pleats Please Issey Miyake</td><td class="lt-desc">Plissé thermique permanent femme. Signature mondiale de la maison.</td></tr>
+    <tr><td class="lt-year">2013</td><td class="lt-name">Homme Plissé Issey Miyake</td><td class="lt-desc">Équivalent homme du Pleats Please. Pièces plissées thermiquement, infroissables et séchage rapide, classiques masculins repensés.</td></tr>
+    <tr><td class="lt-year">2010</td><td class="lt-name">132 5. ISSEY MIYAKE</td><td class="lt-desc">Vêtements géométriques pliables, en collaboration avec le Reality Lab.</td></tr>
+    <tr><td class="lt-year">2010</td><td class="lt-name">Bao Bao Issey Miyake</td><td class="lt-desc">Sacs à structure modulaire, polygones interconnectés.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">A-POC et lignes contemporaines</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">2000</td><td class="lt-name">A-POC</td><td class="lt-desc">Avec Dai Fujiwara, sur le principe "A Piece of Cloth" : un vêtement issu d'un seul tissu tubulaire continu.</td></tr>
+    <tr><td class="lt-year">2000</td><td class="lt-name">HaaT</td><td class="lt-desc">Marque de Makiko Minagawa, ancienne directrice textile du Miyake Design Studio. Vêtements et accessoires en collaboration avec des artisans japonais et indiens. Le nom mêle "Heart" (Japon), "HaaTH" (la main, en hindi) et "haat" (marché de village, en sanskrit).</td></tr>
+    <tr><td class="lt-year">2000</td><td class="lt-name">me ISSEY MIYAKE</td><td class="lt-desc">Ligne diffusion femme axée sur des tops légers, compacts et faciles d'entretien, pensés pour le quotidien.</td></tr>
+    <tr><td class="lt-year">2018</td><td class="lt-name">GOOD GOODS Issey Miyake</td><td class="lt-desc">Projet d'accessoires explorant ce qui fait qu'un produit est « bon ». Travail de la main : tissage, tressage, assemblage.</td></tr>
+    <tr><td class="lt-year">2021</td><td class="lt-name">A-POC ABLE Issey Miyake</td><td class="lt-desc">Relance contemporaine du concept A-POC.</td></tr>
+    <tr><td class="lt-year">2021</td><td class="lt-name">IM Men</td><td class="lt-desc">Ligne homme contemporaine de la maison.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Sous-lignes vintage</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1976</td><td class="lt-name">I.S. / Issey Sport</td><td class="lt-desc">Première ligne sportswear, dessinée à l'origine par Tsumori Chisato.</td></tr>
+    <tr><td class="lt-year">~1977<br>—90s</td><td class="lt-name">Hai Sporting Gear</td><td class="lt-desc">Sous-ligne sportswear « Americana », culte chez les collectionneurs vintage. Produite sous l'égide du Miyake Design Studio — la paternité créative d'Issey Miyake lui-même reste débattue, la marque n'apparaissant pas dans la liste officielle de ses lignes.</td></tr>
+  </table>
+</div></div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection ISSEY MIYAKE</h2>
@@ -214,6 +357,42 @@
           <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-issey-miyake-en-coton-marine-66133496-1_2.jpg" alt="" loading="lazy"></div>
           <div class="cc-name">Mini jupe plissée Me</div>
           <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-hai-en-synthetique-noir-56352460">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-hai-en-synthetique-noir-56352460-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blouson</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-hai-en-synthetique-bordeaux-56368865">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-hai-en-synthetique-bordeaux-56368865-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Blouson</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/jupe-hai-en-coton-bleu-57233638">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/jupe-hai-en-coton-bleu-57233638-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Jupe longue</div>
+          <div class="cc-price">130 €</div>
+        </a>
+        <a class="carousel-card" href="/product/haut-hai-en-coton-bordeaux-57648283">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-hai-en-coton-bordeaux-57648283-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/robe-hai-en-coton-noir-57979518">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/robe-hai-en-coton-noir-57979518-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Robe longue</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/pullgilet-hai-en-coton-gris-63583966">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-hai-en-coton-gris-63583966-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Sweat</div>
+          <div class="cc-price">170 €</div>
         </a>
         <a class="carousel-card" href="/product/pullgilet-issey-miyake-en-laine-bleu-54481520">
           
@@ -292,42 +471,6 @@
           <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-issey-miyake-en-coton-turquoise-58366335-1_2.jpg" alt="" loading="lazy"></div>
           <div class="cc-name">Chemise</div>
           <div class="cc-price">180 €</div>
-        </a>
-        <a class="carousel-card" href="/product/pullgiletsweat-issey-miyake-en-coton-bleu-58738164">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgiletsweat-issey-miyake-en-coton-bleu-58738164-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Sweat</div>
-          <div class="cc-price">340 €</div>
-        </a>
-        <a class="carousel-card" href="/product/chemise-issey-miyake-en-coton-multicolore-58775056">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-issey-miyake-en-coton-multicolore-58775056-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Chemise</div>
-          <div class="cc-price">190 €</div>
-        </a>
-        <a class="carousel-card" href="/product/vesteblouson-issey-miyake-en-laine-noir-58914935">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-issey-miyake-en-laine-noir-58914935-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Veste en laine</div>
-          <div class="cc-price">320 €</div>
-        </a>
-        <a class="carousel-card" href="/product/vesteblouson-issey-miyake-en-polyester-camel-59077044">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-issey-miyake-en-polyester-camel-59077044-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Veste</div>
-          <div class="cc-price">350 €</div>
-        </a>
-        <a class="carousel-card" href="/product/haut-issey-miyake-en-coton-marron-59077157">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-issey-miyake-en-coton-marron-59077157-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Chemise</div>
-          <div class="cc-price">190 €</div>
-        </a>
-        <a class="carousel-card" href="/product/pantalon-issey-miyake-en-polyester-marron-59077806">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pantalon-issey-miyake-en-polyester-marron-59077806-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Pantalon droit</div>
-          <div class="cc-price">220 €</div>
         </a>
       </div>
       <div class="cta-shop">

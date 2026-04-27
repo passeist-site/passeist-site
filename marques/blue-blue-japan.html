@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLUE BLUE JAPAN — Passéist</title>
-<meta name="description" content="Marque du groupe Seilin & Co., fondée par Hideki Yoshioka. Spécialiste des textiles teints à l'indigo et des techniques traditionnelles japonaises — shibor">
+<meta name="description" content="Marque lancée en 1996 par Seilin & Co. , société tokyoïte fondée par Gen Tarumi , qui orchestre également les enseignes Hollywood Ranch Market, Toll Free e">
 <style>
 
   * { box-sizing: border-box; }
@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,13 +279,15 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">Circa 2000s —</div>
   <h1 class="brand-name">BLUE BLUE JAPAN</h1>
-  <div class="brand-bio"><p>Marque du groupe Seilin & Co., fondée par Hideki Yoshioka. Spécialiste des textiles teints à l'indigo et des techniques traditionnelles japonaises — <em>shibori</em>, <em>sashiko</em>, <em>katazome</em> — appliquées à des coupes streetwear contemporaines.</p>
-        <p>Boutique principale OKURA à Daikanyama, Tokyo — devenue mythique chez les amateurs de mode japonaise traditionnelle revisitée. Tee-shirts indigo, hoodies, vestes workwear, bandanas : le Japan heritage modernisé.</p></div>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Marque lancée en <strong>1996</strong> par <strong>Seilin & Co.</strong>, société tokyoïte fondée par <strong>Gen Tarumi</strong>, qui orchestre également les enseignes Hollywood Ranch Market, Toll Free et High Standard. Blue Blue Japan se consacre exclusivement à l'amour de l'indigo véritable et aux savoir-faire textiles traditionnels du Japon.</p>
+        <p>Toutes les pièces sont fabriquées au Japon, en convoquant les techniques ancestrales — <em>shibori</em> (nouage), <em>sashiko</em> (broderie utilitaire), <em>katazome</em> (impression au pochoir) — appliquées à un vestiaire contemporain. Indigo végétal, motifs porteurs de symbolique (l'aubergine du <em>hatsu-yume</em>, premier rêve de l'année), broderies à la main : chaque pièce est un geste, un récit.</p>
+        <p>La boutique mère <strong>OKURA</strong> a ouvert en avril 1993 dans une ruelle de Daikanyama, Tokyo. Son nom évoque le <em>kura</em>, l'ancien entrepôt japonais en bois — l'architecture du lieu, planches de bois patiné et noren à l'entrée, prolonge la philosophie de la marque. OKURA est devenue mythique chez les amateurs de mode japonaise traditionnelle revisitée.</p></div>
+    
+  </section>
   
-  
-  
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection BLUE BLUE JAPAN</h2>

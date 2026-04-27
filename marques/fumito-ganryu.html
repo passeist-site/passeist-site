@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,13 +279,22 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">2018 —</div>
   <h1 class="brand-name">FUMITO GANRYU</h1>
-  <div class="brand-bio"><p>Né en 1976, il rejoint Comme des Garçons en 1999 et travaille sous Junya Watanabe pendant une décennie. Rei Kawakubo lui confie la ligne Ganryu Comme des Garçons en 2008, défilée à Paris jusqu'en 2017.</p>
-        <p>Il quitte CDG et lance sa marque éponyme Fumito Ganryu en 2018, débuts à Pitti Uomo Florence en janvier 2019. Esthétique : hybride sportswear-tailoring, tissus techniques, vocabulaire urbain, héritage Junya assumé.</p></div>
-  
-  
-  
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Né en 1976, il rejoint Comme des Garçons en 1999 et travaille sous Junya Watanabe pendant une décennie.</p>
+        <p>Rei Kawakubo lui confie la ligne <strong>Ganryu Comme des Garçons</strong> en 2008, défilée à Paris jusqu'à son arrêt en 2017 — aujourd'hui culte chez les collectionneurs CDG.</p>
+        <p>Il quitte CDG et lance sa marque éponyme <strong>Fumito Ganryu</strong> en 2018, débuts à Pitti Uomo Florence en janvier 2019. Esthétique : hybride sportswear-tailoring, tissus techniques, vocabulaire urbain, héritage Junya assumé.</p></div>
+    
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Ses lignes successives</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">2008<br>—2017</td><td class="lt-name">Ganryu Comme des Garçons</td><td class="lt-desc">Ligne sous l'aile Comme des Garçons, défilée à Paris. Esthétique street-tailoring radicale, vestiaire workwear retravaillé. Discontinuée en 2017.</td></tr>
+    <tr><td class="lt-year">2018</td><td class="lt-name">Fumito Ganryu</td><td class="lt-desc">Marque éponyme indépendante. Débuts à Pitti Uomo en janvier 2019. Hybride sportswear-tailoring, tissus techniques, héritage Junya Watanabe assumé.</td></tr>
+  </table>
+</div></div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection FUMITO GANRYU</h2>
@@ -190,6 +306,18 @@
           <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/baskets-fumito-ganryu-en-toile-noir-66132460-1_2.jpg" alt="" loading="lazy"></div>
           <div class="cc-name">Baskets basses en toile</div>
           <div class="cc-price">180 €</div>
+        </a>
+        <a class="carousel-card" href="/product/chemise-ganryu-en-coton-multicolore-63037393">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/chemise-ganryu-en-coton-multicolore-63037393-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Chemise</div>
+          <div class="cc-price">170 €</div>
+        </a>
+        <a class="carousel-card" href="/product/vesteblouson-ganryu-en-coton-marron-64220877">
+          
+          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-ganryu-en-coton-marron-64220877-1_2.jpg" alt="" loading="lazy"></div>
+          <div class="cc-name">Veste</div>
+          <div class="cc-price">240 €</div>
         </a>
       </div>
       <div class="cta-shop">

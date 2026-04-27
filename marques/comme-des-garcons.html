@@ -62,35 +62,142 @@
   }
   .brand-bio p { margin: 0 0 16px; }
   .brand-bio em { color: #555; }
+  /* Bloc 1 : narratif (bio + chrono) */
+  .brand-overview {
+    padding: 30px 0 40px;
+  }
+  /* Bloc 2 : expert (lignes & sous-marques) */
+  .brand-expert {
+    margin-top: 40px;
+    padding: 50px 36px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  @media (max-width: 600px) {
+    .brand-expert { padding: 36px 22px; }
+  }
+  .expert-eyebrow {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .expert-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin: 0 0 30px;
+    color: #1a1a1a;
+  }
+  .accuracy-note {
+    margin: 60px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 11px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.55;
+  }
   .brand-timeline {
-    margin: 30px 0;
-    padding: 18px 22px;
-    background: rgba(255,255,255,0.6);
-    border-left: 2px solid #1a1a1a;
-    font-size: 13.5px;
+    margin: 36px 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
   }
   .brand-timeline summary {
-    cursor: pointer; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 1.5px;
-    font-size: 11px; color: #555;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    color: #888;
+    padding: 8px 0;
+    user-select: none;
   }
-  .brand-timeline ul { margin: 18px 0 0; padding-left: 0; list-style: none; }
+  .brand-timeline summary::marker { color: #ccc; }
+  .brand-timeline ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
   .brand-timeline li {
-    padding: 6px 0;
-    border-bottom: 1px dotted rgba(0,0,0,0.1);
-    color: #444;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    color: #555;
+    line-height: 1.55;
+    display: flex;
+    gap: 18px;
   }
+  .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #1a1a1a; min-width: 110px; display: inline-block;
+    color: #999;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 400;
+    min-width: 110px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    letter-spacing: 0.5px;
   }
   .brand-lines {
-    margin: 24px 0;
+    margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.7;
+    color: #2a2a2a; line-height: 1.5;
   }
-  .brand-lines strong {
-    color: #1a1a1a; text-transform: uppercase;
-    letter-spacing: 1px; font-size: 12px;
+  .lines-group { margin: 0 0 30px; }
+  .lines-heading {
+    font-size: 11px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .lines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .lines-table tr {
+    border-bottom: 1px dotted rgba(0,0,0,0.12);
+  }
+  .lines-table tr:last-child { border-bottom: 0; }
+  .lines-table td {
+    padding: 10px 12px 10px 0;
+    vertical-align: top;
+  }
+  .lt-year {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 110px;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .lt-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    padding-right: 18px;
+  }
+  .lt-desc {
+    color: #555;
+    line-height: 1.55;
+  }
+  @media (max-width: 600px) {
+    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
+    .lines-table tr { padding: 12px 0; }
+    .lt-year { width: auto; padding: 0 0 4px; }
+    .lt-name { padding: 0 0 4px; }
+    .lt-desc { padding: 0; }
   }
   .brand-extra {
     margin: 22px 0;
@@ -172,13 +279,50 @@
 <body>
 <div class="container">
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <div class="brand-years">1969 —</div>
   <h1 class="brand-name">COMME DES GARÇONS</h1>
-  <div class="brand-bio"><p>Rei Kawakubo, née à Tokyo en 1942, diplômée de littérature et esthétique à Keio en 1964. Stylist freelance avant de fonder Comme des Garçons en 1969. Ses débuts parisiens en 1981, partagés avec Yohji Yamamoto, déclenchent le <em>« black shock »</em> — une révolution esthétique mondiale.</p>
+  <section class="brand-overview">
+    <div class="brand-bio"><p>Rei Kawakubo, née à Tokyo en 1942, diplômée de littérature et esthétique à Keio en 1964. Stylist freelance avant de fonder Comme des Garçons en 1969. Ses débuts parisiens en 1981, partagés avec Yohji Yamamoto, déclenchent le <em>« black shock »</em> — une révolution esthétique mondiale.</p>
         <p>Anti-mode, asymétrie, déconstruction, monochrome : la collection <em>« Lumps and Bumps »</em> (1997) reste sa déclaration la plus célèbre. Mariée au PDG Adrian Joffe, elle est l'une des très rares créatrices à avoir eu une exposition solo au Met Costume Institute de son vivant (<em>« Art of the In-Between »</em>, 2017).</p></div>
-  <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1969</strong> · fondation à Tokyo</li><li><strong>1973</strong> · incorporation de la société</li><li><strong>1975</strong> · premier défilé Tokyo</li><li><strong>1978</strong> · lancement Comme des Garçons HOMME</li><li><strong>1981</strong> · débuts Paris — « black shock »</li><li><strong>1985</strong> · HOMME PLUS, ligne homme défilée à Paris</li><li><strong>1992</strong> · lancement Junya Watanabe sous l'aile CDG</li><li><strong>1994</strong> · collection « Body Meets Dress, Dress Meets Body »</li><li><strong>2002</strong> · lancement PLAY (le cœur Filip Pagowski)</li><li><strong>2004</strong> · ouverture Dover Street Market Londres</li><li><strong>2008</strong> · lancement Ganryu Comme des Garçons</li><li><strong>2012</strong> · lancement Noir Kei Ninomiya</li><li><strong>2017</strong> · exposition solo au Met Costume Institute</li></ul></details>
-  <div class="brand-lines">Comme des Garçons (femme, défilée Paris), Comme des Garçons HOMME (1978), HOMME PLUS (1985), HOMME DEUX, Tricot Comme des Garçons, Robe de Chambre Comme des Garçons, Comme des Garçons SHIRT, Comme des Garçons SHIRT BOY, PLAY Comme des Garçons (2002), BLACK Comme des Garçons, Junya Watanabe Comme des Garçons (1992), Junya Watanabe Comme des Garçons MAN (2001), Noir Kei Ninomiya (2012). Anciennement : Ganryu (2008-2017), tao (2005-2011).</div>
-  <div class="brand-extra"><strong>Distribution.</strong> Dover Street Market — Londres (2004), New York (2013), Tokyo (2012), Singapour, Los Angeles, Pékin, Paris. Concept-store multimarque, vitrine philosophique du groupe.</div>
+    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1942</strong> · naissance à Tokyo</li><li><strong>1964</strong> · diplôme de littérature et esthétique, université Keio</li><li><strong>1964 — 1969</strong> · relations publiques chez le textilier Asahi Kasei, puis styliste freelance</li><li><strong>1969</strong> · fonde Comme des Garçons à Tokyo</li><li><strong>1975</strong> · premier défilé et ouverture de la première boutique à Tokyo</li><li><strong>1981</strong> · premier défilé à Paris, partagé avec Yohji Yamamoto — déclenche le « black shock »</li><li><strong>1988 — 1991</strong> · publication de « Six », magazine biannuel d'art et de mode (huit numéros, format A3 non broché). Direction artistique : Tsuguya Inoue. Contributions : Bruce Weber, Peter Lindbergh, Saul Leiter, Gilbert & George…</li><li><strong>1992</strong> · lance Junya Watanabe sous l'aile CDG</li><li><strong>1994</strong> · collection iconique « Body Meets Dress, Dress Meets Body »</li><li><strong>2004</strong> · ouverture du premier Dover Street Market à Londres avec son mari Adrian Joffe</li><li><strong>2018</strong> · reçoit la Légion d'honneur en France</li></ul></details>
+  </section>
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes principales</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1969</td><td class="lt-name">Comme des Garçons</td><td class="lt-desc">Ligne principale femme, défilée à Paris. Direction artistique : <strong>Rei Kawakubo</strong>.</td></tr>
+    <tr><td class="lt-year">1978</td><td class="lt-name">Comme des Garçons HOMME</td><td class="lt-desc">Première ligne homme, basée sur le tailoring japonais. Directeurs artistiques successifs : <strong>Rei Kawakubo</strong> (1978 — 1989), <strong>Keiichi Tanaka</strong> (1990 — 2003), <strong>Junya Watanabe</strong> (2003 — actuel).</td></tr>
+    <tr><td class="lt-year">1984</td><td class="lt-name">Comme des Garçons HOMME PLUS</td><td class="lt-desc">Ligne homme défilée à Paris, créative et radicale. Direction artistique : <strong>Rei Kawakubo</strong>.</td></tr>
+    <tr><td class="lt-year">1987</td><td class="lt-name">Comme des Garçons HOMME DEUX</td><td class="lt-desc">Ligne homme tailoring formel, costumes et chemiserie classique. Direction artistique : <strong>Rei Kawakubo</strong> à l'origine, ligne revitalisée à partir de 2009 par <strong>Hirofumi Kurino</strong>, cofondateur de United Arrows.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes diffusion (femme)</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1981</td><td class="lt-name">Tricot Comme des Garçons</td><td class="lt-desc">Première ligne diffusion. Mailles puis ready-to-wear femme. Directeurs successifs : <strong>Rei Kawakubo</strong> (1981 — 1986), <strong>Junya Watanabe</strong> (1987 — 2001), <strong>Tao Kurihara</strong> (2002 — 2021). Rebrandée en Tao en SS 2022.</td></tr>
+    <tr><td class="lt-year">1981<br>—2004</td><td class="lt-name">Robe de Chambre Comme des Garçons</td><td class="lt-desc">Ligne diffusion femme quotidienne. Discontinuée en 2004, fusionnée avec Comme Comme.</td></tr>
+    <tr><td class="lt-year">1988</td><td class="lt-name">Comme des Garçons SHIRT</td><td class="lt-desc">Ligne chemiserie, fabriquée en France.</td></tr>
+    <tr><td class="lt-year">1993</td><td class="lt-name">Comme des Garçons Comme des Garçons</td><td class="lt-desc">Aussi appelée « Comme Comme ». Ligne diffusion femme, basics retravaillés.</td></tr>
+    <tr><td class="lt-year">2009</td><td class="lt-name">BLACK Comme des Garçons</td><td class="lt-desc">Ligne capsule monochrome lancée pendant la crise économique de 2009. Pièces accessibles, tout-noir.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Casual et accessoires</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">2002</td><td class="lt-name">PLAY Comme des Garçons</td><td class="lt-desc">Ligne casual unisexe. Le célèbre logo cœur aux yeux est dessiné par l'illustrateur polonais <strong>Filip Pagowski</strong>.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Designers sous l'aile CDG (lignes propres)</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1992</td><td class="lt-name">Junya Watanabe Comme des Garçons</td><td class="lt-desc">Ligne femme défilée à Paris. Direction : <strong>Junya Watanabe</strong>.</td></tr>
+    <tr><td class="lt-year">2001</td><td class="lt-name">Junya Watanabe Comme des Garçons MAN</td><td class="lt-desc">Ligne homme dirigée par <strong>Junya Watanabe</strong>. Célèbre pour ses collaborations Levi's, Brooks Brothers, Carhartt, Moncler.</td></tr>
+    <tr><td class="lt-year">2005<br>—2011</td><td class="lt-name">tao Comme des Garçons</td><td class="lt-desc">Ligne femme dirigée par <strong>Tao Kurihara</strong>. Discontinuée en 2011.</td></tr>
+    <tr><td class="lt-year">2008<br>—2017</td><td class="lt-name">Ganryu Comme des Garçons</td><td class="lt-desc">Ligne dirigée par <strong>Fumito Ganryu</strong>. Discontinuée en 2017.</td></tr>
+    <tr><td class="lt-year">2012</td><td class="lt-name">Noir Kei Ninomiya</td><td class="lt-desc">Ligne femme dirigée par <strong>Kei Ninomiya</strong>. Tout-noir, féminité armurière, savoir-faire artisanal extrême.</td></tr>
+    <tr><td class="lt-year">2022</td><td class="lt-name">Tao</td><td class="lt-desc">Suite directe de Tricot, après rebrand en SS 2022. Direction : <strong>Tao Kurihara</strong>.</td></tr>
+  </table>
+</div></div></section>
+  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection COMME DES GARÇONS</h2>
