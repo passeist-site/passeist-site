@@ -2415,66 +2415,92 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   body.marques-page .checkout-overlay,
   body.marques-page .cart-panel { display: none !important; }
 
+  /* Page Marques — pure typo, hiérarchie editoriale, tient sur 1 écran */
+  body.marques-page {
+    overflow: hidden;
+    height: 100dvh;
+  }
+  body.marques-page .container {
+    max-width: 880px;
+    height: calc(100dvh - var(--topbar-h));
+    display: flex;
+    flex-direction: column;
+    padding: 36px 32px 24px !important;
+    overflow: hidden;
+  }
+  body.marques-page .page-title {
+    font-size: 36px;
+    margin: 0 0 8px;
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
   .intro {
-    font-size: 15px; line-height: 1.7;
-    color: var(--text-dim); max-width: 720px;
-    margin: 0 0 50px;
+    font-size: 13px; line-height: 1.55;
+    color: var(--text-dim);
+    max-width: 640px;
+    margin: 0 auto 36px;
+    text-align: center;
   }
   .headliners-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin: 0 0 50px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--line);
-  }
-  @media (max-width: 760px) {
-    .headliners-row { grid-template-columns: repeat(2, 1fr); }
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 28px;
+    margin: 0 0 32px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line-ghost);
+    border-bottom: 1px solid var(--line-ghost);
   }
   .headliner-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    aspect-ratio: 1;
-    background: rgba(255,255,255,0.18);
-    border: 1px solid var(--line-ghost);
+    display: inline-block;
+    background: none;
+    border: 0;
+    padding: 0;
     text-decoration: none;
     color: var(--ink);
-    font-size: 19px;
-    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
-    letter-spacing: -0.3px;
     line-height: 1.15;
-    padding: 18px;
-    transition: transform 0.18s, box-shadow 0.18s;
+    transition: opacity 0.2s;
   }
-  .headliner-link:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  }
+  .headliner-link:hover { opacity: 0.55; }
   .brands-list {
-    border-top: 2px solid var(--ink);
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line-ghost);
+    overflow-y: auto;
   }
   .brand-link {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 22px 4px;
+    justify-content: flex-start;
+    padding: 11px 8px;
     border-bottom: 1px solid var(--line-ghost);
     text-decoration: none;
     color: var(--ink);
-    transition: background 0.15s, padding-left 0.15s;
+    transition: opacity 0.2s;
   }
-  .brand-link:hover {
-    background: rgba(255,255,255,0.10);
-    padding-left: 16px;
-  }
+  .brand-link:hover { opacity: 0.55; }
   .bl-name {
-    font-size: 18px;
-    font-weight: 600;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+  }
+  @media (max-width: 760px) {
+    body.marques-page .container { padding: 20px 18px 14px !important; }
+    body.marques-page .page-title { font-size: 26px; }
+    .intro { font-size: 12px; margin-bottom: 18px; }
+    .headliners-row { gap: 4px 14px; padding: 12px 0; margin-bottom: 20px; }
+    .headliner-link { font-size: 16px; }
+    .brand-link { padding: 9px 6px; }
+    .bl-name { font-size: 11px; }
   }
 </style>
 </head>
@@ -2540,7 +2566,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 
 <div class="container">
   <h1 class="page-title">Nos marques</h1>
-  <p class="intro">Passéist explore la mode d'auteur japonaise et vous propose, selon lui, une sélection simple avec du caractère. Cliquez sur une maison pour découvrir son histoire et quelques pièces associées dans la boutique.</p>
+  <p class="intro">Passéist explore la mode d'auteur japonaise et vous propose une sélection simple et usuelle. Cliquez sur une maison pour découvrir son histoire et les pièces associées dans la boutique.</p>
   <div class="headliners-row">
     
     <a class="headliner-link" href="/marques/yohji-yamamoto">
