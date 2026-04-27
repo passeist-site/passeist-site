@@ -7,11 +7,21 @@
 <meta name="description" content="Découvrez les maisons de la mode d'auteur japonaise sélectionnées par Passéist : Yohji Yamamoto, Issey Miyake, Comme des Garçons, 45R et bien d'autres.">
 <style>
 
+  :root {
+    --bg: #a8a6a1;
+    --ink: #0a0a08;
+    --text-dim: #2b2a27;
+    --line: rgba(10,10,8,0.22);
+    --line-ghost: rgba(10,10,8,0.10);
+    --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
   * { box-sizing: border-box; }
   body {
-    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
-    background: #f5f3ee;
-    color: #1a1a1a;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text-dim);
     margin: 0;
     padding: 60px 30px 80px;
     -webkit-font-smoothing: antialiased;
@@ -23,22 +33,25 @@
     letter-spacing: -1.5px;
     margin: 0 0 24px;
     line-height: 1.05;
+    color: var(--ink);
   }
   a { color: inherit; }
   .back-home {
-    font-size: 11px;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     margin-bottom: 30px;
     text-decoration: none;
     display: inline-block;
+    opacity: 0.75;
   }
-  .back-home:hover { color: #1a1a1a; }
+  .back-home:hover { opacity: 1; }
 
   .intro {
     font-size: 15px; line-height: 1.7;
-    color: #444; max-width: 720px;
+    color: var(--text-dim); max-width: 720px;
     margin: 0 0 50px;
   }
   .headliners-row {
@@ -47,7 +60,7 @@
     gap: 14px;
     margin: 0 0 50px;
     padding-bottom: 40px;
-    border-bottom: 1px solid rgba(0,0,0,0.12);
+    border-bottom: 1px solid var(--line);
   }
   @media (max-width: 760px) {
     .headliners-row { grid-template-columns: repeat(2, 1fr); }
@@ -58,10 +71,10 @@
     justify-content: center;
     text-align: center;
     aspect-ratio: 1;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.18);
+    border: 1px solid var(--line-ghost);
     text-decoration: none;
-    color: #1a1a1a;
+    color: var(--ink);
     font-size: 19px;
     font-weight: 700;
     text-transform: uppercase;
@@ -75,20 +88,20 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   }
   .brands-list {
-    border-top: 2px solid #1a1a1a;
+    border-top: 2px solid var(--ink);
   }
   .brand-link {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     padding: 22px 4px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid var(--line-ghost);
     text-decoration: none;
-    color: #1a1a1a;
+    color: var(--ink);
     transition: background 0.15s, padding-left 0.15s;
   }
   .brand-link:hover {
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.10);
     padding-left: 16px;
   }
   .bl-name {

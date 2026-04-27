@@ -7,11 +7,21 @@
 <meta name="description" content="Né à Sendai en 1958, formé à Bunka Fashion College, il rejoint Miyake Design Studio en 1979 comme assistant d'Issey Miyake. Il fonde sa propre marque en 19">
 <style>
 
+  :root {
+    --bg: #a8a6a1;
+    --ink: #0a0a08;
+    --text-dim: #2b2a27;
+    --line: rgba(10,10,8,0.22);
+    --line-ghost: rgba(10,10,8,0.10);
+    --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
   * { box-sizing: border-box; }
   body {
-    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
-    background: #f5f3ee;
-    color: #1a1a1a;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text-dim);
     margin: 0;
     padding: 60px 30px 80px;
     -webkit-font-smoothing: antialiased;
@@ -23,30 +33,33 @@
     letter-spacing: -1.5px;
     margin: 0 0 24px;
     line-height: 1.05;
+    color: var(--ink);
   }
   a { color: inherit; }
   .back-home {
-    font-size: 11px;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     margin-bottom: 30px;
     text-decoration: none;
     display: inline-block;
+    opacity: 0.75;
   }
-  .back-home:hover { color: #1a1a1a; }
+  .back-home:hover { opacity: 1; }
 
   .breadcrumb {
     font-size: 11px;
-    color: #888;
+    color: rgba(10,10,8,0.55);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 30px;
   }
-  .breadcrumb a { color: #888; text-decoration: none; }
-  .breadcrumb a:hover { color: #1a1a1a; }
+  .breadcrumb a { color: rgba(10,10,8,0.55); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--ink); }
   .brand-years {
-    font-size: 11px; color: #888;
+    font-size: 11px; color: rgba(10,10,8,0.55);
     text-transform: uppercase; letter-spacing: 2px;
     margin-bottom: 8px;
   }
@@ -58,10 +71,10 @@
   }
   .brand-bio {
     font-size: 15.5px; line-height: 1.75;
-    color: #2a2a2a;
+    color: var(--text-dim);
   }
   .brand-bio p { margin: 0 0 16px; }
-  .brand-bio em { color: #555; }
+  .brand-bio em { color: var(--text-dim); }
   /* Bloc 1 : narratif (bio + chrono) */
   .brand-overview {
     padding: 30px 0 40px;
@@ -72,14 +85,14 @@
     padding: 50px 36px;
     background: rgba(255, 255, 255, 0.55);
     border-radius: 2px;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid var(--line-ghost);
   }
   @media (max-width: 600px) {
     .brand-expert { padding: 36px 22px; }
   }
   .expert-eyebrow {
     font-size: 10px;
-    color: #999;
+    color: rgba(10,10,8,0.45);
     text-transform: uppercase;
     letter-spacing: 3px;
     margin-bottom: 8px;
@@ -89,14 +102,14 @@
     font-weight: 600;
     letter-spacing: -0.4px;
     margin: 0 0 30px;
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .accuracy-note {
     margin: 60px 0 0;
     padding-top: 28px;
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid var(--line-ghost);
     font-size: 11px;
-    color: #999;
+    color: rgba(10,10,8,0.45);
     font-style: italic;
     text-align: center;
     line-height: 1.55;
@@ -114,7 +127,7 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     font-size: 10.5px;
-    color: #888;
+    color: rgba(10,10,8,0.55);
     padding: 8px 0;
     user-select: none;
   }
@@ -126,15 +139,15 @@
   }
   .brand-timeline li {
     padding: 9px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    color: #555;
+    border-bottom: 1px solid var(--line-ghost);
+    color: var(--text-dim);
     line-height: 1.55;
     display: flex;
     gap: 18px;
   }
   .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #999;
+    color: rgba(10,10,8,0.45);
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 11px;
     font-weight: 400;
@@ -146,18 +159,18 @@
   .brand-lines {
     margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.5;
+    color: var(--text-dim); line-height: 1.5;
   }
   .lines-group { margin: 0 0 30px; }
   .lines-heading {
     font-size: 11px;
-    color: #1a1a1a;
+    color: var(--ink);
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
     margin: 0 0 14px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid var(--ink);
   }
   .lines-table {
     width: 100%;
@@ -165,7 +178,7 @@
     font-size: 13px;
   }
   .lines-table tr {
-    border-bottom: 1px dotted rgba(0,0,0,0.12);
+    border-bottom: 1px dotted var(--line);
   }
   .lines-table tr:last-child { border-bottom: 0; }
   .lines-table td {
@@ -175,7 +188,7 @@
   .lt-year {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 13px;
-    color: #1a1a1a;
+    color: var(--ink);
     font-weight: 600;
     white-space: nowrap;
     width: 110px;
@@ -184,12 +197,12 @@
   }
   .lt-name {
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--ink);
     white-space: nowrap;
     padding-right: 18px;
   }
   .lt-desc {
-    color: #555;
+    color: var(--text-dim);
     line-height: 1.55;
   }
   @media (max-width: 600px) {
@@ -202,21 +215,21 @@
   .brand-extra {
     margin: 22px 0;
     padding: 16px 20px;
-    background: rgba(0,0,0,0.04);
-    font-size: 13px; color: #555;
+    background: rgba(10,10,8,0.04);
+    font-size: 13px; color: var(--text-dim);
     line-height: 1.65;
   }
   .carousel-section {
     margin-top: 80px;
     padding-top: 50px;
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid var(--line-ghost);
   }
   .carousel-title {
     font-size: 18px; font-weight: 600;
     margin: 0 0 6px;
   }
   .carousel-sub {
-    font-size: 12px; color: #888;
+    font-size: 12px; color: rgba(10,10,8,0.55);
     text-transform: uppercase; letter-spacing: 1.5px;
     margin-bottom: 30px;
   }
@@ -229,8 +242,8 @@
   }
   .carousel-card {
     flex: 0 0 200px;
-    background: #fff;
-    text-decoration: none; color: #1a1a1a;
+    background: rgba(255,255,255,0.18);
+    text-decoration: none; color: var(--ink);
     scroll-snap-align: start;
     transition: transform 0.2s;
     position: relative;
@@ -238,7 +251,7 @@
   .carousel-card:hover { transform: translateY(-2px); }
   .cc-img {
     aspect-ratio: 1;
-    background: #fafafa;
+    background: rgba(10,10,8,0.04);
     overflow: hidden;
   }
   .cc-img img {
@@ -247,13 +260,13 @@
   }
   .cc-sold {
     position: absolute; top: 8px; left: 8px;
-    background: #1a1a1a; color: #fff;
+    background: var(--ink); color: #fff;
     padding: 3px 8px;
     font-size: 10px; letter-spacing: 1px;
     text-transform: uppercase;
   }
   .cc-name {
-    font-size: 11px; color: #555;
+    font-size: 11px; color: var(--text-dim);
     padding: 10px 12px 4px;
     text-transform: uppercase; letter-spacing: 0.5px;
   }
@@ -267,7 +280,7 @@
   .cta-shop a {
     display: inline-block;
     padding: 14px 30px;
-    background: #1a1a1a; color: #fff;
+    background: var(--ink); color: #fff;
     text-decoration: none;
     font-size: 12px; letter-spacing: 1.5px;
     text-transform: uppercase;

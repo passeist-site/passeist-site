@@ -7,11 +7,21 @@
 <meta name="description" content="Né en 1944 à Yokohama, mort en juillet 2020 d'une leucémie. Premier designer japonais à présenter une collection à Londres en 1971 — avant Miyake et avant ">
 <style>
 
+  :root {
+    --bg: #a8a6a1;
+    --ink: #0a0a08;
+    --text-dim: #2b2a27;
+    --line: rgba(10,10,8,0.22);
+    --line-ghost: rgba(10,10,8,0.10);
+    --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
   * { box-sizing: border-box; }
   body {
-    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
-    background: #f5f3ee;
-    color: #1a1a1a;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text-dim);
     margin: 0;
     padding: 60px 30px 80px;
     -webkit-font-smoothing: antialiased;
@@ -23,30 +33,33 @@
     letter-spacing: -1.5px;
     margin: 0 0 24px;
     line-height: 1.05;
+    color: var(--ink);
   }
   a { color: inherit; }
   .back-home {
-    font-size: 11px;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     margin-bottom: 30px;
     text-decoration: none;
     display: inline-block;
+    opacity: 0.75;
   }
-  .back-home:hover { color: #1a1a1a; }
+  .back-home:hover { opacity: 1; }
 
   .breadcrumb {
     font-size: 11px;
-    color: #888;
+    color: rgba(10,10,8,0.55);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 30px;
   }
-  .breadcrumb a { color: #888; text-decoration: none; }
-  .breadcrumb a:hover { color: #1a1a1a; }
+  .breadcrumb a { color: rgba(10,10,8,0.55); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--ink); }
   .brand-years {
-    font-size: 11px; color: #888;
+    font-size: 11px; color: rgba(10,10,8,0.55);
     text-transform: uppercase; letter-spacing: 2px;
     margin-bottom: 8px;
   }
@@ -58,10 +71,10 @@
   }
   .brand-bio {
     font-size: 15.5px; line-height: 1.75;
-    color: #2a2a2a;
+    color: var(--text-dim);
   }
   .brand-bio p { margin: 0 0 16px; }
-  .brand-bio em { color: #555; }
+  .brand-bio em { color: var(--text-dim); }
   /* Bloc 1 : narratif (bio + chrono) */
   .brand-overview {
     padding: 30px 0 40px;
@@ -72,14 +85,14 @@
     padding: 50px 36px;
     background: rgba(255, 255, 255, 0.55);
     border-radius: 2px;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid var(--line-ghost);
   }
   @media (max-width: 600px) {
     .brand-expert { padding: 36px 22px; }
   }
   .expert-eyebrow {
     font-size: 10px;
-    color: #999;
+    color: rgba(10,10,8,0.45);
     text-transform: uppercase;
     letter-spacing: 3px;
     margin-bottom: 8px;
@@ -89,14 +102,14 @@
     font-weight: 600;
     letter-spacing: -0.4px;
     margin: 0 0 30px;
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .accuracy-note {
     margin: 60px 0 0;
     padding-top: 28px;
-    border-top: 1px solid rgba(0,0,0,0.06);
+    border-top: 1px solid var(--line-ghost);
     font-size: 11px;
-    color: #999;
+    color: rgba(10,10,8,0.45);
     font-style: italic;
     text-align: center;
     line-height: 1.55;
@@ -114,7 +127,7 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     font-size: 10.5px;
-    color: #888;
+    color: rgba(10,10,8,0.55);
     padding: 8px 0;
     user-select: none;
   }
@@ -126,15 +139,15 @@
   }
   .brand-timeline li {
     padding: 9px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    color: #555;
+    border-bottom: 1px solid var(--line-ghost);
+    color: var(--text-dim);
     line-height: 1.55;
     display: flex;
     gap: 18px;
   }
   .brand-timeline li:last-child { border-bottom: 0; }
   .brand-timeline li strong {
-    color: #999;
+    color: rgba(10,10,8,0.45);
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 11px;
     font-weight: 400;
@@ -146,18 +159,18 @@
   .brand-lines {
     margin: 30px 0;
     font-size: 13.5px;
-    color: #2a2a2a; line-height: 1.5;
+    color: var(--text-dim); line-height: 1.5;
   }
   .lines-group { margin: 0 0 30px; }
   .lines-heading {
     font-size: 11px;
-    color: #1a1a1a;
+    color: var(--ink);
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
     margin: 0 0 14px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid var(--ink);
   }
   .lines-table {
     width: 100%;
@@ -165,7 +178,7 @@
     font-size: 13px;
   }
   .lines-table tr {
-    border-bottom: 1px dotted rgba(0,0,0,0.12);
+    border-bottom: 1px dotted var(--line);
   }
   .lines-table tr:last-child { border-bottom: 0; }
   .lines-table td {
@@ -175,7 +188,7 @@
   .lt-year {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 13px;
-    color: #1a1a1a;
+    color: var(--ink);
     font-weight: 600;
     white-space: nowrap;
     width: 110px;
@@ -184,12 +197,12 @@
   }
   .lt-name {
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--ink);
     white-space: nowrap;
     padding-right: 18px;
   }
   .lt-desc {
-    color: #555;
+    color: var(--text-dim);
     line-height: 1.55;
   }
   @media (max-width: 600px) {
@@ -202,21 +215,21 @@
   .brand-extra {
     margin: 22px 0;
     padding: 16px 20px;
-    background: rgba(0,0,0,0.04);
-    font-size: 13px; color: #555;
+    background: rgba(10,10,8,0.04);
+    font-size: 13px; color: var(--text-dim);
     line-height: 1.65;
   }
   .carousel-section {
     margin-top: 80px;
     padding-top: 50px;
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid var(--line-ghost);
   }
   .carousel-title {
     font-size: 18px; font-weight: 600;
     margin: 0 0 6px;
   }
   .carousel-sub {
-    font-size: 12px; color: #888;
+    font-size: 12px; color: rgba(10,10,8,0.55);
     text-transform: uppercase; letter-spacing: 1.5px;
     margin-bottom: 30px;
   }
@@ -229,8 +242,8 @@
   }
   .carousel-card {
     flex: 0 0 200px;
-    background: #fff;
-    text-decoration: none; color: #1a1a1a;
+    background: rgba(255,255,255,0.18);
+    text-decoration: none; color: var(--ink);
     scroll-snap-align: start;
     transition: transform 0.2s;
     position: relative;
@@ -238,7 +251,7 @@
   .carousel-card:hover { transform: translateY(-2px); }
   .cc-img {
     aspect-ratio: 1;
-    background: #fafafa;
+    background: rgba(10,10,8,0.04);
     overflow: hidden;
   }
   .cc-img img {
@@ -247,13 +260,13 @@
   }
   .cc-sold {
     position: absolute; top: 8px; left: 8px;
-    background: #1a1a1a; color: #fff;
+    background: var(--ink); color: #fff;
     padding: 3px 8px;
     font-size: 10px; letter-spacing: 1px;
     text-transform: uppercase;
   }
   .cc-name {
-    font-size: 11px; color: #555;
+    font-size: 11px; color: var(--text-dim);
     padding: 10px 12px 4px;
     text-transform: uppercase; letter-spacing: 0.5px;
   }
@@ -267,7 +280,7 @@
   .cta-shop a {
     display: inline-block;
     padding: 14px 30px;
-    background: #1a1a1a; color: #fff;
+    background: var(--ink); color: #fff;
     text-decoration: none;
     font-size: 12px; letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -283,9 +296,26 @@
   <section class="brand-overview">
     <div class="brand-bio"><p>Né en 1944 à Yokohama, mort en juillet 2020 d'une leucémie. Premier designer japonais à présenter une collection à Londres en 1971 — avant Miyake et avant Yohji. Fonde sa marque Kansai en 1971.</p>
         <p>Esthétique explosive, théâtrale, kabuki, couleurs vives, motifs surdimensionnés — à l'opposé du minimalisme japonais qui dominera ensuite. Mondialement célèbre pour avoir dessiné les costumes de David Bowie pour Ziggy Stardust et Aladdin Sane (1973-74) : la veste vinyle <em>« Tokyo Pop »</em>, les combinaisons à motifs kanji.</p></div>
-    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1971</strong> · premier designer japonais à présenter une collection à Londres — fondation de la marque Kansai</li><li><strong>1973 — 1974</strong> · dessine les costumes de David Bowie pour Ziggy Stardust et Aladdin Sane — la veste vinyle « Tokyo Pop », les combinaisons à motifs kanji</li><li><strong>Années 70 — 90</strong> · producteur des « Kansai Super Shows », événements monumentaux mêlant mode, musique et performance</li><li><strong>1992</strong> · designs des uniformes du « Yokohama Bay Stars » (équipe de baseball japonaise)</li><li><strong>2018</strong> · design des costumes de la cérémonie d'ouverture du Festival de Cannes</li><li><strong>Juillet 2020</strong> · décès d'une leucémie à 76 ans — sa fille Mirai Yamamoto continue de gérer le legs</li></ul></details>
+    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1971</strong> · premier designer japonais à présenter une collection à Londres — fondation de la marque Kansai</li><li><strong>1973 — 1974</strong> · dessine les costumes de David Bowie pour Ziggy Stardust et Aladdin Sane — la veste vinyle « Tokyo Pop », les combinaisons à motifs kanji</li><li><strong>Années 70 — 90</strong> · producteur des « Kansai Super Shows », événements monumentaux mêlant mode, musique et performance</li><li><strong>FW 1992</strong> · présente sa dernière collection sous son nom propre — il consacre ensuite son énergie aux Super Shows et à la licence de son nom</li><li><strong>Juillet 2020</strong> · décès d'une leucémie à 76 ans — sa fille Mirai Yamamoto continue de gérer le legs</li></ul></details>
   </section>
-  
+  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes principales</h3>
+  <table class="lines-table">
+    <tr><td class="lt-year">1971</td><td class="lt-name">Kansai Yamamoto</td><td class="lt-desc">Ligne principale, défilée à Londres, Tokyo et Paris jusqu'à la dernière collection FW 1992.</td></tr>
+  </table>
+</div>
+<div class="lines-group">
+  <h3 class="lines-heading">Lignes diffusion et licences</h3>
+  <p style="font-size:13px;color:#666;line-height:1.55;margin:0 0 14px;">Après sa dernière collection FW 1992, Kansai Yamamoto licencie son nom à de nombreuses lignes. Pièces vintage très recherchées chez les collectionneurs.</p>
+  <table class="lines-table">
+    <tr><td class="lt-year">~80s — 90s</td><td class="lt-name">Kansai Bis</td><td class="lt-desc">Sous-ligne diffusion, fabrication japonaise. Pièces vintage recherchées.</td></tr>
+    <tr><td class="lt-year">~80s — 90s</td><td class="lt-name">Kansai O2</td><td class="lt-desc">Ligne diffusion mixte. Sweats, vestes, mailles aux motifs caractéristiques de l'univers Kansai.</td></tr>
+    <tr><td class="lt-year">~90s</td><td class="lt-name">CC Kansai (CC by Kansai)</td><td class="lt-desc">Sous-ligne licenciée. Pièces accessibles, polos et casual.</td></tr>
+    <tr><td class="lt-year">~90s</td><td class="lt-name">Kansai Impact</td><td class="lt-desc">Sous-ligne post-1992, mailles et pièces graphiques licenciées.</td></tr>
+    <tr><td class="lt-year">—</td><td class="lt-name">Kansai Man</td><td class="lt-desc">Ligne homme licenciée. Date de lancement non documentée publiquement.</td></tr>
+  </table>
+</div></div></section>
   <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
   
     <section class="carousel-section">
