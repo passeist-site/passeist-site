@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIMI FEU — Passéist</title>
-<meta name="description" content="Limi Yamamoto, née en 1974, est la fille de Yohji Yamamoto. Elle adopte plus tard le nom de scène « Feu » , mot trouvé au hasard dans un dictionnaire — pre">
+<title>Nos marques — Passéist</title>
+<meta name="description" content="Découvrez les maisons de la mode d'auteur japonaise sélectionnées par Passéist : Yohji Yamamoto, Issey Miyake, Comme des Garçons, 45R et bien d'autres.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2415,274 +2415,67 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   body.marques-page .checkout-overlay,
   body.marques-page .cart-panel { display: none !important; }
 
-  .breadcrumb {
-    font-size: 11px;
-    color: rgba(10,10,8,0.55);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 30px;
+  .intro {
+    font-size: 15px; line-height: 1.7;
+    color: var(--text-dim); max-width: 720px;
+    margin: 0 0 50px;
   }
-  .breadcrumb a { color: rgba(10,10,8,0.55); text-decoration: none; }
-  .breadcrumb a:hover { color: var(--ink); }
-  .brand-years {
-    font-size: 11px; color: rgba(10,10,8,0.55);
-    text-transform: uppercase; letter-spacing: 2px;
-    margin-bottom: 8px;
+  .headliners-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 0 0 50px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
   }
-  .brand-name {
-    font-size: 44px; font-weight: 700;
-    letter-spacing: -1px;
-    margin: 0 0 14px;
-    text-transform: uppercase;
+  @media (max-width: 760px) {
+    .headliners-row { grid-template-columns: repeat(2, 1fr); }
   }
-  .brand-bio {
-    font-size: 15.5px; line-height: 1.75;
-    color: var(--text-dim);
-  }
-  .brand-bio p { margin: 0 0 16px; }
-  .brand-bio em { color: var(--text-dim); }
-  /* Bloc 1 : narratif (bio + chrono) */
-  .brand-overview {
-    padding: 30px 0 40px;
-  }
-  /* Portrait du créateur (format carré, B&W) */
-  .brand-portrait {
-    float: right;
-    width: 200px;
-    margin: 8px 0 20px 28px;
-  }
-  .brand-portrait img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    filter: grayscale(100%);
-    background: rgba(255,255,255,0.18);
-  }
-  .portrait-caption {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    letter-spacing: 1px;
-    color: rgba(10,10,8,0.55);
-    margin-top: 6px;
-    line-height: 1.4;
-  }
-  @media (max-width: 600px) {
-    .brand-portrait {
-      float: none;
-      width: 160px;
-      margin: 0 auto 24px;
-    }
-    .portrait-caption { text-align: center; }
-  }
-  /* Bloc 2 : expert (lignes & sous-marques) — même fond que les carrés headliners */
-  .brand-expert {
-    margin-top: 40px;
-    padding: 50px 36px;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 2px;
-    border: 1px solid var(--line-ghost);
-  }
-  @media (max-width: 600px) {
-    .brand-expert { padding: 36px 22px; }
-  }
-  .expert-eyebrow {
-    font-size: 10px;
-    color: rgba(10,10,8,0.45);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 8px;
-  }
-  .expert-title {
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: -0.4px;
-    margin: 0 0 30px;
-    color: var(--ink);
-  }
-  .accuracy-note {
-    margin: 60px 0 0;
-    padding-top: 28px;
-    border-top: 1px solid var(--line-ghost);
-    font-size: 11px;
-    color: rgba(10,10,8,0.45);
-    font-style: italic;
-    text-align: center;
-    line-height: 1.55;
-  }
-  .brand-timeline {
-    margin: 36px 0;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-size: 13px;
-  }
-  .brand-timeline summary {
-    cursor: pointer;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 10.5px;
-    color: rgba(10,10,8,0.55);
-    padding: 8px 0;
-    user-select: none;
-  }
-  .brand-timeline summary::marker { color: #ccc; }
-  .brand-timeline ul {
-    margin: 14px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .brand-timeline li {
-    padding: 9px 0;
-    border-bottom: 1px solid var(--line-ghost);
-    color: var(--text-dim);
-    line-height: 1.55;
+  .headliner-link {
     display: flex;
-    gap: 18px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    aspect-ratio: 1;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid var(--line-ghost);
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 19px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    padding: 18px;
+    transition: transform 0.18s, box-shadow 0.18s;
   }
-  .brand-timeline li:last-child { border-bottom: 0; }
-  .brand-timeline li strong {
-    color: rgba(10,10,8,0.45);
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 11px;
-    font-weight: 400;
-    min-width: 110px;
-    flex-shrink: 0;
-    padding-top: 1px;
+  .headliner-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  .brands-list {
+    border-top: 2px solid var(--ink);
+  }
+  .brand-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 22px 4px;
+    border-bottom: 1px solid var(--line-ghost);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.15s, padding-left 0.15s;
+  }
+  .brand-link:hover {
+    background: rgba(255,255,255,0.10);
+    padding-left: 16px;
+  }
+  .bl-name {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .brand-lines {
-    margin: 30px 0;
-    font-size: 13.5px;
-    color: var(--text-dim); line-height: 1.5;
-  }
-  .lines-group { margin: 0 0 30px; }
-  .lines-heading {
-    font-size: 11px;
-    color: var(--ink);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: 600;
-    margin: 0 0 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--ink);
-  }
-  .lines-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .lines-table tr {
-    border-bottom: 1px dotted var(--line);
-  }
-  .lines-table tr:last-child { border-bottom: 0; }
-  .lines-table td {
-    padding: 10px 12px 10px 0;
-    vertical-align: top;
-  }
-  .lt-year {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 13px;
-    color: var(--ink);
-    font-weight: 600;
-    white-space: nowrap;
-    width: 110px;
-    letter-spacing: 0;
-    line-height: 1.35;
-  }
-  .lt-name {
-    font-weight: 600;
-    color: var(--ink);
-    white-space: nowrap;
-    padding-right: 18px;
-  }
-  .lt-desc {
-    color: var(--text-dim);
-    line-height: 1.55;
-  }
-  @media (max-width: 600px) {
-    .lines-table, .lines-table tbody, .lines-table tr, .lines-table td { display: block; width: 100%; }
-    .lines-table tr { padding: 12px 0; }
-    .lt-year { width: auto; padding: 0 0 4px; }
-    .lt-name { padding: 0 0 4px; }
-    .lt-desc { padding: 0; }
-  }
-  .brand-extra {
-    margin: 22px 0;
-    padding: 16px 20px;
-    background: rgba(10,10,8,0.04);
-    font-size: 13px; color: var(--text-dim);
-    line-height: 1.65;
-  }
-  .carousel-section {
-    margin-top: 80px;
-    padding-top: 50px;
-    border-top: 1px solid var(--line-ghost);
-  }
-  .carousel-title {
-    font-size: 18px; font-weight: 600;
-    margin: 0 0 6px;
-  }
-  .carousel-sub {
-    font-size: 12px; color: rgba(10,10,8,0.55);
-    text-transform: uppercase; letter-spacing: 1.5px;
-    margin-bottom: 30px;
-  }
-  .carousel {
-    display: flex; gap: 16px;
-    overflow-x: auto;
-    padding-bottom: 18px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  .carousel-card {
-    flex: 0 0 200px;
-    background: rgba(255,255,255,0.18);
-    text-decoration: none; color: var(--ink);
-    scroll-snap-align: start;
-    transition: transform 0.2s;
-    position: relative;
-  }
-  .carousel-card:hover { transform: translateY(-2px); }
-  .cc-img {
-    aspect-ratio: 1;
-    background: rgba(10,10,8,0.04);
-    overflow: hidden;
-  }
-  .cc-img img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
-  .cc-sold {
-    position: absolute; top: 8px; left: 8px;
-    background: var(--ink); color: #fff;
-    padding: 3px 8px;
-    font-size: 10px; letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .cc-name {
-    font-size: 11px; color: var(--text-dim);
-    padding: 10px 12px 4px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .cc-price {
-    font-size: 12px; font-weight: 600;
-    padding: 0 12px 12px;
-  }
-  .cta-shop {
-    text-align: center; margin-top: 40px;
-  }
-  .cta-shop a {
-    display: inline-block;
-    padding: 14px 30px;
-    background: var(--ink); color: #fff;
-    text-decoration: none;
-    font-size: 12px; letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
 </style>
 </head>
 <body class="marques-page">
@@ -2746,61 +2539,65 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
-  <h1 class="brand-name">LIMI FEU</h1>
-  <section class="brand-overview">
+  <h1 class="page-title">Nos marques</h1>
+  <p class="intro">Passéist explore la mode d'auteur japonaise et vous propose, selon lui, une sélection simple avec du caractère. Cliquez sur une maison pour découvrir son histoire et quelques pièces associées dans la boutique.</p>
+  <div class="headliners-row">
     
-    <div class="brand-bio"><p>Limi Yamamoto, née en 1974, est la fille de Yohji Yamamoto. Elle adopte plus tard le nom de scène <em>« Feu »</em>, mot trouvé au hasard dans un dictionnaire — presque un jeu d'enfant.</p>
-        <p><strong>Une enfance loin du père.</strong> Ses parents divorcent quand elle a deux ans. Elle grandit avec sa mère dans une petite ville de Kyushu, ne voyant Yohji qu'une fois tous les trois ans environ. La fashion semble alors un univers étranger.</p>
-        <p><strong>La révélation.</strong> Année de terminale : Yohji l'emmène à New York assister à un de ses défilés. Pour la première fois, elle voit le travail de son père sur le runway. <em>« I was so overcome, I just started crying. »</em> Sur place, elle décide de devenir designer.</p>
-        <p><strong>Formation et lancement.</strong> Elle étudie à Bunka Fashion College, puis travaille comme pattern-maker dans plusieurs maisons. En 2000, elle fonde son propre label <strong>Limi feu</strong> sous l'aile du groupe Yohji Yamamoto. Défilés à Tokyo Fashion Week de 2000 à 2007, puis débuts à Paris Fashion Week en octobre 2007 — accueil très favorable de la critique.</p>
-        <p>Esthétique : tailoring structuré, asymétries féminines, palette dominée par le noir, silhouettes amples et bottes militaires — un romantisme punk rock plus terrestre que celui de son père. Limi le formule ainsi : <em>« Mon père dessine pour la femme idéale. Moi je dessine, en tant que femme, pour la femme réelle. »</em></p></div>
-    <div style="clear:both;"></div>
+    <a class="headliner-link" href="/marques/yohji-yamamoto">
+      YOHJI YAMAMOTO
+    </a>
+    <a class="headliner-link" href="/marques/issey-miyake">
+      ISSEY MIYAKE
+    </a>
+    <a class="headliner-link" href="/marques/comme-des-garcons">
+      COMME DES GARÇONS
+    </a>
+    <a class="headliner-link" href="/marques/45rpm">
+      45RPM / 45R
+    </a>
+  </div>
+  <nav class="brands-list">
     
-  </section>
-  
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
-  
-    <section class="carousel-section">
-      <h2 class="carousel-title">Notre sélection LIMI FEU</h2>
-      <div class="carousel-sub">Scroll horizontal</div>
-      <div class="carousel">
-        
-        <a class="carousel-card" href="/product/haut-limi-feu-en-coton-multicolore-58366417">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-limi-feu-en-coton-multicolore-58366417-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Tunique</div>
-          <div class="cc-price">150 €</div>
-        </a>
-        <a class="carousel-card" href="/product/haut-limi-feu-en-polyester-noir-63036032">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/haut-limi-feu-en-polyester-noir-63036032-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Chemise</div>
-          <div class="cc-price">150 €</div>
-        </a>
-        <a class="carousel-card" href="/product/pullgilet-limi-feu-en-laine-vert-63093118">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/pullgilet-limi-feu-en-laine-vert-63093118-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Gilet long en laine</div>
-          <div class="cc-price">160 €</div>
-        </a>
-        <a class="carousel-card" href="/product/vesteblouson-limi-feu-en-coton-gris-63094121">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-limi-feu-en-coton-gris-63094121-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Blouson</div>
-          <div class="cc-price">150 €</div>
-        </a>
-        <a class="carousel-card" href="/product/combinaison-limi-feu-en-polyester-noir-63469146">
-          
-          <div class="cc-img"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/combinaison-limi-feu-en-polyester-noir-63469146-1_2.jpg" alt="" loading="lazy"></div>
-          <div class="cc-name">Combinaison</div>
-          <div class="cc-price">170 €</div>
-        </a>
-      </div>
-      <div class="cta-shop">
-        <a href="/shop?brand=LIMI%20FEU">Voir toutes les pièces LIMI FEU</a>
-      </div>
-    </section>
+    <a class="brand-link" href="/marques/blue-blue-japan">
+      <span class="bl-name">BLUE BLUE JAPAN</span>
+    </a>
+    <a class="brand-link" href="/marques/fumito-ganryu">
+      <span class="bl-name">FUMITO GANRYU</span>
+    </a>
+    <a class="brand-link" href="/marques/junko-koshino">
+      <span class="bl-name">JUNKO KOSHINO</span>
+    </a>
+    <a class="brand-link" href="/marques/junya-watanabe">
+      <span class="bl-name">JUNYA WATANABE</span>
+    </a>
+    <a class="brand-link" href="/marques/kansai-yamamoto">
+      <span class="bl-name">KANSAI YAMAMOTO</span>
+    </a>
+    <a class="brand-link" href="/marques/kijima-takayuki">
+      <span class="bl-name">KIJIMA TAKAYUKI</span>
+    </a>
+    <a class="brand-link" href="/marques/limi-feu">
+      <span class="bl-name">LIMI FEU</span>
+    </a>
+    <a class="brand-link" href="/marques/maison-mihara-yasuhiro">
+      <span class="bl-name">MAISON MIHARA YASUHIRO</span>
+    </a>
+    <a class="brand-link" href="/marques/noir-kei-ninomiya">
+      <span class="bl-name">NOIR KEI NINOMIYA</span>
+    </a>
+    <a class="brand-link" href="/marques/tigre-brocante">
+      <span class="bl-name">TIGRE BROCANTE</span>
+    </a>
+    <a class="brand-link" href="/marques/tsumori-chisato">
+      <span class="bl-name">TSUMORI CHISATO</span>
+    </a>
+    <a class="brand-link" href="/marques/yoshiki-hishinuma">
+      <span class="bl-name">YOSHIKI HISHINUMA</span>
+    </a>
+    <a class="brand-link" href="/marques/zucca">
+      <span class="bl-name">ZUCCA</span>
+    </a>
+  </nav>
 </div>
 
 <footer class="footer">
