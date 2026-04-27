@@ -4180,7 +4180,8 @@ function renderFilters() {
   const totalBrand  = totalFor('brand');
   const totalCat    = totalFor('cat');
   const totalColor  = totalFor('color');
-  const brandList = ['all', ...Object.keys(brandCounts).sort((a, b) => brandCounts[b] - brandCounts[a] || a.localeCompare(b))];
+  // Marques : tri ALPHABÉTIQUE pur (Tom 27/04 : plus simple à scanner que par count)
+  const brandList = ['all', ...Object.keys(brandCounts).sort((a, b) => a.localeCompare(b))];
   const catList = ['all', ...Object.keys(catCounts).sort()];
   const COLOR_ORDER = ['Noir','Anthracite','Marine','Indigo','Bleu','Gris','Blanc','Beige','Camel','Écru','Ivoire','Crème','Marron','Bordeaux','Rouge','Rose','Violet','Vert','Kaki','Jaune','Orange','Métal','Multicolore','Autre'];
   const colorList = ['all', ...COLOR_ORDER.filter(c => colorCounts[c])];
@@ -4253,6 +4254,16 @@ function renderGrid() {
   // Tri selon activeSort
   if (activeSort === 'random') {
     filtered = shuffle(filtered.slice());
+  } else if (activeView === 'archive' && activeSort === 'newest') {
+    // Archive : tri par ordre d'arrivée dans SOLD_IDS (plus récemment basculés en haut).
+    // Permet de voir rapidement les nouvelles ventes ajoutées au sync.
+    const soldArr = Array.from(SOLD_IDS);  // Set itère dans l'ordre d'insertion (ES2015+)
+    const soldIdx = new Map(soldArr.map((id, i) => [id, i]));
+    filtered = filtered.slice().sort((a, b) => {
+      const ai = soldIdx.has(a.id) ? soldIdx.get(a.id) : 999999;
+      const bi = soldIdx.has(b.id) ? soldIdx.get(b.id) : 999999;
+      return ai - bi;  // index plus petit = ajouté en premier dans Set = plus récent (cf workflow qui prepend)
+    });
   } else {
     // Vinted (IDs à 10 chiffres) sont toujours relégués en fin de liste, peu importe le tri
     const isVinted = (p) => String(p.id || '').length >= 10;

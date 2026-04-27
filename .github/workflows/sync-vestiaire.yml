@@ -98,12 +98,16 @@ jobs:
               sys.exit(0)
           # Read index.html
           with open('index.html') as f: html = f.read()
-          # Parse SOLD_IDS Set (cf TASKS.md règle suppression d'ID — pipeline propre)
+          # Parse SOLD_IDS Set en préservant l'ORDRE d'arrivée
+          # (cf TASKS.md : nouveaux SOLD en haut = plus récents en premier dans /archive)
           m = re.search(r'(const SOLD_IDS = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
-          ids = set(re.findall(r'"(\d+)"', m.group(2)))
-          before = len(ids)
-          for pid in to_bascule: ids.add(pid)
-          inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in sorted(ids, reverse=True)) + '\n'
+          existing_ids = re.findall(r'"(\d+)"', m.group(2))
+          existing_set = set(existing_ids)
+          before = len(existing_ids)
+          # Nouveaux IDs ajoutés AU DÉBUT (= plus récents en premier)
+          new_ids = [pid for pid in to_bascule if pid not in existing_set]
+          ordered_ids = new_ids + existing_ids  # nouveaux d'abord, puis les anciens dans l'ordre existant
+          inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in ordered_ids) + '\n'
           html = html.replace(m.group(0), m.group(1) + inside + m.group(3))
           # Validation : aucune paire d'IDs sans virgule
           test = re.search(r'(const SOLD_IDS = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
