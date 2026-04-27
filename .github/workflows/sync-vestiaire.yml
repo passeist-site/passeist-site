@@ -67,7 +67,7 @@ jobs:
           path: ${{ steps.sync.outputs.report }}
           retention-days: 30
 
-      - name: Auto-bascule SOLD pour B (vendus VC, dispo site)
+      - name: Auto-bascule SOLD pour B (vendus VC) + D1 (absents VC)
         id: bascule
         run: |
           python << 'PYEOF'
@@ -77,18 +77,32 @@ jobs:
               print("Pas de rapport, skip"); sys.exit(0)
           with open(rep_path) as f: r = json.load(f)
           B = r.get('B', [])
-          if not B:
-              print("B vide, rien à basculer")
+          D1 = r.get('D1', [])
+          # Vérifie que le scan for-sale était complet (sécurité anti-faux-positif sur D1)
+          fs_target = r.get('vc_stats', {}).get('target_fs', 0)
+          fs_scanned = r.get('vc_stats', {}).get('for_sale', 0)
+          fs_complete = fs_scanned >= fs_target if fs_target else False
+          # B = bascule sûre. D1 = bascule sûre uniquement si scan for-sale complet
+          to_bascule = list(B)
+          d1_skipped = []
+          if fs_complete:
+              to_bascule.extend(D1)
+              print(f'B={len(B)} + D1={len(D1)} → {len(to_bascule)} items à basculer (scan for-sale complet)')
+          else:
+              d1_skipped = D1
+              print(f'B={len(B)} bascule. D1={len(D1)} skip (scan for-sale partiel {fs_scanned}/{fs_target})')
+          if not to_bascule:
+              print("Rien à basculer")
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                  f.write('count=0\n')
+                  f.write('count=0\n'); f.write('d1_skipped=\n')
               sys.exit(0)
-          print(f'B = {len(B)} items à basculer en SOLD')
           # Read index.html
           with open('index.html') as f: html = f.read()
           # Parse SOLD_IDS Set (cf TASKS.md règle suppression d'ID — pipeline propre)
           m = re.search(r'(const SOLD_IDS = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
           ids = set(re.findall(r'"(\d+)"', m.group(2)))
-          for pid in B: ids.add(pid)
+          before = len(ids)
+          for pid in to_bascule: ids.add(pid)
           inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in sorted(ids, reverse=True)) + '\n'
           html = html.replace(m.group(0), m.group(1) + inside + m.group(3))
           # Validation : aucune paire d'IDs sans virgule
@@ -97,10 +111,12 @@ jobs:
               print('ERREUR : virgule manquante détectée, abort')
               sys.exit(1)
           with open('index.html', 'w') as f: f.write(html)
-          print(f'OK : {len(B)} ids ajoutés à SOLD_IDS')
+          added = len(ids) - before
+          print(f'OK : {added} nouveaux ids dans SOLD_IDS (B+D1 dédoublonné)')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f'count={len(B)}\n')
-              f.write(f'ids={" ".join(B)}\n')
+              f.write(f'count={added}\n')
+              f.write(f'ids={" ".join(to_bascule)}\n')
+              f.write(f'd1_skipped={" ".join(d1_skipped)}\n')
           PYEOF
 
       - name: Auto-import des nouvelles pièces (E + C)
@@ -209,10 +225,12 @@ jobs:
             if (needsAction) {
               body += `## ⚠ Actions à valider manuellement\n\n`;
 
-              if (D1.length > 0) {
-                body += `### 🔴 D1 — Items absents du profil VC (potentiellement vendus)\n\n`;
-                body += `${D1.length} items à vérifier (scan vendus public limité, peut être faux positif) :\n\n`;
-                D1.forEach(id => body += `- \`${id}\`\n`);
+              // D1 n'apparait dans l'Issue QUE s'il a été skip (= scan for-sale partiel)
+              const d1Skipped = ("${{ steps.bascule.outputs.d1_skipped }}" || "").split(' ').filter(Boolean);
+              if (d1Skipped.length > 0) {
+                body += `### 🔴 D1 — Items absents du profil VC (scan partiel, validation manuelle)\n\n`;
+                body += `${d1Skipped.length} items à vérifier (scan for-sale incomplet, bascule auto désactivée par sécurité) :\n\n`;
+                d1Skipped.forEach(id => body += `- \`${id}\`\n`);
                 body += `\n→ Vérifier chaque fiche Vestiaire puis dire à Claude dans Cowork "bascule SOLD <ID>".\n\n`;
               }
 
