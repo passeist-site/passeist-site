@@ -115,7 +115,7 @@ jobs:
               print('ERREUR : virgule manquante détectée, abort')
               sys.exit(1)
           with open('index.html', 'w') as f: f.write(html)
-          added = len(ids) - before
+          added = len(new_ids)
           print(f'OK : {added} nouveaux ids dans SOLD_IDS (B+D1 dédoublonné)')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'count={added}\n')
