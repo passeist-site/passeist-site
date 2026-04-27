@@ -1604,8 +1604,8 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .home-brands-strip { display: none; }
 body[data-page="home"] .home-brands-strip { display: block; }
 .home-brands-strip {
-  margin-top: -100px;
-  padding: 60px 40px 80px;
+  margin-top: -160px;
+  padding: 16px 40px 80px;
   background: var(--bg);
   position: relative;
   z-index: 2;
@@ -1614,20 +1614,22 @@ body[data-page="home"] .home-brands-strip { display: block; }
 }
 .hbs-inner { max-width: 920px; margin: 0 auto; }
 .hbs-eyebrow {
-  font-size: 18px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(22px, 2.4vw, 32px);
+  letter-spacing: -0.025em;
+  text-transform: none;
   color: var(--ink);
-  font-weight: 600;
-  margin-bottom: 44px;
+  margin-bottom: 60px;
 }
 .hbs-headliners {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px 30px;
+  gap: 8px 22px;
   font-family: var(--font-sans);
-  font-size: 22px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0;
   margin-bottom: 14px;
@@ -1637,9 +1639,12 @@ body[data-page="home"] .home-brands-strip { display: block; }
 .hbs-headliners a { color: var(--ink); text-decoration: none; transition: opacity .2s; }
 .hbs-headliners a:hover { opacity: 0.55; }
 .hbs-others {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-weight: 300;
   font-size: 15px;
+  letter-spacing: -0.015em;
   color: var(--ink);
-  font-weight: 400;
   line-height: 1.9;
   max-width: 720px;
   margin: 0 auto 36px;
@@ -1664,23 +1669,26 @@ body[data-page="home"] .home-brands-strip { display: block; }
     min-height: calc(100vh - var(--topbar-h) - 80px);
   }
   .home-brands-strip {
-    margin-top: 0;
-    padding: 40px 24px 50px;
+    margin-top: -40px;
+    padding: 12px 24px 50px;
     border-top: 0;
   }
-  .hbs-eyebrow { font-size: 11px; letter-spacing: 2.5px; margin-bottom: 20px; }
+  .hbs-eyebrow { font-size: 20px; letter-spacing: -0.02em; margin-bottom: 32px; }
   .hbs-headliners {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 16px;
-    font-size: 16px;
-    letter-spacing: -0.2px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     margin-bottom: 24px;
-    line-height: 1.2;
+    border-top: 1px solid rgba(10,10,8,0.12);
   }
   .hbs-headliners a {
     text-align: center;
-    padding: 8px 4px;
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(10,10,8,0.12);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.15;
   }
   .hbs-headliners a:hover { opacity: 0.55; }
   .hbs-others { font-size: 11.5px; line-height: 1.85; color: #2a2a2a; margin-bottom: 26px; padding: 0 4px; }
@@ -1815,6 +1823,9 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   .m-headliner { font-size: 16px; }
   .m-brand { font-size: 11px; padding: 9px 6px; }
 }
+
+/* === HOME BRANDS — proposition B (typo) === */
+
 .marques-cta {
   display: inline-block;
   font-family: var(--font-mono);
@@ -2530,7 +2541,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 <!-- HOME BRANDS STRIP (visible uniquement quand body[data-page="home"]) -->
 <section class="home-brands-strip">
   <div class="hbs-inner">
-    <div class="hbs-eyebrow">Les marques</div>
+    <div class="hbs-eyebrow">Les Auteurs</div>
     <div class="hbs-headliners">
       <a href="/marques/45rpm">45RPM</a>
       <a href="/marques/comme-des-garcons">Comme des Garçons</a>
@@ -4386,12 +4397,9 @@ function goPage(p) {
       activeView = newView;
     }
     // Pré-applique un filtre marque depuis l'URL ?brand=NOM (clic depuis /marques/{slug})
-    let urlBrand = null;
-    let urlOpen = null;
     try {
       const params = new URLSearchParams(location.search);
-      urlBrand = params.get('brand');
-      urlOpen = params.get('open');
+      const urlBrand = params.get('brand');
       if (urlBrand && p === 'shop') {
         const decoded = decodeURIComponent(urlBrand);
         if (PRODUCTS.some(prod => prod.brand === decoded)) {
@@ -4401,16 +4409,16 @@ function goPage(p) {
     } catch(e) {}
     renderFilters();
     renderGrid();
-    // Si ?open={slug}, ouvre la fiche produit après applique le filtre.
-    // Avant : remplace l'URL par /shop?brand=X (sans ?open) pour que le retour navigateur
-    // atterrisse sur la boutique filtrée et pas sur l'URL avec open qui rouvrirait la fiche.
-    if (urlOpen && p === 'shop') {
+    // Si flag sessionStorage 'passeist_open_slug' (clic carrousel page marque détail),
+    // ouvre la fiche produit après filtre. Plus robuste que ?open= en URL sur iOS Safari.
+    // Le retour navigateur atterrit sur /shop?brand=X sans rouvrir le produit.
+    if (p === 'shop') {
       try {
-        const prod = PRODUCTS.find(x => x.slug === urlOpen);
-        if (prod) {
-          const cleanUrl = '/shop' + (urlBrand ? '?brand=' + urlBrand : '');
-          history.replaceState({ t:'page', p:'shop' }, '', cleanUrl);
-          setTimeout(() => { if (typeof openDetail === 'function') openDetail(prod.id); }, 60);
+        const slug = sessionStorage.getItem('passeist_open_slug');
+        if (slug) {
+          sessionStorage.removeItem('passeist_open_slug');
+          const prod = PRODUCTS.find(x => x.slug === slug);
+          if (prod) setTimeout(() => { if (typeof openDetail === 'function') openDetail(prod.id); }, 60);
         }
       } catch(e) {}
     }
