@@ -463,7 +463,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .hero-content { position: relative; z-index: 5; }
 
 /* Accueil plein écran sans scroll — footer visible */
-body[data-page="home"] { overflow: hidden; height: 100vh; }
+body[data-page="home"] { overflow: auto; height: auto; }
 /* Lumière rasante — gradient diagonal subtil sur fond ardoise */
 /* Fond uniforme sans gradient */
 
@@ -1597,6 +1597,90 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
 }
 .cart-checkout { width: 100%; }
 
+
+/* ============ HOME BRANDS STRIP ============ */
+.home-brands-strip { display: none; }
+body[data-page="home"] .home-brands-strip { display: block; }
+.home-brands-strip {
+  padding: 80px 40px 100px;
+  background: var(--bg);
+  color: var(--ink);
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.hbs-inner { max-width: 920px; margin: 0 auto; }
+.hbs-eyebrow {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 22px;
+}
+.hbs-headliners {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 30px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+.hbs-headliners a { color: var(--ink); text-decoration: none; transition: opacity .2s; }
+.hbs-headliners a:hover { opacity: 0.55; }
+.hbs-others {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.9;
+  max-width: 720px;
+  margin: 0 auto 36px;
+}
+.hbs-others a { color: inherit; text-decoration: none; }
+.hbs-others a:hover { color: var(--ink); }
+.hbs-cta {
+  display: inline-block;
+  padding: 14px 30px;
+  background: #1a1a1a;
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: opacity .2s;
+}
+.hbs-cta:hover { opacity: 0.85; }
+@media (max-width: 880px) {
+  body[data-page="home"] .hero {
+    min-height: calc(100vh - var(--topbar-h) - 80px);
+  }
+  .home-brands-strip {
+    padding: 50px 24px 60px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .hbs-eyebrow { font-size: 10px; letter-spacing: 2.5px; margin-bottom: 20px; }
+  .hbs-headliners {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+    font-size: 16px;
+    letter-spacing: -0.2px;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  .hbs-headliners a {
+    text-align: center;
+    padding: 12px 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .hbs-headliners a:hover { background: #f5f3ee; opacity: 1; }
+  .hbs-others { font-size: 11.5px; line-height: 1.85; color: #777; margin-bottom: 26px; padding: 0 4px; }
+  .hbs-cta { padding: 12px 22px; font-size: 11px; letter-spacing: 1.2px; }
+}
+
 /* ============ ABOUT ============ */
 .about {
   display: none; margin-top: var(--topbar-h);
@@ -2305,6 +2389,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     <a data-page="home" class="active"><svg class="nav-ink" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="48" filter="url(#ink-rough-g)"/></svg><span>Accueil</span></a>
     <a data-page="shop"><svg class="nav-ink" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="48" filter="url(#ink-rough-h)"/></svg><span>Boutique</span></a>
     <a data-page="archive"><svg class="nav-ink" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="48" filter="url(#ink-rough-i)"/></svg><span>Archive</span></a>
+    <a href="/marques"><svg class="nav-ink" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="48" filter="url(#ink-rough-k)"/></svg><span>Marques</span></a>
     <a data-page="about"><svg class="nav-ink" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="48" filter="url(#ink-rough-j)"/></svg><span>À propos</span></a>
   </nav>
   <div class="topbar-right">
@@ -2336,6 +2421,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   <a data-page="home" class="active"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-g)"/></svg><span>Accueil</span></a>
   <a data-page="shop"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-h)"/></svg><span>Boutique</span></a>
   <a data-page="archive"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-i)"/></svg><span>Archive</span></a>
+  <a href="/marques"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-k)"/></svg><span>Marques</span></a>
   <a data-page="about"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-j)"/></svg><span>À propos</span></a>
   <div class="mobile-nav-sub">Passeist — Paris 11ᵉ</div>
 </nav>
@@ -2349,6 +2435,23 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   </div>
   <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
     <div class="hero-marquee-track" id="hero-marquee-track"></div>
+  </div>
+</section>
+
+<!-- HOME BRANDS STRIP (visible uniquement quand body[data-page="home"]) -->
+<section class="home-brands-strip">
+  <div class="hbs-inner">
+    <div class="hbs-eyebrow">Nos marques</div>
+    <div class="hbs-headliners">
+      <a href="/marques/yohji-yamamoto">Yohji Yamamoto</a>
+      <a href="/marques/issey-miyake">Issey Miyake</a>
+      <a href="/marques/comme-des-garcons">Comme des Garçons</a>
+      <a href="/marques/45rpm">45RPM</a>
+    </div>
+    <div class="hbs-others">
+      <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a>
+    </div>
+    <a href="/marques" class="hbs-cta">Toutes nos marques →</a>
   </div>
 </section>
 
