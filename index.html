@@ -1337,6 +1337,21 @@ body[data-page="home"] { overflow: hidden; height: 100vh; }
   font-family: var(--font-mono);
   letter-spacing: 0;
 }
+/* Réf produit — minuscule, discret, clic = copie ID. Usage interne Tom (gestion commandes). */
+.detail-ref {
+  margin-top: 16px;
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  color: rgba(0,0,0,0.18);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+  display: inline-block;
+}
+.detail-ref:hover { color: rgba(0,0,0,0.5); }
+.detail-ref.copied { color: #4a9; }
+.detail-ref.copied::after { content: ' ✓'; }
 
 /* Archive / sold — on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
@@ -2584,6 +2599,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
       <div class="detail-availability" id="d-availability">
         Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.
       </div>
+      <!-- Réf. produit (discret, pour usage interne — clic = copie ID dans presse-papier) -->
+      <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div>
     </div>
   </div>
   <!-- Carrousel articles similaires (boucle infinie + tactile type hero-marquee) -->
@@ -4387,6 +4404,9 @@ function openDetail(id) {
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';
   document.getElementById('d-size').textContent = (window.formatSize ? window.formatSize(p.size) : p.size);
   document.getElementById('d-gender').textContent = (window.tGender ? window.tGender(p) : (getGender(p) || 'Accessoire'));
+  // Réf discrète pour usage interne (clic = copie)
+  const refEl = document.getElementById('d-ref');
+  if (refEl) { refEl.textContent = 'Réf. ' + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
@@ -4920,6 +4940,24 @@ function renderCart() {
 // === STRIPE CHECKOUT ===
 // Crée une session Stripe via Netlify Function et redirige vers Stripe Checkout.
 // Stripe gère ensuite : carte (3DS), Apple/Google Pay, adresse, frais port, factures.
+// Copie la ref produit dans le presse-papier (clic sur .detail-ref)
+window.copyProductRef = function(el) {
+  const id = el.dataset.id || (el.textContent || '').replace(/^Réf\.\s*/, '').trim();
+  if (!id) return;
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = id; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(id).catch(fallback);
+  } else fallback();
+  el.classList.add('copied');
+  setTimeout(() => el.classList.remove('copied'), 1800);
+};
+
 async function checkoutWithStripe() {
   if (cart.length === 0) return;
   const btn = document.querySelector('.cart-checkout');
