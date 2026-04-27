@@ -2459,6 +2459,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     filter: grayscale(100%);
     background: rgba(255,255,255,0.18);
   }
+  /* Désactive le grayscale pour les portraits "marque" colorés (logos, étiquettes) */
+  .brand-portrait.color img { filter: none; }
   .portrait-caption {
     font-family: var(--font-mono);
     font-size: 9.5px;

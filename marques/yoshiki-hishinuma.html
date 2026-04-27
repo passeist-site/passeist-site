@@ -2459,6 +2459,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     filter: grayscale(100%);
     background: rgba(255,255,255,0.18);
   }
+  /* Désactive le grayscale pour les portraits "marque" colorés (logos, étiquettes) */
+  .brand-portrait.color img { filter: none; }
   .portrait-caption {
     font-family: var(--font-mono);
     font-size: 9.5px;
@@ -2749,7 +2751,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
   <h1 class="brand-name">YOSHIKI HISHINUMA</h1>
   <section class="brand-overview">
-    
+    <figure class="brand-portrait"><img src="/img/portrait-yoshiki-hishinuma.jpg" alt="Portrait — YOSHIKI HISHINUMA" loading="lazy"><figcaption class="portrait-caption"></figcaption></figure>
     <div class="brand-bio"><p>Yoshiki Hishinuma, né en 1958 à Sendai, est l'un des plus radicaux innovateurs textiles de la mode japonaise. Formé à Bunka Fashion College, il rejoint Miyake Design Studio à la fin des années 70 comme assistant d'Issey Miyake, avant de devenir freelance et de signer des costumes pour le théâtre et la scène.</p>
         <p><strong>Genèse de la maison.</strong> Hishinuma ouvre son propre atelier en 1987 et lance officiellement la marque éponyme « Yoshiki Hishinuma » en 1992 (ligne femme), débutant à Paris la même année. En 1996, il reçoit le prestigieux <strong>Mainichi Fashion Award</strong> au Japon.</p>
         <p><strong>Le textile comme œuvre.</strong> Ne trouvant pas chez les fabricants les matières qu'il imagine, Hishinuma se met lui-même à expérimenter — traitements thermiques, dissolution de fils, gaufrages, plissés thermoplastiques en polyester, shibori revisité. Dès les années 80, il produit ses fameux « Kite Clothes » et « Air Clothes » : vêtements façonnés par le vent et l'air. Plus tard, il explore les textiles translucides, les plissés complexes et les effets de superposition.</p>

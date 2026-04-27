@@ -1605,22 +1605,21 @@ body[data-page="home"] { overflow: auto; height: auto; }
 body[data-page="home"] .home-brands-strip { display: block; }
 .home-brands-strip {
   margin-top: -100px;
-  padding: 12px 40px 60px;
+  padding: 60px 40px 80px;
   background: var(--bg);
   position: relative;
   z-index: 2;
   color: var(--ink);
   text-align: center;
-  border-top: 1px solid rgba(0,0,0,0.06);
 }
 .hbs-inner { max-width: 920px; margin: 0 auto; }
 .hbs-eyebrow {
-  font-size: 12px;
-  letter-spacing: 3px;
+  font-size: 18px;
+  letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--ink);
   font-weight: 600;
-  margin-bottom: 22px;
+  margin-bottom: 44px;
 }
 .hbs-headliners {
   display: flex;
@@ -1630,21 +1629,22 @@ body[data-page="home"] .home-brands-strip { display: block; }
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-bottom: 30px;
+  margin-bottom: 14px;
   text-transform: uppercase;
   line-height: 1.15;
 }
 .hbs-headliners a { color: var(--ink); text-decoration: none; transition: opacity .2s; }
 .hbs-headliners a:hover { opacity: 0.55; }
 .hbs-others {
-  font-size: 13px;
-  color: #2a2a2a;
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 400;
   line-height: 1.9;
   max-width: 720px;
   margin: 0 auto 36px;
 }
-.hbs-others a { color: inherit; text-decoration: none; }
-.hbs-others a:hover { color: var(--ink); }
+.hbs-others a { color: var(--ink); text-decoration: none; }
+.hbs-others a:hover { opacity: 0.6; }
 .hbs-cta {
   display: inline-block;
   padding: 14px 30px;
@@ -1663,8 +1663,8 @@ body[data-page="home"] .home-brands-strip { display: block; }
     min-height: calc(100vh - var(--topbar-h) - 80px);
   }
   .home-brands-strip {
-    margin-top: -30px;
-    padding: 6px 24px 40px;
+    margin-top: 0;
+    padding: 40px 24px 50px;
     border-top: 0;
   }
   .hbs-eyebrow { font-size: 11px; letter-spacing: 2.5px; margin-bottom: 20px; }
@@ -2510,7 +2510,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 <!-- HOME BRANDS STRIP (visible uniquement quand body[data-page="home"]) -->
 <section class="home-brands-strip">
   <div class="hbs-inner">
-    <div class="hbs-eyebrow">Nos marques</div>
+    <div class="hbs-eyebrow">Les marques</div>
     <div class="hbs-headliners">
       <a href="/marques/45rpm">45RPM</a>
       <a href="/marques/comme-des-garcons">Comme des Garçons</a>
@@ -2518,9 +2518,9 @@ html[lang="fr"] .about.lang-en { display: none !important; }
       <a href="/marques/yohji-yamamoto">Yohji Yamamoto</a>
     </div>
     <div class="hbs-others">
-      <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a>
+      <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a> …
     </div>
-    <a href="/marques" class="hbs-cta">Toutes nos marques →</a>
+    <a href="/marques" class="hbs-cta">Tout voir →</a>
   </div>
 </section>
 
@@ -4395,9 +4395,12 @@ function goPage(p) {
       activeView = newView;
     }
     // Pré-applique un filtre marque depuis l'URL ?brand=NOM (clic depuis /marques/{slug})
+    let urlBrand = null;
+    let urlOpen = null;
     try {
       const params = new URLSearchParams(location.search);
-      const urlBrand = params.get('brand');
+      urlBrand = params.get('brand');
+      urlOpen = params.get('open');
       if (urlBrand && p === 'shop') {
         const decoded = decodeURIComponent(urlBrand);
         if (PRODUCTS.some(prod => prod.brand === decoded)) {
@@ -4407,6 +4410,19 @@ function goPage(p) {
     } catch(e) {}
     renderFilters();
     renderGrid();
+    // Si ?open={slug}, ouvre la fiche produit après applique le filtre.
+    // Avant : remplace l'URL par /shop?brand=X (sans ?open) pour que le retour navigateur
+    // atterrisse sur la boutique filtrée et pas sur l'URL avec open qui rouvrirait la fiche.
+    if (urlOpen && p === 'shop') {
+      try {
+        const prod = PRODUCTS.find(x => x.slug === urlOpen);
+        if (prod) {
+          const cleanUrl = '/shop' + (urlBrand ? '?brand=' + urlBrand : '');
+          history.replaceState({ t:'page', p:'shop' }, '', cleanUrl);
+          setTimeout(() => { if (typeof openDetail === 'function') openDetail(prod.id); }, 60);
+        }
+      } catch(e) {}
+    }
   }
   window.scrollTo(0, 0);
 }
@@ -6493,7 +6509,7 @@ s0.parentNode.insertBefore(s1,s0);
       title: 'Passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
       desc: 'Passéist — luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — authenticated archive and avant-garde fashion.',
       'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.archive': 'Archive', 'nav.marques': 'Brands', 'nav.about': 'About',
-      'hero.tagline.html': "Japanese <em>author</em> fashion.",
+      'hero.tagline.html': "Japanese <em>author fashion</em>.",
       'hero.keywords': 'Japanese vintage · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
       'hero.cta': 'Explore',
       'shop.title': 'All items',
