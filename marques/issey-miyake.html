@@ -2322,10 +2322,13 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   .grid { gap: 48px 10px; }
 }
 
-/* === Surcharges spécifiques pages marques (typo+topbar viennent du site CSS) === */
+/* === Surcharges spécifiques pages marques === */
+  /* Logo en <a> au lieu de <div> → enlève le soulignement */
+  .topbar a.logo { text-decoration: none; color: var(--ink); }
   /* Body offset pour la topbar fixe (sur la home c'est .hero qui gère margin-top) */
   body.marques-page {
     padding-top: calc(var(--topbar-h) + 30px);
+    overflow: auto; height: auto;
   }
   @media (max-width: 880px) {
     body.marques-page { padding-top: calc(var(--topbar-h-mobile) + 16px); }
@@ -2338,7 +2341,13 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     line-height: 1.05;
     color: var(--ink);
   }
-  /* Footer marques utilise la classe .footer du site (cohérence) */
+  /* Cache les éléments du site qui ne s'appliquent pas aux pages marques */
+  body.marques-page .hero,
+  body.marques-page .shop,
+  body.marques-page .about,
+  body.marques-page .detail-overlay,
+  body.marques-page .checkout-overlay,
+  body.marques-page .cart-panel { display: none !important; }
 
   .breadcrumb {
     font-size: 11px;
