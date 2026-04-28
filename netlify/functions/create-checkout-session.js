@@ -19,6 +19,11 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+// Source de vérité des prix côté serveur (généré depuis index.html via tools/export_products.py)
+// IMPORTANT : on N'UTILISE JAMAIS le prix envoyé par le client — il est trivialement
+// modifiable via les devtools. Le prix Stripe est toujours celui du JSON serveur.
+const PRODUCTS = require('./products.json');
+
 // Frais de port par zone (en centimes, devise EUR) — cohérents avec CGV
 const SHIPPING_RATES = {
   FR: { amount: 1500, label: 'Livraison France' },         // 15€
@@ -46,7 +51,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'https://passeist.com',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
       },
@@ -84,20 +89,56 @@ exports.handler = async (event) => {
       }
     }
 
-    // Construit les line items Stripe
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: `${item.brand} — ${item.type}`,
-          description: item.size ? `Taille ${item.size}` : undefined,
-          images: item.image ? [item.image] : [],
-          metadata: { passeist_id: item.id, slug: item.slug || '' },
+    // Construit les line items Stripe en validant chaque article contre PRODUCTS
+    // (source de vérité serveur). Refuse la session si :
+    //   - id inconnu (article non vendu sur passeist.com)
+    //   - prix manquant ou invalide dans la donnée serveur
+    // Les champs visuels (brand/type/size) viennent aussi du serveur — pas du client.
+    const validationErrors = [];
+    const lineItems = items.map(item => {
+      const id = String(item.id || '');
+      const ref = PRODUCTS[id];
+      if (!ref) {
+        validationErrors.push(`unknown_id:${id}`);
+        return null;
+      }
+      const priceCents = Math.round(parseFloat(ref.price) * 100);
+      if (!isFinite(priceCents) || priceCents <= 0) {
+        validationErrors.push(`invalid_price:${id}`);
+        return null;
+      }
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: `${ref.brand} — ${ref.type}`,
+            description: ref.size ? `Taille ${ref.size}` : undefined,
+            // image envoyée par le client : on la filtre par host (anti SSRF / abus)
+            images: (item.image && /^https:\/\/(passeist\.com|images\.vestiairecollective\.com)/i.test(item.image))
+              ? [item.image]
+              : [],
+            metadata: { passeist_id: id, slug: ref.slug || '' },
+          },
+          unit_amount: priceCents, // prix serveur, pas client
         },
-        unit_amount: Math.round(parseFloat(item.price) * 100), // en centimes
-      },
-      quantity: 1, // 1 exemplaire unique par produit
-    }));
+        quantity: 1,
+      };
+    }).filter(Boolean);
+
+    if (validationErrors.length > 0) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'Items invalides : ' + validationErrors.join(', ') }),
+      };
+    }
+    if (lineItems.length === 0) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'Aucun article valide' }),
+      };
+    }
 
     // Construction des shipping_options (Stripe demande un format spécifique)
     const shippingOptions = [{
@@ -137,7 +178,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'https://passeist.com',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ url: session.url, id: session.id }),
@@ -146,7 +187,7 @@ exports.handler = async (event) => {
     console.error('Stripe checkout error:', err);
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Access-Control-Allow-Origin': 'https://passeist.com' },
       body: JSON.stringify({ error: err.message }),
     };
   }

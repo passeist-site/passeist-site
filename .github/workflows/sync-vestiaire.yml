@@ -166,12 +166,17 @@ jobs:
           print(f'\nRésumé : {len(imported)} importés, {len(failed_unsigned)} NON SIGNÉ skip, {len(failed_other)} autres erreurs')
           PYEOF
 
-      - name: Commit + push (bascules SOLD + imports)
+      - name: Régénère products.json (source de vérité prix serveur)
+        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
+        run: |
+          python tools/export_products.py
+
+      - name: Commit + push (bascules SOLD + imports + products.json)
         if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          git add index.html img/
+          git add index.html img/ netlify/functions/products.json
           MSG="auto-sync $(date -u +%Y-%m-%d_%H:%M)"
           if [ "${{ steps.bascule.outputs.count }}" != "0" ] && [ -n "${{ steps.bascule.outputs.count }}" ]; then
             MSG="$MSG | sold: ${{ steps.bascule.outputs.count }}"
