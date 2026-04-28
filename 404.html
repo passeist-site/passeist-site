@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page introuvable — Passéist</title>
+<meta name="description" content="Cette page n'existe pas ou plus. Retournez à l'accueil pour parcourir la sélection Passéist.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://passeist.com/">
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root {
+    --bg: #f4f1ec;
+    --ink: #0a0a08;
+    --text-dim: #4a4a48;
+    --text-mute: #8a8a86;
+    --line: rgba(10,10,8,0.12);
+    --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --tracking-narrow: 1.5px;
+    --topbar-h: 80px;
+    --topbar-h-mobile: 60px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* Topbar minimal */
+  .topbar {
+    height: var(--topbar-h);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .topbar a.logo {
+    font-family: var(--font-sans);
+    font-weight: 200;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .topbar a.logo .dot { display: inline-block; }
+
+  /* Main */
+  main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 32px;
+    gap: 20px;
+  }
+  .err-code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-mute);
+  }
+  .err-title {
+    font-family: var(--font-sans);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 64px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    max-width: 720px;
+  }
+  .err-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    max-width: 540px;
+  }
+  .err-actions {
+    display: flex;
+    gap: 28px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .err-actions a {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--tracking-narrow);
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding: 4px 0;
+    transition: opacity 0.2s;
+  }
+  .err-actions a:hover { opacity: 0.55; }
+
+  /* Footer (identique au site) */
+  footer.footer {
+    margin-top: 0; padding: 36px 40px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-mute);
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-narrow);
+    flex-shrink: 0;
+  }
+  .footer a { color: var(--ink); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+  .footer a:hover { opacity: 1; }
+  .footer-nav { display: flex; gap: 28px; flex-wrap: wrap; }
+
+  @media (max-width: 760px) {
+    .topbar { height: var(--topbar-h-mobile); padding: 0 20px; }
+    .topbar a.logo { font-size: 22px; }
+    main { padding: 40px 24px; gap: 16px; }
+    .err-title { font-size: clamp(28px, 9vw, 44px); }
+    .err-body { font-size: 13.5px; }
+    .err-actions { gap: 18px; }
+    footer.footer {
+      flex-direction: column; gap: 6px; text-align: center;
+      padding: 10px 16px; font-size: 9px;
+      justify-content: center; align-items: center;
+    }
+    .footer-nav { gap: 14px; justify-content: center; }
+  }
+
+  /* EN version (display by lang attr) */
+  html[lang="en"] [data-fr] { display: none; }
+  html[lang="fr"] [data-en] { display: none; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="/" aria-label="Passéist — Accueil">Passéist<span class="dot">.</span></a>
+</header>
+
+<main>
+  <div class="err-code">404 · NOT FOUND</div>
+  <h1 class="err-title">
+    <span data-fr>Cette page n'existe pas — ou plus.</span>
+    <span data-en>This page doesn't exist — or no longer does.</span>
+  </h1>
+  <p class="err-body">
+    <span data-fr>L'URL est peut-être mal écrite, ou la pièce que vous cherchiez a été vendue. Continuez votre exploration de la mode d'auteur japonaise.</span>
+    <span data-en>The URL may be misspelled, or the piece you were looking for has been sold. Continue exploring author Japanese fashion.</span>
+  </p>
+  <div class="err-actions">
+    <a href="/"><span data-fr>← Accueil</span><span data-en>← Home</span></a>
+    <a href="/shop"><span data-fr>Boutique</span><span data-en>Shop</span></a>
+    <a href="/marques"><span data-fr>Les Auteurs</span><span data-en>Authors</span></a>
+  </div>
+</main>
+
+<footer class="footer">
+  <div>© Passeist — Curation mode d'auteur japonaise · Paris 2026</div>
+  <nav class="footer-nav">
+    <a href="/cgv">CGV</a>
+    <a href="/privacy"><span data-fr>Confidentialité</span><span data-en>Privacy</span></a>
+    <a href="/contact"><span data-fr>Contact</span><span data-en>Contact</span></a>
+    <a href="mailto:info@passeist.com">info@passeist.com</a>
+  </nav>
+</footer>
+
+<script>
+  (function() {
+    try {
+      var p = new URLSearchParams(location.search);
+      var f = p.get('lang');
+      if (f === 'fr' || f === 'en') {
+        document.documentElement.setAttribute('lang', f);
+        return;
+      }
+      var s = localStorage.getItem('passeist_lang');
+      if (s === 'fr' || s === 'en') {
+        document.documentElement.setAttribute('lang', s);
+        return;
+      }
+      var n = (navigator.language || 'fr').toLowerCase();
+      if (n.startsWith('en')) document.documentElement.setAttribute('lang', 'en');
+    } catch(e) {}
+  })();
+</script>
+
+</body>
+</html>

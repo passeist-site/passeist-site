@@ -1,15 +1,23 @@
-# SPA fallback : toutes les routes non-fichier renvoyées vers index.html
-# avec status 200 (pas 301) pour préserver l'URL côté client.
+# SPA fallback : routes connues vers index.html (status 200)
+# Toute autre URL retourne /404.html avec status 404 (vraie 404 pour Google).
 /sitemap.xml      /sitemap.xml      200
 /robots.txt       /robots.txt       200
 /img/*            /img/:splat       200
-# /marques → page statique
+# /marques → pages statiques
 /marques          /marques.html         200
 /marques/         /marques.html         200
-# Marques fusionnées (anciens slugs → nouveaux)
 /marques/ground-y /marques/yohji-yamamoto.html 301
 /marques/ganryu   /marques/fumito-ganryu.html  301
 /marques/hai      /marques/issey-miyake.html   301
-# /marques/{slug} → pages détail statiques
 /marques/*        /marques/:splat.html  200
-/*                /index.html           200
+# Routes SPA explicitement reconnues
+/                 /index.html           200
+/shop             /index.html           200
+/archive          /index.html           200
+/about            /index.html           200
+/cgv              /index.html           200
+/privacy          /index.html           200
+/contact          /index.html           200
+/product/*        /index.html           200
+# Tout le reste → 404 propre
+/*                /404.html             404
