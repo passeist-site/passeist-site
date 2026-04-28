@@ -33,25 +33,12 @@ jobs:
           pip install playwright cloudscraper pillow deep-translator
           playwright install --with-deps chromium
 
-      - name: Patch script with secrets
-        env:
-          DECODO_USER: ${{ secrets.DECODO_USER }}
-          DECODO_PASS: ${{ secrets.DECODO_PASS }}
-        run: |
-          # Override les credentials Decodo (codés en dur dans le script)
-          # pour utiliser les secrets GitHub à la place
-          python -c "
-          import re
-          with open('tools/synchro_vestiaire.py') as f: src = f.read()
-          src = re.sub(r\"'username':\s*'[^']+'\", f\"'username': '${DECODO_USER}'\", src)
-          src = re.sub(r\"'password':\s*'[^']+'\", f\"'password': '${DECODO_PASS}'\", src)
-          with open('tools/synchro_vestiaire.py', 'w') as f: f.write(src)
-          "
-
       - name: Run sync
         id: sync
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports
+          DECODO_USER: ${{ secrets.DECODO_USER }}
+          DECODO_PASS: ${{ secrets.DECODO_PASS }}
         run: |
           python tools/synchro_vestiaire.py | tee /tmp/sync.log
           # Extrait la dernière ligne "Rapport enregistré → /path/to/json"

@@ -6,9 +6,13 @@ from playwright.async_api import async_playwright
 
 PROXY = {
     'server': 'http://fr.decodo.com:40007',
-    'username': 'spon0iejqf',
-    'password': 'PZqA7uvhn6y2phJ_j4'
+    'username': os.environ.get('DECODO_USER', ''),
+    'password': os.environ.get('DECODO_PASS', ''),
 }
+if not PROXY['username'] or not PROXY['password']:
+    raise SystemExit('FATAL: DECODO_USER / DECODO_PASS env vars manquantes. '
+                     'Définis-les en local (export DECODO_USER=... DECODO_PASS=...) '
+                     'ou via les secrets GitHub Actions du repo passeist-site.')
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
