@@ -167,6 +167,14 @@ exports.handler = async (event) => {
       shipping_options: shippingOptions,
       billing_address_collection: 'required',
       phone_number_collection: { enabled: true },
+      // Récupération auto du panier abandonné : Stripe envoie un email
+      // de relance ~24h après abandon si le client a saisi son email
+      after_expiration: {
+        recovery: {
+          enabled: true,
+          allow_promotion_codes: false,
+        },
+      },
       locale: lang,
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: safeCancelUrl,
