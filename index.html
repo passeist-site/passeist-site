@@ -2169,6 +2169,74 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   margin-bottom: 24px; line-height: 1.85; font-weight: 300;
 }
 
+/* === Contact page form === */
+.contact-page-form {
+  display: flex; flex-direction: column; gap: 14px;
+  margin: 28px 0 36px;
+  padding: 28px;
+  background: var(--bg-highlight, rgba(0,0,0,0.02));
+  border: 1px solid var(--line);
+}
+.contact-page-form .contact-row {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.contact-page-form .contact-row-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+@media (max-width: 600px) {
+  .contact-page-form .contact-row-split { grid-template-columns: 1fr; }
+}
+.contact-page-form label {
+  display: flex; flex-direction: column; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-narrow);
+  font-weight: 500;
+}
+.contact-page-form input,
+.contact-page-form select,
+.contact-page-form textarea {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 11px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.contact-page-form input:focus,
+.contact-page-form select:focus,
+.contact-page-form textarea:focus {
+  border-color: var(--ink);
+}
+.contact-page-form textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+.contact-page-form select {
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%230a0a08' stroke-width='1.4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+.contact-page-form .contact-submit {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+.contact-page-form .contact-result {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--tracking-narrow);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.contact-page-form .contact-result.ok { color: #2d7a3a; }
+.contact-page-form .contact-result.err { color: #b1271f; }
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -2808,7 +2876,31 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 <section class="about lang-fr" id="contact-page">
   <div class="about-eyebrow">Contact</div>
   <h2 class="about-title">Nous écrire</h2>
-  <p class="about-body">Pour toute question sur une pièce, une commande ou un rendez-vous d'essayage à l'atelier Paris 11ᵉ, écrivez-nous à <a href="mailto:info@passeist.com">info@passeist.com</a>. Nous répondons généralement sous 24 à 48 heures.</p>
+  <p class="about-body">Une question sur une pièce, une commande, un retour, ou un rendez-vous d'essayage à l'atelier Paris 11ᵉ&nbsp;? Utilisez le formulaire ci-dessous, ou écrivez directement à <a href="mailto:info@passeist.com">info@passeist.com</a>. Nous répondons sous <strong>24 à 48&nbsp;heures</strong> en jours ouvrés.</p>
+  <form class="contact-page-form" name="contact-page" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitContactPage(event, 'fr')">
+    <input type="hidden" name="form-name" value="contact-page">
+    <p style="display:none"><label>Ne pas remplir&nbsp;: <input name="bot-field"></label></p>
+    <div class="contact-row contact-row-split">
+      <label>Nom<input type="text" name="nom" required autocomplete="name"></label>
+      <label>Email<input type="email" name="email" required autocomplete="email"></label>
+    </div>
+    <div class="contact-row">
+      <label>Sujet
+        <select name="sujet" required>
+          <option value="">— Choisir —</option>
+          <option value="piece">Question sur une pièce</option>
+          <option value="commande">Suivi de commande</option>
+          <option value="retour">Retour ou remboursement</option>
+          <option value="rdv">Prendre rendez-vous à l'atelier</option>
+          <option value="presse">Demande presse / partenariat</option>
+          <option value="autre">Autre</option>
+        </select>
+      </label>
+    </div>
+    <div class="contact-row"><label>Votre message<textarea name="message" rows="5" required placeholder="Donnez-nous le maximum de détails (référence d'article si applicable, etc.)"></textarea></label></div>
+    <button type="submit" class="btn btn-primary contact-submit">Envoyer le message</button>
+    <div class="contact-result" id="contact-result-fr"></div>
+  </form>
   <div class="about-section">
     <div class="about-section-title">Atelier</div>
     <div class="about-info-grid">
@@ -2816,6 +2908,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
       <div><div class="about-info-label">Email</div><div class="about-info-value"><a href="mailto:info@passeist.com">info@passeist.com</a></div></div>
       <div><div class="about-info-label">Essayage / remise</div><div class="about-info-value">Sur rendez-vous uniquement</div></div>
       <div><div class="about-info-label">Expédition</div><div class="about-info-value">1 à 7 jours ouvrés · France &amp; international</div></div>
+      <div><div class="about-info-label">Réponse</div><div class="about-info-value">24 à 48&nbsp;h en jours ouvrés</div></div>
+      <div><div class="about-info-label">Langues</div><div class="about-info-value">Français, English</div></div>
     </div>
   </div>
 </section>
@@ -2824,7 +2918,31 @@ html[lang="fr"] .about.lang-en { display: none !important; }
 <section class="about lang-en" id="contact-page-en">
   <div class="about-eyebrow">Contact</div>
   <h2 class="about-title">Get in touch</h2>
-  <p class="about-body">For any question about a piece, an order or a fitting appointment at our Paris 11ᵉ workshop, write to <a href="mailto:info@passeist.com">info@passeist.com</a>. We usually reply within 24 to 48 hours.</p>
+  <p class="about-body">A question about a piece, an order, a return, or a fitting appointment at our Paris 11ᵉ workshop&nbsp;? Use the form below, or write directly to <a href="mailto:info@passeist.com">info@passeist.com</a>. We reply within <strong>24 to 48&nbsp;hours</strong> on business days.</p>
+  <form class="contact-page-form" name="contact-page-en" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitContactPage(event, 'en')">
+    <input type="hidden" name="form-name" value="contact-page-en">
+    <p style="display:none"><label>Do not fill&nbsp;: <input name="bot-field"></label></p>
+    <div class="contact-row contact-row-split">
+      <label>Name<input type="text" name="nom" required autocomplete="name"></label>
+      <label>Email<input type="email" name="email" required autocomplete="email"></label>
+    </div>
+    <div class="contact-row">
+      <label>Subject
+        <select name="sujet" required>
+          <option value="">— Select —</option>
+          <option value="piece">Question about a piece</option>
+          <option value="commande">Order tracking</option>
+          <option value="retour">Return or refund</option>
+          <option value="rdv">Book a workshop appointment</option>
+          <option value="presse">Press / partnership inquiry</option>
+          <option value="autre">Other</option>
+        </select>
+      </label>
+    </div>
+    <div class="contact-row"><label>Your message<textarea name="message" rows="5" required placeholder="Please give as much detail as possible (item reference if applicable, etc.)"></textarea></label></div>
+    <button type="submit" class="btn btn-primary contact-submit">Send message</button>
+    <div class="contact-result" id="contact-result-en"></div>
+  </form>
   <div class="about-section">
     <div class="about-section-title">Workshop</div>
     <div class="about-info-grid">
@@ -2832,6 +2950,8 @@ html[lang="fr"] .about.lang-en { display: none !important; }
       <div><div class="about-info-label">Email</div><div class="about-info-value"><a href="mailto:info@passeist.com">info@passeist.com</a></div></div>
       <div><div class="about-info-label">Fitting / pickup</div><div class="about-info-value">By appointment only</div></div>
       <div><div class="about-info-label">Shipping</div><div class="about-info-value">1–7 business days · France &amp; international</div></div>
+      <div><div class="about-info-label">Response</div><div class="about-info-value">24–48&nbsp;h on business days</div></div>
+      <div><div class="about-info-label">Languages</div><div class="about-info-value">Français, English</div></div>
     </div>
   </div>
 </section>
@@ -5602,6 +5722,45 @@ function submitContact(e) {
     alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com.');
   });
 }
+
+// === Contact page form handler (page /contact, séparé du modal) ===
+window.submitContactPage = function(e, lang) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type="submit"]');
+  const result = form.querySelector('.contact-result');
+  const originalLabel = btn ? btn.textContent : 'Envoyer';
+  const sendingLabel = lang === 'en' ? 'Sending…' : 'Envoi…';
+  const sentLabel = lang === 'en' ? 'Send message' : 'Envoyer le message';
+  const okMsg = lang === 'en'
+    ? '✓ Message sent — we reply within 24 to 48 hours on business days.'
+    : '✓ Message envoyé — nous vous répondons sous 24 à 48 heures en jours ouvrés.';
+  const errMsg = lang === 'en'
+    ? '✗ Send failed. Please email info@passeist.com directly.'
+    : '✗ Échec de l\'envoi. Écrivez directement à info@passeist.com.';
+
+  if (btn) { btn.disabled = true; btn.textContent = sendingLabel; }
+  if (result) { result.className = 'contact-result'; result.textContent = ''; }
+
+  const fd = new FormData(form);
+  const body = new URLSearchParams();
+  for (const [k, v] of fd.entries()) body.append(k, v);
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  }).then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (btn) { btn.disabled = false; btn.textContent = sentLabel; }
+    if (result) { result.className = 'contact-result ok'; result.textContent = okMsg; }
+    form.reset();
+  }).catch(err => {
+    if (btn) { btn.disabled = false; btn.textContent = sentLabel; }
+    if (result) { result.className = 'contact-result err'; result.textContent = errMsg; }
+    console.error('contact-page submit error:', err);
+  });
+};
 
 document.getElementById('d-cart').addEventListener('click', () => { if (currentProduct) addToCart(currentProduct.id); });
 document.getElementById('d-contact').addEventListener('click', openContact);
