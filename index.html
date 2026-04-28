@@ -1537,10 +1537,11 @@ body[data-page="home"] { overflow: auto; height: auto; }
   border-bottom: 1px solid var(--line);
 }
 .cart-item img {
-  width: 64px; height: 84px; object-fit: cover;
+  width: 84px; height: 84px; object-fit: contain;
   background: var(--bg-deep);
   border: 1px solid var(--line-ghost);
   border-radius: 0;
+  flex-shrink: 0;
 }
 .cart-item-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .cart-item-brand {
