@@ -59,7 +59,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { items, locale, country } = JSON.parse(event.body || '{}');
+    const { items, locale, country, cancelUrl } = JSON.parse(event.body || '{}');
     if (!Array.isArray(items) || items.length === 0) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Items required' }) };
     }
@@ -67,6 +67,22 @@ exports.handler = async (event) => {
     const baseUrl = process.env.URL || 'https://passeist.com';
     const lang = locale === 'en' ? 'en' : 'fr';
     const ship = shippingForCountry(country);
+
+    // Validation cancelUrl : doit être une URL passeist.com (sécu : pas de redirection ouverte)
+    let safeCancelUrl = `${baseUrl}/cancel.html`;
+    if (cancelUrl && typeof cancelUrl === 'string') {
+      try {
+        const u = new URL(cancelUrl);
+        // Accepte uniquement passeist.com (et sous-domaines Netlify pour deploy previews)
+        if (u.hostname === 'passeist.com' ||
+            u.hostname === 'www.passeist.com' ||
+            u.hostname.endsWith('.netlify.app')) {
+          safeCancelUrl = cancelUrl;
+        }
+      } catch (e) {
+        // URL invalide → on garde le fallback
+      }
+    }
 
     // Construit les line items Stripe
     const lineItems = items.map(item => ({
@@ -112,7 +128,7 @@ exports.handler = async (event) => {
       phone_number_collection: { enabled: true },
       locale: lang,
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel.html`,
+      cancel_url: safeCancelUrl,
       metadata: {
         passeist_ids: items.map(i => i.id).join(','),
       },

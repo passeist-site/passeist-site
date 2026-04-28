@@ -1587,17 +1587,63 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .cart-footer {
   padding: 24px 32px;
   border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 8px;
 }
-.cart-total {
-  display: flex; justify-content: space-between; margin-bottom: 20px;
+.cart-shipping-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+}
+.cart-shipping-row label {
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 400; color: var(--ink);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-narrow);
+  color: var(--text-mute);
+  white-space: nowrap;
+}
+.cart-shipping-row select {
+  flex: 1 1 auto;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 7px 10px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%230a0a08' stroke-width='1.4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.cart-shipping-row select:focus { border-color: var(--ink); }
+.cart-line {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-narrow);
+  font-variant-numeric: tabular-nums;
+}
+.cart-line .cart-line-label { font-weight: 400; }
+.cart-total {
+  display: flex; justify-content: space-between;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600; color: var(--ink);
   font-variant-numeric: tabular-nums;
   text-transform: uppercase;
   letter-spacing: var(--tracking-narrow);
 }
-.cart-checkout { width: 100%; }
+.cart-checkout { width: 100%; margin-top: 12px; }
 
 
 /* ============ HOME BRANDS STRIP ============ */
@@ -2854,7 +2900,13 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     <button class="cart-close" onclick="toggleCart()">✕</button>
   </div>
   <div class="cart-items" id="cart-items"></div>
-  <div class="cart-footer">
+  <div class="cart-footer" id="cart-footer">
+    <div class="cart-shipping-row">
+      <label for="cart-country">Livraison vers</label>
+      <select id="cart-country" onchange="updateCartTotals()"></select>
+    </div>
+    <div class="cart-line"><span class="cart-line-label">Sous-total</span><span id="cart-subtotal">0 €</span></div>
+    <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">—</span></div>
     <div class="cart-total"><span>Total</span><span id="cart-total">0 €</span></div>
   </div>
 </div>
@@ -5219,9 +5271,109 @@ function renderCart() {
       </div>
     `).join('') + `<div class="cart-cta-wrap"><button class="btn btn-primary cart-checkout" onclick="checkoutWithStripe()">Procéder au paiement</button></div>`;
   }
-  const total = cart.reduce((s, p) => s + parseInt(p.price), 0);
-  document.getElementById('cart-total').textContent = total + ' €';
+  updateCartTotals();
 }
+
+// === SHIPPING & COUNTRY (mirror serveur) ===
+const PASSEIST_SHIPPING = {
+  FR:    { amount: 15, label: 'Colissimo Suivi' },
+  EU:    { amount: 25, label: 'Colissimo International' },
+  WORLD: { amount: 55, label: 'DHL Express' },
+};
+const PASSEIST_EU = new Set(['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO']);
+const PASSEIST_COUNTRIES = [
+  ['FR','France'],
+  ['BE','Belgique'],
+  ['LU','Luxembourg'],
+  ['CH','Suisse'],
+  ['DE','Allemagne'],
+  ['ES','Espagne'],
+  ['IT','Italie'],
+  ['NL','Pays-Bas'],
+  ['GB','Royaume-Uni'],
+  ['PT','Portugal'],
+  ['IE','Irlande'],
+  ['AT','Autriche'],
+  ['SE','Suède'],
+  ['DK','Danemark'],
+  ['NO','Norvège'],
+  ['FI','Finlande'],
+  ['PL','Pologne'],
+  ['CZ','Tchéquie'],
+  ['HU','Hongrie'],
+  ['HR','Croatie'],
+  ['SI','Slovénie'],
+  ['SK','Slovaquie'],
+  ['EE','Estonie'],
+  ['LV','Lettonie'],
+  ['LT','Lituanie'],
+  ['BG','Bulgarie'],
+  ['RO','Roumanie'],
+  ['CY','Chypre'],
+  ['MT','Malte'],
+  ['GR','Grèce'],
+  ['__sep1__','— Hors Europe —'],
+  ['US','États-Unis'],
+  ['CA','Canada'],
+  ['JP','Japon'],
+  ['KR','Corée du Sud'],
+  ['AU','Australie'],
+  ['NZ','Nouvelle-Zélande'],
+  ['SG','Singapour'],
+  ['HK','Hong Kong'],
+];
+function passeistShippingFor(country) {
+  if (!country) return PASSEIST_SHIPPING.FR;
+  if (country === 'FR') return PASSEIST_SHIPPING.FR;
+  if (PASSEIST_EU.has(country)) return PASSEIST_SHIPPING.EU;
+  return PASSEIST_SHIPPING.WORLD;
+}
+function getCartCountry() {
+  const sel = document.getElementById('cart-country');
+  return sel ? sel.value : 'FR';
+}
+function populateCartCountry() {
+  const sel = document.getElementById('cart-country');
+  if (!sel || sel.dataset.populated === 'true') return;
+  sel.innerHTML = PASSEIST_COUNTRIES.map(([code, name]) =>
+    code.startsWith('__sep') ? `<option disabled>${name}</option>` : `<option value="${code}">${name}</option>`
+  ).join('');
+  // Pré-sélection : 1) localStorage, 2) langue navigateur, 3) FR par défaut
+  let pref = 'FR';
+  try {
+    const saved = localStorage.getItem('passeist_country');
+    if (saved) pref = saved;
+    else {
+      const nav = (navigator.language || 'fr').toLowerCase();
+      if (nav.startsWith('fr')) pref = 'FR';
+      else if (nav.startsWith('en-us')) pref = 'US';
+      else if (nav.startsWith('en-gb')) pref = 'GB';
+      else if (nav.startsWith('de')) pref = 'DE';
+      else if (nav.startsWith('es')) pref = 'ES';
+      else if (nav.startsWith('it')) pref = 'IT';
+      else if (nav.startsWith('ja')) pref = 'JP';
+    }
+  } catch(e) {}
+  sel.value = pref;
+  sel.dataset.populated = 'true';
+}
+function updateCartTotals() {
+  populateCartCountry();
+  const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
+  const country = getCartCountry();
+  const ship = cart.length > 0 ? passeistShippingFor(country) : { amount: 0, label: '' };
+  const total = subtotal + ship.amount;
+  try { if (country) localStorage.setItem('passeist_country', country); } catch(e) {}
+  const subEl = document.getElementById('cart-subtotal');
+  const shipEl = document.getElementById('cart-shipping');
+  const shipLblEl = document.getElementById('cart-shipping-label');
+  const totEl = document.getElementById('cart-total');
+  if (subEl) subEl.textContent = subtotal + ' €';
+  if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' : '—');
+  if (shipLblEl) shipLblEl.textContent = (cart.length > 0 && ship.label ? 'Frais de port · ' + ship.label : 'Frais de port');
+  if (totEl) totEl.textContent = total + ' €';
+}
+
 // === STRIPE CHECKOUT ===
 // Crée une session Stripe via Netlify Function et redirige vers Stripe Checkout.
 // Stripe gère ensuite : carte (3DS), Apple/Google Pay, adresse, frais port, factures.
@@ -5256,24 +5408,30 @@ async function checkoutWithStripe() {
       size: p.size,
       price: p.price,
       slug: p.slug,
-      // Image absolue pour Stripe (CDN Vestiaire ou /img/ local sur passeist.com)
+      // Image accessible par Stripe :
+      // - URL Vestiaire CDN : passe par notre proxy (le CDN bloque les requêtes externes en 403)
+      // - chemin local /img/* : préfixé du domaine, accessible directement
       image: (function() {
         if (typeof imgUrl !== 'function') return '';
         const u = imgUrl(p, 0, { square: true, size: 'md' });
         if (!u) return '';
-        // Si déjà absolue (CDN Vestiaire) → garder telle quelle
+        if (/^https?:\/\/images\.vestiairecollective\.com/i.test(u)) {
+          return 'https://passeist.com/.netlify/functions/img-proxy?url=' + encodeURIComponent(u);
+        }
         if (/^https?:\/\//i.test(u)) return u;
-        // Sinon (chemin /img/... local) → préfixer le domaine
         return 'https://passeist.com' + (u.startsWith('/') ? u : '/' + u);
       })(),
     }));
     const lang = (window.__lang === 'en') ? 'en' : 'fr';
-    const country = navigator.language && navigator.language.toLowerCase().includes('fr') ? 'FR' : '';
+    // Pays sélectionné par le client dans le panier (sinon FR par défaut)
+    const country = (typeof getCartCountry === 'function' ? getCartCountry() : 'FR') || 'FR';
+    // URL d'où il est parti — pour revenir si paiement annulé
+    const cancelUrl = window.location.href;
 
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, locale: lang, country }),
+      body: JSON.stringify({ items, locale: lang, country, cancelUrl }),
     });
     if (!res.ok) {
       const err = await res.text();
