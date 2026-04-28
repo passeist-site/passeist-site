@@ -2908,6 +2908,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     <div class="cart-line"><span class="cart-line-label">Sous-total</span><span id="cart-subtotal">0 €</span></div>
     <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">—</span></div>
     <div class="cart-total"><span>Total</span><span id="cart-total">0 €</span></div>
+    <button class="btn btn-primary cart-checkout" id="cart-checkout-btn" onclick="checkoutWithStripe()">Procéder au paiement</button>
   </div>
 </div>
 
@@ -5269,7 +5270,7 @@ function renderCart() {
           <button class="cart-item-remove" onclick="removeFromCart('${p.id}')">Retirer</button>
         </div>
       </div>
-    `).join('') + `<div class="cart-cta-wrap"><button class="btn btn-primary cart-checkout" onclick="checkoutWithStripe()">Procéder au paiement</button></div>`;
+    `).join('');
   }
   updateCartTotals();
 }
@@ -5368,10 +5369,13 @@ function updateCartTotals() {
   const shipEl = document.getElementById('cart-shipping');
   const shipLblEl = document.getElementById('cart-shipping-label');
   const totEl = document.getElementById('cart-total');
+  const footerEl = document.getElementById('cart-footer');
   if (subEl) subEl.textContent = subtotal + ' €';
   if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' : '—');
   if (shipLblEl) shipLblEl.textContent = (cart.length > 0 && ship.label ? 'Frais de port · ' + ship.label : 'Frais de port');
   if (totEl) totEl.textContent = total + ' €';
+  // Cache l'encart total + bouton si panier vide
+  if (footerEl) footerEl.style.display = cart.length === 0 ? 'none' : 'flex';
 }
 
 // === STRIPE CHECKOUT ===
@@ -5425,8 +5429,12 @@ async function checkoutWithStripe() {
     const lang = (window.__lang === 'en') ? 'en' : 'fr';
     // Pays sélectionné par le client dans le panier (sinon FR par défaut)
     const country = (typeof getCartCountry === 'function' ? getCartCountry() : 'FR') || 'FR';
-    // URL d'où il est parti — pour revenir si paiement annulé
-    const cancelUrl = window.location.href;
+    // URL d'où il est parti + flag canceled=1 pour afficher une notif au retour
+    const cancelUrl = (function() {
+      const u = new URL(window.location.href);
+      u.searchParams.set('canceled', '1');
+      return u.toString();
+    })();
 
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
@@ -6526,6 +6534,41 @@ window.updateSEO = function(p) {
     document.body.dataset.page = 'home';
     try { history.replaceState({ t:'page', p: 'home' }, '', '/'); } catch(e){}
   }
+})();
+
+// ============ NOTIF "Paiement annulé" si retour de Stripe ============
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('canceled') === '1') {
+      // Affiche un toast simple
+      const toast = document.createElement('div');
+      toast.id = 'passeist-cancel-toast';
+      toast.textContent = (window.__lang === 'en')
+        ? 'Payment canceled — your cart is still available'
+        : 'Paiement annulé — votre panier est toujours disponible';
+      toast.style.cssText = [
+        'position:fixed','top:calc(var(--topbar-h, 80px) + 16px)','left:50%','transform:translateX(-50%)',
+        'background:#1a1a1a','color:#f4f1ec','padding:14px 24px',
+        'font-family:var(--font-mono, monospace)','font-size:11px','letter-spacing:1.5px',
+        'text-transform:uppercase','z-index:10000','box-shadow:0 4px 24px rgba(0,0,0,0.18)',
+        'opacity:0','transition:opacity 0.4s ease',
+      ].join(';');
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => { toast.style.opacity = '1'; });
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+      }, 4500);
+      // Nettoie l'URL (retire le flag canceled)
+      try {
+        params.delete('canceled');
+        const newSearch = params.toString();
+        const cleanUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+        history.replaceState(history.state, '', cleanUrl);
+      } catch(e) {}
+    }
+  } catch(e) {}
 })();
 
 // ============ SECTION NUMBER (shop/archive) ============
