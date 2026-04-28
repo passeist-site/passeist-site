@@ -5256,10 +5256,16 @@ async function checkoutWithStripe() {
       size: p.size,
       price: p.price,
       slug: p.slug,
-      // Image absolue (Stripe ne peut pas afficher des chemins relatifs)
-      image: 'https://passeist.com' + (typeof imgUrl === 'function'
-        ? imgUrl(p, 0, { square: true, size: 'md' }).replace(/^https?:\/\//, '').replace(/^[^/]+/, '')
-        : ''),
+      // Image absolue pour Stripe (CDN Vestiaire ou /img/ local sur passeist.com)
+      image: (function() {
+        if (typeof imgUrl !== 'function') return '';
+        const u = imgUrl(p, 0, { square: true, size: 'md' });
+        if (!u) return '';
+        // Si déjà absolue (CDN Vestiaire) → garder telle quelle
+        if (/^https?:\/\//i.test(u)) return u;
+        // Sinon (chemin /img/... local) → préfixer le domaine
+        return 'https://passeist.com' + (u.startsWith('/') ? u : '/' + u);
+      })(),
     }));
     const lang = (window.__lang === 'en') ? 'en' : 'fr';
     const country = navigator.language && navigator.language.toLowerCase().includes('fr') ? 'FR' : '';
