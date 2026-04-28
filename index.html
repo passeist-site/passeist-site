@@ -5277,9 +5277,9 @@ function renderCart() {
 
 // === SHIPPING & COUNTRY (mirror serveur) ===
 const PASSEIST_SHIPPING = {
-  FR:    { amount: 15, label: 'Colissimo Suivi' },
-  EU:    { amount: 25, label: 'Colissimo International' },
-  WORLD: { amount: 55, label: 'DHL Express' },
+  FR:    { amount: 15, label: '' },
+  EU:    { amount: 25, label: '' },
+  WORLD: { amount: 55, label: '' },
 };
 const PASSEIST_EU = new Set(['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO']);
 const PASSEIST_COUNTRIES = [
@@ -6534,6 +6534,20 @@ window.updateSEO = function(p) {
     document.body.dataset.page = 'home';
     try { history.replaceState({ t:'page', p: 'home' }, '', '/'); } catch(e){}
   }
+})();
+
+// ============ RESET du bouton paiement au retour (bfcache + canceled) ============
+(function() {
+  function resetCheckoutBtn() {
+    const btn = document.querySelector('.cart-checkout');
+    if (!btn) return;
+    btn.disabled = false;
+    btn.textContent = (window.__lang === 'en') ? 'Proceed to checkout' : 'Procéder au paiement';
+  }
+  // pageshow déclenche aussi quand la page sort du bfcache (retour navigateur)
+  window.addEventListener('pageshow', resetCheckoutBtn);
+  // Au cas où la page est juste rendue après retour de Stripe via cancel_url
+  document.addEventListener('DOMContentLoaded', resetCheckoutBtn);
 })();
 
 // ============ NOTIF "Paiement annulé" si retour de Stripe ============

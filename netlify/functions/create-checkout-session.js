@@ -21,9 +21,9 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Frais de port par zone (en centimes, devise EUR) — cohérents avec CGV
 const SHIPPING_RATES = {
-  FR: { amount: 1500, label: 'Livraison France · Colissimo Suivi' },          // 15€
-  EU: { amount: 2500, label: 'Livraison Europe · Colissimo International' }, // 25€
-  WORLD: { amount: 5500, label: 'International express · DHL' },             // 55€
+  FR: { amount: 1500, label: 'Livraison France' },         // 15€
+  EU: { amount: 2500, label: 'Livraison Europe' },         // 25€
+  WORLD: { amount: 5500, label: 'Livraison internationale' }, // 55€
 };
 
 const EU_COUNTRIES = new Set([
