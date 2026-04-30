@@ -68,7 +68,8 @@ async def scrape_profile():
         last_err = None
         for attempt in range(3):
             try:
-                await page.goto(PROFILE_URL, timeout=180000, wait_until='commit')
+                await page.goto(PROFILE_URL, timeout=180000, wait_until='domcontentloaded')
+                await page.wait_for_selector('body', timeout=30000)
                 await page.wait_for_timeout(4000)
                 last_err = None
                 break
