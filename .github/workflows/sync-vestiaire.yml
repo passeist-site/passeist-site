@@ -33,7 +33,7 @@ jobs:
           pip install playwright cloudscraper pillow deep-translator
           playwright install --with-deps chromium
 
-      - name: Run sync
+      - name: Run sync (cloudscraper warmup → cookies CF → Playwright headless)
         id: sync
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports

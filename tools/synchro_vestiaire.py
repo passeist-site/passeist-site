@@ -2,17 +2,23 @@
 """Synchro Vestiaire — test manuel. Scan profil + 5 croisements + rapport.
 NE TOUCHE À RIEN sur le site ni sur Netlify. Rapport seulement."""
 import asyncio, re, json, math, time, os, random
+import cloudscraper
 from playwright.async_api import async_playwright
 
-# Decodo : si Vestiaire bloque les IPs FR, on bascule sur d'autres pays
-# Format: (host, port) — les ports sont rotating, chaque request = nouvelle IP
+# Decodo Residential Pay-As-You-Go : pool gate.decodo.com:10001-10010
+# IMPORTANT: ce compte ne supporte PAS le format `user-session-XXX` (407 Proxy Auth).
+# On utilise l'auth plain et on cycle sur les ports si un endpoint échoue.
 DECODO_ENDPOINTS = [
-    ('fr.decodo.com', 40007),       # France residential
-    ('us.decodo.com', 10001),       # US residential
-    ('gb.decodo.com', 30001),       # Royaume-Uni residential
-    ('de.decodo.com', 20001),       # Allemagne residential
-    ('gate.decodo.com', 7000),      # World rotating (mix)
-    ('fr.decodo.com', 40001),       # France retry (autre pool)
+    ('gate.decodo.com', 10001),
+    ('gate.decodo.com', 10002),
+    ('gate.decodo.com', 10003),
+    ('gate.decodo.com', 10004),
+    ('gate.decodo.com', 10005),
+    ('gate.decodo.com', 10006),
+    ('gate.decodo.com', 10007),
+    ('gate.decodo.com', 10008),
+    ('gate.decodo.com', 10009),
+    ('gate.decodo.com', 10010),
 ]
 DECODO_USER_RAW = os.environ.get('DECODO_USER', '')
 DECODO_PASS = os.environ.get('DECODO_PASS', '')
@@ -22,18 +28,38 @@ if not DECODO_USER_RAW or not DECODO_PASS:
                      'ou via les secrets GitHub Actions du repo passeist-site.')
 
 def make_proxy(host, port, session_id=None):
-    """Construit la config proxy avec sticky session optionnelle (stabilité IP)."""
-    user = DECODO_USER_RAW
-    if session_id:
-        user = f'{DECODO_USER_RAW}-session-{session_id}'
+    """Construit la config proxy. session_id IGNORÉ : ce compte Decodo
+    ne supporte pas le format user-session-XXX (renvoie 407 Proxy Auth)."""
     return {
         'server': f'http://{host}:{port}',
-        'username': user,
+        'username': DECODO_USER_RAW,
         'password': DECODO_PASS,
     }
 
 PROXY = make_proxy(*DECODO_ENDPOINTS[0])  # legacy compat
-UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+# UA HARMONISÉ entre cloudscraper + Playwright. Si différent → Cloudflare invalide
+# le cf_clearance et on se reprend un challenge sur l'XHR.
+UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+
+
+def cloudflare_warmup(host, port):
+    """Visite la page profile via cloudscraper pour résoudre le challenge JS
+    Cloudflare et récupérer les cookies (__cf_bm, etc.) qu'on injectera dans Playwright.
+    Sans cette étape, Playwright headless se prend un 403 immédiat sur Vestiaire."""
+    proxy_url = f'http://{DECODO_USER_RAW}:{DECODO_PASS}@{host}:{port}'
+    proxies = {'http': proxy_url, 'https': proxy_url}
+    scraper = cloudscraper.create_scraper(browser={'custom': UA})
+    r = scraper.get(PROFILE_URL, proxies=proxies, timeout=60)
+    if r.status_code != 200:
+        raise Exception(f'cloudscraper warmup failed: HTTP {r.status_code}')
+    cookies = []
+    for ck in scraper.cookies:
+        cookies.append({
+            'name': ck.name, 'value': ck.value,
+            'domain': ck.domain or '.vestiairecollective.com',
+            'path': ck.path or '/',
+        })
+    return cookies
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
 
@@ -85,33 +111,40 @@ async def scrape_profile():
         endpoints = list(DECODO_ENDPOINTS)  # copie
 
         for ep_idx, (host, port) in enumerate(endpoints):
-            session_id = random.randint(100000, 999999)  # sticky session
-            proxy_cfg = make_proxy(host, port, session_id=session_id)
-            print(f'\n=== Tentative {ep_idx+1}/{len(endpoints)} : {host}:{port} (session {session_id}) ===')
+            proxy_cfg = make_proxy(host, port)
+            print(f'\n=== Tentative {ep_idx+1}/{len(endpoints)} : {host}:{port} ===')
 
-            browser = await p.chromium.launch(headless=True, proxy=proxy_cfg)
-            context = await browser.new_context(user_agent=UA, locale='fr-FR',
-                viewport={'width': 1280, 'height': 900})
-
-            # OPTIMISATION : bloque images/fonts/css/media → 80% moins de trafic via proxy
-            # Évite les timeouts en chargeant uniquement le HTML/JS essentiel
-            await context.route('**/*', lambda route: (
-                route.abort() if route.request.resource_type in ('image', 'font', 'media', 'stylesheet')
-                else route.continue_()
-            ))
-
-            page = await context.new_page()
             try:
-                await page.goto(PROFILE_URL, timeout=120000, wait_until='domcontentloaded')
-                await page.wait_for_selector('body', timeout=30000)
-                await page.wait_for_timeout(4000)
+                # 1) cloudscraper passe le challenge Cloudflare → cookies cf_clearance
+                print(f'  cloudscraper warmup...')
+                cf_cookies = cloudflare_warmup(host, port)
+                print(f'  ✓ cookies CF récupérés: {[c["name"] for c in cf_cookies]}')
+
+                # 2) Playwright avec ces cookies + même UA + même proxy → pas de challenge
+                browser = await p.chromium.launch(
+                    headless=True,
+                    proxy=proxy_cfg,
+                    args=['--disable-blink-features=AutomationControlled', '--no-sandbox'],
+                )
+                context = await browser.new_context(
+                    user_agent=UA, locale='fr-FR', timezone_id='Europe/Paris',
+                    viewport={'width': 1280, 'height': 900},
+                )
+                await context.add_cookies(cf_cookies)
+                page = await context.new_page()
+
+                resp = await page.goto(PROFILE_URL, timeout=60000, wait_until='domcontentloaded')
+                if not resp or resp.status != 200:
+                    raise Exception(f'goto returned status {resp.status if resp else "?"}')
+                await page.wait_for_timeout(5000)
                 last_err = None
-                print(f'  ✓ Page chargée via {host}:{port}')
+                print(f'  ✓ Page chargée via {host}:{port} (HTTP {resp.status})')
                 break  # Succès → sortir de la boucle
             except Exception as e:
                 last_err = e
-                print(f'  ✗ {host}:{port} failed: {type(e).__name__}: {str(e)[:120]}')
-                await browser.close()
+                print(f'  ✗ {host}:{port} failed: {type(e).__name__}: {str(e)[:200]}')
+                try: await browser.close()
+                except: pass
                 if ep_idx < len(endpoints) - 1:
                     await asyncio.sleep(3)
                     continue
@@ -121,17 +154,23 @@ async def scrape_profile():
         # === ACCEPTER LES COOKIES (sinon popup bloque tout le scan) ===
         accepted = await page.evaluate('''() => {
             const btn = Array.from(document.querySelectorAll('button')).find(
-                b => /accepter/i.test(b.textContent) && !/refuser|paramétrer|param/i.test(b.textContent));
+                b => /accepter|accept all|accept cookies/i.test(b.textContent)
+                  && !/refuser|reject|paramétrer|customize|param/i.test(b.textContent));
             if (btn) { btn.click(); return true; }
             return false;
         }''')
         print(f'  cookies accept: {accepted}')
         if accepted: await page.wait_for_timeout(3000)
 
-        # Get counts from the profile header
+        # Get counts from the profile header (FR ou EN — l'IP Decodo peut redirect sur US)
         counts_text = await page.evaluate('() => document.body.innerText')
-        fs_target = int(re.search(r'(\d+)\s+articles?\s+en\s+vente', counts_text).group(1))
-        sold_target = int(re.search(r'(\d+)\s+vendus', counts_text).group(1))
+        # FR: "X articles en vente" / "X vendus"  |  EN: "X items for sale" / "X sold"
+        m_fs = re.search(r'(\d+)\s+(?:articles?\s+en\s+vente|items?\s+for\s+sale)', counts_text)
+        m_sold = re.search(r'(\d+)\s+(?:vendus|sold)\b', counts_text)
+        if not m_fs or not m_sold:
+            raise Exception(f'Compteurs introuvables. body[:400]={counts_text[:400]!r}')
+        fs_target = int(m_fs.group(1))
+        sold_target = int(m_sold.group(1))
         print(f'Profil : {fs_target} en vente · {sold_target} vendus')
 
         # Set 60/page
@@ -186,12 +225,12 @@ async def scrape_profile():
         # Vestiaire limite l'affichage public des vendus → pas la peine de chercher plus.
         # CONSÉQUENCE : D1 sera flaggé "incertain" puisqu'on n'a pas tous les sold.
         print('  → Scan vendus : page 1 uniquement (suffit pour B, D1 à vérifier manuellement)')
-        # Cliquer le DIV "Articles vendus"
+        # Cliquer l'onglet vendus (FR "Articles vendus"/"Vendus" ou EN "Sold items"/"Sold")
         clicked_vendus = await page.evaluate('''() => {
             const all = Array.from(document.querySelectorAll('div, span, button, a, [role="button"]'));
             const target = all.find(el => {
                 const t = (el.textContent || '').trim();
-                return /^Articles vendus$|^Vendus$/i.test(t) && t.length < 30;
+                return /^(Articles vendus|Vendus|Sold items|Sold)$/i.test(t) && t.length < 30;
             });
             if (target) { target.click(); return true; }
             return false;
