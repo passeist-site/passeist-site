@@ -4,8 +4,16 @@ NE TOUCHE À RIEN sur le site ni sur Netlify. Rapport seulement."""
 import asyncio, re, json, math, time, os, random
 from playwright.async_api import async_playwright
 
-# Decodo : ports FR rotating 40000-40010, on tente plusieurs si l'un est saturé/banni
-DECODO_PORTS = [40007, 40001, 40002, 40003, 40005, 40009]
+# Decodo : si Vestiaire bloque les IPs FR, on bascule sur d'autres pays
+# Format: (host, port) — les ports sont rotating, chaque request = nouvelle IP
+DECODO_ENDPOINTS = [
+    ('fr.decodo.com', 40007),       # France residential
+    ('us.decodo.com', 10001),       # US residential
+    ('gb.decodo.com', 30001),       # Royaume-Uni residential
+    ('de.decodo.com', 20001),       # Allemagne residential
+    ('gate.decodo.com', 7000),      # World rotating (mix)
+    ('fr.decodo.com', 40001),       # France retry (autre pool)
+]
 DECODO_USER_RAW = os.environ.get('DECODO_USER', '')
 DECODO_PASS = os.environ.get('DECODO_PASS', '')
 if not DECODO_USER_RAW or not DECODO_PASS:
@@ -13,18 +21,18 @@ if not DECODO_USER_RAW or not DECODO_PASS:
                      'Définis-les en local (export DECODO_USER=... DECODO_PASS=...) '
                      'ou via les secrets GitHub Actions du repo passeist-site.')
 
-def make_proxy(port, session_id=None):
+def make_proxy(host, port, session_id=None):
     """Construit la config proxy avec sticky session optionnelle (stabilité IP)."""
     user = DECODO_USER_RAW
     if session_id:
         user = f'{DECODO_USER_RAW}-session-{session_id}'
     return {
-        'server': f'http://fr.decodo.com:{port}',
+        'server': f'http://{host}:{port}',
         'username': user,
         'password': DECODO_PASS,
     }
 
-PROXY = make_proxy(DECODO_PORTS[0])  # legacy compat
+PROXY = make_proxy(*DECODO_ENDPOINTS[0])  # legacy compat
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
@@ -74,13 +82,12 @@ async def scrape_profile():
     sold_map = {}  # id → url (sold)
     async with async_playwright() as p:
         last_err = None
-        ports_to_try = list(DECODO_PORTS)  # copie
-        random.shuffle(ports_to_try)  # randomise l'ordre des ports
+        endpoints = list(DECODO_ENDPOINTS)  # copie
 
-        for port_idx, port in enumerate(ports_to_try):
+        for ep_idx, (host, port) in enumerate(endpoints):
             session_id = random.randint(100000, 999999)  # sticky session
-            proxy_cfg = make_proxy(port, session_id=session_id)
-            print(f'\n=== Tentative {port_idx+1}/{len(ports_to_try)} : Decodo port {port} (session {session_id}) ===')
+            proxy_cfg = make_proxy(host, port, session_id=session_id)
+            print(f'\n=== Tentative {ep_idx+1}/{len(endpoints)} : {host}:{port} (session {session_id}) ===')
 
             browser = await p.chromium.launch(headless=True, proxy=proxy_cfg)
             context = await browser.new_context(user_agent=UA, locale='fr-FR',
@@ -99,13 +106,13 @@ async def scrape_profile():
                 await page.wait_for_selector('body', timeout=30000)
                 await page.wait_for_timeout(4000)
                 last_err = None
-                print(f'  ✓ Page chargée via port {port}')
+                print(f'  ✓ Page chargée via {host}:{port}')
                 break  # Succès → sortir de la boucle
             except Exception as e:
                 last_err = e
-                print(f'  ✗ port {port} failed: {type(e).__name__}: {str(e)[:120]}')
+                print(f'  ✗ {host}:{port} failed: {type(e).__name__}: {str(e)[:120]}')
                 await browser.close()
-                if port_idx < len(ports_to_try) - 1:
+                if ep_idx < len(endpoints) - 1:
                     await asyncio.sleep(3)
                     continue
         if last_err:
