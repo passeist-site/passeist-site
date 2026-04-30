@@ -6860,6 +6860,7 @@ s0.parentNode.insertBefore(s1,s0);
       'hero.tagline.html': "<em>Mode d'Auteur</em> japonaise.",
       'hero.keywords': 'Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
       'hero.cta': 'Explorer',
+      'home.authors': 'Les Auteurs',
       'shop.title': 'Tous les articles',
       'archive.title': 'Archive · Pièces vendues',
       'favorites.title': 'Mes favoris',
@@ -6902,6 +6903,7 @@ s0.parentNode.insertBefore(s1,s0);
       'hero.tagline.html': "Japanese <em>author fashion</em>.",
       'hero.keywords': 'Japanese vintage · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
       'hero.cta': 'Explore',
+      'home.authors': 'The Authors',
       'shop.title': 'All items',
       'archive.title': 'Archive · Sold pieces',
       'favorites.title': 'My favorites',
@@ -6985,6 +6987,9 @@ s0.parentNode.insertBefore(s1,s0);
     if (ht) ht.innerHTML = t('hero.tagline.html');
     const hcta = document.querySelector('.hero-cta span:not(.arrow-symbol)');
     if (hcta) hcta.textContent = t('hero.cta');
+    // Home — "Les Auteurs" eyebrow
+    const hbsEyebrow = document.querySelector('.hbs-eyebrow');
+    if (hbsEyebrow) hbsEyebrow.textContent = t('home.authors');
     // Detail static
     const sizeLab = document.querySelector('.detail-attrs > div:nth-child(1) .attr-label');
     const genLab  = document.querySelector('.detail-attrs > div:nth-child(2) .attr-label');
