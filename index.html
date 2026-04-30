@@ -1004,22 +1004,13 @@ body[data-page="home"] { overflow: auto; height: auto; }
   white-space: nowrap;
 }
 
-/* Archive / sold — photos légèrement floues par défaut, nettes au survol */
+/* Archive / sold — photos nettes (flou retiré) */
 .product-card.sold .product-img { opacity: 1; }
 .product-card.sold .product-img-primary {
-  filter: blur(4px) contrast(0.96);
-  transition: filter 0.45s var(--ease-out), opacity 0.4s var(--ease-out);
+  filter: none;
+  transition: opacity 0.4s var(--ease-out);
 }
 .product-card.sold .product-size { visibility: hidden; }
-@media (hover: hover) {
-  .product-card.sold:hover .product-img-primary {
-    filter: blur(0) contrast(1);
-  }
-}
-/* Sur écran tactile : un tap retire le flou. La classe est basculée en JS. */
-.product-card.sold.revealed .product-img-primary {
-  filter: blur(0) contrast(1);
-}
 .sold-badge {
   position: absolute; top: 12px; right: 12px;
   background: var(--bg); color: var(--ink);
@@ -1724,8 +1715,8 @@ body[data-page="home"] .home-brands-strip { display: block; }
     min-height: calc(100vh - var(--topbar-h) - 80px);
   }
   .home-brands-strip {
-    margin-top: -40px;
-    padding: 12px 24px 50px;
+    margin-top: -20px;
+    padding: 20px 24px 50px;
     border-top: 0;
   }
   .hbs-eyebrow { font-size: 32px; letter-spacing: -0.02em; margin-bottom: 32px; }
@@ -1778,7 +1769,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   font-size: clamp(48px, 7vw, 84px);
   font-weight: 200; line-height: 1;
   color: var(--ink); letter-spacing: -0.04em;
-  text-align: center; margin: auto 0 24px;
+  text-align: center; margin: 32px 0 18px;
 }
 .about-logo-top .dot { color: #5a7593; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
@@ -1895,7 +1886,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
   transition: opacity 0.2s;
 }
 .marques-cta:hover { opacity: 0.7; }
-.about-section { margin-top: auto; padding-top: 24px; }
+.about-section { margin-top: 32px; padding-top: 16px; }
 .about-section-title {
   font-family: var(--font-mono);
   font-size: 9px;
