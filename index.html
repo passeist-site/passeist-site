@@ -41,33 +41,33 @@
 <style>
 :root {
   /* Gris foncé — ardoise, papier sumi-e mouillé */
-  --bg: #a8a6a1;            /* plan principal, plus dense */
-  --bg-deep: #8f8d88;       /* ombre */
-  --bg-soft: #b6b4af;       /* reflet */
-  --bg-highlight: #c5c3be;  /* plan éclairé */
+  --bg: #1C2230;            /* plan principal, plus dense */
+  --bg-deep: #131826;       /* ombre */
+  --bg-soft: #262D3C;       /* reflet */
+  --bg-highlight: #313847;  /* plan éclairé */
 
   /* Noir encre de Chine — outrenoir */
-  --ink: #0a0a08;
-  --text: #0a0a08;
-  --text-dim: #2b2a27;
-  --text-mute: #4a4945;
+  --ink: #f4f1ec;
+  --text: #f4f1ec;
+  --text-dim: #d6d2cc;
+  --text-mute: #a8a6a1;
   --text-ghost: #6e6d68;
 
   /* Hairlines (plus marqués sur fond foncé) */
-  --line: rgba(10,10,8,0.22);
-  --line-strong: rgba(10,10,8,0.45);
-  --line-ghost: rgba(10,10,8,0.10);
+  --line: rgba(244,241,236,0.18);
+  --line-strong: rgba(244,241,236,0.40);
+  --line-ghost: rgba(244,241,236,0.08);
 
-  --accent: #0a0a08;
-  --hover: #2b2a27;
+  --accent: #5984B0;
+  --hover: #7BA0C6;
   --sold-dim: #7a7874;
 
   /* Legacy aliases */
   --bg-elev: var(--bg);
   --line-soft: var(--line);
-  --red: var(--ink);
-  --red-soft: var(--hover);
-  --red-glow: rgba(30,29,27,0.08);
+  --red: #5984B0;
+  --red-soft: #7BA0C6;
+  --red-glow: rgba(89,132,176,0.12);
   --bg-card: var(--bg);
 
   --topbar-h: 64px;
@@ -385,7 +385,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   font-size: 15px; line-height: 1;
   transition: background 0.2s, border-color 0.2s, transform 0.2s;
   padding: 0;
-  box-shadow: 0 6px 16px rgba(10,10,8,0.22);
+  box-shadow: 0 6px 16px rgba(244,241,236,0.18);
 }
 .chat-close-x:hover { background: var(--ink); color: var(--bg); transform: scale(1.08); }
 .chat-close-x.open { display: flex; }
@@ -530,7 +530,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .hero-cta {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 18px 32px;
-  background: var(--ink); color: #f4f1ec;
+  background: #5a7593; color: #f4f1ec;
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
@@ -548,7 +548,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .hero-cta > span { position: relative; z-index: 1; }
 /* Masque l'ancienne tache d'encre : on garde un carré noir net */
 .hero-cta .nav-ink { display: none !important; }
-.hero-cta:hover { background: #1a1a16; transform: scale(1.02); }
+.hero-cta:hover { background: #738ba8; transform: scale(1.02); }
 .hero-cta .arrow-symbol { font-size: 14px; line-height: 1; font-weight: 300; }
 
 @keyframes heroIn {
@@ -1709,8 +1709,8 @@ body[data-page="home"] .home-brands-strip { display: block; }
 .hbs-cta {
   display: inline-block;
   padding: 14px 30px;
-  background: #1a1a1a;
-  color: #fff !important;
+  background: #5a7593;
+  color: #f4f1ec !important;
   text-decoration: none;
   font-size: 12px;
   letter-spacing: 1.5px;
