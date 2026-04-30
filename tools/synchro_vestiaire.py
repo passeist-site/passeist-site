@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
 """Synchro Vestiaire — test manuel. Scan profil + 5 croisements + rapport.
 NE TOUCHE À RIEN sur le site ni sur Netlify. Rapport seulement."""
-import asyncio, re, json, math, time, os
+import asyncio, re, json, math, time, os, random
 from playwright.async_api import async_playwright
 
-PROXY = {
-    'server': 'http://fr.decodo.com:40007',
-    'username': os.environ.get('DECODO_USER', ''),
-    'password': os.environ.get('DECODO_PASS', ''),
-}
-if not PROXY['username'] or not PROXY['password']:
+# Decodo : ports FR rotating 40000-40010, on tente plusieurs si l'un est saturé/banni
+DECODO_PORTS = [40007, 40001, 40002, 40003, 40005, 40009]
+DECODO_USER_RAW = os.environ.get('DECODO_USER', '')
+DECODO_PASS = os.environ.get('DECODO_PASS', '')
+if not DECODO_USER_RAW or not DECODO_PASS:
     raise SystemExit('FATAL: DECODO_USER / DECODO_PASS env vars manquantes. '
                      'Définis-les en local (export DECODO_USER=... DECODO_PASS=...) '
                      'ou via les secrets GitHub Actions du repo passeist-site.')
+
+def make_proxy(port, session_id=None):
+    """Construit la config proxy avec sticky session optionnelle (stabilité IP)."""
+    user = DECODO_USER_RAW
+    if session_id:
+        user = f'{DECODO_USER_RAW}-session-{session_id}'
+    return {
+        'server': f'http://fr.decodo.com:{port}',
+        'username': user,
+        'password': DECODO_PASS,
+    }
+
+PROXY = make_proxy(DECODO_PORTS[0])  # legacy compat
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
@@ -56,28 +68,46 @@ def load_site():
 
 
 async def scrape_profile():
-    """Scan both for-sale and sold tabs via profile, with pagination."""
+    """Scan both for-sale and sold tabs via profile, with pagination.
+    Boucle sur plusieurs ports Decodo + sticky session si timeout."""
     fs_map = {}   # id → url (for-sale)
     sold_map = {}  # id → url (sold)
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, proxy=PROXY)
-        context = await browser.new_context(user_agent=UA, locale='fr-FR',
-            viewport={'width': 1280, 'height': 900})
-        page = await context.new_page()
-        # Retry x3 sur TimeoutError (Vestiaire/Decodo lent par moments)
         last_err = None
-        for attempt in range(3):
+        ports_to_try = list(DECODO_PORTS)  # copie
+        random.shuffle(ports_to_try)  # randomise l'ordre des ports
+
+        for port_idx, port in enumerate(ports_to_try):
+            session_id = random.randint(100000, 999999)  # sticky session
+            proxy_cfg = make_proxy(port, session_id=session_id)
+            print(f'\n=== Tentative {port_idx+1}/{len(ports_to_try)} : Decodo port {port} (session {session_id}) ===')
+
+            browser = await p.chromium.launch(headless=True, proxy=proxy_cfg)
+            context = await browser.new_context(user_agent=UA, locale='fr-FR',
+                viewport={'width': 1280, 'height': 900})
+
+            # OPTIMISATION : bloque images/fonts/css/media → 80% moins de trafic via proxy
+            # Évite les timeouts en chargeant uniquement le HTML/JS essentiel
+            await context.route('**/*', lambda route: (
+                route.abort() if route.request.resource_type in ('image', 'font', 'media', 'stylesheet')
+                else route.continue_()
+            ))
+
+            page = await context.new_page()
             try:
-                await page.goto(PROFILE_URL, timeout=180000, wait_until='domcontentloaded')
+                await page.goto(PROFILE_URL, timeout=120000, wait_until='domcontentloaded')
                 await page.wait_for_selector('body', timeout=30000)
                 await page.wait_for_timeout(4000)
                 last_err = None
-                break
+                print(f'  ✓ Page chargée via port {port}')
+                break  # Succès → sortir de la boucle
             except Exception as e:
                 last_err = e
-                print(f'  goto attempt {attempt+1}/3 failed: {type(e).__name__}: {str(e)[:120]}')
-                if attempt < 2:
-                    await page.wait_for_timeout(5000)
+                print(f'  ✗ port {port} failed: {type(e).__name__}: {str(e)[:120]}')
+                await browser.close()
+                if port_idx < len(ports_to_try) - 1:
+                    await asyncio.sleep(3)
+                    continue
         if last_err:
             raise last_err
 
