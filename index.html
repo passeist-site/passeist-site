@@ -4249,18 +4249,17 @@ function getCategory(type) {
   return 'Autres';
 }
 function getGender(p) {
-  // Map h/f → "Homme"/"Femme" (FR) ou "Men"/"Women" (EN selon i18n).
-  // Garde une chaîne lisible (pas la lettre brute).
+  // Normalise toutes les variantes (h/H/Homme/homme/m/M/Men/men) → "Homme" (FR) / "Men" (EN)
   const g = (p.gender || '').toLowerCase();
   if (!g) return '';
   if (window.__lang === 'en') {
-    if (g === 'h') return 'Men';
-    if (g === 'f') return 'Women';
-    return g;
+    if (g === 'h' || g === 'homme' || g === 'm' || g === 'men') return 'Men';
+    if (g === 'f' || g === 'femme' || g === 'w' || g === 'women') return 'Women';
+    return '';
   }
-  if (g === 'h') return 'Homme';
-  if (g === 'f') return 'Femme';
-  return g;
+  if (g === 'h' || g === 'homme' || g === 'm' || g === 'men') return 'Homme';
+  if (g === 'f' || g === 'femme' || g === 'w' || g === 'women') return 'Femme';
+  return '';
 }
 
 // Map abréviations tailles vers le nom complet (XS→Extra Small, etc.)
