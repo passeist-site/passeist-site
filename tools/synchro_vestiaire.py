@@ -64,8 +64,21 @@ async def scrape_profile():
         context = await browser.new_context(user_agent=UA, locale='fr-FR',
             viewport={'width': 1280, 'height': 900})
         page = await context.new_page()
-        await page.goto(PROFILE_URL, timeout=60000, wait_until='domcontentloaded')
-        await page.wait_for_timeout(4000)
+        # Retry x3 sur TimeoutError (Vestiaire/Decodo lent par moments)
+        last_err = None
+        for attempt in range(3):
+            try:
+                await page.goto(PROFILE_URL, timeout=180000, wait_until='commit')
+                await page.wait_for_timeout(4000)
+                last_err = None
+                break
+            except Exception as e:
+                last_err = e
+                print(f'  goto attempt {attempt+1}/3 failed: {type(e).__name__}: {str(e)[:120]}')
+                if attempt < 2:
+                    await page.wait_for_timeout(5000)
+        if last_err:
+            raise last_err
 
         # === ACCEPTER LES COOKIES (sinon popup bloque tout le scan) ===
         accepted = await page.evaluate('''() => {
