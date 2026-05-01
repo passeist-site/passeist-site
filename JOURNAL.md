@@ -6,6 +6,28 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-05-01
 
+### Sync Vestiaire — vérification parallèle systématique (FINAL)
+- **Architecture finale** : pour chaque article dans `fs_map ∩ site_available`, on hit sa fiche produit Vestiaire en parallèle (12 threads via `ThreadPoolExecutor`). On lit le JSON-LD `availability` :
+  - URL redirige vers catégorie (ID disparaît) → vraiment supprimé → bascule SOLD via D1
+  - HTTP != 200 → vraiment supprimé → bascule SOLD via D1
+  - JSON-LD `OutOfStock` → vendu oublié → bascule SOLD via B
+  - JSON-LD `InStock` → article actif, on garde
+- **Coût** : ~70s pour 564 articles (vs 14 min en séquentiel). Tient largement dans le timeout 15 min du workflow.
+- **Plus de phantoms qui passent à travers les mailles** : les URLs fantômes que Vestiaire laisse dans la grille for-sale sont maintenant systématiquement testées contre l'état réel de la fiche produit.
+- Commit : `627624b`.
+
+### Bascules SOLD manuelles — Tom
+- `66151282` Comme des Garçons T-shirt 150€ (Femme)
+- `65604053` Yohji Yamamoto Pantalon 170€ (Femme)
+- Articles supprimés sur Vestiaire mais qui ne sortaient pas en D1 sur l'ancien algo (phantoms). Avec la vérif parallèle ils seraient désormais détectés automatiquement.
+- Commit : `ea99bc5`.
+
+### Fix critique i18n — filtre Genre vide en anglais
+- **Bug** : sur la version EN du site, le dropdown "Genre" ne montrait que "Accessories" (33). Plus de Homme/Femme.
+- **Cause** : `getGender()` retournait `'Men'` / `'Women'` en EN, mais `genderOrder` était hardcodé `['Femme', 'Homme', '']`. Le `genderOrder.filter(g => genderCounts[g])` cherchait des clés FR qui n'existaient plus → liste vide → 0 options.
+- **Fix** : `getGender()` retourne TOUJOURS la valeur canonique FR (`'Homme'`/`'Femme'`/`''`), peu importe la langue. La traduction est appliquée uniquement au moment de l'affichage via `t('gender.X')`. C'est la bonne architecture, c'est cohérent avec le reste du codebase qui utilise `t()` partout.
+- Commit : `d646e3a`.
+
 ### Sync Vestiaire — fix faux positifs D1
 - **Problème** : le scan SOLD était limité à la page 1 (24 derniers vendus). Un article vendu il y a longtemps tombait à tort en D1 quand notre logique pensait qu'il avait été supprimé.
 - **Fix** : ajouté une étape de vérification individuelle dans `tools/synchro_vestiaire.py`. Pour chaque D1 candidat, on hit sa fiche produit Vestiaire via cloudscraper et on classe via JSON-LD `availability` :
