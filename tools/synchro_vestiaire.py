@@ -352,70 +352,143 @@ async def main():
     for pid in B_extra:
         if pid not in B: B.append(pid)
 
-    # === VÉRIFICATION SYSTÉMATIQUE PARALLÈLE DE TOUS LES ITEMS fs_map ∩ site_available ===
-    # La grille for-sale de Vestiaire contient parfois des URLs d'articles déjà vendus
-    # ou supprimés (phantoms) qui masquent les D1. On hit chaque fiche produit en
-    # parallèle (12 threads) via cloudscraper et on classe via JSON-LD :
-    #   - HTTP redirect vers catégorie / 404      → vraiment supprimé (D1)
-    #   - JSON-LD "availability":"OutOfStock"     → vendu raté par le scan (B)
-    #   - JSON-LD "availability":"InStock"        → actif, on garde
-    # Coût parallèle : 564 items / 12 workers × ~1.5s = ~70 secondes.
+    # === VÉRIFICATION SYSTÉMATIQUE — VERSION SÉCURISÉE (post-incident 2026-05-01) ===
+    # Règles strictes pour éviter les faux positifs catastrophiques :
+    #
+    # 1. CONCURRENCE LIMITÉE : 3 workers max (au lieu de 12) pour pas se faire
+    #    rate-limit par Cloudflare. 0.3s pacing entre requêtes par worker.
+    #
+    # 2. CLASSIFICATION STRICTE :
+    #    - DELETED ssi : HTTP 200 ET ID disparu de l'URL finale (= redirect catégorie)
+    #    - SOLD ssi    : HTTP 200 ET JSON-LD "availability":"OutOfStock"
+    #    - Tout le reste (403, 429, 5xx, timeout, error réseau, JSON-LD absent…)
+    #      → ON GARDE ACTIF (on skip, jamais on bascule). Le doute profite à l'item.
+    #
+    # 3. CIRCUIT BREAKER : si > MAX_BASCULES_PER_RUN items détectés → ABORT,
+    #    on annule TOUTES les bascules de la passe et on ouvre une Issue.
+    #
+    # 4. CONFIRMATION PASS : chaque item flaggé deleted/sold est re-vérifié
+    #    une 2ème fois avant inclusion finale (anti-glitch transitoire).
+
+    MAX_BASCULES_PER_RUN = 15  # Au-delà → catastrophe en cours, on annule tout
+    WORKERS = 3
+    PACING_SEC = 0.3
+
     to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x))
     if to_check_systematic:
         from concurrent.futures import ThreadPoolExecutor, as_completed
-        import threading
-        print(f'\n  → Vérif parallèle de {len(to_check_systematic)} items (12 workers)...')
+        import threading, time as _time
 
-        # 1 scraper partagé par tous les threads (les sessions cloudscraper sont thread-safe en lecture)
-        # On warmup d'abord pour récupérer les cookies CF, puis on partage la session.
+        print(f'\n  → Vérif parallèle SÉCURISÉE de {len(to_check_systematic)} items ({WORKERS} workers, pacing {PACING_SEC}s)...')
+
         proxy_url = f'http://{DECODO_USER_RAW}:{DECODO_PASS}@gate.decodo.com:10001'
         proxies = {'http': proxy_url, 'https': proxy_url}
         verifier = cloudscraper.create_scraper(browser={'custom': UA})
         try: verifier.get('https://fr.vestiairecollective.com/profile/30773496/', proxies=proxies, timeout=60)
         except: pass
 
-        deleted_found = []
-        sold_found = []
-        errors = 0
+        deleted_candidates = []  # détectés comme supprimés (à re-vérifier)
+        sold_candidates = []     # détectés comme vendus (à re-vérifier)
+        http_errors = 0          # tracking pour debug
         lock = threading.Lock()
         progress = [0]
+        last_request_time = [0.0]
+        pacing_lock = threading.Lock()
+
+        def fetch_with_pacing(url):
+            """Limite le rythme global : pas plus d'1 requête / PACING_SEC."""
+            with pacing_lock:
+                elapsed = _time.time() - last_request_time[0]
+                if elapsed < PACING_SEC:
+                    _time.sleep(PACING_SEC - elapsed)
+                last_request_time[0] = _time.time()
+            return verifier.get(url, proxies=proxies, timeout=20, allow_redirects=True)
 
         def verify_one(pid):
-            """Hit une fiche produit, retourne ('deleted', pid) / ('sold', pid) / ('active', pid) / ('skip', pid) / ('err', pid)."""
+            """Retourne ('deleted', pid) / ('sold', pid) / ('keep', pid) / ('skip', pid)
+            où 'keep' = on garde actif (par défaut sécurisé en cas de doute)."""
             if pid in B or pid in D1: return ('skip', pid)
             prod = by_id.get(pid)
             if not prod or not prod.get('path'): return ('skip', pid)
             url = f'https://fr.vestiairecollective.com{prod["path"]}'
             try:
-                r = verifier.get(url, proxies=proxies, timeout=20, allow_redirects=True)
-                if pid not in r.url: return ('deleted', pid)
-                if r.status_code != 200: return ('deleted', pid)
-                m_av = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
-                avail = m_av.group(1) if m_av else None
-                if avail == 'OutOfStock': return ('sold', pid)
-                return ('active', pid)
+                r = fetch_with_pacing(url)
             except Exception:
-                return ('err', pid)
+                return ('keep', pid)  # erreur réseau → on garde actif
 
-        with ThreadPoolExecutor(max_workers=12) as ex:
+            # Erreur HTTP (403, 429, 5xx) → CRUCIAL : on garde actif, jamais deleted
+            if r.status_code != 200:
+                return ('keep', pid)
+
+            # 200 mais URL ne contient plus l'ID = vraie redirection catégorie = supprimé
+            if pid not in r.url:
+                return ('deleted', pid)
+
+            # 200 + JSON-LD OutOfStock = vendu confirmé
+            m_av = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
+            avail = m_av.group(1) if m_av else None
+            if avail == 'OutOfStock':
+                return ('sold', pid)
+
+            # 200 + InStock OU JSON-LD absent → on garde actif (doute = sécurité)
+            return ('keep', pid)
+
+        with ThreadPoolExecutor(max_workers=WORKERS) as ex:
             futures = {ex.submit(verify_one, pid): pid for pid in to_check_systematic}
             for fut in as_completed(futures):
                 status, pid = fut.result()
                 with lock:
                     progress[0] += 1
                     if status == 'deleted':
-                        D1.append(pid); deleted_found.append(pid)
+                        deleted_candidates.append(pid)
                     elif status == 'sold':
-                        if pid not in B: B.append(pid)
-                        sold_found.append(pid)
-                    elif status == 'err':
-                        errors += 1
+                        sold_candidates.append(pid)
                     if progress[0] % 100 == 0:
-                        print(f'    [{progress[0]}/{len(to_check_systematic)}] supprimés={len(deleted_found)}, vendus={len(sold_found)}, err={errors}')
+                        print(f'    [{progress[0]}/{len(to_check_systematic)}] supprimés candidats={len(deleted_candidates)}, vendus candidats={len(sold_candidates)}')
 
-        print(f'    ✓ terminé : {len(deleted_found)} supprimés, {len(sold_found)} vendus oubliés, {errors} erreurs réseau')
-        if deleted_found: print(f'      supprimés: {deleted_found}')
-        if sold_found:    print(f'      vendus:    {sold_found}')
+        total_candidates = len(deleted_candidates) + len(sold_candidates)
+        print(f'    1ère passe : {len(deleted_candidates)} supprimés candidats, {len(sold_candidates)} vendus candidats')
+
+        # === CIRCUIT BREAKER ===
+        if total_candidates > MAX_BASCULES_PER_RUN:
+            print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER DÉCLENCHÉ : {total_candidates} > {MAX_BASCULES_PER_RUN} items ⚠⚠⚠')
+            print(f'    Ce volume est anormal — probable rate-limit Cloudflare.')
+            print(f'    AUCUNE bascule appliquée pour cette passe. Vérification manuelle requise.')
+            # On ne touche pas à B et D1 → 0 bascule de cette vérif systématique
+        elif total_candidates > 0:
+            # === CONFIRMATION PASS : re-vérification individuelle des candidats ===
+            print(f'\n  → Confirmation pass : re-vérification des {total_candidates} candidats...')
+            _time.sleep(2)  # petite pause avant la 2ème passe
+
+            confirmed_deleted = []
+            confirmed_sold = []
+            for pid in deleted_candidates + sold_candidates:
+                try:
+                    prod = by_id.get(pid)
+                    url = f'https://fr.vestiairecollective.com{prod["path"]}'
+                    r = fetch_with_pacing(url)
+                    if r.status_code != 200:
+                        print(f'    {pid}: 2ème passe HTTP {r.status_code} → on skip (doute)')
+                        continue
+                    if pid not in r.url:
+                        confirmed_deleted.append(pid)
+                        continue
+                    m_av = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
+                    if m_av and m_av.group(1) == 'OutOfStock':
+                        confirmed_sold.append(pid)
+                except Exception as e:
+                    print(f'    {pid}: 2ème passe erreur ({type(e).__name__}) → on skip')
+
+            for pid in confirmed_deleted:
+                if pid not in D1: D1.append(pid)
+            for pid in confirmed_sold:
+                if pid not in B: B.append(pid)
+
+            print(f'    ✓ confirmés : {len(confirmed_deleted)} supprimés, {len(confirmed_sold)} vendus')
+            if confirmed_deleted: print(f'      supprimés: {confirmed_deleted}')
+            if confirmed_sold:    print(f'      vendus:    {confirmed_sold}')
+        else:
+            print(f'    ✓ rien à reclasser')
     # E: TOUS les nouveaux IDs Vestiaire qui ne sont PAS déjà dans PRODUCTS
     # (peu importe si leur stem ressemble à du sold ou du available — tout nouveau doit être importé)
     # On exclut ceux déjà dans C pour éviter les doublons
