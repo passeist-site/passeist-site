@@ -20,12 +20,18 @@ DECODO_ENDPOINTS = [
     ('gate.decodo.com', 10009),
     ('gate.decodo.com', 10010),
 ]
-DECODO_USER_RAW = os.environ.get('DECODO_USER', '')
-DECODO_PASS = os.environ.get('DECODO_PASS', '')
+DECODO_USER_RAW = os.environ.get('DECODO_USER', '').strip()
+DECODO_PASS = os.environ.get('DECODO_PASS', '').strip()
 if not DECODO_USER_RAW or not DECODO_PASS:
     raise SystemExit('FATAL: DECODO_USER / DECODO_PASS env vars manquantes. '
                      'Définis-les en local (export DECODO_USER=... DECODO_PASS=...) '
                      'ou via les secrets GitHub Actions du repo passeist-site.')
+
+# DEBUG : affiche les longueurs (et premier/dernier caractère du user) pour debug
+# d'éventuels caractères parasites dans les secrets GitHub
+print(f'[debug] DECODO_USER len={len(DECODO_USER_RAW)} '
+      f'first={DECODO_USER_RAW[:2]!r} last={DECODO_USER_RAW[-2:]!r}')
+print(f'[debug] DECODO_PASS len={len(DECODO_PASS)}')
 
 def make_proxy(host, port, session_id=None):
     """Construit la config proxy. session_id IGNORÉ : ce compte Decodo
