@@ -351,6 +351,52 @@ async def main():
     # Fusionne B_extra avec B (en évitant doublons)
     for pid in B_extra:
         if pid not in B: B.append(pid)
+
+    # === VÉRIFICATION SYSTÉMATIQUE DE TOUS LES ITEMS site_available ∩ fs_map ===
+    # La grille for-sale de Vestiaire contient parfois des URLs d'articles déjà vendus
+    # ou supprimés (phantoms) qui masquent les D1. La SEULE façon d'être sûr est de
+    # hit chaque fiche produit individuellement via cloudscraper et lire JSON-LD :
+    #   - HTTP redirect vers catégorie / 404      → vraiment supprimé (D1)
+    #   - JSON-LD "availability":"OutOfStock"     → vendu (B)
+    #   - JSON-LD "availability":"InStock"        → actif, OK on garde
+    # Coût : 1 hit par item dans fs_map ∩ site_available (~564 items × ~1.5s = ~14 min)
+    to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x))
+    if to_check_systematic:
+        print(f'\n  → Vérif systématique de {len(to_check_systematic)} items (fs_map ∩ site_avail)...')
+        proxy_url = f'http://{DECODO_USER_RAW}:{DECODO_PASS}@gate.decodo.com:10001'
+        proxies = {'http': proxy_url, 'https': proxy_url}
+        verifier = cloudscraper.create_scraper(browser={'custom': UA})
+        try: verifier.get('https://fr.vestiairecollective.com/profile/30773496/', proxies=proxies, timeout=60)
+        except: pass
+
+        deleted_found = []
+        sold_found = []
+        errors = 0
+        for i, pid in enumerate(to_check_systematic):
+            if pid in B or pid in D1: continue  # déjà classé via le scan vendus
+            prod = by_id.get(pid)
+            if not prod or not prod.get('path'): continue
+            url = f'https://fr.vestiairecollective.com{prod["path"]}'
+            try:
+                r = verifier.get(url, proxies=proxies, timeout=20, allow_redirects=True)
+                if pid not in r.url:
+                    D1.append(pid); deleted_found.append(pid)
+                    continue
+                if r.status_code != 200:
+                    D1.append(pid); deleted_found.append(pid)
+                    continue
+                m_av = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
+                avail = m_av.group(1) if m_av else None
+                if avail == 'OutOfStock':
+                    if pid not in B: B.append(pid)
+                    sold_found.append(pid)
+                # InStock : actif, OK
+            except Exception as e:
+                errors += 1
+            # Progression toutes les 50 vérifs pour pas spammer
+            if (i + 1) % 50 == 0:
+                print(f'    [{i+1}/{len(to_check_systematic)}] supprimés={len(deleted_found)}, vendus={len(sold_found)}, err={errors}')
+        print(f'    → terminé : {len(deleted_found)} supprimés, {len(sold_found)} vendus oubliés, {errors} erreurs réseau')
     # E: TOUS les nouveaux IDs Vestiaire qui ne sont PAS déjà dans PRODUCTS
     # (peu importe si leur stem ressemble à du sold ou du available — tout nouveau doit être importé)
     # On exclut ceux déjà dans C pour éviter les doublons

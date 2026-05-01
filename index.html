@@ -4241,14 +4241,12 @@ function getCategory(type) {
   return 'Autres';
 }
 function getGender(p) {
-  // Normalise toutes les variantes (h/H/Homme/homme/m/M/Men/men) → "Homme" (FR) / "Men" (EN)
+  // Retourne TOUJOURS la valeur canonique FR ('Homme', 'Femme', ou '').
+  // La traduction EN ('Men', 'Women') est faite au moment de l'affichage via t('gender.X').
+  // Critique : tout le filtre/sort utilise cette valeur canonique pour matcher,
+  // donc elle doit être indépendante de window.__lang.
   const g = (p.gender || '').toLowerCase();
   if (!g) return '';
-  if (window.__lang === 'en') {
-    if (g === 'h' || g === 'homme' || g === 'm' || g === 'men') return 'Men';
-    if (g === 'f' || g === 'femme' || g === 'w' || g === 'women') return 'Women';
-    return '';
-  }
   if (g === 'h' || g === 'homme' || g === 'm' || g === 'men') return 'Homme';
   if (g === 'f' || g === 'femme' || g === 'w' || g === 'women') return 'Femme';
   return '';
