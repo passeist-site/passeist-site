@@ -298,7 +298,59 @@ async def main():
         if s and s in sold_stems:
             C.append({'id': vid, 'url': url, 'stem': s})
     # D1: site available non-Vinted absent Vestiaire
-    D1 = [pid for pid in site_available if pid not in vc_all]
+    D1_raw = [pid for pid in site_available if pid not in vc_all]
+
+    # === VÉRIFICATION INDIVIDUELLE DES D1 (anti-faux-positif) ===
+    # Notre scan SOLD est limité à la page 1 → un article vendu il y a longtemps
+    # serait faussement classé D1. On hit chaque D1 candidat sur sa fiche produit
+    # et on classe via JSON-LD availability :
+    #   - HTTP redirect vers catégorie OU 404 → vraiment supprimé (D1 confirmé)
+    #   - JSON-LD "OutOfStock"               → vendu (déplacé vers B)
+    #   - JSON-LD "InStock"                  → actif, faux positif (skip)
+    D1 = []  # vraiment supprimés
+    B_extra = []  # vendus oubliés par le scan sold (à fusionner avec B)
+    if D1_raw:
+        print(f'\n  → Vérification individuelle des {len(D1_raw)} D1 candidats...')
+        proxy_url = f'http://{DECODO_USER_RAW}:{DECODO_PASS}@gate.decodo.com:10001'
+        proxies = {'http': proxy_url, 'https': proxy_url}
+        verifier = cloudscraper.create_scraper(browser={'custom': UA})
+        # warmup pour cookies CF
+        try: verifier.get('https://fr.vestiairecollective.com/profile/30773496/', proxies=proxies, timeout=60)
+        except: pass
+        for pid in D1_raw:
+            prod = by_id.get(pid)
+            if not prod or not prod.get('path'):
+                D1.append(pid)  # par défaut on bascule
+                continue
+            url = f'https://fr.vestiairecollective.com{prod["path"]}'
+            try:
+                r = verifier.get(url, proxies=proxies, timeout=30, allow_redirects=True)
+                # Article supprimé : redirection vers catégorie (l'ID disparaît de l'URL finale)
+                if pid not in r.url:
+                    D1.append(pid)
+                    print(f'    {pid}: → SUPPRIMÉ (redirige vers {r.url[:60]}...)')
+                    continue
+                if r.status_code != 200:
+                    D1.append(pid)
+                    print(f'    {pid}: → SUPPRIMÉ (HTTP {r.status_code})')
+                    continue
+                m = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
+                avail = m.group(1) if m else None
+                if avail == 'OutOfStock':
+                    B_extra.append(pid)
+                    print(f'    {pid}: → VENDU (re-classé en B)')
+                elif avail == 'InStock':
+                    print(f'    {pid}: → ACTIF, faux positif (skip)')
+                else:
+                    D1.append(pid)
+                    print(f'    {pid}: → indéterminé (availability={avail}), traité comme D1')
+            except Exception as e:
+                D1.append(pid)
+                print(f'    {pid}: → erreur vérif ({type(e).__name__}), traité comme D1')
+
+    # Fusionne B_extra avec B (en évitant doublons)
+    for pid in B_extra:
+        if pid not in B: B.append(pid)
     # E: TOUS les nouveaux IDs Vestiaire qui ne sont PAS déjà dans PRODUCTS
     # (peu importe si leur stem ressemble à du sold ou du available — tout nouveau doit être importé)
     # On exclut ceux déjà dans C pour éviter les doublons
