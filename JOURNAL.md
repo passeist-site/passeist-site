@@ -6,6 +6,25 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-05-01
 
+### Incident & recovery — auto-bascule de 184 faux positifs
+- **Incident** : à 21:33 UTC, l'auto-sync (commit `8e4466a`) a basculé **184 articles** en SOLD à tort.
+- **Cause** : la vérif parallèle 12 threads + pacing 0 s'est faite rate-limit/challenge par Cloudflare. Beaucoup d'URLs ont retourné 403 ou 5xx. Mon code interprétait `r.status_code != 200` comme "supprimé" → bascule massive.
+- **Recovery** :
+  1. `git revert 8e4466a` → annule les 184 bascules (commit `fdb833a`).
+  2. Workflow **désactivé** via API GitHub (`PUT /actions/workflows/.../disable`) pour empêcher une re-occurrence au prochain cron.
+  3. Re-bascule manuelle de `66151282` qui avait été retiré pour le test.
+- **Fix robuste** (commit `6fe9747`) :
+  - **Concurrence réduite** : 3 workers (vs 12) + pacing 0.3 s entre requêtes
+  - **Classification stricte** : HTTP non-200 / timeout / erreur réseau → on garde ACTIF (jamais "deleted"). DELETED ssi HTTP 200 ET ID disparu de l'URL finale. SOLD ssi HTTP 200 ET JSON-LD `OutOfStock`.
+  - **Confirmation pass** : chaque candidat re-vérifié 1× avant inclusion finale (anti-glitch).
+  - **Circuit breaker** : si > 15 items détectés en un run → ABORT, 0 bascule, vérification manuelle requise.
+- **Validation end-to-end** (run `25235087251`) :
+  - 563 items vérifiés sans rate-limit
+  - **1 seul détecté** : `66151282` (le bon)
+  - Confirmation pass OK → bascule auto → commit `b733f0f auto-sync 2026-05-01_22:13 | sold: 1`
+  - **0 faux positif**
+- Workflow ré-activé. L'outil est maintenant à toute épreuve.
+
 ### Sync Vestiaire — vérification parallèle systématique (FINAL)
 - **Architecture finale** : pour chaque article dans `fs_map ∩ site_available`, on hit sa fiche produit Vestiaire en parallèle (12 threads via `ThreadPoolExecutor`). On lit le JSON-LD `availability` :
   - URL redirige vers catégorie (ID disparaît) → vraiment supprimé → bascule SOLD via D1
