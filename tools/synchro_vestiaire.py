@@ -371,8 +371,8 @@ async def main():
     #    une 2ème fois avant inclusion finale (anti-glitch transitoire).
 
     MAX_BASCULES_PER_RUN = 15  # Au-delà → catastrophe en cours, on annule tout
-    WORKERS = 5         # 5 workers + pacing 0.1s = 10 req/s effectifs
-    PACING_SEC = 0.1    # 562 items / 10 = ~56s pour la vérif systématique
+    WORKERS = 8         # 8 workers + pacing 0.05s = 20 req/s effectifs
+    PACING_SEC = 0.05   # 562 items / 20 = ~28s pour la vérif systématique
 
     # Vérif systématique TOUJOURS ON : c'est la seule façon de détecter les
     # articles supprimés sur Vestiaire qui apparaissent encore en URL phantom.
