@@ -18,7 +18,9 @@ env:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 30 min : laisse de la marge pour les imports E (chaque pièce = ~40s download images + parse)
+    # Le scan + vérif systématique parallèle fait ~10 min, l'import peut donc traiter ~25 nouvelles pièces.
+    timeout-minutes: 30
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
