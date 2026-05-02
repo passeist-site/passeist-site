@@ -195,7 +195,8 @@ jobs:
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          git add index.html img/ netlify/functions/products.json
+          # --sparse : permet d'ajouter des fichiers hors sparse-checkout (cas de img/)
+          git add --sparse index.html img/ netlify/functions/products.json
           MSG="auto-sync $(date -u +%Y-%m-%d_%H:%M)"
           if [ "${{ steps.bascule.outputs.count }}" != "0" ] && [ -n "${{ steps.bascule.outputs.count }}" ]; then
             MSG="$MSG | sold: ${{ steps.bascule.outputs.count }}"
