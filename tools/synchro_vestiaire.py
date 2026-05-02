@@ -371,16 +371,12 @@ async def main():
     #    une 2ème fois avant inclusion finale (anti-glitch transitoire).
 
     MAX_BASCULES_PER_RUN = 15  # Au-delà → catastrophe en cours, on annule tout
-    WORKERS = 3
-    PACING_SEC = 0.3
+    WORKERS = 5         # 5 workers + pacing 0.1s = 10 req/s effectifs
+    PACING_SEC = 0.1    # 562 items / 10 = ~56s pour la vérif systématique
 
-    # Vérif systématique gated par DEEP_SYNC=1. Lente (~5min sur 562 items) donc OFF
-    # par défaut sur les runs cron 5min. Run la deep sync manuellement via le workflow
-    # "Sync Vestiaire — Deep" quand tu veux chasser les phantoms.
-    DEEP_SYNC = os.environ.get('DEEP_SYNC', '0') == '1'
-    to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x)) if DEEP_SYNC else []
-    if not DEEP_SYNC:
-        print('\n  → Vérif systématique SKIPPED (DEEP_SYNC=0). Lance le workflow "Deep Sync" pour la déclencher.')
+    # Vérif systématique TOUJOURS ON : c'est la seule façon de détecter les
+    # articles supprimés sur Vestiaire qui apparaissent encore en URL phantom.
+    to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x))
     if to_check_systematic:
         from concurrent.futures import ThreadPoolExecutor, as_completed
         import threading, time as _time
