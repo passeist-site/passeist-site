@@ -152,32 +152,23 @@ jobs:
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write('imported=0\n'); f.write('failed_unsigned=\n'); f.write('failed_other=\n')
               sys.exit(0)
-          # Imports parallélisés (5 workers) pour traiter 14+ items en ~3 min
-          from concurrent.futures import ThreadPoolExecutor, as_completed
-          import threading
+          # IMPORTS SÉQUENTIELS (race condition fatale en parallèle, R14)
           imported = []
-          failed_unsigned = []  # NON SIGNÉ sans brand détectable → Issue
-          failed_other = []     # autre erreur (proxy, photos, etc.) → Issue
-          lock = threading.Lock()
-          def import_one(item):
+          failed_unsigned = []
+          failed_other = []
+          for item in E:
               pid = item['id']; url = item['url']
+              print(f'\n=== Import {pid} ===')
               ret = subprocess.run(['python3', 'tools/import_vestiaire.py', pid, url],
                                    capture_output=False)
-              return (pid, url, ret.returncode, item)
-          with ThreadPoolExecutor(max_workers=5) as ex:
-              futures = [ex.submit(import_one, item) for item in E]
-              for fut in as_completed(futures):
-                  pid, url, code, item = fut.result()
-                  with lock:
-                      if code == 0:
-                          imported.append(pid)
-                      elif code == 2:
-                          failed_unsigned.append(item)
-                      elif code == 4:
-                          print(f'{pid} déjà présent, skip')
-                      else:
-                          failed_other.append({'id': pid, 'url': url, 'code': code})
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              if ret.returncode == 0:
+                  imported.append(pid)
+              elif ret.returncode == 2:
+                  failed_unsigned.append(item)
+              elif ret.returncode == 4:
+                  print(f'{pid} déjà présent, skip')
+              else:
+                  failed_other.append({'id': pid, 'url': url, 'code': ret.returncode})
               f.write(f'imported={len(imported)}\n')
               f.write(f'imported_ids={" ".join(imported)}\n')
               f.write(f'failed_unsigned={json.dumps(failed_unsigned)}\n')
