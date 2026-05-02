@@ -18,9 +18,7 @@ env:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # 30 min : laisse de la marge pour les imports E (chaque pièce = ~40s download images + parse)
-    # Le scan + vérif systématique parallèle fait ~10 min, l'import peut donc traiter ~25 nouvelles pièces.
-    timeout-minutes: 30
+    timeout-minutes: 5
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -133,22 +131,31 @@ jobs:
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write('imported=0\n'); f.write('failed_unsigned=\n'); f.write('failed_other=\n')
               sys.exit(0)
+          # Imports parallélisés (3 workers) pour rentrer dans les 5min de timeout
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          import threading
           imported = []
           failed_unsigned = []  # NON SIGNÉ sans brand détectable → Issue
           failed_other = []     # autre erreur (proxy, photos, etc.) → Issue
-          for item in E:
+          lock = threading.Lock()
+          def import_one(item):
               pid = item['id']; url = item['url']
-              print(f'\n=== Import {pid} ===')
               ret = subprocess.run(['python3', 'tools/import_vestiaire.py', pid, url],
                                    capture_output=False)
-              if ret.returncode == 0:
-                  imported.append(pid)
-              elif ret.returncode == 2:
-                  failed_unsigned.append(item)
-              elif ret.returncode == 4:
-                  print(f'{pid} déjà présent, skip')
-              else:
-                  failed_other.append({'id': pid, 'url': url, 'code': ret.returncode})
+              return (pid, url, ret.returncode, item)
+          with ThreadPoolExecutor(max_workers=3) as ex:
+              futures = [ex.submit(import_one, item) for item in E]
+              for fut in as_completed(futures):
+                  pid, url, code, item = fut.result()
+                  with lock:
+                      if code == 0:
+                          imported.append(pid)
+                      elif code == 2:
+                          failed_unsigned.append(item)
+                      elif code == 4:
+                          print(f'{pid} déjà présent, skip')
+                      else:
+                          failed_other.append({'id': pid, 'url': url, 'code': code})
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'imported={len(imported)}\n')
               f.write(f'imported_ids={" ".join(imported)}\n')

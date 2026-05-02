@@ -374,7 +374,13 @@ async def main():
     WORKERS = 3
     PACING_SEC = 0.3
 
-    to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x))
+    # Vérif systématique gated par DEEP_SYNC=1. Lente (~5min sur 562 items) donc OFF
+    # par défaut sur les runs cron 5min. Run la deep sync manuellement via le workflow
+    # "Sync Vestiaire — Deep" quand tu veux chasser les phantoms.
+    DEEP_SYNC = os.environ.get('DEEP_SYNC', '0') == '1'
+    to_check_systematic = sorted(set(fs_map.keys()) & site_available, key=lambda x: int(x)) if DEEP_SYNC else []
+    if not DEEP_SYNC:
+        print('\n  → Vérif systématique SKIPPED (DEEP_SYNC=0). Lance le workflow "Deep Sync" pour la déclencher.')
     if to_check_systematic:
         from concurrent.futures import ThreadPoolExecutor, as_completed
         import threading, time as _time
