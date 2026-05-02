@@ -300,53 +300,72 @@ async def main():
     # D1: site available non-Vinted absent Vestiaire
     D1_raw = [pid for pid in site_available if pid not in vc_all]
 
-    # === VÉRIFICATION INDIVIDUELLE DES D1 (anti-faux-positif) ===
-    # Notre scan SOLD est limité à la page 1 → un article vendu il y a longtemps
-    # serait faussement classé D1. On hit chaque D1 candidat sur sa fiche produit
-    # et on classe via JSON-LD availability :
-    #   - HTTP redirect vers catégorie OU 404 → vraiment supprimé (D1 confirmé)
-    #   - JSON-LD "OutOfStock"               → vendu (déplacé vers B)
-    #   - JSON-LD "InStock"                  → actif, faux positif (skip)
-    D1 = []  # vraiment supprimés
-    B_extra = []  # vendus oubliés par le scan sold (à fusionner avec B)
-    if D1_raw:
-        print(f'\n  → Vérification individuelle des {len(D1_raw)} D1 candidats...')
+    # === GARDE-FOU SCAN INCOMPLET ===
+    # Si le scan for-sale a foiré (pagination cassée etc.), len(fs_map) sera très
+    # inférieur à fs_target → D1_raw exploserait avec des centaines de faux positifs.
+    # Dans ce cas on skip toute la vérif et on ouvre une Issue.
+    SCAN_COMPLETION_THRESHOLD = 0.9  # exiger >= 90% du target pour considérer le scan fiable
+    scan_ratio = len(fs_map) / fs_target if fs_target else 0
+    scan_incomplete = scan_ratio < SCAN_COMPLETION_THRESHOLD
+
+    D1 = []         # vraiment supprimés
+    B_extra = []    # vendus oubliés par le scan sold
+
+    if scan_incomplete:
+        print(f'\n  ⚠ SCAN INCOMPLET : {len(fs_map)}/{fs_target} URLs ({scan_ratio:.0%} < {SCAN_COMPLETION_THRESHOLD:.0%}).')
+        print(f'    Vérification SKIPPED pour éviter les faux positifs en masse.')
+        print(f'    Investiguer la pagination Vestiaire avant de relancer.')
+    elif D1_raw:
+        # === VÉRIFICATION INDIVIDUELLE DES D1 (parallèle) ===
+        # Chaque D1 candidat est testé via sa fiche produit Vestiaire :
+        #   - HTTP redirect vers catégorie / 404 → vraiment supprimé (D1)
+        #   - JSON-LD "OutOfStock"                → vendu (B)
+        #   - JSON-LD "InStock"                   → actif (skip, doute = sécurité)
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import threading, time as _time
+
+        print(f'\n  → Vérif parallèle des {len(D1_raw)} D1 candidats (8 workers, pacing 0.05s)...')
         proxy_url = f'http://{DECODO_USER_RAW}:{DECODO_PASS}@gate.decodo.com:10001'
         proxies = {'http': proxy_url, 'https': proxy_url}
         verifier = cloudscraper.create_scraper(browser={'custom': UA})
-        # warmup pour cookies CF
         try: verifier.get('https://fr.vestiairecollective.com/profile/30773496/', proxies=proxies, timeout=60)
         except: pass
-        for pid in D1_raw:
+
+        last_request_time = [0.0]
+        pacing_lock = threading.Lock()
+        def fetch_paced(url):
+            with pacing_lock:
+                elapsed = _time.time() - last_request_time[0]
+                if elapsed < 0.05:
+                    _time.sleep(0.05 - elapsed)
+                last_request_time[0] = _time.time()
+            return verifier.get(url, proxies=proxies, timeout=20, allow_redirects=True)
+
+        def verify_d1(pid):
             prod = by_id.get(pid)
-            if not prod or not prod.get('path'):
-                D1.append(pid)  # par défaut on bascule
-                continue
+            if not prod or not prod.get('path'): return ('keep', pid)
             url = f'https://fr.vestiairecollective.com{prod["path"]}'
             try:
-                r = verifier.get(url, proxies=proxies, timeout=30, allow_redirects=True)
-                # Article supprimé : redirection vers catégorie (l'ID disparaît de l'URL finale)
-                if pid not in r.url:
-                    D1.append(pid)
-                    print(f'    {pid}: → SUPPRIMÉ (redirige vers {r.url[:60]}...)')
-                    continue
-                if r.status_code != 200:
-                    D1.append(pid)
-                    print(f'    {pid}: → SUPPRIMÉ (HTTP {r.status_code})')
-                    continue
+                r = fetch_paced(url)
+                if r.status_code != 200: return ('keep', pid)  # par défaut sécurisé
+                if pid not in r.url: return ('deleted', pid)
                 m = re.search(r'"availability"\s*:\s*"([^"]+)"', r.text)
                 avail = m.group(1) if m else None
-                if avail == 'OutOfStock':
-                    B_extra.append(pid)
-                    print(f'    {pid}: → VENDU (re-classé en B)')
-                elif avail == 'InStock':
-                    print(f'    {pid}: → ACTIF, faux positif (skip)')
-                else:
+                if avail == 'OutOfStock': return ('sold', pid)
+                return ('keep', pid)
+            except Exception:
+                return ('keep', pid)
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            futures = {ex.submit(verify_d1, pid): pid for pid in D1_raw}
+            for fut in as_completed(futures):
+                status, pid = fut.result()
+                if status == 'deleted':
                     D1.append(pid)
-                    print(f'    {pid}: → indéterminé (availability={avail}), traité comme D1')
-            except Exception as e:
-                D1.append(pid)
-                print(f'    {pid}: → erreur vérif ({type(e).__name__}), traité comme D1')
+                elif status == 'sold':
+                    B_extra.append(pid)
+
+        print(f'    ✓ {len(D1)} confirmés supprimés, {len(B_extra)} re-classés vendus')
 
     # Fusionne B_extra avec B (en évitant doublons)
     for pid in B_extra:
