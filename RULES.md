@@ -4,6 +4,34 @@ Ces règles sont **non négociables**, issues d'incidents réels. Chaque règle 
 
 ---
 
+## R-1. Sparse-checkout : danger sur les modifications de fichiers exclus
+
+**Incident 2026-05-04** : batch d'import HD photos. 137 dossiers traités, 10K+ webp écrites localement par `import_hd.py`. `git status` ne montrait quasi rien comme modifié → mes commits étaient vides/incomplets → les versions carrées (800×800) sont restées sur GitHub à la place des nouvelles natives 2:3 (533×800).
+
+**Cause** : sparse-checkout marque les fichiers exclus (ex: `img/`) avec le flag `SkipWorktree`. **Git ignore les modifications locales sur ces fichiers**, même quand ils existent physiquement et qu'on les a réécrits. `git add --sparse` traite les NOUVEAUX fichiers, mais pas les MODIFICATIONS de fichiers déjà tracked et skip-worktree'd.
+
+**Règle** : quand on modifie en masse des fichiers dans un path exclu de sparse-checkout :
+1. **Désactiver sparse temporairement** : `git config core.sparseCheckout false`
+2. **Clear skip-worktree** : `git ls-files -t img/ | grep '^S' | awk '{print $2}' | xargs git update-index --no-skip-worktree`
+3. Vérifier avec `git status -s` qu'on a bien le nombre de modifs attendu
+4. Add + commit + push
+5. Réactiver sparse : `git config core.sparseCheckout true && git read-tree -mu HEAD`
+
+**Ou plus simple** : pour les batchs photos, faire un clone NON-sparse temporaire dans un autre dossier, traiter, push, supprimer le clone.
+
+---
+
+## R-1bis. Inspection visuelle après batch sur output binaire
+
+Après tout traitement batch d'images (`import_hd.py`, `import_vestiaire.py`) :
+1. **Comparer 1-2 outputs avec un produit déjà OK connu** — dimensions, format, ratio
+2. Vérifier qu'au moins un fichier modifié apparaît dans `git status`
+3. Hash 1 fichier local vs HEAD pour confirmer divergence : `git hash-object img/X.webp` vs `git ls-tree HEAD img/X.webp`
+
+Sans ça, on peut traiter parfaitement 10 000 fichiers et n'en pousser que 0% à 50% sans s'en rendre compte.
+
+---
+
 ## R0. Vérifier individuellement TOUT candidat à bascule SOLD (R1 appliquée)
 
 **Incident 2026-05-03** : 7 articles ont été basculés SOLD à tort. Cause : la liste
