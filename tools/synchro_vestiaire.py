@@ -251,7 +251,26 @@ def main():
     vc_all = vc_fs_ids | vc_sold_ids
 
     A = list(vc_fs_ids & site_sold)
-    B = list((vc_sold_ids - vc_fs_ids) & site_available)
+    # B brut = items vus dans onglet "Vendus" Vestiaire ET dispo sur site.
+    # ATTENTION : Vestiaire montre parfois des items InStock dans l'onglet Vendus
+    # (bug UI / cache). Sans vérif individuelle, on bascule à tort.
+    # → On VÉRIFIE chaque candidat B via JSON-LD avant de l'inclure (post-incident
+    # 2026-05-03 où 7 articles InStock ont été basculés à tort).
+    B_raw = list((vc_sold_ids - vc_fs_ids) & site_available)
+    B = []  # B vérifié via JSON-LD availability=OutOfStock
+    if B_raw:
+        print(f'\n  → Vérification individuelle des {len(B_raw)} candidats B (anti-faux-positif)...')
+        from concurrent.futures import ThreadPoolExecutor as _TPE, as_completed as _ac
+        with _TPE(max_workers=8) as _ex:
+            _futs = {_ex.submit(verify_item, pid, by_id): pid for pid in B_raw}
+            for _f in _ac(_futs):
+                _pid, _status = _futs[_f], _f.result()
+                if _status == 'sold':
+                    B.append(_pid)
+                else:
+                    print(f'    ⚠ {_pid} : faux positif B ({_status}), skip')
+        print(f'    ✓ {len(B)}/{len(B_raw)} confirmés vendus')
+
     C = []
     for vid, url in fs_map.items():
         if vid in site_all: continue
