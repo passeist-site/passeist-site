@@ -20,9 +20,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, "index.html")
 OUT_IMG = os.path.join(ROOT, "img")
 
-# Cherche le dossier source dans plusieurs paths possibles (sandbox vs CI)
+# Cherche le dossier source dans plusieurs paths possibles (sandbox vs CI).
+# Inclut "A IMPORTER " pour les nouveaux dossiers en attente.
 PHOTOS_DIRS_CANDIDATES = [
+    "/sessions/sharp-vibrant-turing/mnt/PASSEIST WEBSITE/photos passeist /A IMPORTER ",
     "/sessions/sharp-vibrant-turing/mnt/PASSEIST WEBSITE/photos passeist ",
+    os.path.expanduser("~/Desktop/PASSEIST WEBSITE/photos passeist /A IMPORTER "),
     os.path.expanduser("~/Desktop/PASSEIST WEBSITE/photos passeist "),
     os.path.expanduser("~/Desktop/PASSEIST WEBSITE/photos passeist"),
 ]
@@ -85,7 +88,8 @@ def process_one(item_id):
         print(f'❌ {item_id}: dossier introuvable {src_dir}')
         return 0
     finder_order = get_finder_order(src_dir)
-    all_jpgs = glob.glob(os.path.join(src_dir, '*.[Jj][Pp][Gg]'))
+    all_jpgs = (glob.glob(os.path.join(src_dir, '*.[Jj][Pp][Gg]'))
+                + glob.glob(os.path.join(src_dir, '*.[Jj][Pp][Ee][Gg]')))
     if finder_order:
         by_name = {os.path.basename(p): p for p in all_jpgs}
         photos = [by_name[n] for n in finder_order if n in by_name]
@@ -169,12 +173,37 @@ def main():
         print(f'Mode --all : {len(ids)} dossiers détectés')
     else:
         ids = args
+    # FAIT folder = dossier où on déplace les sous-dossiers traités avec succès.
+    # Si PHOTOS_DIR finit par 'A IMPORTER ', le FAIT est au même niveau (parent commun).
+    fait_dir = None
+    parent = os.path.dirname(PHOTOS_DIR.rstrip('/'))
+    cand_fait = os.path.join(parent, 'FAIT')
+    if os.path.isdir(cand_fait):
+        fait_dir = cand_fait
+        print(f'FAIT : {fait_dir}')
+
     updates = {}
+    moved = []
+    import shutil
     for item_id in ids:
         n = process_one(item_id)
-        if n > 0: updates[item_id] = n
+        if n > 0:
+            updates[item_id] = n
+            # Déplace le dossier vers FAIT après succès
+            src = os.path.join(PHOTOS_DIR, item_id)
+            if fait_dir and os.path.isdir(src):
+                dst = os.path.join(fait_dir, item_id)
+                try:
+                    if os.path.exists(dst):
+                        # Conflit : append timestamp pour pas écraser
+                        dst = f'{dst}_{int(__import__("time").time())}'
+                    shutil.move(src, dst)
+                    moved.append(item_id)
+                    print(f'  → déplacé vers FAIT/')
+                except Exception as e:
+                    print(f'  ⚠ move FAIT failed: {e}')
     print('\n=== Update index.html ===')
     update_index(updates)
-    print(f'\n✓ {len(updates)} produits importés en HD')
+    print(f'\n✓ {len(updates)} produits importés en HD, {len(moved)} déplacés vers FAIT/')
 
 if __name__ == '__main__': main()
