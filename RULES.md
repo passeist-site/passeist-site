@@ -4,6 +4,23 @@ Ces règles sont **non négociables**, issues d'incidents réels. Chaque règle 
 
 ---
 
+## R0. Vérifier individuellement TOUT candidat à bascule SOLD (R1 appliquée)
+
+**Incident 2026-05-03** : 7 articles ont été basculés SOLD à tort. Cause : la liste
+B (`vc_sold_ids - vc_fs_ids & site_available`) était basculée DIRECTEMENT sans
+vérification individuelle. L'onglet "Vendus" de Vestiaire affichait par erreur
+7 articles actuellement InStock (bug UI / cache Vestiaire).
+
+**Règle absolue** : tout item qui va passer en SOLD (que ce soit via B, D1, ou
+n'importe quel autre bucket) DOIT être vérifié individuellement via sa fiche
+produit JSON-LD `availability="OutOfStock"` AVANT bascule. Aucune exception.
+
+Application dans `synchro_vestiaire.py` : `B_raw → verify_item() → B`. Les items
+qui ne renvoient pas explicitement `OutOfStock` sont skippés silencieusement
+(R1 : doute = sécurité).
+
+---
+
 ## R1. Le doute profite à l'item (sécurité par défaut)
 
 Pour toute opération automatique sur l'inventaire (bascule SOLD, retrait, suppression, etc.) :
