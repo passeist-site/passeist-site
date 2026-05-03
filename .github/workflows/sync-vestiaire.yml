@@ -184,8 +184,12 @@ jobs:
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          # --sparse : permet d'ajouter des fichiers hors sparse-checkout (cas de img/)
-          git add --sparse index.html img/ netlify/functions/products.json
+          # Toujours add index.html + products.json (présents)
+          git add --sparse index.html netlify/functions/products.json
+          # img/ seulement s'il existe et contient des fichiers (imports faits)
+          if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then
+            git add --sparse img/
+          fi
           MSG="auto-sync $(date -u +%Y-%m-%d_%H:%M)"
           if [ "${{ steps.bascule.outputs.count }}" != "0" ] && [ -n "${{ steps.bascule.outputs.count }}" ]; then
             MSG="$MSG | sold: ${{ steps.bascule.outputs.count }}"
