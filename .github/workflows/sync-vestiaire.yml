@@ -202,7 +202,14 @@ jobs:
           🤖 Généré automatiquement par GitHub Actions sync-vestiaire
           SOLD bascule IDs: ${{ steps.bascule.outputs.ids }}
           Imports IDs: ${{ steps.import_e.outputs.imported_ids }}"
-          git push
+          # Pull --rebase pour gérer les commits concurrents (autre run cron / manuel
+          # qui aurait pushé pendant qu'on tournait). Retry le push 3 fois si échec.
+          for i in 1 2 3; do
+            if git push; then break; fi
+            echo "Push rejeté (autre run a pushé), pull --rebase puis retry..."
+            git pull --rebase origin main
+            sleep 2
+          done
 
       - name: Ouvre Issue si D1, NON SIGNÉ sans brand, ou erreurs d'import
         if: always()
