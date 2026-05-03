@@ -209,7 +209,13 @@ def verify_item(pid, by_id):
     prod = by_id.get(pid)
     if not prod or not prod.get('path'):
         return 'keep'
-    url = f'https://fr.vestiairecollective.com{prod["path"]}'
+    path = prod['path']
+    # Garde-fou : path doit pointer vers une fiche produit (.shtml), pas une catégorie.
+    # Sinon on serait sur la page catégorie, l'ID n'apparaîtrait pas, et on classerait
+    # à tort en DELETED.
+    if not path.endswith('.shtml'):
+        return 'keep'
+    url = f'https://fr.vestiairecollective.com{path if path.startswith("/") else "/" + path}'
     # 1ère tentative : datacenter (1 credit)
     status, resolved, html = sb_fetch(url, premium=False)
     if status == 0:
