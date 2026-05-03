@@ -169,7 +169,7 @@ jobs:
                   print(f'{pid} déjà présent, skip')
               else:
                   failed_other.append({'id': pid, 'url': url, 'code': ret.returncode})
-             with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'imported={len(imported)}\n')
               f.write(f'imported_ids={" ".join(imported)}\n')
               f.write(f'failed_unsigned={json.dumps(failed_unsigned)}\n')
