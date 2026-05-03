@@ -56,12 +56,11 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps chromium
 
-      - name: Run sync (cloudscraper warmup → cookies CF → Playwright headless)
+      - name: Run sync (Playwright via ScrapingBee proxy)
         id: sync
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports
-          DECODO_USER: ${{ secrets.DECODO_USER }}
-          DECODO_PASS: ${{ secrets.DECODO_PASS }}
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: |
           python -u tools/synchro_vestiaire.py | tee /tmp/sync.log
           # Extrait la dernière ligne "Rapport enregistré → /path/to/json"
@@ -136,8 +135,7 @@ jobs:
       - name: Auto-import des nouvelles pièces (E + C)
         id: import_e
         env:
-          DECODO_USER: ${{ secrets.DECODO_USER }}
-          DECODO_PASS: ${{ secrets.DECODO_PASS }}
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: |
           python << 'PYEOF'
           import json, os, subprocess, sys

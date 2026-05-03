@@ -21,12 +21,10 @@ Codes retour :
   3  pas de photos téléchargeables → ouvrir Issue
   4  produit déjà dans PRODUCTS (skip silently)
 """
-import sys, os, re, json, asyncio, math, time, io
+import sys, os, re, json, math, time, io
 from PIL import Image
-from playwright.async_api import async_playwright
-import cloudscraper
+import requests
 
-# Ajout du dossier tools/ au path pour importer brand_detector
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_brand_extraction
 
@@ -34,12 +32,12 @@ from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_b
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, 'index.html')
 OUT_IMG = os.path.join(ROOT, 'img')
-PROXY_USER = os.environ.get('DECODO_USER', '')
-PROXY_PASS = os.environ.get('DECODO_PASS', '')
-PROXY_HOST = os.environ.get('DECODO_HOST', 'fr.decodo.com:40005')
-PROXY = {'server': f'http://{PROXY_HOST}', 'username': PROXY_USER, 'password': PROXY_PASS}
-PROXY_URL = f'http://{PROXY_USER}:{PROXY_PASS}@{PROXY_HOST}'
-UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+SCRAPINGBEE_API_KEY = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
+if not SCRAPINGBEE_API_KEY:
+    print('FATAL: SCRAPINGBEE_API_KEY env var manquante', file=sys.stderr)
+    sys.exit(1)
+SB_API = 'https://app.scrapingbee.com/api/v1/'
+UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
 # Mapping brand canonique → slug pour path
 BRAND_TO_SLUG = {
@@ -89,16 +87,19 @@ def pad_square(im, target):
 
 
 def make_scraper():
-    s = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'darwin'})
-    s.proxies = {'http': PROXY_URL, 'https': PROXY_URL}
-    s.headers.update({'Referer': 'https://fr.vestiairecollective.com/'})
+    """Session pour photos CDN (Vestiaire images servis sans Cloudflare)."""
+    s = requests.Session()
+    s.headers.update({
+        'User-Agent': UA,
+        'Referer': 'https://fr.vestiairecollective.com/',
+    })
     return s
 
 
 def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
     """Télécharge la photo {photo_idx} (1-indexed) depuis Vestiaire CDN
-    et écrit 3 versions webp pad square : item_id-{idx-1}-xl/md/sm.webp
-    Retourne True si OK."""
+    et écrit 3 versions webp pad square : item_id-{idx-1}-xl/md/sm.webp.
+    Le CDN images.vestiairecollective.com n'a pas Cloudflare → fetch direct."""
     url = f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/produit/{vestiaire_slug}-{photo_idx}.jpg'
     try:
         r = scraper.get(url, timeout=30)
@@ -114,28 +115,31 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
         return False
 
 
-async def fetch_meta(url):
-    """Fetch fiche Vestiaire via Playwright. Retourne dict metadata ou None."""
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, proxy=PROXY)
-        ctx = await browser.new_context(user_agent=UA, locale='fr-FR',
-                                         viewport={'width': 1280, 'height': 900})
-        page = await ctx.new_page()
-        try:
-            await page.goto(url, timeout=60000, wait_until='domcontentloaded')
-            await page.wait_for_timeout(3500)
-            data = await page.evaluate('() => document.getElementById("__NEXT_DATA__")?.textContent')
-            await browser.close()
-            if not data: return None
-            jd = json.loads(data)
-            queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
-            for q in queries:
-                d = q.get('state', {}).get('data')
-                if isinstance(d, dict) and d.get('id') and d.get('brand'):
-                    return d
-        except Exception as e:
-            print(f'fetch_meta ERR: {e}', file=sys.stderr)
-            await browser.close()
+def fetch_meta(url):
+    """Fetch fiche Vestiaire via ScrapingBee API → parse __NEXT_DATA__."""
+    params = {
+        'api_key': SCRAPINGBEE_API_KEY,
+        'url': url,
+        'premium_proxy': 'true',
+        'country_code': 'fr',
+    }
+    try:
+        r = requests.get(SB_API, params=params, timeout=90)
+        if r.status_code != 200:
+            print(f'fetch_meta : ScrapingBee HTTP {r.status_code} pour {url}', file=sys.stderr)
+            return None
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
+        if not m:
+            print(f'fetch_meta : __NEXT_DATA__ introuvable pour {url}', file=sys.stderr)
+            return None
+        jd = json.loads(m.group(1))
+        queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
+        for q in queries:
+            d = q.get('state', {}).get('data')
+            if isinstance(d, dict) and d.get('id') and d.get('brand'):
+                return d
+    except Exception as e:
+        print(f'fetch_meta ERR: {e}', file=sys.stderr)
     return None
 
 
@@ -167,7 +171,7 @@ def main():
 
     # Fetch metadata
     print(f'Fetch fiche Vestiaire : {url}')
-    meta = asyncio.run(fetch_meta(url))
+    meta = fetch_meta(url)
     if not meta:
         print(f'{item_id}: pas de metadata (fiche introuvable ou proxy fail)', file=sys.stderr)
         sys.exit(1)
