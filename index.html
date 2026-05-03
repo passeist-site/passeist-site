@@ -1316,14 +1316,16 @@ body[data-page="home"] { overflow: auto; height: auto; }
   margin-top: 16px;
   font-size: 9.5px;
   font-family: var(--font-mono);
-  color: rgba(0,0,0,0.18);
+  /* Ton-sur-ton sur dark mode : crème très léger (~25% opacité) sur fond navy.
+     Discret mais visible. */
+  color: rgba(244,241,236,0.28);
   letter-spacing: 0.5px;
   cursor: pointer;
   user-select: none;
   transition: color 0.2s;
   display: inline-block;
 }
-.detail-ref:hover { color: rgba(0,0,0,0.5); }
+.detail-ref:hover { color: rgba(244,241,236,0.65); }
 .detail-ref.copied { color: #4a9; }
 .detail-ref.copied::after { content: ' ✓'; }
 
