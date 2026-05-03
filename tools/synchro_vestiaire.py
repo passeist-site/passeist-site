@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""Synchro Vestiaire — version ScrapingBee (refactor 2026-05-03).
+"""Synchro Vestiaire — version ScrapingBee API + js_scenario (refactor 2026-05-03).
 
-Architecture simple :
-- Playwright + ScrapingBee proxy mode pour le scan profil (pagination JS)
-- ScrapingBee API direct (datacenter, 1 credit) pour vérifier chaque item individuellement
+Architecture :
+- ScrapingBee API + js_scenario pour le scan profil (1 appel = ~75 crédits)
+- ScrapingBee API direct (datacenter, 1 credit) pour vérifier chaque item
 - Anti-faux-positifs : circuit breaker à 15, classification stricte (R1)
 
-Plus de cloudscraper, plus de Decodo, plus de cookies CF à warmup. ScrapingBee
-gère tout ça en interne. Le seul env var requis : SCRAPINGBEE_API_KEY.
+Plus de Playwright, plus de Decodo, plus de cookies CF à warmup. ScrapingBee
+gère tout en interne. Seul env var requis : SCRAPINGBEE_API_KEY.
+
+Coût ~1000 crédits/run × 3 runs/jour × 30 jours = 90K/mois (plan 49$ = 250K).
 """
-import asyncio, re, json, os, time, urllib.parse
+import re, json, os, time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import requests
-from playwright.async_api import async_playwright
 
 # === CONFIG ===
 SCRAPINGBEE_API_KEY = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
@@ -27,15 +28,6 @@ UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
-
-# ScrapingBee proxy config pour Playwright
-SB_PROXY = {
-    'server': 'http://proxy.scrapingbee.com:8886',
-    'username': SCRAPINGBEE_API_KEY,
-    'password': 'render_js=False',  # Playwright fait son propre rendering
-}
-
-# ScrapingBee API direct pour les fetchs item-par-item
 SB_API = 'https://app.scrapingbee.com/api/v1/'
 
 
@@ -84,122 +76,126 @@ def load_site():
     return site_all, site_sold, site_available, sold_stems, all_stems, by_id
 
 
-async def scrape_profile():
-    """Scan for-sale (pagination 10 pages) + sold page 1 via Playwright + ScrapingBee proxy."""
+def scrape_profile():
+    """Scan for-sale + sold via ScrapingBee API + js_scenario compacté.
+    Toutes les helpers déclarées dans window.H, instructions ultra-courtes
+    pour rester sous les 8KB de la URL GET ScrapingBee."""
+    print('  → Scan via ScrapingBee js_scenario (for-sale 10 pages + sold page 1)')
+
+    # Setup unique : définit window.H avec toutes les helpers
+    setup = (
+        "window._fs=new Set();window._sd=new Set();window._c={};"
+        "window.H={"
+        # Accept cookies
+        "ck:()=>{const b=[...document.querySelectorAll('button')].find(x=>/accepter|accept all|accept cookies/i.test(x.textContent)&&!/refuser|reject|paramétrer|customize|param/i.test(x.textContent));if(b)b.click()},"
+        # Read counters
+        "co:()=>{const t=document.body.innerText;const fs=t.match(/(\\d+)\\s+(?:articles?\\s+en\\s+vente|items?\\s+for\\s+sale)/);const sd=t.match(/(\\d+)\\s+(?:vendus|sold)\\b/);window._c.fs=fs?parseInt(fs[1]):0;window._c.sd=sd?parseInt(sd[1]):0},"
+        # Click 60/page
+        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>x.textContent.trim()==='60'&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
+        # Click page N
+        "p:n=>{const bs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test(b.textContent.trim())&&+b.textContent.trim()<=20&&b.getAttribute('aria-current')!=='page');const b=bs.find(x=>x.textContent.trim()===String(n));if(b)b.click()},"
+        # Scroll bottom
+        "sc:()=>window.scrollTo(0,document.documentElement.scrollHeight),"
+        # Harvest into target Set
+        "hf:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._fs.add(u)),"
+        "hs:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._sd.add(u)),"
+        # Switch to Sold tab
+        "sw:()=>{const t=[...document.querySelectorAll('div,span,button,a,[role=\"button\"]')].find(e=>{const x=(e.textContent||'').trim();return /^(Articles vendus|Vendus|Sold items|Sold)$/i.test(x)&&x.length<30});if(t)t.click()},"
+        # Final: dump URLs + counters as meta tags
+        "dump:()=>{const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],['_h_c',window._c]];a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;m.content=JSON.stringify(v);document.head.appendChild(m)})}"
+        "}"
+    )
+
+    def call_sb(instructions, label):
+        """Single call ScrapingBee with given instructions, returns html."""
+        js_scenario = {"instructions": instructions}
+        params = {
+            'api_key': SCRAPINGBEE_API_KEY,
+            'url': PROFILE_URL,
+            'premium_proxy': 'true', 'country_code': 'fr',
+            'render_js': 'true',
+            'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
+            'forward_headers': 'true',
+            'block_resources': 'false',
+        }
+        headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
+        print(f'  → SB call "{label}" ({len(instructions)} instructions)...')
+        rr = requests.get(SB_API, params=params, headers=headers, timeout=180)
+        if rr.status_code != 200:
+            raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
+        return rr.text
+
+    # Call 1 : init + counters + pages 1-5
+    inst_1 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.co()"},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    for n in range(1, 6):
+        if n > 1: inst_1 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
+        inst_1 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    inst_1 += [{"evaluate": "H.dump()"}]
+    html1 = call_sb(inst_1, 'pages 1-5')
+
+    # Call 2 : pages 6-10 + sold
+    # On reload depuis la page 1 puis on saute à la page 6 directement
+    inst_2 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    # Click pages 2,3,4,5,6 to reach page 6, then continue to 10
+    for n in range(2, 11):
+        inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
+        if n >= 6:
+            inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    # Switch to sold + harvest
+    inst_2 += [
+        {"evaluate": "H.sw()"}, {"wait": 2500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+        {"evaluate": "H.sc()"}, {"wait": 1200},
+        {"evaluate": "H.hs()"},
+        {"evaluate": "H.dump()"},
+    ]
+    html2 = call_sb(inst_2, 'pages 6-10 + sold')
+    r = type('FakeR', (), {'text': html1 + html2, 'status_code': 200})()
+    # Parse les meta tags injectés (présents dans html1 + html2)
+    import html as html_lib
+    def extract_all(name, source):
+        results = []
+        for m in re.finditer(rf'<meta name="{name}" content="([^"]*)"', source):
+            try: results.append(json.loads(html_lib.unescape(m.group(1))))
+            except: pass
+        return results
+
+    # html1 contient _h_fs (pages 1-5), _h_c (counters)
+    # html2 contient _h_fs (pages 6-10), _h_sd (sold)
+    fs_urls = []
+    for arr in extract_all('_h_fs', r.text):
+        fs_urls.extend(arr)
+    sd_urls = []
+    for arr in extract_all('_h_sd', r.text):
+        sd_urls.extend(arr)
+    cs = extract_all('_h_c', r.text)
+    counters = cs[0] if cs else {}
+
+    fs_target = int(counters.get('fs', 0))
+    sold_target = int(counters.get('sd', 0))
+    print(f'Profil : {fs_target} en vente · {sold_target} vendus')
+
     fs_map = {}
+    for u in fs_urls:
+        m = re.search(r'-(\d{7,9})\.shtml?', u)
+        if m: fs_map[m.group(1)] = u
     sold_map = {}
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            proxy=SB_PROXY,
-            args=['--disable-blink-features=AutomationControlled', '--no-sandbox',
-                  '--ignore-certificate-errors'],  # ScrapingBee proxy MITM-style
-        )
-        context = await browser.new_context(
-            user_agent=UA, locale='fr-FR', timezone_id='Europe/Paris',
-            viewport={'width': 1280, 'height': 900},
-            ignore_https_errors=True,
-        )
-        # Bloquer images/fonts/media pour économiser les crédits ScrapingBee
-        # (chaque requête asset = 1 crédit). On garde HTML + CSS + JS uniquement.
-        await context.route('**/*', lambda route: (
-            route.abort() if route.request.resource_type in ('image', 'font', 'media')
-            else route.continue_()
-        ))
+    for u in sd_urls:
+        m = re.search(r'-(\d{7,9})\.shtml?', u)
+        if m: sold_map[m.group(1)] = u
 
-        page = await context.new_page()
-        resp = await page.goto(PROFILE_URL, timeout=90000, wait_until='domcontentloaded')
-        if not resp or resp.status != 200:
-            raise Exception(f'goto returned status {resp.status if resp else "?"}')
-        await page.wait_for_timeout(5000)
-        print(f'  ✓ Page chargée (HTTP {resp.status})')
+    print(f'  ✓ for-sale: {len(fs_map)} URLs')
+    print(f'  ✓ sold page 1: {len(sold_map)} URLs')
 
-        # Accept cookies popup
-        accepted = await page.evaluate('''() => {
-            const btn = Array.from(document.querySelectorAll('button')).find(
-                b => /accepter|accept all|accept cookies/i.test(b.textContent)
-                  && !/refuser|reject|paramétrer|customize|param/i.test(b.textContent));
-            if (btn) { btn.click(); return true; }
-            return false;
-        }''')
-        if accepted: await page.wait_for_timeout(3000)
-
-        # Counters
-        counts_text = await page.evaluate('() => document.body.innerText')
-        m_fs = re.search(r'(\d+)\s+(?:articles?\s+en\s+vente|items?\s+for\s+sale)', counts_text)
-        m_sold = re.search(r'(\d+)\s+(?:vendus|sold)\b', counts_text)
-        if not m_fs or not m_sold:
-            raise Exception(f'Compteurs introuvables. body[:300]={counts_text[:300]!r}')
-        fs_target = int(m_fs.group(1))
-        sold_target = int(m_sold.group(1))
-        print(f'Profil : {fs_target} en vente · {sold_target} vendus')
-
-        # Set 60/page
-        await page.evaluate('''() => {
-            const b = Array.from(document.querySelectorAll('button')).find(
-                x => x.textContent.trim() === '60' && x.getAttribute('aria-current') !== 'true');
-            if (b) b.click();
-        }''')
-        await page.wait_for_timeout(4000)
-
-        async def collect():
-            for step in range(8):
-                await page.evaluate(f'() => window.scrollTo(0, document.documentElement.scrollHeight * {(step+1)/8})')
-                await page.wait_for_timeout(500)
-            await page.evaluate('() => window.scrollTo(0, document.documentElement.scrollHeight)')
-            await page.wait_for_timeout(1500)
-            return await page.evaluate('''() => Array.from(document.querySelectorAll('a[href]'))
-                .map(a => a.href).filter(u => /-\\d{7,9}\\.shtml?/.test(u))''')
-
-        async def click_page(n):
-            await page.evaluate('() => window.scrollTo(0, document.documentElement.scrollHeight)')
-            await page.wait_for_timeout(1000)
-            return await page.evaluate(f'''() => {{
-                const btns = Array.from(document.querySelectorAll('button')).filter(
-                    b => /^\\d+$/.test(b.textContent.trim()) && +b.textContent.trim() <= 20
-                         && b.getAttribute('aria-current') !== 'page');
-                const btn = btns.find(b => b.textContent.trim() === '{n}');
-                if (btn) {{ btn.click(); return true; }}
-                return false;
-            }}''')
-
-        # Scan for-sale
-        for page_num in range(1, 15):
-            urls = await collect()
-            for u in urls:
-                m = re.search(r'-(\d{7,9})\.shtml?', u)
-                if m: fs_map[m.group(1)] = u
-            print(f'  for-sale page {page_num}: {len(fs_map)} cumul')
-            if len(fs_map) >= fs_target: break
-            clicked = await click_page(page_num + 1)
-            if not clicked: break
-            await page.wait_for_timeout(3500)
-
-        # Scan sold page 1
-        print('  → Scan vendus : page 1 uniquement')
-        clicked_vendus = await page.evaluate('''() => {
-            const all = Array.from(document.querySelectorAll('div, span, button, a, [role="button"]'));
-            const target = all.find(el => {
-                const t = (el.textContent || '').trim();
-                return /^(Articles vendus|Vendus|Sold items|Sold)$/i.test(t) && t.length < 30;
-            });
-            if (target) { target.click(); return true; }
-            return false;
-        }''')
-        await page.wait_for_timeout(4000)
-        await page.evaluate('''() => {
-            const b = Array.from(document.querySelectorAll('button')).find(
-                x => x.textContent.trim() === '60' && x.getAttribute('aria-current') !== 'true');
-            if (b) b.click();
-        }''')
-        await page.wait_for_timeout(4000)
-        urls = await collect()
-        for u in urls:
-            m = re.search(r'-(\d{7,9})\.shtml?', u)
-            if m: sold_map[m.group(1)] = u
-        print(f'    sold page 1: {len(sold_map)} items collectés')
-
-        await browser.close()
     return fs_map, sold_map, fs_target, sold_target
 
 
@@ -237,13 +233,13 @@ def verify_item(pid, by_id):
     return 'keep'
 
 
-async def main():
+def main():
     print('=== Chargement du site ===')
     site_all, site_sold, site_available, sold_stems, all_stems, by_id = load_site()
     print(f'Site : {len(site_all)} produits Vestiaire · {len(site_sold)} sold · {len(site_available)} available')
 
-    print('\n=== Scan profil Vestiaire (Playwright + ScrapingBee proxy) ===')
-    fs_map, sold_map, fs_target, sold_target = await scrape_profile()
+    print('\n=== Scan profil Vestiaire (ScrapingBee API + js_scenario) ===')
+    fs_map, sold_map, fs_target, sold_target = scrape_profile()
     print(f'Vestiaire : {len(fs_map)} for-sale · {len(sold_map)} vendus')
 
     def slug_stem(url):
@@ -365,4 +361,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()

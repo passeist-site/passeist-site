@@ -2,10 +2,9 @@ name: Sync Vestiaire
 
 on:
   schedule:
-    # 2 fois par jour : 06:00 et 18:00 UTC (soit 08h et 20h heure Paris).
-    # Économise conso Decodo + minutes GitHub Actions, le run manuel reste possible
-    # à tout moment via "Run workflow" sur l'UI Actions.
-    - cron: '0 6,18 * * *'
+    # 3 fois par jour : 06:00, 12:00, 18:00 UTC (soit 08h, 14h, 20h heure Paris).
+    # Possible grâce à js_scenario qui divise par 4 le coût d'un run.
+    - cron: '0 6,12,18 * * *'
   workflow_dispatch: {}  # permet aussi le déclenchement manuel via l'UI GitHub
 
 permissions:
