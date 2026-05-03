@@ -129,15 +129,17 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
 
 
 def fetch_meta(url):
-    """Fetch fiche Vestiaire via ScrapingBee API → parse __NEXT_DATA__."""
+    """Fetch fiche Vestiaire via ScrapingBee → __NEXT_DATA__.
+    Accept-Language: fr-FR force la version française sinon Vestiaire
+    renvoie EN (type='Top' au lieu de 'Haut')."""
     params = {
-        'api_key': SCRAPINGBEE_API_KEY,
-        'url': url,
-        'premium_proxy': 'true',
-        'country_code': 'fr',
+        'api_key': SCRAPINGBEE_API_KEY, 'url': url,
+        'premium_proxy': 'true', 'country_code': 'fr',
+        'forward_headers': 'true',
     }
+    headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
     try:
-        r = requests.get(SB_API, params=params, timeout=90)
+        r = requests.get(SB_API, params=params, headers=headers, timeout=90)
         if r.status_code != 200:
             print(f'fetch_meta : ScrapingBee HTTP {r.status_code} pour {url}', file=sys.stderr)
             return None

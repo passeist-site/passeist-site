@@ -2,6 +2,7 @@
 """Détection de marque depuis description Vestiaire.
 Règle TASKS.md : si brand Vestiaire = 'Non Signé / Unsigned', chercher la vraie
 marque dans la description et l'utiliser à la place."""
+import re
 
 # Marques connues du catalogue passeist (canonique → patterns lowercase)
 KNOWN_BRANDS = [
@@ -57,8 +58,12 @@ def is_unsigned(brand_name):
 
 
 def detect_brand_in_desc(desc):
-    """Cherche une marque connue dans la description.
-    Retourne (canonical, pattern_matched, context) ou (None, None, None)."""
+    """Cherche une marque dans la description.
+
+    1) Match contre KNOWN_BRANDS d'abord (priorité aux patterns avec sous-marques).
+    2) Fallback : prend la 1ère ligne non vide comme marque (Tom écrit toujours
+       la marque au début de desc). Validation stricte 1-4 mots, 2-40 chars,
+       lettres présentes, pas de virgule/point-virgule, ne commence pas par chiffre."""
     if not desc:
         return None, None, None
     desc_lc = desc.lower()
@@ -68,8 +73,17 @@ def detect_brand_in_desc(desc):
                 idx = desc_lc.find(pat)
                 ctx_start = max(0, idx - 30)
                 ctx_end = min(len(desc), idx + len(pat) + 30)
-                context = desc[ctx_start:ctx_end]
-                return canonical, pat, context
+                return canonical, pat, desc[ctx_start:ctx_end]
+    for raw in desc.split('\n'):
+        line = raw.strip().rstrip('.,;:')
+        if not line: continue
+        words = line.split()
+        if (1 <= len(words) <= 4 and 2 <= len(line) <= 40
+                and re.search(r'[A-Za-zÀ-ÿ]', line)
+                and not re.search(r'[,;:]', line)
+                and not re.match(r'^\d', line)):
+            return line.upper(), 'FIRST_LINE', line
+        break
     return None, None, None
 
 
