@@ -32,6 +32,21 @@ Sans ça, on peut traiter parfaitement 10 000 fichiers et n'en pousser que 0% à
 
 ---
 
+## R-1ter. Batchs lourds I/O : depuis le Mac, jamais depuis le sandbox Cowork
+
+**Incident 2026-05-04 (suite)** : tentative de re-process de 184 dossiers FAIT (~2700 photos) depuis Cowork. Résultat : ~30 min perdues à se battre contre :
+- Erreurs FUSE deadlock (errno 35 « Resource deadlock avoided ») aléatoires sur les lectures du mount macOS↔Linux
+- Saturation du disque sandbox (`/sessions` = 9.8 GB partagés avec git history et /tmp)
+- CPU sandbox limité (~1 thread effectif) → encoding WebP 5-10× plus lent que sur le Mac
+
+**Règle** : tout batch qui touche à beaucoup de fichiers binaires (photos, vidéos, archives) → script `.command` sur le Mac, jamais depuis le sandbox.
+
+**Outil** : `tools/relance_batch_hd.command` (re-process complet photos HD format 2:3 portrait + push). Lance directement en double-clic depuis le Finder.
+
+**Pour le sandbox** : code, diff, logique métier, audits HTTP, edits ciblés sur quelques fichiers. Pas de gros volumes I/O.
+
+---
+
 ## R0. Vérifier individuellement TOUT candidat à bascule SOLD (R1 appliquée)
 
 **Incident 2026-05-03** : 7 articles ont été basculés SOLD à tort. Cause : la liste

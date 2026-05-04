@@ -5280,7 +5280,11 @@ function openDetail(id) {
   // Pattern iOS-safe : position: fixed sur body pour empêcher iOS Safari
   // de reset le scroll à la réouverture (bug connu avec overflow:hidden sur iOS).
   window.__savedScrollY = window.scrollY || window.pageYOffset || 0;
-  document.getElementById('detail').classList.add('open');
+  const _detailEl = document.getElementById('detail');
+  _detailEl.classList.add('open');
+  // Force scroll au top de la fiche produit (sinon le panel garde la position
+  // précédente — Tom : "ça me met au milieu pas en haut des photos").
+  _detailEl.scrollTop = 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + window.__savedScrollY + 'px';
   document.body.style.left = '0';
