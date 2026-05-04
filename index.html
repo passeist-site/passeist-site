@@ -1407,16 +1407,18 @@ body[data-page="home"] { overflow: auto; height: auto; }
 }
 .lightbox.open { display: flex; animation: fadeIn 0.3s var(--ease); }
 .lightbox img {
-  max-height: 92vh; max-width: 92vw; object-fit: contain;
+  /* Recadrage 2:3 portrait uniforme dans le lightbox (les photos avec bords
+     blancs cyclorama sont croppées au format produit, plus de cadre blanc). */
+  aspect-ratio: 2 / 3;
+  height: 92vh;
+  max-width: 92vw;
+  object-fit: cover;
   animation: lbIn 0.4s var(--ease-out);
   border: 1px solid var(--line);
   cursor: zoom-in;
   transition: transform 0.45s cubic-bezier(.4, 0, .2, 1);
   will-change: transform;
-  /* L'image passe AU-DESSUS des bandes de navigation (z-index:2). */
   position: relative; z-index: 2;
-  /* touch-action: none pour que notre JS gère le pinch (sinon le navigateur
-     intercepte et zoome toute la page au lieu de l'image). */
   touch-action: none;
   -ms-touch-action: none;
 }
