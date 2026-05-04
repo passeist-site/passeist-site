@@ -236,7 +236,7 @@ def main():
     os.makedirs(OUT_IMG, exist_ok=True)
     scraper = make_scraper()
     good = 0
-    for idx in range(1, 31):  # max 30 photos
+    for idx in range(1, 41):  # max 40 photos (règle définitive Tom 2026-05-04)
         if process_photo(scraper, item_id, idx, vestiaire_slug):
             good += 1
             print(f'    photo {idx}: OK')
