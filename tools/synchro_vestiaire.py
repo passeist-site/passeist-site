@@ -225,10 +225,13 @@ def verify_item(pid, by_id):
         return 'keep'
     path = prod['path']
     # Garde-fou : path doit pointer vers une fiche produit (.shtml), pas une catégorie.
-    # Sinon on serait sur la page catégorie, l'ID n'apparaîtrait pas, et on classerait
-    # à tort en DELETED.
+    # Si path = catégorie seule (= bug historique import_vestiaire.py 2026-05-04),
+    # on reconstruit la fiche complète via {path}/{slug}.shtml.
     if not path.endswith('.shtml'):
-        return 'keep'
+        slug = prod.get('slug', '')
+        if not slug:
+            return 'keep'
+        path = f"/{path.strip('/')}/{slug}.shtml"
     url = f'https://fr.vestiairecollective.com{path if path.startswith("/") else "/" + path}'
     # 1ère tentative : datacenter (1 credit)
     status, resolved, html = sb_fetch(url, premium=False)

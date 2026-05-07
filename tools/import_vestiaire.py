@@ -159,10 +159,16 @@ def fetch_meta(url):
 
 
 def extract_path_from_url(vestiaire_url):
-    """Extrait le category-path Vestiaire depuis l'URL.
-    Ex: https://fr.vestiairecollective.com/accessoires-homme/chapeaux-bonnets/non-signe-unsigned/...shtml
-        → 'accessoires-homme/chapeaux-bonnets/non-signe-unsigned'"""
-    m = re.search(r'vestiairecollective\.com/(.*?)/[^/]+\.shtml?', vestiaire_url)
+    """Extrait le path COMPLET Vestiaire depuis l'URL (avec slug + .shtml).
+    Ex: https://fr.vestiairecollective.com/accessoires-homme/chapeaux/non-signe/sac-non-signe-66730081.shtml
+        → '/accessoires-homme/chapeaux/non-signe/sac-non-signe-66730081.shtml'
+
+    Note historique : avant 2026-05-07 cette fonction renvoyait seulement la
+    catégorie (sans slug ni .shtml). verify_item() de la sync skippait alors
+    silencieusement TOUS les articles importés récemment (path !.shtml = keep).
+    Bug détecté quand des articles vendus sur Vestiaire ne basculaient pas en
+    SOLD sur le site malgré le bon fonctionnement apparent de la sync."""
+    m = re.search(r'vestiairecollective\.com(/.+?\.shtml?)', vestiaire_url)
     return m.group(1) if m else ''
 
 
