@@ -89,6 +89,23 @@ Tout script qui modifie automatiquement plusieurs items doit avoir un **plafond 
 
 ---
 
+## R2bis. Pas de seuils incohérents entre couches (layered guards alignés)
+
+**Incident 2026-05-04** : la sync Vestiaire ne basculait plus les D1 (articles supprimés sur Vestiaire) depuis plusieurs runs. Cause : double check sur la complétude du scan, avec deux seuils différents :
+
+- `synchro_vestiaire.py` : `SCAN_THRESHOLD = 0.9` (calcule D1 si scan ≥ 90%)
+- `.github/workflows/sync-vestiaire.yml` : `fs_complete = fs_scanned >= fs_target` (applique D1 SEULEMENT si scan = 100% strict)
+
+Quand Tom est passé à 611 articles dispos pour un cap scan de 600, le ratio passait à 98% : le script computait D1, le workflow le skippait. Tom voyait "rien ne bascule" sans erreur visible.
+
+**Règle** : quand deux couches successives gardent la même condition (ici "scan complet"), elles doivent utiliser le **MÊME seuil**, ou la couche aval doit être strictement plus permissive (la couche amont est déjà la garde-fou). Sinon on a un guard mort qui bloque silencieusement.
+
+**Pour la sync Vestiaire** : seuil aligné à 90% des deux côtés, car `verify_item()` (JSON-LD individuel) est l'ultime garde-fou anti-faux-positif (R0).
+
+**Plus généralement** : à chaque check de sécurité empilé, se poser la question "est-ce que ce check est strictement plus restrictif que celui d'amont, et si oui pourquoi ?". Sinon → simplifier.
+
+---
+
 ## R3. Confirmation pass avant action irréversible
 
 Toute action automatique destructive (= qui modifie l'état du site) doit être précédée d'une **deuxième vérification** indépendante du candidat.
