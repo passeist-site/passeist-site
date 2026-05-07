@@ -64,6 +64,24 @@ qui ne renvoient pas explicitement `OutOfStock` sont skippés silencieusement
 
 ---
 
+## R0bis. Présence dans for-sale = preuve plus forte que JSON-LD pour 'sold'
+
+**Incident 2026-05-07** : faux positif bascule SOLD sur 66739013 (Issey Miyake pull, annonce active). Le JSON-LD de la fiche `66739013.shtml` retournait `availability="OutOfStock"` alors que l'article était bien listé dans l'onglet "En vente" de Vestiaire.
+
+**Cause** : quand Tom reliste un même article physique (ancienne annonce supprimée + nouvelle annonce avec ID différent), Vestiaire propage parfois temporairement le statut "sold" sur le JSON-LD de la nouvelle annonce (lag back-end / cache CDN / liaison interne sur le SKU produit).
+
+**Règle** : si un article apparaît dans `vc_fs_ids` (= URLs scannées de l'onglet "En vente"), il ne peut PAS être classé 'sold' ou 'deleted' par `verify_item()`, peu importe ce que renvoie le JSON-LD. La présence dans for-sale est une preuve **active** (l'article est bien listé maintenant), le JSON-LD `availability` est un **état dérivé** (potentiellement stale).
+
+**Application** dans `synchro_vestiaire.py` worker :
+```python
+if status == 'sold' and pid in vc_fs_ids: return pid, 'keep'
+if status == 'deleted' and pid in vc_fs_ids: return pid, 'keep'
+```
+
+Coût zéro (info déjà calculée), élimine ce type de faux positif définitivement.
+
+---
+
 ## R1. Le doute profite à l'item (sécurité par défaut)
 
 Pour toute opération automatique sur l'inventaire (bascule SOLD, retrait, suppression, etc.) :

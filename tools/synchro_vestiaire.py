@@ -321,8 +321,21 @@ def main():
         lock = threading.Lock()
 
         def worker(pid):
-            return pid, verify_item(pid, by_id)
+            status = verify_item(pid, by_id)
+            # Cross-check anti-faux-positif (R0bis) : si l'article est dans l'onglet
+            # "En vente" de Vestiaire (vc_fs_ids), il NE PEUT PAS être vendu, peu
+            # importe ce que dit le JSON-LD. Vestiaire propage parfois OutOfStock
+            # entre annonces liées (relistage du même produit physique).
+            # Incident 2026-05-07 : 66739013 (Issey Miyake pull, relistage actif)
+            # avait JSON-LD OutOfStock alors que l'annonce était bien active sur VC.
+            if status == 'sold' and pid in vc_fs_ids:
+                return pid, 'keep'
+            # Symétrique pour 'deleted' : si l'article est dans for-sale, il existe.
+            if status == 'deleted' and pid in vc_fs_ids:
+                return pid, 'keep'
+            return pid, status
 
+        false_positives = [0]
         with ThreadPoolExecutor(max_workers=12) as ex:
             futures = {ex.submit(worker, pid): pid for pid in to_verify}
             for fut in as_completed(futures):
