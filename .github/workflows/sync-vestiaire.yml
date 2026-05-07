@@ -86,10 +86,13 @@ jobs:
           with open(rep_path) as f: r = json.load(f)
           B = r.get('B', [])
           D1 = r.get('D1', [])
-          # Vérifie que le scan for-sale était complet (sécurité anti-faux-positif sur D1)
+          # Vérifie que le scan for-sale était suffisamment complet (>=90%, aligné avec
+          # SCAN_THRESHOLD du script Python). 100% strict avant cassait D1 dès qu'on
+          # touchait le plafond du scan (10 pages × 60). verify_item() fait la double-
+          # vérification individuelle via JSON-LD, donc 90% est safe.
           fs_target = r.get('vc_stats', {}).get('target_fs', 0)
           fs_scanned = r.get('vc_stats', {}).get('for_sale', 0)
-          fs_complete = fs_scanned >= fs_target if fs_target else False
+          fs_complete = (fs_scanned >= fs_target * 0.9) if fs_target else False
           # B = bascule sûre. D1 = bascule sûre uniquement si scan for-sale complet
           to_bascule = list(B)
           d1_skipped = []

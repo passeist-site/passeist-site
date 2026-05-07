@@ -79,8 +79,12 @@ def load_site():
 def scrape_profile():
     """Scan for-sale + sold via ScrapingBee API + js_scenario compacté.
     Toutes les helpers déclarées dans window.H, instructions ultra-courtes
-    pour rester sous les 8KB de la URL GET ScrapingBee."""
-    print('  → Scan via ScrapingBee js_scenario (for-sale 10 pages + sold page 1)')
+    pour rester sous les 8KB de la URL GET ScrapingBee.
+
+    Capacité : 15 pages × 60 = 900 articles (étendu de 10 → 15 le 2026-05-04
+    car Tom approchait le plafond de 600 → scan_ratio < 100% → workflow
+    skippait D1 par sécurité)."""
+    print('  → Scan via ScrapingBee js_scenario (for-sale 15 pages + sold page 1)')
 
     # Setup unique : définit window.H avec toutes les helpers
     setup = (
@@ -138,28 +142,41 @@ def scrape_profile():
     inst_1 += [{"evaluate": "H.dump()"}]
     html1 = call_sb(inst_1, 'pages 1-5')
 
-    # Call 2 : pages 6-10 + sold
-    # On reload depuis la page 1 puis on saute à la page 6 directement
+    # Call 2 : pages 6-10
     inst_2 = [
         {"evaluate": setup},
         {"evaluate": "H.ck()"}, {"wait": 1500},
         {"evaluate": "H.s60()"}, {"wait": 2500},
     ]
-    # Click pages 2,3,4,5,6 to reach page 6, then continue to 10
+    # Click pages 2,3,4,5 pour atteindre la 6, puis harvest 6-10
     for n in range(2, 11):
         inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
         if n >= 6:
             inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    inst_2 += [{"evaluate": "H.dump()"}]
+    html2 = call_sb(inst_2, 'pages 6-10')
+
+    # Call 3 : pages 11-15 + sold tab
+    inst_3 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    # Navigation 2 → 15, harvest 11-15
+    for n in range(2, 16):
+        inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
+        if n >= 11:
+            inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
     # Switch to sold + harvest
-    inst_2 += [
+    inst_3 += [
         {"evaluate": "H.sw()"}, {"wait": 2500},
         {"evaluate": "H.s60()"}, {"wait": 2500},
         {"evaluate": "H.sc()"}, {"wait": 1200},
         {"evaluate": "H.hs()"},
         {"evaluate": "H.dump()"},
     ]
-    html2 = call_sb(inst_2, 'pages 6-10 + sold')
-    r = type('FakeR', (), {'text': html1 + html2, 'status_code': 200})()
+    html3 = call_sb(inst_3, 'pages 11-15 + sold')
+    r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
     def extract_all(name, source):
@@ -170,7 +187,8 @@ def scrape_profile():
         return results
 
     # html1 contient _h_fs (pages 1-5), _h_c (counters)
-    # html2 contient _h_fs (pages 6-10), _h_sd (sold)
+    # html2 contient _h_fs (pages 6-10)
+    # html3 contient _h_fs (pages 11-15), _h_sd (sold)
     fs_urls = []
     for arr in extract_all('_h_fs', r.text):
         fs_urls.extend(arr)
