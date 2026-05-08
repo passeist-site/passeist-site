@@ -1,0 +1,42 @@
+name: Daily Digest
+
+on:
+  schedule:
+    # 19h UTC = 21h Paris (heure d'été) / 20h Paris (heure d'hiver)
+    # Tom préfère un seul mail le soir résumant les 3 syncs de la journée.
+    - cron: '0 19 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: read
+  issues: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout (sparse, only tools/)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Send daily digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          DIGEST_RECIPIENT: ${{ secrets.DIGEST_RECIPIENT }}
+        run: python tools/daily_digest.py
