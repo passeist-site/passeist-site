@@ -1768,7 +1768,7 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* ============ ABOUT ============ */
 .about {
   display: none; margin-top: var(--topbar-h);
-  padding: 32px 32px 24px;
+  padding: 18px 32px 24px;
   max-width: 800px; margin-left: auto; margin-right: auto;
   position: relative;
   height: calc(100dvh - var(--topbar-h));
@@ -1795,11 +1795,12 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 /* Logo passeist en haut de la page À propos (remplace l'eyebrow "À propos") */
 .about-logo-top {
   font-family: var(--font-sans);
-  /* Tom 2026-05-08 : agrandi (était 48-84px) + plus d'air sous le logo (était 18px) */
+  /* Tom 2026-05-08 : agrandi pour la presence + serré contre le top (suppr auto)
+     pour que toute la page tienne sur 1 écran desktop */
   font-size: clamp(72px, 10vw, 132px);
   font-weight: 200; line-height: 1;
   color: var(--ink); letter-spacing: -0.04em;
-  text-align: center; margin: auto 0 48px;
+  text-align: center; margin: 0 0 24px;
 }
 .about-logo-top .dot { color: #5a7593; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
@@ -2686,7 +2687,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 <!-- HOME BRANDS STRIP (visible uniquement quand body[data-page="home"]) -->
 <section class="home-brands-strip">
   <div class="hbs-inner">
-    <div class="hbs-eyebrow">Les auteurs</div>
+    <div class="hbs-eyebrow">les auteurs</div>
     <div class="hbs-headliners">
       <a href="/marques/45rpm">45RPM</a>
       <a href="/marques/comme-des-garcons">Comme des Garçons</a>
@@ -7133,7 +7134,7 @@ s0.parentNode.insertBefore(s1,s0);
       'hero.tagline.html': "<em>mode d'auteur</em> japonaise",
       'hero.keywords': 'Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
       'hero.cta': 'Explorer',
-      'home.authors': 'Les auteurs',
+      'home.authors': 'les auteurs',
       'shop.title': 'Tous les articles',
       'archive.title': 'Archive · Pièces vendues',
       'favorites.title': 'Mes favoris',
@@ -7173,10 +7174,10 @@ s0.parentNode.insertBefore(s1,s0);
       title: 'passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
       desc: 'passéist — luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — authenticated archive and avant-garde fashion.',
       'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.archive': 'Sold', 'nav.marques': 'Authors', 'nav.about': 'About',
-      'hero.tagline.html': "Japanese <em>author fashion</em>",
+      'hero.tagline.html': "japanese <em>author fashion</em>",
       'hero.keywords': 'Japanese vintage · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
       'hero.cta': 'Explore',
-      'home.authors': 'The authors',
+      'home.authors': 'the authors',
       'shop.title': 'All items',
       'archive.title': 'Archive · Sold pieces',
       'favorites.title': 'My favorites',
