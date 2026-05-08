@@ -6789,32 +6789,60 @@ window.updateSEO = function(p) {
     setMeta('meta[name="twitter:title"]', 'content', title);
     setMeta('meta[name="twitter:description"]', 'content', desc);
     if (img) setMeta('meta[name="twitter:image"]', 'content', img);
-    // JSON-LD Product
+    // JSON-LD Product (Schema.org enrichi pour Google rich results + Merchant Center)
+    const sold = (typeof isSold === 'function' && isSold(p));
+    // priceValidUntil = +1 an depuis aujourd'hui (Google demande cette date pour Product)
+    const priceValid = new Date(Date.now() + 365*24*60*60*1000).toISOString().slice(0, 10);
     const ld = {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: p.brand + ', ' + p.type,
       brand: { '@type': 'Brand', name: p.brand },
-      image: img,
+      image: img ? [img, (typeof imgUrl === 'function') ? imgUrl(p, 0, {size:'xl'}) : img] : undefined,
       description: desc,
       sku: p.id,
+      mpn: p.id,
       category: gender,
       size: p.size,
+      color: p.color || undefined,
       offers: {
         '@type': 'Offer',
         priceCurrency: 'EUR',
         price: p.price,
-        availability: (typeof isSold === 'function' && isSold(p)) ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        priceValidUntil: priceValid,
+        availability: sold ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
         url: url,
         itemCondition: 'https://schema.org/UsedCondition',
-        seller: { '@type': 'Organization', name: 'passeist' }
+        seller: { '@type': 'Organization', name: 'passéist', url: BASE }
       }
     };
+    // Nettoie les undefined avant JSON.stringify (sinon ils deviennent "undefined" string)
+    Object.keys(ld).forEach(k => ld[k] === undefined && delete ld[k]);
+    Object.keys(ld.offers).forEach(k => ld.offers[k] === undefined && delete ld.offers[k]);
     const s = document.createElement('script');
     s.type = 'application/ld+json';
     s.setAttribute('data-seo', 'product');
     s.textContent = JSON.stringify(ld);
     head.appendChild(s);
+
+    // BreadcrumbList Schema pour la fiche produit (passeist › Boutique › {brand} › {produit})
+    const cat = (typeof getCategory === 'function') ? getCategory(p.type) : '';
+    const brandSlug = p.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'passéist', item: BASE },
+        { '@type': 'ListItem', position: 2, name: 'Boutique', item: BASE + '/shop' },
+        { '@type': 'ListItem', position: 3, name: p.brand, item: BASE + '/marques/' + brandSlug },
+        { '@type': 'ListItem', position: 4, name: p.brand + ' ' + p.type, item: url }
+      ]
+    };
+    const sb = document.createElement('script');
+    sb.type = 'application/ld+json';
+    sb.setAttribute('data-seo', 'product');
+    sb.textContent = JSON.stringify(breadcrumb);
+    head.appendChild(sb);
   } else {
     const t = 'passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
     const d = 'passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm — pièces rares chinées et authentifiées.';
