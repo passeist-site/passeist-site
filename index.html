@@ -1811,7 +1811,13 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   font-size: 13.5px; line-height: 1.55;
   color: var(--text-dim); margin-bottom: 12px; font-weight: 300;
 }
-.about-intro { max-width: 720px; margin: 0 auto; text-align: center; }
+.about-intro {
+  max-width: 720px;
+  /* Centrage vertical du bloc texte entre le logo et le bas (Tom 2026-05-08) :
+     auto top eats space above, auto sides centre horizontalement, bottom 0 reste collé à about-section */
+  margin: auto auto 0;
+  text-align: center;
+}
 .about-intro .about-body { margin-bottom: 10px; }
 .about-intro .about-body:last-child { margin-bottom: 0; }
 
@@ -1915,7 +1921,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   transition: opacity 0.2s;
 }
 .marques-cta:hover { opacity: 0.7; }
-.about-section { margin-top: auto; padding-top: 16px; }
+.about-section { margin-top: 0; margin-bottom: auto; padding-top: 16px; }
 .about-section-title {
   font-family: var(--font-mono);
   font-size: 9px;
@@ -2686,10 +2692,10 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 <section class="home-brands-strip">
   <div class="hbs-inner">
     <div class="hbs-headliners">
+      <a href="/marques/45rpm">45RPM</a>
       <a href="/marques/issey-miyake">Issey Miyake</a>
       <a href="/marques/yohji-yamamoto">Yohji Yamamoto</a>
       <a href="/marques/comme-des-garcons">Comme des Garçons</a>
-      <a href="/marques/45rpm">45RPM</a>
     </div>
     <div class="hbs-others">
       <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a> …
