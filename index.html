@@ -498,9 +498,11 @@ body[data-page="home"] { overflow: auto; height: auto; }
 }
 .hero-logo {
   font-family: var(--font-sans);
-  font-size: clamp(72px, 11vw, 168px); font-weight: 200;
+  /* Tom 2026-05-08 : agrandi (était 72-168px) pour mieux dominer la tagline en minuscules */
+  font-size: clamp(96px, 14vw, 220px); font-weight: 200;
   letter-spacing: -0.045em; line-height: 0.86;
-  margin-bottom: 20px;
+  /* + d'air entre le wordmark et "mode d'auteur japonaise" */
+  margin-bottom: 56px;
   color: var(--ink);
   opacity: 0;
   animation: heroIn 1.3s var(--ease-out) 0.3s forwards;
@@ -2299,7 +2301,7 @@ html[lang="fr"] .about.lang-en { display: none !important; }
     display: flex; flex-direction: column; align-items: center;
   }
   .hero-eyebrow { margin-bottom: 10px; }
-  .hero-logo { margin-bottom: 10px; font-size: clamp(76px, 20vw, 150px); }
+  .hero-logo { margin-bottom: 40px; font-size: clamp(96px, 22vw, 200px); }
   .hero-sub { margin-bottom: 18px; font-size: 15px; max-width: 340px; margin-left: auto; margin-right: auto; }
   .hero-cta { min-width: 0; padding: 13px 22px; margin-bottom: 0; align-self: center; font-size: 12px; }
   /* Carrousel CENTRÉ verticalement dans l'espace libre entre le CTA et le footer.
