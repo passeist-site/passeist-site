@@ -81,18 +81,46 @@ def build_digest():
         for s in data['sold_ids']: sold_ids.extend(s.split())
         for s in data['imports_ids']: imports_ids.extend(s.split())
 
-    needs_action = bool(issues) or bool(failed_runs)
+    # Filtre les issues : ACTION REQUISE seulement si D1 > 0, non-signé, ou autres erreurs.
+    # Une issue avec uniquement "X sold, Y import, 0 D1" est purement informative
+    # (les actions ont déjà été appliquées automatiquement).
+    actionable_issues = []
+    info_issues = []
+    import re as _re
+    for iss in issues:
+        title_str = iss.get('title', '')
+        # Extrait les compteurs du title : "🔄 Sync ... — N sold, M import, K D1"
+        d1_match = _re.search(r'(\d+)\s*D1', title_str)
+        unsigned_match = _re.search(r'(\d+)\s*non-signé', title_str)
+        d1_count = int(d1_match.group(1)) if d1_match else 0
+        unsigned_count = int(unsigned_match.group(1)) if unsigned_match else 0
+        # body contient parfois failed_other → considère actionnable
+        body_str = iss.get('body', '')
+        has_other_errors = 'Erreurs d\'import' in body_str or 'failed_other' in body_str
+        if d1_count > 0 or unsigned_count > 0 or has_other_errors:
+            actionable_issues.append(iss)
+        else:
+            info_issues.append(iss)
+
+    needs_action = bool(actionable_issues) or bool(failed_runs)
 
     # === Build HTML body ===
     today = datetime.now(timezone.utc).astimezone().strftime('%d/%m/%Y')
     if not needs_action and total_sold == 0 and total_imports == 0:
         title = f'✓ Sync passeist {today} — RAS'
         body_summary = '<p>Aucune action automatique sur les 24 dernières heures. Rien à faire.</p>'
+    elif not needs_action:
+        # Tout en auto, rien à valider → titre vert "tout est bon"
+        parts = []
+        if total_sold: parts.append(f'{total_sold} vendu{"s" if total_sold>1 else ""}')
+        if total_imports: parts.append(f'{total_imports} nouvel{"s" if total_imports>1 else ""}{" article" if total_imports==1 else " articles"}')
+        title = f'✓ Sync passeist {today} — ' + ' + '.join(parts) + ' (auto)'
+        body_summary = '<p style="color:#2a7d4f;">Toutes les actions ont été appliquées automatiquement. Rien à faire de ton côté.</p>'
     else:
         parts = []
         if total_sold: parts.append(f'{total_sold} bascule{"s" if total_sold>1 else ""} SOLD')
         if total_imports: parts.append(f'{total_imports} import{"s" if total_imports>1 else ""}')
-        if issues: parts.append(f'{len(issues)} issue{"s" if len(issues)>1 else ""}')
+        if actionable_issues: parts.append(f'{len(actionable_issues)} à valider')
         if failed_runs: parts.append(f'{len(failed_runs)} run{"s" if len(failed_runs)>1 else ""} échoué{"s" if len(failed_runs)>1 else ""}')
         title = f'Sync passeist {today} — ' + ', '.join(parts)
         body_summary = ''
@@ -120,14 +148,14 @@ def build_digest():
             html += f'<li><a href="{r["html_url"]}">{r["created_at"][:16].replace("T"," ")} — {r["conclusion"] or r["status"]}</a></li>'
         html += '</ul>'
 
-    if issues:
-        html += f'<h3 style="color: #c44;">⚠ {len(issues)} action{"s" if len(issues)>1 else ""} à valider manuellement</h3><ul>'
-        for iss in issues:
+    if actionable_issues:
+        html += f'<h3 style="color: #c44;">⚠ {len(actionable_issues)} action{"s" if len(actionable_issues)>1 else ""} à valider manuellement</h3><ul>'
+        for iss in actionable_issues:
             html += f'<li><a href="{iss["html_url"]}">{iss["title"]}</a></li>'
         html += '</ul>'
 
     html += '<hr style="margin-top: 32px; border: 0; border-top: 1px solid #ccc;">'
-    html += '<p style="font-size: 11px; color: #888;">Daily digest passeist · sync auto Vestiaire · 21h Paris<br>'
+    html += '<p style="font-size: 11px; color: #888;">Daily digest passeist · sync auto Vestiaire · 22h Paris<br>'
     html += f'Repo : <a href="https://github.com/{REPO}">{REPO}</a></p></body></html>'
 
     return title, html
