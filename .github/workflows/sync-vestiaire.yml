@@ -75,7 +75,7 @@ jobs:
           path: ${{ steps.sync.outputs.report }}
           retention-days: 30
 
-      - name: Auto-bascule SOLD pour B (vendus VC) + D1 (absents VC)
+      - name: Auto-bascule SOLD pour B (vendus VC) + D1 (absents VC) + auto-revert A (faux positifs)
         id: bascule
         run: |
           python << 'PYEOF'
@@ -86,6 +86,12 @@ jobs:
           with open(rep_path) as f: r = json.load(f)
           B = r.get('B', [])
           D1 = r.get('D1', [])
+          # A = items dans SOLD_IDS du site MAIS visibles dans for-sale onglet Vestiaire
+          # → faux positifs à AUTO-REVERT (Tom 2026-05-08)
+          # Sûr : Vestiaire génère un nouvel ID au relistage, donc un ID dans for-sale ne peut
+          # pas être un vrai vendu antérieur. C'est forcément un faux positif (R0bis).
+          A = r.get('A', [])
+          # Garde-fou : applique A seulement si scan for-sale fiable (≥90%)
           # Vérifie que le scan for-sale était suffisamment complet (>=90%, aligné avec
           # SCAN_THRESHOLD du script Python). 100% strict avant cassait D1 dès qu'on
           # touchait le plafond du scan (10 pages × 60). verify_item() fait la double-
@@ -115,6 +121,14 @@ jobs:
           existing_ids = re.findall(r'"(\d+)"', m.group(2))
           existing_set = set(existing_ids)
           before = len(existing_ids)
+          # AUTO-REVERT A : items à RETIRER de SOLD_IDS car visibles dans for-sale Vestiaire.
+          # Ne s'applique que si scan complet (sinon risque de retirer à tort).
+          to_revert = [pid for pid in A if pid in existing_set] if fs_complete else []
+          if to_revert:
+              print(f'A auto-revert : {len(to_revert)} items retirés de SOLD_IDS (faux positifs détectés)')
+              for pid in to_revert: print(f'  - revert {pid}')
+              existing_ids = [pid for pid in existing_ids if pid not in set(to_revert)]
+              existing_set = set(existing_ids)
           # Nouveaux IDs ajoutés AU DÉBUT (= plus récents en premier)
           new_ids = [pid for pid in to_bascule if pid not in existing_set]
           ordered_ids = new_ids + existing_ids  # nouveaux d'abord, puis les anciens dans l'ordre existant
@@ -127,11 +141,14 @@ jobs:
               sys.exit(1)
           with open('index.html', 'w') as f: f.write(html)
           added = len(new_ids)
-          print(f'OK : {added} nouveaux ids dans SOLD_IDS (B+D1 dédoublonné)')
+          reverted = len(to_revert)
+          print(f'OK : +{added} nouveaux SOLD, -{reverted} reverts (B+D1+A net)')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'count={added}\n')
               f.write(f'ids={" ".join(to_bascule)}\n')
               f.write(f'd1_skipped={" ".join(d1_skipped)}\n')
+              f.write(f'reverted={reverted}\n')
+              f.write(f'reverted_ids={" ".join(to_revert)}\n')
           PYEOF
 
       - name: Auto-import des nouvelles pièces (E + C)
@@ -178,12 +195,12 @@ jobs:
           PYEOF
 
       - name: Régénère products.json (source de vérité prix serveur)
-        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
+        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
           python tools/export_products.py
 
-      - name: Commit + push (bascules SOLD + imports + products.json)
-        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
+      - name: Commit + push (bascules SOLD + reverts + imports + products.json)
+        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
@@ -196,6 +213,9 @@ jobs:
           MSG="auto-sync $(date -u +%Y-%m-%d_%H:%M)"
           if [ "${{ steps.bascule.outputs.count }}" != "0" ] && [ -n "${{ steps.bascule.outputs.count }}" ]; then
             MSG="$MSG | sold: ${{ steps.bascule.outputs.count }}"
+          fi
+          if [ "${{ steps.bascule.outputs.reverted }}" != "0" ] && [ -n "${{ steps.bascule.outputs.reverted }}" ]; then
+            MSG="$MSG | revert: ${{ steps.bascule.outputs.reverted }}"
           fi
           if [ "${{ steps.import_e.outputs.imported }}" != "0" ] && [ -n "${{ steps.import_e.outputs.imported }}" ]; then
             MSG="$MSG | imports: ${{ steps.import_e.outputs.imported }}"
