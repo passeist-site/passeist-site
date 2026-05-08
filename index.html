@@ -1766,7 +1766,7 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* ============ ABOUT ============ */
 .about {
   display: none; margin-top: var(--topbar-h);
-  padding: 18px 32px 24px;
+  padding: 32px 32px 24px;
   max-width: 800px; margin-left: auto; margin-right: auto;
   position: relative;
   height: calc(100dvh - var(--topbar-h));
@@ -1793,12 +1793,11 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 /* Logo passeist en haut de la page À propos (remplace l'eyebrow "À propos") */
 .about-logo-top {
   font-family: var(--font-sans);
-  /* Tom 2026-05-08 : agrandi pour la presence + serré contre le top (suppr auto)
-     pour que toute la page tienne sur 1 écran desktop */
+  /* Logo centré verticalement (auto top) avec mentions légales poussées en bas par .about-section margin-top:auto */
   font-size: clamp(72px, 10vw, 132px);
   font-weight: 200; line-height: 1;
   color: var(--ink); letter-spacing: -0.04em;
-  text-align: center; margin: 0 0 24px;
+  text-align: center; margin: auto 0 48px;
 }
 .about-logo-top .dot { color: #5a7593; font-weight: 400; font-size: 1.3em; line-height: 0.6; vertical-align: baseline; }
 .about-title {
@@ -1811,13 +1810,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   font-size: 13.5px; line-height: 1.55;
   color: var(--text-dim); margin-bottom: 12px; font-weight: 300;
 }
-.about-intro {
-  max-width: 720px;
-  /* Centrage vertical du bloc texte entre le logo et le bas (Tom 2026-05-08) :
-     auto top eats space above, auto sides centre horizontalement, bottom 0 reste collé à about-section */
-  margin: auto auto 0;
-  text-align: center;
-}
+.about-intro { max-width: 720px; margin: 0 auto; text-align: center; }
 .about-intro .about-body { margin-bottom: 10px; }
 .about-intro .about-body:last-child { margin-bottom: 0; }
 
@@ -1921,7 +1914,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   transition: opacity 0.2s;
 }
 .marques-cta:hover { opacity: 0.7; }
-.about-section { margin-top: 0; margin-bottom: auto; padding-top: 16px; }
+.about-section { margin-top: auto; padding-top: 16px; }
 .about-section-title {
   font-family: var(--font-mono);
   font-size: 9px;
