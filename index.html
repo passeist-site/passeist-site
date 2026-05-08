@@ -641,7 +641,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   display: flex; flex-wrap: wrap; gap: 28px 36px;
   margin-bottom: 64px; align-items: flex-end;
 }
-.filter-field { display: flex; flex-direction: column; gap: 12px; }
+.filter-field { display: flex; flex-direction: column; gap: 4px; }
 .filter-label {
   font-family: var(--font-sans);
   font-size: 15px; color: var(--ink); font-weight: 500;
@@ -1002,17 +1002,13 @@ body[data-page="home"] { overflow: auto; height: auto; }
   white-space: nowrap;
 }
 
-/* Archive / sold — photos floutées par défaut, défloute au hover (Tom 2026-05-08) */
+/* Archive / sold — photo nette + badge SOLD overlay + pas de fav (Tom 2026-05-08) */
 .product-card.sold .product-img { opacity: 1; }
 .product-card.sold .product-img-primary {
-  filter: blur(14px);
-  transition: filter 0.45s var(--ease-out), opacity 0.4s var(--ease-out);
-  cursor: pointer;
+  filter: none;
+  transition: opacity 0.4s var(--ease-out);
 }
-.product-card.sold:hover .product-img-primary,
-.product-card.sold:focus-within .product-img-primary {
-  filter: blur(0);
-}
+.product-card.sold .fav-btn { display: none; }
 .product-card.sold .product-size { visibility: hidden; }
 .sold-badge {
   position: absolute; top: 12px; right: 12px;
@@ -5032,10 +5028,11 @@ function renderGrid() {
     const slug = (typeof productSlug === 'function') ? productSlug(p) : p.id;
     return `
     <a class="product-card ${sold ? 'sold' : ''}" href="/product/${slug}" data-id="${p.id}">
-      <button class="fav-btn ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+      ${sold ? '' : `<button class="fav-btn ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
-      </button>
+      </button>`}
       <div class="product-img loading">
+        ${sold ? `<span class="sold-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
       </div>
       <div class="product-body">
