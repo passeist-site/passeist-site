@@ -1002,14 +1002,43 @@ body[data-page="home"] { overflow: auto; height: auto; }
   white-space: nowrap;
 }
 
-/* Archive / sold — photo nette + badge SOLD overlay + pas de fav (Tom 2026-05-08) */
-.product-card.sold .product-img { opacity: 1; }
+/* Archive / sold — photo nette + ruban VENDU diagonal + pas de fav, pas de prix (Tom 2026-05-08) */
+.product-card.sold .product-img {
+  opacity: 1;
+  position: relative;
+  overflow: hidden;
+}
 .product-card.sold .product-img-primary {
   filter: none;
   transition: opacity 0.4s var(--ease-out);
 }
 .product-card.sold .fav-btn { display: none; }
 .product-card.sold .product-size { visibility: hidden; }
+.product-card.sold .product-price-wrap { display: none; }
+.product-card.sold .product-name-row { justify-content: flex-start; }
+
+/* Ruban VENDU diagonal dans l'angle haut-droit de la photo */
+.sold-stamp {
+  position: absolute;
+  top: 22px;
+  right: -54px;
+  transform: rotate(45deg);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 64px;
+  letter-spacing: 0.22em;
+  font-weight: 400;
+  text-transform: uppercase;
+  z-index: 4;
+  pointer-events: none;
+  border-top: 1px solid rgba(244,241,236,0.18);
+  border-bottom: 1px solid rgba(244,241,236,0.18);
+}
+@media (max-width: 800px) {
+  .sold-stamp { top: 14px; right: -42px; padding: 4px 50px; font-size: 9px; }
+}
 .sold-badge {
   position: absolute; top: 12px; right: 12px;
   background: var(--bg); color: var(--ink);
@@ -5032,7 +5061,7 @@ function renderGrid() {
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>`}
       <div class="product-img loading">
-        ${sold ? `<span class="sold-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
+        ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
       </div>
       <div class="product-body">
