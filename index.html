@@ -356,9 +356,8 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   .chat-launcher .chat-bubble { width: 38px; height: 38px; }
   /* Sur mobile, pas de bouton CHAT sur la page d'accueil */
   body[data-page="home"] .chat-launcher { display: none !important; }
-  /* Masque aussi le bouton Panier sur l'accueil mobile,
-     SAUF quand une fiche produit est ouverte (body.detail-open). */
-  body[data-page="home"]:not(.detail-open) .topbar .cart-btn { display: none !important; }
+  /* Bouton Panier : visible partout incluant l'accueil mobile (Tom 2026-05-08).
+     L'ancienne règle qui le masquait sur home a été retirée. */
 }
 /* (Tentative de repositionnement Tawk retirée — laisse la fenêtre s'afficher
    à son emplacement natif en bas-droite) */
