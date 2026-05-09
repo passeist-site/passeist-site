@@ -43,13 +43,13 @@
 
 <style>
 :root {
-  /* Gris foncé — ardoise, papier sumi-e mouillé */
+  /* Gris foncé, ardoise, papier sumi-e mouillé */
   --bg: #1C2230;            /* plan principal, plus dense */
   --bg-deep: #131826;       /* ombre */
   --bg-soft: #262D3C;       /* reflet */
   --bg-highlight: #313847;  /* plan éclairé */
 
-  /* Noir encre de Chine — outrenoir */
+  /* Noir encre de Chine, outrenoir */
   --ink: #f4f1ec;
   --text: #f4f1ec;
   --text-dim: #d6d2cc;
@@ -107,7 +107,7 @@ img { -webkit-user-drag: none; user-select: none; }
 
 a { color: inherit; }
 
-/* ============ SIDE META — label rotatif sur la tranche gauche ============ */
+/* ============ SIDE META, label rotatif sur la tranche gauche ============ */
 .side-meta {
   position: fixed; left: 18px; bottom: 120px;
   transform-origin: left bottom;
@@ -129,7 +129,7 @@ a { color: inherit; }
   position: relative; z-index: 2;
 }
 
-/* ============ NAV INK BLOBS — boutons dans taches d'encre ============ */
+/* ============ NAV INK BLOBS, boutons dans taches d'encre ============ */
 .nav-ink {
   position: absolute;
   top: -6px; bottom: -6px; left: -10px; right: -10px;
@@ -152,7 +152,7 @@ a { color: inherit; }
   transition: background 0.3s var(--ease);
 }
 
-/* ============ TOPBAR ICONS — Recherche, Profil, Favoris, Panier ============ */
+/* ============ TOPBAR ICONS, Recherche, Profil, Favoris, Panier ============ */
 .topbar-icons {
   display: flex; align-items: center; gap: 18px;
 }
@@ -214,7 +214,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   .topbar-icon svg { width: 18px; height: 18px; }
 }
 
-/* Bulle de chat — animation wiggle toutes les 10 s */
+/* Bulle de chat, animation wiggle toutes les 10 s */
 .topbar-icon-chat svg {
   transform-origin: 50% 85%; /* pivote par le bas de la bulle */
   animation: chatWiggle 6s ease-in-out infinite;
@@ -261,7 +261,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   transition: opacity 0.25s var(--ease);
 }
 .top-nav a > span { position: relative; z-index: 1; }
-/* Les anciens encarts noirs "ink-rough" sont masqués — on garde juste le texte */
+/* Les anciens encarts noirs "ink-rough" sont masqués, on garde juste le texte */
 .top-nav a .nav-ink { display: none; }
 .top-nav a:hover { opacity: 0.55; }
 .top-nav a.active {
@@ -289,7 +289,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .cart-btn > span { position: relative; z-index: 1; }
 .cart-btn .nav-ink { opacity: 1; transition: opacity 0.25s var(--ease), transform 0.35s var(--ease-out); }
 .cart-btn:hover .nav-ink { opacity: 0.88; transform: scale(1.04); }
-/* Animation d'ajout au panier — scale bounce sur toute la tache d'encre */
+/* Animation d'ajout au panier, scale bounce sur toute la tache d'encre */
 @keyframes cartBump {
   0%   { transform: scale(1); }
   30%  { transform: scale(1.18); }
@@ -299,7 +299,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .cart-btn.cart-bump .nav-ink { animation: cartBump 0.55s var(--ease-out); }
 .cart-btn.cart-bump .cart-count { animation: cartBump 0.55s var(--ease-out) 0.05s; display: inline-block; }
 
-/* Image volante vers le panier — bords nets, sans cadre noir ni flou */
+/* Image volante vers le panier, bords nets, sans cadre noir ni flou */
 .fly-to-cart {
   position: fixed;
   z-index: 9999;
@@ -359,7 +359,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   /* Bouton Panier : visible partout incluant l'accueil mobile (Tom 2026-05-08).
      L'ancienne règle qui le masquait sur home a été retirée. */
 }
-/* (Tentative de repositionnement Tawk retirée — laisse la fenêtre s'afficher
+/* (Tentative de repositionnement Tawk retirée, laisse la fenêtre s'afficher
    à son emplacement natif en bas-droite) */
 /* Backdrop cliquable pour fermer le chat en touchant hors de la fenêtre.
    z-index > topbar/overlays mais < iframe Tawk (qui monte à ~999999999). */
@@ -371,7 +371,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   transition: opacity 0.3s var(--ease);
 }
 .chat-backdrop.open { opacity: 1; pointer-events: auto; }
-/* Croix de fermeture custom — flotte en haut-gauche de l'écran (toujours visible) */
+/* Croix de fermeture custom, flotte en haut-gauche de l'écran (toujours visible) */
 .chat-close-x {
   position: fixed;
   z-index: 2147483646; /* juste sous l'iframe Tawk (max int) */
@@ -466,9 +466,9 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 /* Contenu au-dessus du dégradé */
 .hero-content { position: relative; z-index: 5; }
 
-/* Accueil plein écran sans scroll — footer visible */
+/* Accueil plein écran sans scroll, footer visible */
 body[data-page="home"] { overflow: auto; height: auto; }
-/* Lumière rasante — gradient diagonal subtil sur fond ardoise */
+/* Lumière rasante, gradient diagonal subtil sur fond ardoise */
 /* Fond uniforme sans gradient */
 
 /* Gestes d'encre en fond du hero */
@@ -581,7 +581,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   transition: transform 0.45s var(--ease-out);
   display: inline-flex; position: relative;
 }
-/* Hover sans translation — la carte reste en place */
+/* Hover sans translation, la carte reste en place */
 .hero-marquee-card:hover { transform: none; }
 .hero-marquee-card img {
   height: 100%; width: auto; display: block;
@@ -849,7 +849,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   border-radius: 50%;
   transition: background 0.25s var(--ease), transform 0.25s var(--ease);
 }
-/* Variante détail produit — bouton inline avec label */
+/* Variante détail produit, bouton inline avec label */
 .btn-fav-detail {
   position: static !important;
   width: auto !important; height: auto !important;
@@ -878,7 +878,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   .fav-btn { top: 8px; right: 8px; width: 32px; height: 32px; }
   .fav-btn svg { width: 16px; height: 16px; }
 }
-/* État vide — page Favoris */
+/* État vide, page Favoris */
 .empty-state {
   grid-column: 1 / -1;
   text-align: center; padding: 80px 20px;
@@ -987,7 +987,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   padding: 4px 12px;
   display: inline-flex; align-items: center;
   background: #f4f1ec;
-  /* Coin inférieur-gauche biseauté (8px) — effet étiquette */
+  /* Coin inférieur-gauche biseauté (8px), effet étiquette */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 /* Masque l'ancienne tache rugueuse */
@@ -1002,7 +1002,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   white-space: nowrap;
 }
 
-/* Archive / sold — photo nette + ruban VENDU diagonal + pas de fav, pas de prix (Tom 2026-05-08) */
+/* Archive / sold, photo nette + ruban VENDU diagonal + pas de fav, pas de prix (Tom 2026-05-08) */
 .product-card.sold .product-img {
   opacity: 1;
   position: relative;
@@ -1121,8 +1121,8 @@ body[data-page="home"] { overflow: auto; height: auto; }
   object-fit: initial;
 }
 /* Photos secondaires : bordures blanches rognées server-side (wsrv.nl?trim=10).
-   L'image s'affiche dans sa proportion naturelle — en général portrait ~1070x1600
-   après rognage — sans recadrage carré. La grille peut avoir des lignes de hauteur
+   L'image s'affiche dans sa proportion naturelle, en général portrait ~1070x1600
+   après rognage, sans recadrage carré. La grille peut avoir des lignes de hauteur
    variable, c'est voulu : on privilégie la lisibilité du vêtement. */
 .detail-gallery .thumb {
   position: relative;
@@ -1142,7 +1142,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .detail-gallery img:hover { transform: none; }
 .detail-info { position: sticky; top: 112px; align-self: start; }
 
-/* ============ SIMILAR PRODUCTS CAROUSEL — boucle infinie type hero-marquee ============ */
+/* ============ SIMILAR PRODUCTS CAROUSEL, boucle infinie type hero-marquee ============ */
 .similar-section {
   border-top: 1px solid var(--line);
   padding: 32px 24px 48px;
@@ -1211,7 +1211,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   line-height: 1.02;
   margin-left: 0;
   padding-left: 0;
-  /* Petite marque noire devant le nom de la marque — cohérente avec les cartes grille */
+  /* Petite marque noire devant le nom de la marque, cohérente avec les cartes grille */
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1237,7 +1237,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   padding: 0 20px;
   margin: 0;
   background: #f4f1ec;
-  /* Coin inférieur-gauche biseauté (12px) — effet étiquette, proportionnel à la hauteur */
+  /* Coin inférieur-gauche biseauté (12px), effet étiquette, proportionnel à la hauteur */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 /* Remplace la tache rugueuse par l'étiquette biseautée */
@@ -1349,7 +1349,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   font-family: var(--font-mono);
   letter-spacing: 0;
 }
-/* Réf produit — minuscule, discret, clic = copie ID. Usage interne Tom (gestion commandes). */
+/* Réf produit, minuscule, discret, clic = copie ID. Usage interne Tom (gestion commandes). */
 .detail-ref {
   margin-top: 16px;
   font-size: 9.5px;
@@ -1367,7 +1367,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .detail-ref.copied { color: #4a9; }
 .detail-ref.copied::after { content: ' ✓'; }
 
-/* Archive / sold — on garde les attributs + description visibles (Tom 25/04).
+/* Archive / sold, on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
 .detail.detail-sold .detail-note { display: none; }
 
@@ -1379,7 +1379,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   display: block;
   grid-column: 1 / -1;  /* prend toute la largeur de la grille 2-col */
 }
-/* Flèches discrètes prev/next sur main photo — desktop only (hover) */
+/* Flèches discrètes prev/next sur main photo, desktop only (hover) */
 .detail-gallery .main-arrow {
   position: absolute;
   top: 50%;
@@ -1814,7 +1814,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 .about-intro .about-body { margin-bottom: 10px; }
 .about-intro .about-body:last-child { margin-bottom: 0; }
 
-/* === MARQUES — pure typo, hiérarchie editoriale === */
+/* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
   min-height: 0 !important;
@@ -1898,7 +1898,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   .m-brand { font-size: 11px; padding: 9px 6px; }
 }
 
-/* === HOME BRANDS — proposition B (typo) === */
+/* === HOME BRANDS, proposition B (typo) === */
 
 .marques-cta {
   display: inline-block;
@@ -2372,7 +2372,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 
   .filter-bar .filter-field,
   .filter-bar .filter-reset { display: none; }
-  /* Filtres figés sous la topbar — toujours accessibles en scrollant.
+  /* Filtres figés sous la topbar, toujours accessibles en scrollant.
      position: fixed (plus robuste que sticky qui peut casser avec overflow-x: hidden). */
   .filter-bar {
     position: fixed; top: 82px; left: 0; right: 0;
@@ -2432,8 +2432,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  /* La topbar mobile a une hauteur dynamique (logo + tabs sur 2 lignes) —
-     le .detail commence pile en dessous via la variable --actual-topbar-h
+  /* La topbar mobile a une hauteur dynamique (logo + tabs sur 2 lignes), le .detail commence pile en dessous via la variable --actual-topbar-h
      calculée par JS au layout. */
   .detail { top: var(--actual-topbar-h, 82px); }
   .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
@@ -2512,7 +2511,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   .detail-price { font-size: 14px; }
   .detail-attrs { grid-template-columns: 1fr 1fr; }
 
-  /* Page À propos en 1 seul écran sans défilement (mobile) — compact */
+  /* Page À propos en 1 seul écran sans défilement (mobile), compact */
   .about {
     padding: 12px 18px 14px;
     height: calc(100dvh - var(--topbar-h-mobile));
@@ -2810,7 +2809,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 <section class="about lang-en" id="about-page-en">
   <div class="about-logo-top">passéist<span class="dot">.</span></div>
   <div class="about-intro">
-  <p class="about-body">passéist discovers, authenticates and offers you pieces of Japanese auteur fashion — a modest tracker of style and history.</p>
+  <p class="about-body">passéist discovers, authenticates and offers you pieces of Japanese auteur fashion, a modest tracker of style and history.</p>
   <p class="about-body">The selection spans iconic houses like Issey Miyake, Yohji Yamamoto, Comme des Garçons, alongside more confidential names such as 45RPM, Yoshiki Hishinuma, Junko Koshino…</p>
   <p class="about-body">Each piece is photographed in detail, measured, and described honestly.</p>
   </div>
@@ -2867,7 +2866,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 <section class="about lang-fr" id="privacy-page">
   <div class="about-eyebrow">Confidentialité</div>
   <h2 class="about-title">Politique de confidentialité</h2>
-  <p class="about-body"><strong>Responsable du traitement.</strong> passeist — info@passeist.com.</p>
+  <p class="about-body"><strong>Responsable du traitement.</strong> passeist, info@passeist.com.</p>
   <p class="about-body"><strong>Données collectées.</strong> Lors d'une commande&nbsp;: nom, prénom, adresse postale, email, téléphone (facultatif). Ces données sont nécessaires à l'exécution de la vente et ne sont utilisées qu'à cette fin.</p>
   <p class="about-body"><strong>Finalités.</strong> Traitement des commandes, préparation de la livraison, communication relative au suivi. Aucune donnée n'est revendue ou transmise à des tiers à des fins commerciales.</p>
   <p class="about-body"><strong>Destinataires.</strong> Prestataire de paiement (Stripe), transporteur (La Poste / Chronopost / Colissimo), et passeist seule.</p>
@@ -2881,7 +2880,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 <section class="about lang-en" id="privacy-page-en">
   <div class="about-eyebrow">Privacy</div>
   <h2 class="about-title">Privacy Policy</h2>
-  <p class="about-body"><strong>Data controller.</strong> passéist — info@passeist.com.</p>
+  <p class="about-body"><strong>Data controller.</strong> passéist, info@passeist.com.</p>
   <p class="about-body"><strong>Data collected.</strong> When ordering: first name, last name, postal address, email, phone (optional). This data is necessary for order fulfilment and used solely for that purpose.</p>
   <p class="about-body"><strong>Purposes.</strong> Order processing, shipping preparation, tracking communication. No data is resold or transferred to third parties for commercial purposes.</p>
   <p class="about-body"><strong>Recipients.</strong> Payment provider (Stripe), carrier (La Poste / Chronopost / Colissimo), and passéist alone.</p>
@@ -3012,7 +3011,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
       <div class="detail-availability" id="d-availability">
         Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.
       </div>
-      <!-- Réf. produit (discret, pour usage interne — clic = copie ID dans presse-papier) -->
+      <!-- Réf. produit (discret, pour usage interne, clic = copie ID dans presse-papier) -->
       <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div>
     </div>
   </div>
@@ -3047,7 +3046,7 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
       <select id="cart-country" onchange="updateCartTotals()"></select>
     </div>
     <div class="cart-line"><span class="cart-line-label">Sous-total</span><span id="cart-subtotal">0 €</span></div>
-    <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">—</span></div>
+    <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">,</span></div>
     <div class="cart-total"><span>Total</span><span id="cart-total">0 €</span></div>
     <button class="btn btn-primary cart-checkout" id="cart-checkout-btn" onclick="checkoutWithStripe()">Procéder au paiement</button>
   </div>
@@ -3337,7 +3336,7 @@ const IMG_SRC_BASE = 'https://images.vestiairecollective.com/images/resized/w=16
 const IMG_REORDER = {};
 // Override du suffixe de variante Vestiaire (par défaut "_2", certains produits utilisent "_1" ou "_3")
 const IMG_SUFFIX = {
-  '65404316': '_1',   // Yohji Y's for men — Tee coton noir (photos uniquement en _1)
+  '65404316': '_1',   // Yohji Y's for men, Tee coton noir (photos uniquement en _1)
 };
 
 const PRODUCTS = [
@@ -3393,7 +3392,7 @@ const PRODUCTS = [
   {"id": "66635461", "brand": "COMME DES GARCONS", "type": "Gilet en laine", "size": "M", "price": "180", "gender": "h", "color": "Navy", "path": "/women-clothing/knitwear/comme-des-garcons/navy-wool-comme-des-garcons-knitwear-66635461.shtml", "slug": "navy-wool-comme-des-garcons-knitwear-66635461", "n": 12, "desc": "Comme des garçons \n\nCollection tricot sans doute hiver 2010 \n\nRavissant cardigan marinière très doux en alpaga 50% et laine 50%. \n\nParfait état \n\nDimensions :\n\n- épaule à épaule : 40cm\n- aisselle à aisselle : 46cm\n- longueur dos depuis bas du col : 59cm \n- longueur manche depuis épaule 62cm et depuis aisselle :49cm\n- ouverture bas :34cm", "desc_en": "Like boys \n\nKnitting collection undoubtedly winter 2010 \n\nLovely, very soft sailor cardigan in 50% alpaca and 50% wool. \n\nPerfect condition \n\nDimensions:\n\n- shoulder to shoulder: 40cm\n- armpit to armpit: 46cm\n- back length from the bottom of the collar: 59cm \n- sleeve length from shoulder 62cm and from armpit: 49cm\n- bottom opening: 34cm", "type_en": "Wool cardigan", "size_en": "M", "sq": true},
   {"id": "66633321", "brand": "ISSEY MIYAKE", "type": "Blouse", "size": "Taille Unique", "price": "250", "gender": "h", "color": "Grey", "path": "/women-clothing/tops/issey-miyake/grey-polyester-issey-miyake-top-66633321.shtml", "slug": "grey-polyester-issey-miyake-top-66633321", "n": 14, "desc": "Issey Miyake \n\nCollection femme hiver 1995\n\nRavissante blouse col tortue en plissé diagonal asymétrique de polyester 100%. \nCouleur gris taupe. Le toucher est très agréable, l’ensemble reste assez stretche sur une taille déjà grande donc facilement adaptable à tout les gabarits. \n\nTaille indiquée M \n\nDimensions non étiré :\n\n- épaule à épaule : 43cm\n- aisselle à aisselle : 42cm\n- longueur dos depuis bas du col : 71cm \n- longueur manche depuis épaule 61cm et depuis aisselle :48cm\n- ouverture bas :44cm", "desc_en": "Issey Miyake \n\nWomen's winter 1995 collection\n\nLovely turtle neck blouse in asymmetrical diagonal pleat in 100% polyester. \nTaupe gray color. The touch is very pleasant, the whole remains quite stretchy on an already large size so easily adaptable to all sizes. \n\nSize indicated M \n\nUnstretched dimensions:\n\n- shoulder to shoulder: 43cm\n- armpit to armpit: 42cm\n- back length from the bottom of the collar: 71cm \n- sleeve length from shoulder 61cm and from armpit: 48cm\n- bottom opening: 44cm", "type_en": "Blouse", "size_en": "One size", "sq": true},
   {"id": "66633868", "brand": "YOHJI YAMAMOTO", "type": "Tee shirt", "size": "M", "price": "170", "gender": "h", "color": "Brown", "path": "/men-clothing/t-shirts/yohji-yamamoto/brown-cotton-yohji-yamamoto-t-shirt-66633868.shtml", "slug": "brown-cotton-yohji-yamamoto-t-shirt-66633868", "n": 14, "desc": "Yohji Yamamoto \n\nCollection hiver 2019\n\nRavissant t-shirt manches longues en coton 50% et rayonne 50%. Jolie détails de volant et effet asymétrique. Couleur brun taupe. \n\nParfait état \n\nTaille indiquée 3 convient à un M à l’homme \n\nDimensions :\n\n- épaule à épaule : 50cm\n- aisselle à aisselle : 56cm\n- longueur dos depuis bas du col : 70cm \n- longueur manche depuis épaule 61cm et depuis aisselle :48cm\n- ouverture bas :54cm", "desc_en": "Yohji Yamamoto \n\nWinter 2019 collection\n\nLovely long-sleeved t-shirt in 50% cotton and 50% rayon. Pretty ruffle details and asymmetrical effect. Taupe brown color. \n\nPerfect condition \n\nSize indicated 3 suitable for an M for men \n\nDimensions:\n\n- shoulder to shoulder: 50cm\n- armpit to armpit: 56cm\n- back length from the bottom of the collar: 70cm \n- sleeve length from shoulder 61cm and from armpit: 48cm\n- bottom opening: 54cm", "type_en": "T-shirt", "size_en": "M", "sq": true},
-  {"id": "66632730", "brand": "YOHJI YAMAMOTO", "type": "Veste", "size": "M", "price": "250", "gender": "h", "color": "Black", "path": "/men-clothing/jackets/yohji-yamamoto/black-cotton-yohji-yamamoto-jacket-66632730.shtml", "slug": "black-cotton-yohji-yamamoto-jacket-66632730", "n": 15, "desc": "Yohji Yamamoto — Ground Y\n\n\nSweat-chemise type vareuse à long col zippé, en coton fin 100 %. Boutons de nacre brune, coupe ample.\n\nÉtat impeccable, comme neuf.\n\nTaille indiquée 3 — équivaut à un M homme.\n\n\nMesures :\n\n-épaule à épaule : 52 cm\n-aisselle à aisselle : 62 cm\n-longueur dos (depuis le bas du col) : 84 cm\n-longueur manche : 61 cm depuis l'épaule, 52 cm depuis l'aisselle\n-ouverture bas : 60 cm", "desc_en": "Yohji Yamamoto — Ground Y\n\n\nJacket-style sweatshirt with long zipped collar, in 100% fine cotton. Brown mother-of-pearl buttons, loose fit.\n\nImpeccable condition, like new.\n\nSize indicated 3 — equivalent to a men's M.\n\n\nMeasurements:\n\n-shoulder to shoulder: 52 cm\n-armpit to armpit: 62 cm\n-back length (from the bottom of the collar): 84 cm\n-sleeve length: 61 cm from the shoulder, 52 cm from the armpit\n-bottom opening: 60 cm", "type_en": "Vest", "size_en": "M", "sq": true},
+  {"id": "66632730", "brand": "YOHJI YAMAMOTO", "type": "Veste", "size": "M", "price": "250", "gender": "h", "color": "Black", "path": "/men-clothing/jackets/yohji-yamamoto/black-cotton-yohji-yamamoto-jacket-66632730.shtml", "slug": "black-cotton-yohji-yamamoto-jacket-66632730", "n": 15, "desc": "Yohji Yamamoto, Ground Y\n\n\nSweat-chemise type vareuse à long col zippé, en coton fin 100 %. Boutons de nacre brune, coupe ample.\n\nÉtat impeccable, comme neuf.\n\nTaille indiquée 3, équivaut à un M homme.\n\n\nMesures :\n\n-épaule à épaule : 52 cm\n-aisselle à aisselle : 62 cm\n-longueur dos (depuis le bas du col) : 84 cm\n-longueur manche : 61 cm depuis l'épaule, 52 cm depuis l'aisselle\n-ouverture bas : 60 cm", "desc_en": "Yohji Yamamoto, Ground Y\n\n\nJacket-style sweatshirt with long zipped collar, in 100% fine cotton. Brown mother-of-pearl buttons, loose fit.\n\nImpeccable condition, like new.\n\nSize indicated 3, equivalent to a men's M.\n\n\nMeasurements:\n\n-shoulder to shoulder: 52 cm\n-armpit to armpit: 62 cm\n-back length (from the bottom of the collar): 84 cm\n-sleeve length: 61 cm from the shoulder, 52 cm from the armpit\n-bottom opening: 60 cm", "type_en": "Vest", "size_en": "M", "sq": true},
   {"id": "66635329", "brand": "YOHJI YAMAMOTO", "type": "Veste", "size": "L", "price": "440", "gender": "h", "color": "Black", "path": "/men-clothing/jackets/yohji-yamamoto/black-cotton-yohji-yamamoto-jacket-66635329.shtml", "slug": "black-cotton-yohji-yamamoto-jacket-66635329", "n": 16, "desc": "Yohji Yamamoto\n\nCollection Y’s for men printemps été 2017\n\nTrès long et oversized cardigan en rayonne 50%, coton 33% et lin 17%.\n\nParfait état\n\nTaille indiquée 3, taille m oversized convient à plus si besoin\n\nDimensions :\n\n- épaule à épaule : 51cm\n- aisselle à aisselle : 64cm\n- longueur dos depuis bas du col : 114cm\n- longueur manche depuis épaule 72cm et depuis aisselle :54cm\n- ouverture bas :75cm", "desc_en": "Yohji Yamamoto\n\nY’s for men spring summer 2017 collection\n\nVery long and oversized cardigan in 50% rayon, 33% cotton and 17% linen.\n\nPerfect condition\n\nSize indicated 3, size m oversized suitable for more if necessary\n\nDimensions:\n\n- shoulder to shoulder: 51cm\n- armpit to armpit: 64cm\n- back length from the bottom of the collar: 114cm\n- sleeve length from shoulder 72cm and from armpit: 54cm\n- bottom opening: 75cm", "type_en": "Vest", "size_en": "L", "sq": true},
   {"id": "66634431", "brand": "YOHJI YAMAMOTO", "type": "Pantalon large", "size": "S", "price": "340", "gender": "h", "color": "Black", "path": "/women-clothing/trousers/yohji-yamamoto/black-cotton-yohji-yamamoto-trousers-66634431.shtml", "slug": "black-cotton-yohji-yamamoto-trousers-66634431", "n": 15, "desc": "Yohji Yamamoto \n\nCollection B automne hiver 2020 (photo portée disponible par message) \n\nMagnifique pantalon double couche (layered pants). \nPartie intérieure marine en lin 65% et rayonne 35% \nPartie extérieure noir en coton 100%. Cordon de serrage à chaque cheville ou mollet (x4)  \n\nParfait état \n\nTaille indiquée 1 convient à un S à la femme\n\n\nTaille 36cm très légèrement élastiqué et cordon d’ajustement \nHanches 50cm\nLongueur jambes 99cm et 69cm depuis l’entre jambe", "desc_en": "Yohji Yamamoto \n\nCollection B fall winter 2020 (worn photo available via message) \n\nMagnificent double layered pants. \nNavy interior part in 65% linen and 35% rayon \nBlack outer part in 100% cotton. Drawstring at each ankle or calf (x4)  \n\nPerfect condition \n\nSize indicated 1 suitable for an S for women\n\n\n36cm waist, very slightly elasticated and adjustment cord \nHips 50cm\nLeg length 99cm and 69cm from the crotch", "type_en": "Large pants", "size_en": "S", "sq": true},
   {"id": "66633029", "brand": "ISSEY MIYAKE", "type": "Costume en laine", "size": "L", "price": "610", "gender": "h", "color": "Navy", "path": "/men-clothing/suits/issey-miyake/navy-wool-issey-miyake-suit-66633029.shtml", "slug": "navy-wool-issey-miyake-suit-66633029", "n": 25, "desc": "Issey Miyake\n\nCollection homme automne hiver 1991\n\nTrès très rare costume complet bleu marine comme neuf.\n\nAttention design futuriste pour l'époque.\n\nLa veste :\nOversized à épaules larges (le prémice du\nBalanciaga période Demna) raglan plongeantes avec jolie détail de couture. La veste en laine 100% et légèrement matelassée et rembourrée comme un manteau. Deux boutons en position basse. Très belles poches latérales en diagonale.\n\nLe pantalon:\nEn laine 100%, à pinces,jambes larges, taille à dos élastiquée, ourlet à deux mini boutons pressions par jambe pour jouer sur la longueur si besoin.\n\nÉtat exceptionnel pour cet ensemble\n\nTaille indiquée L-XL je conseille un L pas plus. Et si vous aimez en oversized le pantalon et la veste peuvent convenir à un M\n\nDimensions veste:\n- épaule à épaule : raglan\n- aisselle à aisselle : 60cm\n- longueur dos depuis bas du col : 81cm et 86 à l'avant\n- longueur manche depuis col 78cm et depuis aisselle : 41cm\n- ouverture bas :60cm\n\n\nDimensions pantalon:\n-taille de 37 à 48cm\n-Longueur jambe ourlet fermés 101cm et 74cm\ndepuis l'entre jambe\n-Ourlet 21cm", "desc_en": "Issey Miyake\n\nMen's fall winter 1991 collection\n\nVery very rare complete navy blue suit like new.\n\nAttention futuristic design for the time.\n\nThe jacket:\nOversized with broad shoulders (the beginning of\nBalanciaga period Demna) plunging raglan with pretty stitching detail. The 100% wool jacket is lightly quilted and padded like a coat. Two buttons in the lower position. Very nice diagonal side pockets.\n\nThe pants:\nIn 100% wool, pleated, wide legs, elasticated back waist, hem with two mini snap buttons per leg to play along the length if necessary.\n\nExceptional condition for this set\n\nSize indicated L-XL I recommend an L no more. And if you like oversized pants and jacket can fit an M\n\nJacket dimensions:\n- shoulder to shoulder: raglan\n- armpit to armpit: 60cm\n- back length from the bottom of the collar: 81cm and 86 at the front\n- sleeve length from collar 78cm and from armpit: 41cm\n- bottom opening: 60cm\n\n\nTrouser dimensions:\n-size from 37 to 48cm\n-Leg length closed hem 101cm and 74cm\nfrom between the legs\n-Hem 21cm", "type_en": "Wool suit", "size_en": "L", "sq": true},
@@ -3433,7 +3432,7 @@ const PRODUCTS = [
   {"id": "66132730", "brand": "ISSEY MIYAKE", "type": "Sac cartable", "size": "Taille unique", "price": "270", "gender": "", "color": "Gris", "path": "/sacs-homme/sacs/issey-miyake/sac-issey-miyake-en-synthetique-gris-66132730.shtml", "slug": "sac-issey-miyake-en-synthetique-gris-66132730", "n": 15, "desc": "Issey Miyake\n\nTrès beau sac à empiècements de cuir grainé noir et toile sans doute en nylon. Bandoulière réglable et jolis détails de fermoirs de grande qualité en métal en forme de manilles.\n\nParfait état général, un petit renfort sur le coin de la anse main.\n\nHauteur 42cm · Largeur 33cm · Profondeur 21cm", "desc_en": "Issey Miyake\n\nVery beautiful bag with black grained leather inserts and probably nylon canvas. Adjustable shoulder strap and pretty details of high quality metal clasps in the shape of shackles.\n\nPerfect general condition, a small reinforcement on the corner of the hand handle.\n\nHeight 42cm · Width 33cm · Depth 21cm", "type_en": "Satchel bag", "size_en": "One size", "sq": true},
   {"id": "66067467", "brand": "YOHJI YAMAMOTO", "type": "T-shirt manches longues crâne", "size": "M", "price": "220", "gender": "Homme", "color": "Noir", "path": "/vetements-homme/tee-shirts/yohji-yamamoto/tee-shirt-yohji-yamamoto-en-coton-noir-66067467.shtml", "slug": "tee-shirt-yohji-yamamoto-en-coton-noir-66067467", "n": 13, "desc": "Yohji Yamamoto\n\nCollection automne-hiver 2017.\n\nT-shirt manches longues en coton noir 100% à décor d'un crâne noir en projection de velours.\n\nTrès bon état.\n\nTaille indiquée 3 convient du M au L\n\nDimensions :\n- épaule à épaule : 51cm\n- aisselle à aisselle : 65cm\n- longueur dos depuis bas du col : 85cm\n- longueur manche depuis épaule 66cm et depuis aisselle :52cm\n- ouverture bas :65cm", "desc_en": "Yohji Yamamoto\n\nFall-winter 2017 collection.\n\nLong-sleeved t-shirt in 100% black cotton decorated with a black skull in velvet projection.\n\nVery good condition.\n\nSize indicated 3 suitable from M to L\n\nDimensions:\n- shoulder to shoulder: 51cm\n- armpit to armpit: 65cm\n- back length from the bottom of the collar: 85cm\n- sleeve length from shoulder 66cm and from armpit: 52cm\n- bottom opening: 65cm", "type_en": "Skull long sleeve t-shirt", "size_en": "M", "sq": true},
   {"id": "66133496", "brand": "ISSEY MIYAKE", "type": "Mini jupe plissée Me", "size": "Taille unique", "price": "180", "gender": "Femme", "color": "Marine", "path": "/vetements-femme/jupes/issey-miyake/jupe-issey-miyake-en-coton-marine-66133496.shtml", "slug": "jupe-issey-miyake-en-coton-marine-66133496", "n": 14, "desc": "Issey Miyake\n\nCollection Me.\n\nComme je le dis souvent, pour moi c'est l'un des plus beaux plissés de Issey Miyake et notamment au toucher car composé à 97% de coton : un toucher naturel et stretch en même temps.\n\nTrès belle jupe courte en plissé cauliflower marine composée à 97% de coton et 3% de polyester. Jolis détails de côtes verticales.\n\nTaille indiquée « - » pour taille unique.\n\nTaille élastiquée de 31 à 44 cm\nLongueur 56 cm\nAmplitude bas 96 cm", "desc_en": "Issey Miyake\n\nCollection Me.\n\nAs I often say, for me it is one of the most beautiful pleats from Issey Miyake and particularly to the touch because it is made of 97% cotton: a natural and stretchy feel at the same time.\n\nVery beautiful short skirt in navy cauliflower pleated made from 97% cotton and 3% polyester. Nice vertical rib details.\n\nSize indicated “-” for one size.\n\nElasticated waist from 31 to 44 cm\nLength 56 cm\nBottom amplitude 96 cm", "type_en": "Me pleated mini skirt", "size_en": "One size", "sq": true},
-  {"id": "65526473", "brand": "PORTER BY YOSHIDA KABAN", "type": "Sac banane camouflage", "size": "Taille unique", "price": "150", "gender": "", "color": "Noir", "path": "/sacs-homme/sacs-banane/porter-by-yoshida-kaban/sac-banane-porter-by-yoshida-kaban-en-synthetique-noir-65526473.shtml", "slug": "sac-banane-porter-by-yoshida-kaban-en-synthetique-noir-65526473", "n": 11, "desc": "Yoshida & Company — PORTER Tokyo Japan\n\nTrès belle fine banane en nylon noir et à motifs camouflage.\n\n- 1 poche avant\n- 1 grande poche centrale\n- 1 longue poche arrière\n\nBandoulière ajustable.\n\nDimensions du contenant : 30 cm x 12 cm", "desc_en": "Yoshida & Company — PORTER Tokyo Japan\n\nVery beautiful thin fanny pack in black nylon with camouflage patterns.\n\n- 1 front pocket\n- 1 large central pocket\n- 1 long back pocket\n\nAdjustable shoulder strap.\n\nContainer dimensions: 30 cm x 12 cm", "type_en": "Camouflage fanny pack", "size_en": "One size", "sq": true},
+  {"id": "65526473", "brand": "PORTER BY YOSHIDA KABAN", "type": "Sac banane camouflage", "size": "Taille unique", "price": "150", "gender": "", "color": "Noir", "path": "/sacs-homme/sacs-banane/porter-by-yoshida-kaban/sac-banane-porter-by-yoshida-kaban-en-synthetique-noir-65526473.shtml", "slug": "sac-banane-porter-by-yoshida-kaban-en-synthetique-noir-65526473", "n": 11, "desc": "Yoshida & Company, PORTER Tokyo Japan\n\nTrès belle fine banane en nylon noir et à motifs camouflage.\n\n- 1 poche avant\n- 1 grande poche centrale\n- 1 longue poche arrière\n\nBandoulière ajustable.\n\nDimensions du contenant : 30 cm x 12 cm", "desc_en": "Yoshida & Company, PORTER Tokyo Japan\n\nVery beautiful thin fanny pack in black nylon with camouflage patterns.\n\n- 1 front pocket\n- 1 large central pocket\n- 1 long back pocket\n\nAdjustable shoulder strap.\n\nContainer dimensions: 30 cm x 12 cm", "type_en": "Camouflage fanny pack", "size_en": "One size", "sq": true},
   {"id": "57231869", "brand": "45RPM", "type": "Chemise", "size": "S", "price": "130", "gender": "Femme", "color": "Bleu", "path": "/vetements-femme/tops/45rpm/haut-45rpm-en-coton-bleu-57231869.shtml", "slug": "haut-45rpm-en-coton-bleu-57231869", "n": 15, "desc": "45rpm \n\nCollection Femme \n\nTrès belle chemise en gaze de coton extérieur type denim et intérieur écossais jaune et bleu \n\nComme neuve \n\nTaille indiquée 2 \n\nDimensions :\n\n- épaule à épaule : 45cm\n- aisselle à aisselle : 51cm\n- longueur dos depuis bas du col : 70cm \n- longueur manche depuis épaule 59cm et depuis aisselle :52cm\n- ouverture bas :51cm\n", "desc_en": "45rpm \n\nWomen's Collection \n\nVery beautiful cotton gauze shirt with denim type exterior and yellow and blue tartan interior \n\nLike new \n\nSize indicated 2 \n\nDimensions:\n\n- shoulder to shoulder: 45cm\n- armpit to armpit: 51cm\n- back length from the bottom of the collar: 70cm \n- sleeve length from shoulder 59cm and from armpit: 52cm\n- bottom opening: 51cm", "type_en": "Shirt", "size_en": "S"},
   {"id": "57233026", "brand": "45RPM", "type": "Short", "size": "M", "price": "120", "gender": "Homme", "color": "Beige", "path": "/vetements-homme/shorts/45rpm/short-45rpm-en-coton-beige-57233026.shtml", "slug": "short-45rpm-en-coton-beige-57233026", "n": 15, "desc": "45rpm \n\nCollection « and marine » \n\nTrès beau short cargo en toile de coton épaisse 100% boutons en metals au logo. Cordons d'ajustements en fin de jambes \n\nComme neuf \n\nTaille indiquée 32 \n\nTaille 42cm\nLongueur jambe 56cm et 27cm depuis l'entrejambe.", "desc_en": "45rpm \n\n“and marine” collection \n\nVery nice cargo shorts in thick cotton canvas 100% metal buttons with logo. Adjustment cords at the end of the legs \n\nLike new \n\nSize indicated 32 \n\nSize 42cm\nLeg length 56cm and 27cm from the crotch.", "type_en": "Shorts", "size_en": "M"},
   {"id": "57233350", "brand": "45RPM", "type": "Tee shirt", "size": "S", "price": "80", "gender": "Homme", "color": "Marron", "path": "/vetements-homme/tee-shirts/45rpm/tee-shirt-45rpm-en-coton-marron-57233350.shtml", "slug": "tee-shirt-45rpm-en-coton-marron-57233350", "n": 15, "desc": "45rpm \n\nTrès beau t-shirt manches longues en 100% coton chiné. \n\nComme neuf \n\nTaille indiquée 3 je conseille S à l'homme et M à la femme \n\nDimensions :\n\n- épaule à épaule : 48cm\n- aisselle à aisselle : 50cm\n- longueur dos depuis bas du col : 70cm \n- longueur manche depuis épaule 59cm et depuis aisselle :52cm\n- ouverture bas :51cm\n", "desc_en": "45rpm \n\nVery beautiful long-sleeved t-shirt in 100% heather cotton. \n\nLike new \n\nSize indicated 3 I recommend S for men and M for women \n\nDimensions:\n\n- shoulder to shoulder: 48cm\n- armpit to armpit: 50cm\n- back length from the bottom of the collar: 70cm \n- sleeve length from shoulder 59cm and from armpit: 52cm\n- bottom opening: 51cm", "type_en": "T-shirt", "size_en": "S"},
@@ -4528,7 +4527,7 @@ window.formatSize = function(size) {
   return s.replace(/\b(XXL|XL|XS|S|M|L)\b/g, (m) => map[m] || m);
 };
 // Helpers d'affichage internationalisé : type produit (utilise type_en si lang === 'en')
-// et genre (utilise i18n gender.X) — évite de toucher chaque render.
+// et genre (utilise i18n gender.X), évite de toucher chaque render.
 window.tType = function(p) {
   if (!p) return '';
   return (window.__lang === 'en' && p.type_en) ? p.type_en : (p.type || '');
@@ -4539,7 +4538,7 @@ window.tGender = function(p) {
   return g || 'Accessoires';
 };
 
-// IDs des pièces vendues — à compléter au fur et à mesure
+// IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
   "66700312",
   "61583292",
@@ -4944,7 +4943,7 @@ function renderFilters() {
   catCounts.__allTotal    = totalCat;
   colorCounts.__allTotal  = totalColor;
 
-  // Sync ALL desktop + mobile selects (gender/brand/cat/color) — labels traduits via i18n
+  // Sync ALL desktop + mobile selects (gender/brand/cat/color), labels traduits via i18n
   const _t = (typeof window.t === 'function') ? window.t : ((k) => k);
   const dimensions = [
     ['gender-select',  'm-gender-select',  genderList, activeGender, _t('filter.all_genders'),  genderCounts, g => _t('gender.' + (g || ''))],
@@ -5144,7 +5143,7 @@ function openDetail(id) {
     dFav.dataset.id = p.id;
     dFav.classList.toggle('is-fav', isFavorite(p.id));
   }
-  // Gallery — main photo + thumb row (style Centre Commercial sur mobile, grille 2-col sur desktop)
+  // Gallery, main photo + thumb row (style Centre Commercial sur mobile, grille 2-col sur desktop)
   // Photos en taille XL (1600px) pour qualité optimale en main photo retina/HDPI.
   // Règle SOLD : 1 seule photo affichée (la principale), pas de thumbs (économie visuelle).
   const gal = document.getElementById('detail-gallery');
@@ -5153,7 +5152,7 @@ function openDetail(id) {
   for (let i = 0; i < numPhotos; i++) photos.push(imgUrl(p, i, {size: 'xl'}));
   lbPhotos = photos;
   // Note : onerror enlève le thumb cassé (404) pour qu'il ne reste pas un slot vide.
-  // Pour la principale, fallback sur la première photo qui charge — on retire aussi
+  // Pour la principale, fallback sur la première photo qui charge, on retire aussi
   // tous les thumbs qui ne chargent pas pour aligner le compteur.
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${p.type} photo 1" onerror="this.style.display='none'">`;
   // Thumbs : skip la photo 0 puisqu'elle est déjà affichée en main (évite le doublon)
@@ -5358,10 +5357,10 @@ function openDetail(id) {
   mainEl.addEventListener('click', (e) => {
     if (mDidPinch) { mDidPinch = false; e.preventDefault(); return; }
     if (mScale > 1) { e.preventDefault(); return; }
-    // Seulement desktop (>920px) — mobile garde zoom direct via pinch
+    // Seulement desktop (>920px), mobile garde zoom direct via pinch
     if (window.innerWidth > 920) openLB(curIdx);
   });
-  // Flèches navigation discrètes sur main photo (desktop only — mobile a swipe)
+  // Flèches navigation discrètes sur main photo (desktop only, mobile a swipe)
   if (photos.length > 1) {
     const wrap = gal.querySelector('.main-photo-wrap');
     if (wrap) {
@@ -5402,7 +5401,7 @@ function openDetail(id) {
   const _detailEl = document.getElementById('detail');
   _detailEl.classList.add('open');
   // Force scroll au top de la fiche produit (sinon le panel garde la position
-  // précédente — Tom : "ça me met au milieu pas en haut des photos").
+  // précédente, Tom : "ça me met au milieu pas en haut des photos").
   _detailEl.scrollTop = 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + window.__savedScrollY + 'px';
@@ -5414,14 +5413,14 @@ function openDetail(id) {
 function closeDetail() {
   document.getElementById('detail').classList.remove('open');
   const savedY = window.__savedScrollY || 0;
-  // Retire les styles de verrouillage dans l'ordre — évite le clignotement iOS
+  // Retire les styles de verrouillage dans l'ordre, évite le clignotement iOS
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
   document.body.style.right = '';
   document.body.style.width = '';
   document.body.style.overflow = '';
-  // Restaure immédiatement — pas de rAF qui laisse iOS gagner la course
+  // Restaure immédiatement, pas de rAF qui laisse iOS gagner la course
   window.scrollTo(0, savedY);
 }
 
@@ -5706,7 +5705,7 @@ const PASSEIST_COUNTRIES = [
   ['CY','Chypre'],
   ['MT','Malte'],
   ['GR','Grèce'],
-  ['__sep1__','— Hors Europe —'],
+  ['__sep1__',', Hors Europe ,'],
   ['US','États-Unis'],
   ['CA','Canada'],
   ['JP','Japon'],
@@ -5764,7 +5763,7 @@ function updateCartTotals() {
   const totEl = document.getElementById('cart-total');
   const footerEl = document.getElementById('cart-footer');
   if (subEl) subEl.textContent = subtotal + ' €';
-  if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' : '—');
+  if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' : ',');
   if (shipLblEl) shipLblEl.textContent = (cart.length > 0 && ship.label ? 'Frais de port · ' + ship.label : 'Frais de port');
   if (totEl) totEl.textContent = total + ' €';
   // Cache l'encart total + bouton si panier vide
@@ -5876,7 +5875,7 @@ function openCheckout() {
   renderCheckoutSummary();
   document.getElementById('checkout-overlay').classList.add('open');
 }
-// Auto-select shipping zone based on country — customers cannot override this
+// Auto-select shipping zone based on country, customers cannot override this
 const EUROPE_COUNTRIES = new Set([
   'Albanie','Allemagne','Andorre','Autriche','Belgique','Biélorussie','Bosnie-Herzégovine',
   'Bulgarie','Chypre','Croatie','Danemark','Espagne','Estonie','Finlande','Grèce','Hongrie',
@@ -5915,7 +5914,7 @@ function submitOrder(e) {
   e.preventDefault();
   const form = document.getElementById('checkout-form');
   const ref = 'PSST-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-  const items = cart.map(p => '• ' + p.brand + ', ' + p.type + ' (' + p.size + ') — ' + p.price + ' EUR').join('\n');
+  const items = cart.map(p => '• ' + p.brand + ', ' + p.type + ' (' + p.size + '), ' + p.price + ' EUR').join('\n');
   const shipEl = document.getElementById('ship-input');
   const shipBase = shipEl ? parseInt(shipEl.value) : 15;
   const shipZone = shipEl ? shipEl.dataset.label : 'France';
@@ -5923,7 +5922,7 @@ function submitOrder(e) {
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const total = subtotal + shipCost;
   const details = 'RÉFÉRENCE : ' + ref + '\n\n'
-    + '— PIÈCES DEMANDÉES —\n' + items + '\n\n'
+    + ', PIÈCES DEMANDÉES ,\n' + items + '\n\n'
     + 'Sous-total : ' + subtotal + ' EUR\n'
     + 'Livraison (' + shipZone + ') : ' + shipCost + ' EUR\n'
     + 'TOTAL : ' + total + ' EUR';
@@ -5958,7 +5957,7 @@ function submitOrder(e) {
 }
 function openContact() {
   document.getElementById('contact-lead').textContent = currentProduct
-    ? 'Une question sur ' + currentProduct.brand + ' — ' + currentProduct.type + ' ? Taille, matière, photos supplémentaires : écrivez-nous, nous répondons sous 24 h.'
+    ? 'Une question sur ' + currentProduct.brand + ', ' + currentProduct.type + ' ? Taille, matière, photos supplémentaires : écrivez-nous, nous répondons sous 24 h.'
     : 'Une question ? Écrivez-nous, nous répondons sous 24 h.';
   document.getElementById('contact-overlay').classList.add('open');
 }
@@ -5970,7 +5969,7 @@ function submitContact(e) {
   const prodEl = document.getElementById('contact-produit');
   if (prodEl) {
     prodEl.value = currentProduct
-      ? currentProduct.brand + ' — ' + currentProduct.type + ' (' + currentProduct.size + ', ref ' + currentProduct.id + ')'
+      ? currentProduct.brand + ', ' + currentProduct.type + ' (' + currentProduct.size + ', ref ' + currentProduct.id + ')'
       : '';
   }
   const btn = form.querySelector('button[type="submit"]');
@@ -6004,8 +6003,8 @@ window.submitContactPage = function(e, lang) {
   const sendingLabel = lang === 'en' ? 'Sending…' : 'Envoi…';
   const sentLabel = lang === 'en' ? 'Send message' : 'Envoyer le message';
   const okMsg = lang === 'en'
-    ? '✓ Message sent — we reply within 24 to 48 hours on business days.'
-    : '✓ Message envoyé — nous vous répondons sous 24 à 48 heures en jours ouvrés.';
+    ? '✓ Message sent, we reply within 24 to 48 hours on business days.'
+    : '✓ Message envoyé, nous vous répondons sous 24 à 48 heures en jours ouvrés.';
   const errMsg = lang === 'en'
     ? '✗ Send failed. Please email info@passeist.com directly.'
     : '✗ Échec de l\'envoi. Écrivez directement à info@passeist.com.';
@@ -6122,7 +6121,7 @@ function renderHeroMarquee() {
   requestAnimationFrame(() => startMarqueeLoop(track));
 }
 
-// ============ HERO MARQUEE — auto-drift + click-and-drag scrubbing ============
+// ============ HERO MARQUEE, auto-drift + click-and-drag scrubbing ============
 const marqueeState = {
   offset: 0,          // current translateX in px (negative = moved left)
   baseSpeed: -28,     // auto-drift speed in px/sec (negative = moves left)
@@ -6147,7 +6146,7 @@ function startMarqueeLoop(track) {
     img.addEventListener('load', measure, { once: true });
   });
 
-  // Click-and-drag scrubbing — keeps drifting on its own otherwise
+  // Click-and-drag scrubbing, keeps drifting on its own otherwise
   marquee.addEventListener('mousedown', (e) => {
     marqueeState.dragging = true;
     marqueeState.dragged = false;
@@ -6206,7 +6205,7 @@ function startMarqueeLoop(track) {
     setTimeout(() => { marqueeState.dragged = false; }, 50);
   });
 
-  // Touchpad horizontal swipe (wheel with deltaX) — scrubs the marquee
+  // Touchpad horizontal swipe (wheel with deltaX), scrubs the marquee
   marquee.addEventListener('wheel', (e) => {
     const dx = e.deltaX;
     const dy = e.deltaY;
@@ -6246,7 +6245,7 @@ function startMarqueeLoop(track) {
   requestAnimationFrame(step);
 }
 
-// ============ SIMILAR PRODUCTS MARQUEE — même drift + drag + inertie + boucle infinie ============
+// ============ SIMILAR PRODUCTS MARQUEE, même drift + drag + inertie + boucle infinie ============
 window.__simMarqueeState = {
   offset: 0, baseSpeed: -22, half: 0, lastT: 0,
   dragging: false, dragged: false, dragStartX: 0, dragStartOffset: 0,
@@ -6356,7 +6355,7 @@ window.startSimilarMarqueeLoop = function() {
   st.rafId = requestAnimationFrame(simStep);
 };
 
-// ============ MESURE HAUTEUR TOPBAR MOBILE — bind sur --actual-topbar-h ============
+// ============ MESURE HAUTEUR TOPBAR MOBILE, bind sur --actual-topbar-h ============
 (function(){
   const tb = document.querySelector('.topbar');
   if (!tb) return;
@@ -6492,7 +6491,7 @@ window.startSimilarMarqueeLoop = function() {
   updateCountBadge();
 })();
 
-// ============ HERO MARQUEE — pause offscreen ============
+// ============ HERO MARQUEE, pause offscreen ============
 (function(){
   const marquee = document.getElementById('hero-marquee');
   if (!marquee || !('IntersectionObserver' in window)) return;
@@ -6533,7 +6532,7 @@ window.startSimilarMarqueeLoop = function() {
 })();
 
 // ============ MOBILE : révèle les pièces Archive (sold) pendant le touch ============
-// Équivalent tactile du :hover — le flou se retire pendant que le doigt est sur
+// Équivalent tactile du :hover, le flou se retire pendant que le doigt est sur
 // la carte, puis revient à la fin du geste. Le clic suit son cours pour ouvrir
 // la fiche (pas de préventDefault).
 (function(){
@@ -6640,7 +6639,7 @@ window.startSimilarMarqueeLoop = function() {
     img.classList.remove('zoomed');
   }
 
-  // CLICK desktop — zoom/dézoom centré sur le point cliqué
+  // CLICK desktop, zoom/dézoom centré sur le point cliqué
   // SUR MOBILE TACTILE : on désactive le toggle de zoom au tap simple ; seul le pinch à 2 doigts zoome.
   img.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -6661,7 +6660,7 @@ window.startSimilarMarqueeLoop = function() {
     }
   });
 
-  // TOUCH — pan (1 doigt) quand zoomé, pinch (2 doigts) pour zoomer
+  // TOUCH, pan (1 doigt) quand zoomé, pinch (2 doigts) pour zoomer
   // (Pas de double-tap sur mobile : Tom veut UNIQUEMENT le pinch à 2 doigts.)
   img.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
@@ -6700,7 +6699,7 @@ window.startSimilarMarqueeLoop = function() {
     pinchStart = null;
   });
 
-  // MOUSE drag desktop — pan quand zoomé
+  // MOUSE drag desktop, pan quand zoomé
   img.addEventListener('mousedown', (e) => {
     if (scale <= 1) return;
     dragStart = { x: e.clientX, y: e.clientY, tx: tx, ty: ty };
@@ -6844,16 +6843,16 @@ window.updateSEO = function(p) {
     sb.textContent = JSON.stringify(breadcrumb);
     head.appendChild(sb);
   } else {
-    const t = 'passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
-    const d = 'passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm — pièces rares chinées et authentifiées.';
+    const t = 'passéist, Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
+    const d = 'passéist : curation de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm, pièces rares chinées et authentifiées.';
     document.title = t;
     setMeta('meta[name="description"]', 'content', d);
     setLink('canonical', BASE + '/');
     setMeta('meta[property="og:type"]', 'content', 'website');
-    setMeta('meta[property="og:title"]', 'content', 'passéist — Mode japonaise vintage & archive');
+    setMeta('meta[property="og:title"]', 'content', 'passéist, Mode japonaise vintage & archive');
     setMeta('meta[property="og:description"]', 'content', d);
     setMeta('meta[property="og:url"]', 'content', BASE + '/');
-    setMeta('meta[name="twitter:title"]', 'content', 'passéist — Mode japonaise vintage & archive');
+    setMeta('meta[name="twitter:title"]', 'content', 'passéist, Mode japonaise vintage & archive');
     setMeta('meta[name="twitter:description"]', 'content', 'Yohji Yamamoto, Comme des Garçons, Issey Miyake. Vintage japonais authentifié à Paris.');
   }
 };
@@ -6962,7 +6961,7 @@ window.updateSEO = function(p) {
       updateSEO(null);
     }
   });
-  // État initial (au chargement) — supporte les URLs propres /shop, /archive, /product/{slug}
+  // État initial (au chargement), supporte les URLs propres /shop, /archive, /product/{slug}
   // ET les anciens liens hash #shop, #product/{slug} pour rétrocompatibilité
   function parseInitialRoute() {
     const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
@@ -7019,8 +7018,8 @@ window.updateSEO = function(p) {
       const toast = document.createElement('div');
       toast.id = 'passeist-cancel-toast';
       toast.textContent = (window.__lang === 'en')
-        ? 'Payment canceled — your cart is still available'
-        : 'Paiement annulé — votre panier est toujours disponible';
+        ? 'Payment canceled, your cart is still available'
+        : 'Paiement annulé, votre panier est toujours disponible';
       toast.style.cssText = [
         'position:fixed','top:calc(var(--topbar-h, 80px) + 16px)','left:50%','transform:translateX(-50%)',
         'background:#1a1a1a','color:#f4f1ec','padding:14px 24px',
@@ -7079,7 +7078,7 @@ renderCart();
 renderHeroMarquee();
 
 </script>
-<!-- Tawk.to (la bulle par défaut est cachée — on utilise l'icône dans la topbar) -->
+<!-- Tawk.to (la bulle par défaut est cachée, on utilise l'icône dans la topbar) -->
 <script>
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 
@@ -7127,7 +7126,7 @@ document.addEventListener('keydown', function(e){
   }
 });
 
-// (Repositionnement de la fenêtre Tawk abandonné — l'iframe est en sandbox
+// (Repositionnement de la fenêtre Tawk abandonné, l'iframe est en sandbox
 // cross-origin et Tawk écrase systématiquement toute tentative de déplacement.
 // On laisse la fenêtre à son emplacement natif et on garde les UX de fermeture.)
 
@@ -7154,8 +7153,8 @@ s0.parentNode.insertBefore(s1,s0);
 (function(){
   const I18N = {
     fr: {
-      title: 'passéist — Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake',
-      desc: 'passéist — friperie de luxe à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm. Pièces archive et avant-garde chinées et authentifiées.',
+      title: 'passéist, Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      desc: 'passéist, friperie de luxe à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm. Pièces archive et avant-garde chinées et authentifiées.',
       'nav.home': 'Accueil', 'nav.shop': 'Boutique', 'nav.archive': 'Vendu', 'nav.marques': 'Auteurs', 'nav.about': 'À propos',
       'hero.tagline.html': "<em>mode d'auteur</em> japonaise",
       'hero.keywords': 'Vintage japonais · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
@@ -7181,7 +7180,7 @@ s0.parentNode.insertBefore(s1,s0);
       'cart.title': 'Panier', 'cart.total': 'Total',
       'detail.back': '← Retour à la boutique',
       'sold': 'Vendu', 'vendu.badge': 'VENDU',
-      // Termes filtre dynamiques (genre, catégorie) — passés tels quels en FR
+      // Termes filtre dynamiques (genre, catégorie), passés tels quels en FR
       'gender.Femme': 'Femme', 'gender.Homme': 'Homme', 'gender.': 'Accessoires',
       'cat.Hauts': 'Hauts', 'cat.Bas': 'Bas', 'cat.Vestes': 'Vestes',
       'cat.Maille': 'Maille', 'cat.Robes': 'Robes', 'cat.Chaussures': 'Chaussures',
@@ -7197,8 +7196,8 @@ s0.parentNode.insertBefore(s1,s0);
       'color.Métal': 'Métal', 'color.Multicolore': 'Multicolore', 'color.Autre': 'Autre',
     },
     en: {
-      title: 'passéist — Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
-      desc: 'passéist — luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm — authenticated archive and avant-garde fashion.',
+      title: 'passéist, Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      desc: 'passéist, luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm, authenticated archive and avant-garde fashion.',
       'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.archive': 'Sold', 'nav.marques': 'Authors', 'nav.about': 'About',
       'hero.tagline.html': "japanese <em>author fashion</em>",
       'hero.keywords': 'Japanese vintage · Archive · Avant-garde · Yohji Yamamoto · Comme des Garçons · Issey Miyake',
@@ -7211,7 +7210,7 @@ s0.parentNode.insertBefore(s1,s0);
       'detail.condition.value': 'Very good condition',
       'detail.cart': 'Add to cart',
       'detail.contact': 'Ask a question',
-      'detail.availability': 'Each piece is unique and listed on multiple platforms — your order will be confirmed after a quick availability check.',
+      'detail.availability': 'Each piece is unique and listed on multiple platforms, your order will be confirmed after a quick availability check.',
       'detail.similar': 'Similar items',
       'filter.gender': 'Gender', 'filter.brand': 'Brand', 'filter.category': 'Category',
       'filter.color': 'Color', 'filter.sort': 'Sort by', 'filter.search': 'Search',
@@ -7287,7 +7286,7 @@ s0.parentNode.insertBefore(s1,s0);
     if (ht) ht.innerHTML = t('hero.tagline.html');
     const hcta = document.querySelector('.hero-cta span:not(.arrow-symbol)');
     if (hcta) hcta.textContent = t('hero.cta');
-    // Home — "Les Auteurs" eyebrow
+    // Home, "Les Auteurs" eyebrow
     const hbsEyebrow = document.querySelector('.hbs-eyebrow');
     if (hbsEyebrow) hbsEyebrow.textContent = t('home.authors');
     // Detail static
@@ -7347,7 +7346,7 @@ s0.parentNode.insertBefore(s1,s0);
     if (cartTitle) cartTitle.textContent = t('cart.title');
     const cartTotalLabel = document.querySelector('.cart-total > span:first-child');
     if (cartTotalLabel) cartTotalLabel.textContent = t('cart.total');
-    // Shop title — laisse renderGrid réécrire ensuite
+    // Shop title, laisse renderGrid réécrire ensuite
     const shopTitle = document.getElementById('shop-title');
     if (shopTitle) {
       const isArchive = document.body.dataset.page === 'archive';
@@ -7377,7 +7376,7 @@ s0.parentNode.insertBefore(s1,s0);
   // Init au load
   const initialLang = detectLang();
   applyI18n(initialLang);
-  // Bouton toggle — full reload pour garantir que TOUT bascule (incluant
+  // Bouton toggle, full reload pour garantir que TOUT bascule (incluant
   // les sections About FR/EN dupliquées + meta + JSON-LD).
   const toggle = document.getElementById('lang-toggle');
   if (toggle) {

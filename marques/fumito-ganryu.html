@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FUMITO GANRYU — passéist</title>
+<title>FUMITO GANRYU, passéist</title>
 <meta name="description" content="Né en 1976, il rejoint Comme des Garçons en 1999 et travaille sous Junya Watanabe pendant une décennie. Rei Kawakubo lui confie la ligne Ganryu Comme des G">
 <link rel="canonical" href="https://passeist.com/marques/fumito-ganryu">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
@@ -11,7 +11,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="/img/favicon-512.png">
 <link rel="apple-touch-icon" sizes="192x192" href="/img/favicon-192.png">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Fumito Ganryu — vintage et archive · passéist">
+<meta property="og:title" content="Fumito Ganryu, vintage et archive · passéist">
 <meta property="og:description" content="Né en 1976, il rejoint Comme des Garçons en 1999 et travaille sous Junya Watanabe pendant une décennie. Rei Kawakubo lui confie la ligne Ganryu Comme des G">
 <meta property="og:url" content="https://passeist.com/marques/fumito-ganryu">
 <meta property="og:image" content="https://passeist.com/og.jpg">
@@ -27,13 +27,13 @@
 <style>
 
 :root {
-  /* Gris foncé — ardoise, papier sumi-e mouillé */
+  /* Gris foncé, ardoise, papier sumi-e mouillé */
   --bg: #1C2230;            /* plan principal, plus dense */
   --bg-deep: #131826;       /* ombre */
   --bg-soft: #262D3C;       /* reflet */
   --bg-highlight: #313847;  /* plan éclairé */
 
-  /* Noir encre de Chine — outrenoir */
+  /* Noir encre de Chine, outrenoir */
   --ink: #f4f1ec;
   --text: #f4f1ec;
   --text-dim: #d6d2cc;
@@ -91,7 +91,7 @@ img { -webkit-user-drag: none; user-select: none; }
 
 a { color: inherit; }
 
-/* ============ SIDE META — label rotatif sur la tranche gauche ============ */
+/* ============ SIDE META, label rotatif sur la tranche gauche ============ */
 .side-meta {
   position: fixed; left: 18px; bottom: 120px;
   transform-origin: left bottom;
@@ -113,7 +113,7 @@ a { color: inherit; }
   position: relative; z-index: 2;
 }
 
-/* ============ NAV INK BLOBS — boutons dans taches d'encre ============ */
+/* ============ NAV INK BLOBS, boutons dans taches d'encre ============ */
 .nav-ink {
   position: absolute;
   top: -6px; bottom: -6px; left: -10px; right: -10px;
@@ -136,7 +136,7 @@ a { color: inherit; }
   transition: background 0.3s var(--ease);
 }
 
-/* ============ TOPBAR ICONS — Recherche, Profil, Favoris, Panier ============ */
+/* ============ TOPBAR ICONS, Recherche, Profil, Favoris, Panier ============ */
 .topbar-icons {
   display: flex; align-items: center; gap: 18px;
 }
@@ -198,7 +198,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   .topbar-icon svg { width: 18px; height: 18px; }
 }
 
-/* Bulle de chat — animation wiggle toutes les 10 s */
+/* Bulle de chat, animation wiggle toutes les 10 s */
 .topbar-icon-chat svg {
   transform-origin: 50% 85%; /* pivote par le bas de la bulle */
   animation: chatWiggle 6s ease-in-out infinite;
@@ -245,7 +245,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   transition: opacity 0.25s var(--ease);
 }
 .top-nav a > span { position: relative; z-index: 1; }
-/* Les anciens encarts noirs "ink-rough" sont masqués — on garde juste le texte */
+/* Les anciens encarts noirs "ink-rough" sont masqués, on garde juste le texte */
 .top-nav a .nav-ink { display: none; }
 .top-nav a:hover { opacity: 0.55; }
 .top-nav a.active {
@@ -273,7 +273,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .cart-btn > span { position: relative; z-index: 1; }
 .cart-btn .nav-ink { opacity: 1; transition: opacity 0.25s var(--ease), transform 0.35s var(--ease-out); }
 .cart-btn:hover .nav-ink { opacity: 0.88; transform: scale(1.04); }
-/* Animation d'ajout au panier — scale bounce sur toute la tache d'encre */
+/* Animation d'ajout au panier, scale bounce sur toute la tache d'encre */
 @keyframes cartBump {
   0%   { transform: scale(1); }
   30%  { transform: scale(1.18); }
@@ -283,7 +283,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .cart-btn.cart-bump .nav-ink { animation: cartBump 0.55s var(--ease-out); }
 .cart-btn.cart-bump .cart-count { animation: cartBump 0.55s var(--ease-out) 0.05s; display: inline-block; }
 
-/* Image volante vers le panier — bords nets, sans cadre noir ni flou */
+/* Image volante vers le panier, bords nets, sans cadre noir ni flou */
 .fly-to-cart {
   position: fixed;
   z-index: 9999;
@@ -344,7 +344,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
      SAUF quand une fiche produit est ouverte (body.detail-open). */
   body[data-page="home"]:not(.detail-open) .topbar .cart-btn { display: none !important; }
 }
-/* (Tentative de repositionnement Tawk retirée — laisse la fenêtre s'afficher
+/* (Tentative de repositionnement Tawk retirée, laisse la fenêtre s'afficher
    à son emplacement natif en bas-droite) */
 /* Backdrop cliquable pour fermer le chat en touchant hors de la fenêtre.
    z-index > topbar/overlays mais < iframe Tawk (qui monte à ~999999999). */
@@ -356,7 +356,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   transition: opacity 0.3s var(--ease);
 }
 .chat-backdrop.open { opacity: 1; pointer-events: auto; }
-/* Croix de fermeture custom — flotte en haut-gauche de l'écran (toujours visible) */
+/* Croix de fermeture custom, flotte en haut-gauche de l'écran (toujours visible) */
 .chat-close-x {
   position: fixed;
   z-index: 2147483646; /* juste sous l'iframe Tawk (max int) */
@@ -451,9 +451,9 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 /* Contenu au-dessus du dégradé */
 .hero-content { position: relative; z-index: 5; }
 
-/* Accueil plein écran sans scroll — footer visible */
+/* Accueil plein écran sans scroll, footer visible */
 body[data-page="home"] { overflow: auto; height: auto; }
-/* Lumière rasante — gradient diagonal subtil sur fond ardoise */
+/* Lumière rasante, gradient diagonal subtil sur fond ardoise */
 /* Fond uniforme sans gradient */
 
 /* Gestes d'encre en fond du hero */
@@ -565,7 +565,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   transition: transform 0.45s var(--ease-out);
   display: inline-flex; position: relative;
 }
-/* Hover sans translation — la carte reste en place */
+/* Hover sans translation, la carte reste en place */
 .hero-marquee-card:hover { transform: none; }
 .hero-marquee-card img {
   height: 100%; width: auto; display: block;
@@ -833,7 +833,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   border-radius: 50%;
   transition: background 0.25s var(--ease), transform 0.25s var(--ease);
 }
-/* Variante détail produit — bouton inline avec label */
+/* Variante détail produit, bouton inline avec label */
 .btn-fav-detail {
   position: static !important;
   width: auto !important; height: auto !important;
@@ -862,7 +862,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   .fav-btn { top: 8px; right: 8px; width: 32px; height: 32px; }
   .fav-btn svg { width: 16px; height: 16px; }
 }
-/* État vide — page Favoris */
+/* État vide, page Favoris */
 .empty-state {
   grid-column: 1 / -1;
   text-align: center; padding: 80px 20px;
@@ -976,7 +976,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   padding: 4px 12px;
   display: inline-flex; align-items: center;
   background: #f4f1ec;
-  /* Coin inférieur-gauche biseauté (8px) — effet étiquette */
+  /* Coin inférieur-gauche biseauté (8px), effet étiquette */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 /* Masque l'ancienne tache rugueuse */
@@ -991,7 +991,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   white-space: nowrap;
 }
 
-/* Archive / sold — photos légèrement floues par défaut, nettes au survol */
+/* Archive / sold, photos légèrement floues par défaut, nettes au survol */
 .product-card.sold .product-img { opacity: 1; }
 .product-card.sold .product-img-primary {
   filter: blur(4px) contrast(0.96);
@@ -1090,8 +1090,8 @@ body[data-page="home"] { overflow: auto; height: auto; }
   object-fit: initial;
 }
 /* Photos secondaires : bordures blanches rognées server-side (wsrv.nl?trim=10).
-   L'image s'affiche dans sa proportion naturelle — en général portrait ~1070x1600
-   après rognage — sans recadrage carré. La grille peut avoir des lignes de hauteur
+   L'image s'affiche dans sa proportion naturelle, en général portrait ~1070x1600
+   après rognage, sans recadrage carré. La grille peut avoir des lignes de hauteur
    variable, c'est voulu : on privilégie la lisibilité du vêtement. */
 .detail-gallery .thumb {
   position: relative;
@@ -1110,7 +1110,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .detail-gallery img:hover { transform: translateY(-2px); }
 .detail-info { position: sticky; top: 112px; align-self: start; }
 
-/* ============ SIMILAR PRODUCTS CAROUSEL — boucle infinie type hero-marquee ============ */
+/* ============ SIMILAR PRODUCTS CAROUSEL, boucle infinie type hero-marquee ============ */
 .similar-section {
   border-top: 1px solid var(--line);
   padding: 32px 24px 48px;
@@ -1179,7 +1179,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   line-height: 1.02;
   margin-left: 0;
   padding-left: 0;
-  /* Petite marque noire devant le nom de la marque — cohérente avec les cartes grille */
+  /* Petite marque noire devant le nom de la marque, cohérente avec les cartes grille */
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1214,7 +1214,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   padding: 0 20px;
   margin: 0;
   background: #f4f1ec;
-  /* Coin inférieur-gauche biseauté (12px) — effet étiquette, proportionnel à la hauteur */
+  /* Coin inférieur-gauche biseauté (12px), effet étiquette, proportionnel à la hauteur */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 /* Remplace la tache rugueuse par l'étiquette biseautée */
@@ -1326,7 +1326,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   font-family: var(--font-mono);
   letter-spacing: 0;
 }
-/* Réf produit — minuscule, discret, clic = copie ID. Usage interne Tom (gestion commandes). */
+/* Réf produit, minuscule, discret, clic = copie ID. Usage interne Tom (gestion commandes). */
 .detail-ref {
   margin-top: 16px;
   font-size: 9.5px;
@@ -1342,7 +1342,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
 .detail-ref.copied { color: #4a9; }
 .detail-ref.copied::after { content: ' ✓'; }
 
-/* Archive / sold — on garde les attributs + description visibles (Tom 25/04).
+/* Archive / sold, on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
 .detail.detail-sold .detail-note { display: none; }
 
@@ -1354,7 +1354,7 @@ body[data-page="home"] { overflow: auto; height: auto; }
   display: block;
   grid-column: 1 / -1;  /* prend toute la largeur de la grille 2-col */
 }
-/* Flèches discrètes prev/next sur main photo — desktop only (hover) */
+/* Flèches discrètes prev/next sur main photo, desktop only (hover) */
 .detail-gallery .main-arrow {
   position: absolute;
   top: 50%;
@@ -2191,7 +2191,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 
   .filter-bar .filter-field,
   .filter-bar .filter-reset { display: none; }
-  /* Filtres figés sous la topbar — toujours accessibles en scrollant.
+  /* Filtres figés sous la topbar, toujours accessibles en scrollant.
      position: fixed (plus robuste que sticky qui peut casser avec overflow-x: hidden). */
   .filter-bar {
     position: fixed; top: 82px; left: 0; right: 0;
@@ -2251,8 +2251,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
   .detail-header { display: none !important; }
-  /* La topbar mobile a une hauteur dynamique (logo + tabs sur 2 lignes) —
-     le .detail commence pile en dessous via la variable --actual-topbar-h
+  /* La topbar mobile a une hauteur dynamique (logo + tabs sur 2 lignes), le .detail commence pile en dessous via la variable --actual-topbar-h
      calculée par JS au layout. */
   .detail { top: var(--actual-topbar-h, 82px); }
   .detail-main { grid-template-columns: 1fr; padding: 0 0 32px; gap: 18px; }
@@ -2498,7 +2497,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
     .brand-years { text-align: center; }
     .brand-name { text-align: center; }
   }
-  /* Bloc 2 : expert (lignes & sous-marques) — même fond que les carrés headliners */
+  /* Bloc 2 : expert (lignes & sous-marques), même fond que les carrés headliners */
   .brand-expert {
     margin-top: 40px;
     padding: 50px 36px;
@@ -2772,9 +2771,9 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
   <h1 class="brand-name">FUMITO GANRYU</h1>
   <section class="brand-overview">
-    <figure class="brand-portrait"><img src="https://image.tokion.jp/wp-content/uploads/2021/06/GANRYU6_R__0665ok-scaled.jpg" alt="Portrait — FUMITO GANRYU" loading="lazy"><figcaption class="portrait-caption">Photo : Shinpo Kimura — Tokion (2021)</figcaption></figure>
+    <figure class="brand-portrait"><img src="https://image.tokion.jp/wp-content/uploads/2021/06/GANRYU6_R__0665ok-scaled.jpg" alt="Portrait, FUMITO GANRYU" loading="lazy"><figcaption class="portrait-caption">Photo : Shinpo Kimura, Tokion (2021)</figcaption></figure>
     <div class="brand-bio"><p>Né en 1976, il rejoint Comme des Garçons en 1999 et travaille sous Junya Watanabe pendant une décennie.</p>
-        <p>Rei Kawakubo lui confie la ligne <strong>Ganryu Comme des Garçons</strong> en 2008, défilée à Paris jusqu'à son arrêt en 2017 — aujourd'hui culte chez les collectionneurs CDG.</p>
+        <p>Rei Kawakubo lui confie la ligne <strong>Ganryu Comme des Garçons</strong> en 2008, défilée à Paris jusqu'à son arrêt en 2017, aujourd'hui culte chez les collectionneurs CDG.</p>
         <p>Il quitte CDG et lance sa marque éponyme <strong>Fumito Ganryu</strong> en 2018, débuts à Pitti Uomo Florence en janvier 2019. Esthétique : hybride sportswear-tailoring, tissus techniques, vocabulaire urbain, héritage Junya assumé.</p></div>
     <div style="clear:both;"></div>
     
@@ -2783,7 +2782,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 <div class="lines-group">
   <h3 class="lines-heading">Ses lignes successives</h3>
   <table class="lines-table">
-    <tr><td class="lt-year">2008<br>—2017</td><td class="lt-name">Ganryu Comme des Garçons</td><td class="lt-desc">Ligne sous l'aile Comme des Garçons, défilée à Paris. Esthétique street-tailoring radicale, vestiaire workwear retravaillé. Discontinuée en 2017.</td></tr>
+    <tr><td class="lt-year">2008<br>-2017</td><td class="lt-name">Ganryu Comme des Garçons</td><td class="lt-desc">Ligne sous l'aile Comme des Garçons, défilée à Paris. Esthétique street-tailoring radicale, vestiaire workwear retravaillé. Discontinuée en 2017.</td></tr>
     <tr><td class="lt-year">2018</td><td class="lt-name">Fumito Ganryu</td><td class="lt-desc">Marque éponyme indépendante. Débuts à Pitti Uomo en janvier 2019. Hybride sportswear-tailoring, tissus techniques, héritage Junya Watanabe assumé.</td></tr>
   </table>
 </div></div></section>
@@ -2819,7 +2818,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </div>
 
 <footer class="footer">
-  <div>© passeist — Curation mode d'auteur japonaise · Paris 2026</div>
+  <div>© passeist, Curation mode d'auteur japonaise · Paris 2026</div>
   <nav class="footer-nav">
     <a href="/cgv">CGV</a>
     <a href="/privacy">Confidentialité</a>
