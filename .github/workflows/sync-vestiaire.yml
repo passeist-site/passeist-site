@@ -2,12 +2,9 @@ name: Sync Vestiaire
 
 on:
   schedule:
-    # 2 fois par jour. GitHub Actions a un délai cron jusqu'à 1h30, donc l'heure
-    # exacte est approximative. Acceptable en été : 12h-13h et 21h-22h Paris.
-    # En hiver (UTC+1) : 11h-12h et 20h-21h Paris.
-    # On NE met PAS de time-check car le cron peut être délayé > 1h
-    # → le check skip à tort.
-    - cron: '0 10,19 * * *'
+    # 1×/jour seulement (Tom 2026-05-11 : économie de credits Netlify).
+    # 19h UTC = ~21h Paris en été (+1h délai possible côté GitHub Actions).
+    - cron: '0 19 * * *'
   workflow_dispatch: {}  # permet aussi le déclenchement manuel via l'UI GitHub
 
 permissions:
