@@ -2,13 +2,12 @@ name: Sync Vestiaire
 
 on:
   schedule:
-    # 2 fois par jour à 12h et 21h HEURE DE PARIS (été ou hiver, idem).
-    # GitHub Actions cron ne supporte que UTC, donc on déclenche aux 4 heures
-    # qui couvrent CEST (UTC+2 été) et CET (UTC+1 hiver) :
-    #   12h Paris = 10h UTC (été) OU 11h UTC (hiver)
-    #   21h Paris = 19h UTC (été) OU 20h UTC (hiver)
-    # Le 1er step de la job skip si l'heure Paris n'est pas 12h ou 21h.
-    - cron: '0 10,11,19,20 * * *'
+    # 2 fois par jour. GitHub Actions a un délai cron jusqu'à 1h30, donc l'heure
+    # exacte est approximative. Acceptable en été : 12h-13h et 21h-22h Paris.
+    # En hiver (UTC+1) : 11h-12h et 20h-21h Paris.
+    # On NE met PAS de time-check car le cron peut être délayé > 1h
+    # → le check skip à tort.
+    - cron: '0 10,19 * * *'
   workflow_dispatch: {}  # permet aussi le déclenchement manuel via l'UI GitHub
 
 permissions:
@@ -19,34 +18,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'  # supprime le warning Node 20 deprecation
 
 jobs:
-  # Job léger qui vérifie qu'on est bien à 12h ou 21h Paris (peu importe DST).
-  # Le cron déclenche à 4 heures UTC (10/11/19/20) — 2 d'entre elles correspondent
-  # à des heures Paris hors de notre fenêtre. On skip celles-là.
-  check-time:
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    outputs:
-      should_run: ${{ steps.tc.outputs.should_run }}
-    steps:
-      - id: tc
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "Run manuel → toujours exécuter"
-            echo "should_run=true" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          H=$(TZ='Europe/Paris' date +%H)
-          echo "Heure Paris : ${H}h"
-          if [ "$H" = "12" ] || [ "$H" = "21" ]; then
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          else
-            echo "should_run=false" >> $GITHUB_OUTPUT
-            echo "Pas 12h ni 21h Paris (réel: ${H}h) → skip"
-          fi
-
   sync:
-    needs: check-time
-    if: needs.check-time.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
