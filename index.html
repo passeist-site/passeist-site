@@ -94,10 +94,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0;
-  overflow-x: hidden;
-  /* Coupe l'effet élastique/bounce iOS quand on arrive en bout de page */
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+  overflow-x: clip;  /* Tom 2026-05-14 : clip au lieu de hidden — ne crée pas de scrolling context (fix scroll Firefox Android) */
+  /* Coupe l'effet élastique/bounce iOS quand on arrive en bout de page.
+     contain au lieu de none = autorise le scroll normal mais bloque le bounce */
+  overscroll-behavior-y: contain;
 }
 body { position: relative; }
 body.no-scroll { overflow: hidden; }
@@ -467,7 +467,10 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .hero-content { position: relative; z-index: 5; }
 
 /* Accueil plein écran sans scroll, footer visible */
-body[data-page="home"] { overflow: auto; height: auto; }
+body[data-page="home"],
+body[data-page="shop"],
+body[data-page="archive"],
+body[data-page="favorites"] { overflow: auto; height: auto; }
 /* Lumière rasante, gradient diagonal subtil sur fond ardoise */
 /* Fond uniforme sans gradient */
 
@@ -2277,7 +2280,10 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 
 @media (max-width: 900px) {
   /* Sur mobile, hero plein écran (~100dvh) puis scroll vers la strip Marques */
-  body[data-page="home"] { overflow: auto; height: auto; }
+  body[data-page="home"],
+body[data-page="shop"],
+body[data-page="archive"],
+body[data-page="favorites"] { overflow: auto; height: auto; }
   body[data-page="home"] .footer { display: flex; flex-shrink: 0; }
   /* Layout home mobile : body flex column, hero fills + footer naturel.
      (La topbar est position:fixed donc hors du flow.) */
