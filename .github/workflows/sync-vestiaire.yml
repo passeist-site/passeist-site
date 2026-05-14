@@ -5,7 +5,7 @@ on:
     # 1×/jour seulement (Tom 2026-05-11 : économie de credits Netlify).
     # 19h UTC = ~21h Paris en été (+1h délai possible côté GitHub Actions).
     - cron: '0 19 * * *'
-  workflow_dispatch: {}  # permet aussi le déclenchement manuel via l'UI GitHub
+  workflow_dispatch: {}
 
 permissions:
   contents: write   # pour commit/push les bascules SOLD

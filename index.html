@@ -602,6 +602,8 @@ body[data-page="home"] { overflow: auto; height: auto; }
   margin-left: auto; margin-right: auto;
   min-height: calc(100vh - var(--topbar-h));
   position: relative;
+  /* Tom 2026-05-11 : force scroll vertical explicite (fix Firefox Android bloqué) */
+  touch-action: pan-y;
 }
 .shop-header {
   margin-bottom: 40px; padding-bottom: 28px;
@@ -2373,13 +2375,14 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
   .filter-bar .filter-field,
   .filter-bar .filter-reset { display: none; }
   /* Filtres figés sous la topbar, toujours accessibles en scrollant.
-     position: fixed (plus robuste que sticky qui peut casser avec overflow-x: hidden). */
+     position: fixed (plus robuste que sticky qui peut casser avec overflow-x: hidden).
+     Tom 2026-05-11 : suppr backdrop-filter (bloquait le scroll sur Firefox Android,
+     leur compositeur GPU re-blur toute la zone à chaque frame). Fond solide opaque
+     suffit visuellement. */
   .filter-bar {
     position: fixed; top: 82px; left: 0; right: 0;
     z-index: 15;
-    background: rgba(28,34,48,0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: #1C2230;
     margin: 0;
     padding: 8px 20px;
     border-bottom: 1px solid var(--line);
