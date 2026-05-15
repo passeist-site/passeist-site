@@ -2,10 +2,18 @@ name: Sync Vestiaire
 
 on:
   schedule:
-    # 1×/jour seulement (Tom 2026-05-11 : économie de credits Netlify).
-    # 19h UTC = ~21h Paris en été (+1h délai possible côté GitHub Actions).
-    - cron: '0 19 * * *'
+    # 2×/jour pour la fiabilité (si un run rate, le suivant compense).
+    # ~12h Paris (10h UTC) et ~21h Paris (19h UTC) en été. +1h en hiver.
+    # Le commit n'est créé QUE si des changements sont détectés (sold>0 ou
+    # imports>0 ou reverted>0), donc 0 conso Netlify sur les runs neutres.
+    - cron: '0 10,19 * * *'
   workflow_dispatch: {}
+
+# Empêche un push manuel de cancel un run cron en cours, et empêche 2 runs cron
+# parallèles (risque de double-bascule).
+concurrency:
+  group: sync-vestiaire
+  cancel-in-progress: false
 
 permissions:
   contents: write   # pour commit/push les bascules SOLD
