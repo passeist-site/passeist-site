@@ -262,9 +262,15 @@ jobs:
             try { failedOther = JSON.parse(`${{ steps.import_e.outputs.failed_other }}` || '[]'); } catch (e) {}
             const sold = parseInt("${{ steps.bascule.outputs.count }}" || "0");
 
-            // Si rien à signaler ET rien à reporter, skip
-            if (D1.length === 0 && failedUnsigned.length === 0 && failedOther.length === 0 && sold === 0 && importedCount === 0) {
-              console.log('Rien à signaler');
+            // Tom 2026-05-15 : ne crée d'issue QUE si action manuelle REQUISE.
+            // Les bascules/imports auto réussis ne créent plus d'issue (pollue
+            // sans rien à valider). Le commit auto-sync sert déjà de log.
+            // Actions requises = D1 skipped (scan partiel), NON SIGNÉ sans brand,
+            // ou erreurs autres. Le reste = autonome, pas d'issue.
+            const d1SkippedArr = ("${{ steps.bascule.outputs.d1_skipped }}" || "").split(' ').filter(Boolean);
+            const needsManualAction = d1SkippedArr.length > 0 || failedUnsigned.length > 0 || failedOther.length > 0;
+            if (!needsManualAction) {
+              console.log(`Aucune action manuelle requise (sold=${sold} auto, imports=${importedCount} auto). Pas d'issue créée.`);
               return;
             }
 
