@@ -158,7 +158,7 @@ def build_digest():
     html += '<p style="font-size: 11px; color: #888;">Daily digest passeist · sync auto Vestiaire · 22h Paris<br>'
     html += f'Repo : <a href="https://github.com/{REPO}">{REPO}</a></p></body></html>'
 
-    return title, html
+    return title, html, needs_action
 
 
 def send(title, html):
@@ -174,7 +174,13 @@ def send(title, html):
 
 
 if __name__ == '__main__':
-    title, html = build_digest()
+    title, html, needs_action = build_digest()
     print(f'Title : {title}')
     print(f'HTML length : {len(html)} chars')
-    send(title, html)
+    print(f'needs_action : {needs_action}')
+    # Tom 2026-05-15 : envoie le mail UNIQUEMENT si action manuelle requise.
+    # Sinon silence total — le sync est autonome, pas besoin de daily digest.
+    if not needs_action:
+        print('Aucune action manuelle requise → pas de mail envoyé (système autonome).')
+    else:
+        send(title, html)
