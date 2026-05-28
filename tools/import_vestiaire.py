@@ -32,11 +32,10 @@ from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_b
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, 'index.html')
 OUT_IMG = os.path.join(ROOT, 'img')
-SCRAPINGBEE_API_KEY = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
-if not SCRAPINGBEE_API_KEY:
-    print('FATAL: SCRAPINGBEE_API_KEY env var manquante', file=sys.stderr)
+APIFY_API_KEY = os.environ.get('APIFY_API_KEY', '').strip()
+if not APIFY_API_KEY:
+    print('FATAL: APIFY_API_KEY env var manquante', file=sys.stderr)
     sys.exit(1)
-SB_API = 'https://app.scrapingbee.com/api/v1/'
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
 # Mapping brand canonique → slug pour path
@@ -129,33 +128,21 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
 
 
 def fetch_meta(url):
-    """Fetch fiche Vestiaire via ScrapingBee → __NEXT_DATA__.
+    """Fetch fiche Vestiaire via Apify proxy → __NEXT_DATA__.
     Accept-Language: fr-FR force la version française sinon Vestiaire
     renvoie EN (type='Top' au lieu de 'Haut').
 
     Stratégie 2 passes :
-    1. Premium proxy sans render_js (rapide, ~25 crédits) — suffit quand
-       Cloudflare laisse passer le proxy résidentiel.
-    2. Si __NEXT_DATA__ absent (Cloudflare challenge renvoyé) → retry avec
-       render_js=True (headless Chrome, bypass garanti, ~75 crédits)."""
-    headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
+    1. Proxy résidentiel Apify sans browser (rapide, peu de données).
+    2. Si __NEXT_DATA__ absent (Cloudflare challenge) → Playwright + Apify proxy
+       (headless Chrome avec proxy résidentiel, bypass garanti)."""
 
-    def _try(extra_params, label):
-        params = {
-            'api_key': SCRAPINGBEE_API_KEY, 'url': url,
-            'premium_proxy': 'true', 'country_code': 'fr',
-            'forward_headers': 'true',
-        }
-        params.update(extra_params)
+    def _extract(html_text, label):
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_text, re.DOTALL)
+        if not m:
+            print(f'fetch_meta [{label}] : __NEXT_DATA__ introuvable', file=sys.stderr)
+            return None
         try:
-            r = requests.get(SB_API, params=params, headers=headers, timeout=120)
-            if r.status_code != 200:
-                print(f'fetch_meta [{label}] : ScrapingBee HTTP {r.status_code}', file=sys.stderr)
-                return None
-            m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
-            if not m:
-                print(f'fetch_meta [{label}] : __NEXT_DATA__ introuvable', file=sys.stderr)
-                return None
             jd = json.loads(m.group(1))
             queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
             for q in queries:
@@ -163,17 +150,57 @@ def fetch_meta(url):
                 if isinstance(d, dict) and d.get('id') and d.get('brand'):
                     return d
         except Exception as e:
-            print(f'fetch_meta [{label}] ERR: {e}', file=sys.stderr)
+            print(f'fetch_meta [{label}] parse ERR: {e}', file=sys.stderr)
         return None
 
-    # Passe 1 : sans render_js (rapide)
-    result = _try({}, 'pass1-no-js')
-    if result:
-        return result
+    proxy_url = f'http://groups-RESIDENTIAL,country-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
+    proxies = {'http': proxy_url, 'https': proxy_url}
+    headers = {
+        'User-Agent': UA,
+        'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    }
 
-    # Passe 2 : avec render_js (bypass Cloudflare garanti)
-    print(f'  → Passe 1 échouée, retry avec render_js=True pour {url}')
-    return _try({'render_js': 'true'}, 'pass2-render-js')
+    # Passe 1 : proxy résidentiel, sans browser
+    try:
+        r = requests.get(url, proxies=proxies, headers=headers, timeout=60)
+        if r.status_code == 200:
+            result = _extract(r.text, 'pass1-no-js')
+            if result:
+                return result
+        else:
+            print(f'fetch_meta [pass1-no-js] : HTTP {r.status_code}', file=sys.stderr)
+    except Exception as e:
+        print(f'fetch_meta [pass1-no-js] ERR: {e}', file=sys.stderr)
+
+    # Passe 2 : Playwright + Apify proxy (bypass Cloudflare garanti)
+    print(f'  → Passe 1 échouée, retry avec Playwright pour {url}')
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                proxy={
+                    'server': 'http://proxy.apify.com:8000',
+                    'username': 'groups-RESIDENTIAL,country-FR',
+                    'password': APIFY_API_KEY,
+                },
+                extra_http_headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
+                user_agent=UA,
+            )
+            page = context.new_page()
+            # Block images/fonts/media pour économiser la bande passante
+            page.route('**/*', lambda route: route.abort()
+                       if route.request.resource_type in ['image', 'font', 'media']
+                       else route.continue_())
+            page.goto(url, wait_until='domcontentloaded', timeout=60000)
+            content = page.content()
+            browser.close()
+        return _extract(content, 'pass2-playwright')
+    except Exception as e:
+        print(f'fetch_meta [pass2-playwright] ERR: {e}', file=sys.stderr)
+
+    return None
 
 
 def extract_path_from_url(vestiaire_url):
