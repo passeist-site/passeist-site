@@ -189,6 +189,8 @@ def fetch_meta(url):
                 user_agent=UA,
             )
             page = context.new_page()
+            from playwright_stealth import Stealth
+            Stealth().apply_stealth_sync(page)
             # Block images/fonts/media pour économiser la bande passante
             page.route('**/*', lambda route: route.abort()
                        if route.request.resource_type in ['image', 'font', 'media']
