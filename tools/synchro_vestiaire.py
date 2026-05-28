@@ -310,11 +310,12 @@ def main():
     if scan_incomplete:
         print(f'\n  ⚠ SCAN INCOMPLET : {len(fs_map)}/{fs_target} URLs ({scan_ratio:.0%}). Vérif SKIPPED.')
     else:
-        # === Vérif systématique : tous les items site_available ===
-        # Cas couverts en une seule boucle : phantoms (URL VC mais article supprimé/vendu)
-        # ET articles absents de fs_map (vrais D1).
-        to_verify = sorted(site_available, key=lambda x: int(x))
-        print(f'\n  → Vérif parallèle de {len(to_verify)} items site_available (12 workers)...')
+        # === Vérif ciblée : uniquement les D1 candidates ===
+        # Items présents sur le site mais absents du scan Vestiaire (ni for-sale ni sold).
+        # Les items dans vc_fs_ids sont définitivement actifs → pas besoin de les vérifier.
+        # Gain : ~5-20 vérifs au lieu de 600+ → ~30x moins de crédits ScrapingBee.
+        to_verify = sorted(site_available - vc_fs_ids - vc_sold_ids, key=lambda x: int(x))
+        print(f'\n  → Vérif D1 candidates : {len(to_verify)} items absents du scan VC (12 workers)...')
         deleted_set = set()
         sold_set = set()
         progress = [0]
