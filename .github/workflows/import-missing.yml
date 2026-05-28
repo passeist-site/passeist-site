@@ -16,18 +16,22 @@ jobs:
           fetch-depth: 1
           sparse-checkout: |
             tools/
+            .github/
+            netlify/
             index.html
-            img/
-            netlify/functions/products.json
+            requirements.txt
+          sparse-checkout-cone-mode: false
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install deps
-        run: pip install requests pillow deep-translator
+        run: pip install -r requirements.txt
 
       - name: Import 10 pièces manquantes
+        id: import
         env:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: |
@@ -57,7 +61,7 @@ jobs:
               elif ret.returncode == 4:
                   print(f"{pid} déjà présent, skip")
               else:
-                  failed.append((pid, ret.returncode))
+                  failed.append(f"{pid}(code{ret.returncode})")
 
           print(f"\n✓ Importés : {imported}")
           print(f"✗ Échecs   : {failed}")
@@ -65,6 +69,7 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"imported={len(imported)}\n")
               f.write(f"imported_ids={' '.join(imported)}\n")
+              f.write(f"failed={' '.join(failed)}\n")
           PYEOF
 
       - name: Régénère products.json
@@ -78,7 +83,7 @@ jobs:
           git config user.email "bot@passeist.com"
           git add index.html netlify/functions/products.json
           if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then git add img/; fi
-          git commit -m "import-manuel: ${{ steps.import.outputs.imported }} pièces manquantes | ${{ steps.import.outputs.imported_ids }}"
+          git commit -m "import-manuel: ${{ steps.import.outputs.imported }} pièces | ${{ steps.import.outputs.imported_ids }}"
           for i in 1 2 3; do
             if git push; then break; fi
             git pull --rebase origin main && sleep 2
