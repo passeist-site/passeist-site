@@ -1,4 +1,5 @@
 playwright
+playwright-stealth
 cloudscraper
 pillow
 deep-translator
