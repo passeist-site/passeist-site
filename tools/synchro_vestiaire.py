@@ -84,67 +84,47 @@ def load_site():
 
 
 def scrape_profile():
-    """Scan for-sale + sold via Playwright + Apify proxy résidentiel.
+    """Scan for-sale + sold via Playwright.
 
-    Navigation JS native (une seule session browser) :
-    - Pages 1→15 for-sale (60 items/page, jusqu'à 900 articles)
-    - Onglet Vendus page 1
+    2 tentatives : direct d'abord (sans proxy), puis Apify proxy residentiel.
+    Timeout 120s par tentative. Pages 1->15 for-sale + onglet Vendus.
     """
-    print('  → Scan via Playwright + Apify proxy résidentiel')
-
-    from playwright.sync_api import sync_playwright
+    from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
     fs_urls = set()
     sd_urls = set()
     fs_target = 0
     sold_target = 0
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            proxy={
-                'server': 'http://proxy.apify.com:8000',
-                'username': 'groups-RESIDENTIAL,country-FR',
-                'password': APIFY_API_KEY,
-            },
-            extra_http_headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
-            user_agent=UA,
-        )
-        page = context.new_page()
+    def _do_scrape(page):
+        nonlocal fs_target, sold_target
 
-        # Block images/fonts/media pour économiser la bande passante Apify
+        page.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
         page.route('**/*', lambda route: route.abort()
-                   if route.request.resource_type in ['image', 'font', 'media']
+                   if route.request.resource_type in ['image', 'media']
                    else route.continue_())
 
-        print(f'  → Navigation vers profil...')
-        page.goto(PROFILE_URL, wait_until='domcontentloaded', timeout=90000)
+        print('  -> Navigation vers profil...')
+        page.goto(PROFILE_URL, wait_until='load', timeout=120000)
         time.sleep(2)
 
-        # Accept cookies
         try:
             for txt in ['Accepter', 'Accept all', 'Accept cookies', 'Tout accepter']:
                 btns = page.locator(f'button:has-text("{txt}")')
                 if btns.count() > 0 and btns.first.is_visible(timeout=2000):
-                    btns.first.click()
-                    time.sleep(1.5)
-                    break
+                    btns.first.click(); time.sleep(1.5); break
         except Exception:
             pass
 
-        # Lecture compteurs
         try:
             body = page.inner_text('body', timeout=5000)
-            m = re.search(r'(\d[\d\s \xa0]*)\s+(?:articles?\s+en\s+vente|items?\s+for\s+sale)', body)
-            if m:
-                fs_target = int(re.sub(r'[\s \xa0]', '', m.group(1)))
-            m = re.search(r'(\d[\d\s \xa0]*)\s+(?:vendus|sold)\b', body)
-            if m:
-                sold_target = int(re.sub(r'[\s \xa0]', '', m.group(1)))
+            m = re.search(r'(\d[\d\s\xa0 ]*)\s+(?:articles?\s+en\s+vente|items?\s+for\s+sale)', body)
+            if m: fs_target = int(re.sub(r'[\s\xa0 ]', '', m.group(1)))
+            m = re.search(r'(\d[\d\s\xa0 ]*)\s+(?:vendus|sold)\b', body)
+            if m: sold_target = int(re.sub(r'[\s\xa0 ]', '', m.group(1)))
         except Exception as e:
-            print(f'  → Lecture compteurs ERR: {e}')
+            print(f'  -> compteurs ERR: {e}')
 
-        # Click 60 par page
         try:
             page.locator('button:has-text("60")').first.click(timeout=5000)
             time.sleep(2.5)
@@ -152,64 +132,73 @@ def scrape_profile():
             pass
 
         def harvest(target_set):
-            """Récolte tous les liens .shtml de la page courante."""
             links = page.eval_on_selector_all('a[href]', 'els => els.map(a => a.href)')
             cnt = 0
             for u in links:
                 if re.search(r'-\d{7,9}\.shtml', u):
-                    target_set.add(u)
-                    cnt += 1
+                    target_set.add(u); cnt += 1
             return cnt
 
-        # Harvest page 1
-        page.evaluate('window.scrollTo(0, document.documentElement.scrollHeight)')
+        page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
         time.sleep(0.8)
         cnt = harvest(fs_urls)
-        print(f'  → Page 1: {cnt} items')
+        print(f'  -> Page 1: {cnt} items')
 
-        # Navigation pages 2–15
         for n in range(2, 16):
             try:
-                # Cherche le bouton de pagination : texte exactement = n, pas la page courante
-                btn = page.locator('button').filter(
-                    has_text=re.compile(f'^{n}$')
-                ).locator(':not([aria-current="page"])')
-                if btn.count() == 0:
-                    print(f'  → Page {n}: bouton introuvable, fin pagination')
-                    break
-                btn.first.click(timeout=5000)
+                btn = page.locator('button').filter(has_text=re.compile(f'^{n}$')).first
+                btn.click(timeout=5000)
                 time.sleep(2)
-                page.evaluate('window.scrollTo(0, document.documentElement.scrollHeight)')
+                page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
                 time.sleep(0.8)
                 cnt = harvest(fs_urls)
-                print(f'  → Page {n}: {cnt} items récoltés')
-                if cnt == 0:
-                    print(f'  → Page {n}: aucun item, fin pagination')
-                    break
+                print(f'  -> Page {n}: {cnt} items')
+                if cnt == 0: break
             except Exception as e:
-                print(f'  → Page {n}: {e}, fin pagination')
-                break
+                print(f'  -> Page {n}: {e}, fin'); break
 
-        # Onglet Vendus
         try:
             sold_tab = page.locator('div,span,button,a,[role="button"]').filter(
                 has_text=re.compile(r'^(Articles vendus|Vendus|Sold items|Sold)$', re.IGNORECASE)
             ).first
-            sold_tab.click(timeout=5000)
-            time.sleep(2.5)
+            sold_tab.click(timeout=5000); time.sleep(2.5)
             try:
-                page.locator('button:has-text("60")').first.click(timeout=5000)
-                time.sleep(2.5)
-            except Exception:
-                pass
-            page.evaluate('window.scrollTo(0, document.documentElement.scrollHeight)')
+                page.locator('button:has-text("60")').first.click(timeout=5000); time.sleep(2.5)
+            except Exception: pass
+            page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
             time.sleep(1.2)
             cnt = harvest(sd_urls)
-            print(f'  → Sold tab: {cnt} items')
+            print(f'  -> Sold tab: {cnt} items')
         except Exception as e:
-            print(f'  → Sold tab ERR: {e}')
+            print(f'  -> Sold tab ERR: {e}')
 
-        browser.close()
+    for label, ctx_extra in [
+        ('direct (sans proxy)', {}),
+        ('Apify proxy residentiel', {'proxy': {
+            'server': 'http://proxy.apify.com:8000',
+            'username': 'groups-RESIDENTIAL,country-FR',
+            'password': APIFY_API_KEY,
+        }}),
+    ]:
+        print(f'  -> Tentative {label}...')
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                ctx = browser.new_context(
+                    extra_http_headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
+                    user_agent=UA, viewport={'width': 1920, 'height': 1080},
+                    **ctx_extra,
+                )
+                _do_scrape(ctx.new_page())
+                browser.close()
+            if fs_urls:
+                print(f'  OK {label}'); break
+            else:
+                print(f'  -> {label}: 0 items, retry...')
+                fs_urls.clear(); sd_urls.clear(); fs_target = 0; sold_target = 0
+        except (PWTimeout, Exception) as e:
+            print(f'  -> {label}: {type(e).__name__}, retry...')
+            fs_urls.clear(); sd_urls.clear(); fs_target = 0; sold_target = 0
 
     fs_map = {}
     for u in fs_urls:
@@ -221,11 +210,10 @@ def scrape_profile():
         if m: sold_map[m.group(1)] = u
 
     print(f'Profil : {fs_target} en vente · {sold_target} vendus')
-    print(f'  ✓ for-sale: {len(fs_map)} URLs')
-    print(f'  ✓ sold page 1: {len(sold_map)} URLs')
+    print(f'  for-sale: {len(fs_map)} URLs')
+    print(f'  sold page 1: {len(sold_map)} URLs')
 
     return fs_map, sold_map, fs_target, sold_target
-
 
 def verify_item(pid, by_id):
     """Hit la fiche produit via Apify proxy et classe.
