@@ -43,7 +43,7 @@ def apify_fetch(url, premium=False):
         except Exception as e:
             return 0, url, f'ERROR: {e}'
     else:
-        proxy_url = f'http://groups-RESIDENTIAL,country-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
+        proxy_url = f'http://groups-RESIDENTIAL%2Ccountry-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
         proxies = {'http': proxy_url, 'https': proxy_url}
         try:
             r = requests.get(url, proxies=proxies, headers=headers, timeout=60)
@@ -146,8 +146,11 @@ def scrape_profile():
         for n in range(2, 16):
             try:
                 btn = page.locator('button').filter(has_text=re.compile(f'^{n}$')).first
-                btn.click(timeout=5000)
-                time.sleep(2)
+                btn.click(timeout=15000)
+                try:
+                    page.wait_for_load_state('networkidle', timeout=10000)
+                except Exception:
+                    time.sleep(3)
                 page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
                 time.sleep(0.8)
                 cnt = harvest(fs_urls)
