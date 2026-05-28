@@ -144,20 +144,22 @@ def scrape_profile():
         print(f'  -> Page 1: {cnt} items')
 
         for n in range(2, 16):
-            try:
-                btn = page.locator('button').filter(has_text=re.compile(f'^{n}$')).first
-                btn.click(timeout=15000)
-                try:
-                    page.wait_for_load_state('networkidle', timeout=10000)
-                except Exception:
-                    time.sleep(3)
-                page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
-                time.sleep(0.8)
-                cnt = harvest(fs_urls)
-                print(f'  -> Page {n}: {cnt} items')
-                if cnt == 0: break
-            except Exception as e:
-                print(f'  -> Page {n}: {e}, fin'); break
+            clicked = page.evaluate(f'''(() => {{
+                const btns = [...document.querySelectorAll('button')].filter(
+                    b => b.textContent.trim() === '{n}'
+                );
+                if (btns.length > 0) {{ btns[0].click(); return true; }}
+                return false;
+            }})()''')
+            if not clicked:
+                print(f'  -> Page {n}: bouton absent, fin')
+                break
+            time.sleep(3)
+            page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
+            time.sleep(0.8)
+            cnt = harvest(fs_urls)
+            print(f'  -> Page {n}: {cnt} items')
+            if cnt == 0: break
 
         try:
             sold_tab = page.locator('div,span,button,a,[role="button"]').filter(
@@ -422,3 +424,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
