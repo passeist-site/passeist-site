@@ -128,14 +128,14 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
 
 
 def fetch_meta(url):
-    """Fetch fiche Vestiaire via Apify proxy → __NEXT_DATA__.
+    """Fetch fiche Vestiaire → __NEXT_DATA__.
     Accept-Language: fr-FR force la version française sinon Vestiaire
     renvoie EN (type='Top' au lieu de 'Haut').
 
-    Stratégie 2 passes :
-    1. Proxy résidentiel Apify sans browser (rapide, peu de données).
-    2. Si __NEXT_DATA__ absent (Cloudflare challenge) → Playwright + Apify proxy
-       (headless Chrome avec proxy résidentiel, bypass garanti)."""
+    Stratégie 2 passes (SANS proxy — même approche que scrape_profile) :
+    1. requests direct (rapide, pas de browser).
+    2. Si Cloudflare challenge → Playwright + stealth sans proxy
+       (même technique qui fait fonctionner le scan profil)."""
 
     def _extract(html_text, label):
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_text, re.DOTALL)
@@ -153,40 +153,34 @@ def fetch_meta(url):
             print(f'fetch_meta [{label}] parse ERR: {e}', file=sys.stderr)
         return None
 
-    proxy_url = f'http://groups-RESIDENTIAL%2Ccountry-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
-    proxies = {'http': proxy_url, 'https': proxy_url}
     headers = {
         'User-Agent': UA,
         'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     }
 
-    # Passe 1 : proxy résidentiel, sans browser
+    # Passe 1 : direct sans proxy (rapide)
     try:
-        r = requests.get(url, proxies=proxies, headers=headers, timeout=60)
+        r = requests.get(url, headers=headers, timeout=30)
         if r.status_code == 200:
-            result = _extract(r.text, 'pass1-no-js')
+            result = _extract(r.text, 'pass1-direct')
             if result:
                 return result
         else:
-            print(f'fetch_meta [pass1-no-js] : HTTP {r.status_code}', file=sys.stderr)
+            print(f'fetch_meta [pass1-direct] : HTTP {r.status_code}', file=sys.stderr)
     except Exception as e:
-        print(f'fetch_meta [pass1-no-js] ERR: {e}', file=sys.stderr)
+        print(f'fetch_meta [pass1-direct] ERR: {e}', file=sys.stderr)
 
-    # Passe 2 : Playwright + Apify proxy (bypass Cloudflare garanti)
-    print(f'  → Passe 1 échouée, retry avec Playwright pour {url}')
+    # Passe 2 : Playwright + stealth sans proxy (bypass Cloudflare — même technique que scrape_profile)
+    print(f'  → Passe 1 échouée, retry avec Playwright pour {url}', file=sys.stderr)
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(
-                proxy={
-                    'server': 'http://proxy.apify.com:8000',
-                    'username': 'groups-RESIDENTIAL,country-FR',
-                    'password': APIFY_API_KEY,
-                },
                 extra_http_headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
                 user_agent=UA,
+                viewport={'width': 1920, 'height': 1080},
             )
             page = context.new_page()
             from playwright_stealth import Stealth
@@ -366,3 +360,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
