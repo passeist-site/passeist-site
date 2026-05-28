@@ -153,7 +153,7 @@ def fetch_meta(url):
             print(f'fetch_meta [{label}] parse ERR: {e}', file=sys.stderr)
         return None
 
-    proxy_url = f'http://groups-RESIDENTIAL,country-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
+    proxy_url = f'http://groups-RESIDENTIAL%2Ccountry-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
     proxies = {'http': proxy_url, 'https': proxy_url}
     headers = {
         'User-Agent': UA,
