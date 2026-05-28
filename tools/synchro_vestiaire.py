@@ -11,7 +11,7 @@ gère tout en interne. Seul env var requis : SCRAPINGBEE_API_KEY.
 
 Coût ~1000 crédits/run × 3 runs/jour × 30 jours = 90K/mois (plan 49$ = 250K).
 """
-import re, json, os, time
+import re, json, os, time, datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import requests
@@ -26,6 +26,10 @@ print(f'[debug] SCRAPINGBEE_API_KEY len={len(SCRAPINGBEE_API_KEY)} '
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+# Full scan : dimanche automatiquement, ou forcé via env var FULL_SCAN=true (workflow_dispatch)
+FULL_SCAN = (os.environ.get('FULL_SCAN', 'false').lower() == 'true'
+             or datetime.datetime.utcnow().weekday() == 6)  # 6 = dimanche
+
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
 SB_API = 'https://app.scrapingbee.com/api/v1/'
@@ -310,12 +314,15 @@ def main():
     if scan_incomplete:
         print(f'\n  ⚠ SCAN INCOMPLET : {len(fs_map)}/{fs_target} URLs ({scan_ratio:.0%}). Vérif SKIPPED.')
     else:
-        # === Vérif ciblée : uniquement les D1 candidates ===
-        # Items présents sur le site mais absents du scan Vestiaire (ni for-sale ni sold).
-        # Les items dans vc_fs_ids sont définitivement actifs → pas besoin de les vérifier.
-        # Gain : ~5-20 vérifs au lieu de 600+ → ~30x moins de crédits ScrapingBee.
-        to_verify = sorted(site_available - vc_fs_ids - vc_sold_ids, key=lambda x: int(x))
-        print(f'\n  → Vérif D1 candidates : {len(to_verify)} items absents du scan VC (12 workers)...')
+        if FULL_SCAN:
+            # Scan complet : vérifie tous les items actifs (dimanche + workflow_dispatch manuel)
+            to_verify = sorted(site_available, key=lambda x: int(x))
+            print(f'\n  → SCAN COMPLET ({len(to_verify)} items actifs) — dimanche ou forcé manuel...')
+        else:
+            # Scan ciblé : uniquement les D1 candidates (absents du scan VC)
+            # Les items dans vc_fs_ids sont définitivement actifs → inutile de les vérifier
+            to_verify = sorted(site_available - vc_fs_ids - vc_sold_ids, key=lambda x: int(x))
+            print(f'\n  → Vérif D1 ciblée : {len(to_verify)} items absents du scan VC...')
         deleted_set = set()
         sold_set = set()
         progress = [0]

@@ -3,10 +3,13 @@ name: Sync Vestiaire
 on:
   schedule:
     # 1×/jour à 21h Paris (19h UTC en été, 20h UTC en hiver).
-    # Le commit n'est créé QUE si des changements sont détectés (sold>0 ou
-    # imports>0 ou reverted>0), donc 0 conso Netlify sur les runs neutres.
     - cron: '0 19 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      full_scan:
+        description: 'Scan complet de tous les items actifs (ignore le mode ciblé)'
+        type: boolean
+        default: false
 
 # Empêche un push manuel de cancel un run cron en cours, et empêche 2 runs cron
 # parallèles (risque de double-bascule).
@@ -67,6 +70,7 @@ jobs:
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+          FULL_SCAN: ${{ github.event.inputs.full_scan || 'false' }}
         run: |
           python -u tools/synchro_vestiaire.py | tee /tmp/sync.log
           # Extrait la dernière ligne "Rapport enregistré → /path/to/json"
