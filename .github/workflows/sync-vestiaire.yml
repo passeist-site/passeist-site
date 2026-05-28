@@ -65,11 +65,11 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps chromium
 
-      - name: Run sync (Playwright via ScrapingBee proxy)
+      - name: Run sync (Playwright via Apify proxy)
         id: sync
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports
-          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
           FULL_SCAN: ${{ github.event.inputs.full_scan || 'false' }}
         run: |
           python -u tools/synchro_vestiaire.py | tee /tmp/sync.log
@@ -165,7 +165,7 @@ jobs:
       - name: Auto-import des nouvelles pièces (E + C)
         id: import_e
         env:
-          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
         run: |
           python << 'PYEOF'
           import json, os, subprocess, sys
