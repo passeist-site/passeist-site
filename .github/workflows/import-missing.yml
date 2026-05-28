@@ -30,13 +30,24 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      - name: Import 10 pièces manquantes
+      - name: Import + debug
         id: import
         env:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: |
           python << 'PYEOF'
-          import subprocess, os, json
+          import subprocess, os, json, sys
+
+          debug = {}
+          debug['index_exists'] = os.path.exists('index.html')
+          debug['index_size'] = os.path.getsize('index.html') if debug['index_exists'] else 0
+          debug['sb_key_len'] = len(os.environ.get('SCRAPINGBEE_API_KEY',''))
+          debug['cwd'] = os.getcwd()
+          debug['tools_files'] = os.listdir('tools') if os.path.isdir('tools') else []
+
+          print(f"[debug] index.html: {debug['index_exists']} ({debug['index_size']} bytes)")
+          print(f"[debug] SB key len: {debug['sb_key_len']}")
+          print(f"[debug] cwd: {debug['cwd']}")
 
           items = [
             ("67439918", "https://fr.vestiairecollective.com/vetements-femme/tops/issey-miyake/haut-issey-miyake-en-coton-marron-67439918.shtml"),
@@ -52,38 +63,53 @@ jobs:
           ]
 
           imported, failed = [], []
+          results = []
           for pid, url in items:
               print(f"\n=== Import {pid} ===")
               ret = subprocess.run(["python3", "tools/import_vestiaire.py", pid, url],
-                                   capture_output=False)
+                                   capture_output=True, text=True)
+              stdout = ret.stdout[-500:] if ret.stdout else ''
+              stderr = ret.stderr[-500:] if ret.stderr else ''
+              print(f"  code={ret.returncode}")
+              if stdout: print(f"  stdout: {stdout[-200:]}")
+              if stderr: print(f"  stderr: {stderr[-200:]}")
+              results.append({'id': pid, 'code': ret.returncode, 'stdout': stdout, 'stderr': stderr})
               if ret.returncode == 0:
                   imported.append(pid)
               elif ret.returncode == 4:
-                  print(f"{pid} déjà présent, skip")
+                  print(f"  {pid}: déjà présent")
               else:
                   failed.append(f"{pid}(code{ret.returncode})")
+
+          debug['results'] = results
+          debug['imported'] = imported
+          debug['failed'] = failed
+
+          with open('debug_import.json', 'w') as f:
+              json.dump(debug, f, indent=2, ensure_ascii=False)
 
           print(f"\n✓ Importés : {imported}")
           print(f"✗ Échecs   : {failed}")
 
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"imported={len(imported)}\n")
               f.write(f"imported_ids={' '.join(imported)}\n")
-              f.write(f"failed={' '.join(failed)}\n")
           PYEOF
 
       - name: Régénère products.json
         if: steps.import.outputs.imported != '0' && steps.import.outputs.imported != ''
         run: python tools/export_products.py
 
-      - name: Commit + push
-        if: steps.import.outputs.imported != '0' && steps.import.outputs.imported != ''
+      - name: Commit résultats
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          git add index.html netlify/functions/products.json
-          if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then git add img/; fi
-          git commit -m "import-manuel: ${{ steps.import.outputs.imported }} pièces | ${{ steps.import.outputs.imported_ids }}"
+          git add debug_import.json
+          if [ "${{ steps.import.outputs.imported }}" != "0" ] && [ -n "${{ steps.import.outputs.imported }}" ]; then
+            git add index.html netlify/functions/products.json
+            if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then git add img/; fi
+          fi
+          git commit -m "debug+import: ${{ steps.import.outputs.imported }} pièces | ${{ steps.import.outputs.imported_ids }}"
           for i in 1 2 3; do
             if git push; then break; fi
             git pull --rebase origin main && sleep 2
