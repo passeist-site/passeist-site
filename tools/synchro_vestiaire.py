@@ -99,7 +99,6 @@ def scrape_profile():
     def _do_scrape(page):
         nonlocal fs_target, sold_target
 
-        page.add_init_script("Object.defineProperty(navigator,'webdriver',{get:()=>undefined})")
         page.route('**/*', lambda route: route.abort()
                    if route.request.resource_type in ['image', 'media']
                    else route.continue_())
@@ -189,7 +188,10 @@ def scrape_profile():
                     user_agent=UA, viewport={'width': 1920, 'height': 1080},
                     **ctx_extra,
                 )
-                _do_scrape(ctx.new_page())
+                page = ctx.new_page()
+                from playwright_stealth import Stealth
+                Stealth().apply_stealth_sync(page)
+                _do_scrape(page)
                 browser.close()
             if fs_urls:
                 print(f'  OK {label}'); break
