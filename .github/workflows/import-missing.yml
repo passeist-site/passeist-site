@@ -1,0 +1,85 @@
+name: Import manquants
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+          sparse-checkout: |
+            tools/
+            index.html
+            img/
+            netlify/functions/products.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests pillow deep-translator
+
+      - name: Import 10 pièces manquantes
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: |
+          python << 'PYEOF'
+          import subprocess, os, json
+
+          items = [
+            ("67439918", "https://fr.vestiairecollective.com/vetements-femme/tops/issey-miyake/haut-issey-miyake-en-coton-marron-67439918.shtml"),
+            ("67439970", "https://fr.vestiairecollective.com/vetements-homme/tee-shirts/issey-miyake/tee-shirt-issey-miyake-en-coton-blanc-67439970.shtml"),
+            ("67440123", "https://fr.vestiairecollective.com/vetements-homme/vestes-blousons/comme-des-garcons/vesteblouson-comme-des-garcons-en-coton-marron-67440123.shtml"),
+            ("67439844", "https://fr.vestiairecollective.com/vetements-femme/tops/ys/haut-ys-en-lin-noir-67439844.shtml"),
+            ("67440437", "https://fr.vestiairecollective.com/vetements-homme/chemises/non-signe-unsigned/chemise-non-signe-unsigned-en-lin-ecru-67440437.shtml"),
+            ("67440551", "https://fr.vestiairecollective.com/accessoires-homme/chapeaux-bonnets/non-signe-unsigned/chapeaubonnet-non-signe-unsigned-en-coton-violet-67440551.shtml"),
+            ("67440051", "https://fr.vestiairecollective.com/vetements-femme/tops/45rpm/haut-45rpm-en-coton-marine-67440051.shtml"),
+            ("67440359", "https://fr.vestiairecollective.com/vetements-homme/pulls-gilets-sweats/45rpm/pullgiletsweat-45rpm-en-coton-marine-67440359.shtml"),
+            ("67440184", "https://fr.vestiairecollective.com/vetements-homme/pulls-gilets-sweats/comme-des-garcons/pullgiletsweat-comme-des-garcons-en-laine-gris-67440184.shtml"),
+            ("67440288", "https://fr.vestiairecollective.com/vetements-homme/chemises/comme-des-garcons/chemise-comme-des-garcons-en-coton-marine-67440288.shtml"),
+          ]
+
+          imported, failed = [], []
+          for pid, url in items:
+              print(f"\n=== Import {pid} ===")
+              ret = subprocess.run(["python3", "tools/import_vestiaire.py", pid, url],
+                                   capture_output=False)
+              if ret.returncode == 0:
+                  imported.append(pid)
+              elif ret.returncode == 4:
+                  print(f"{pid} déjà présent, skip")
+              else:
+                  failed.append((pid, ret.returncode))
+
+          print(f"\n✓ Importés : {imported}")
+          print(f"✗ Échecs   : {failed}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"imported={len(imported)}\n")
+              f.write(f"imported_ids={' '.join(imported)}\n")
+          PYEOF
+
+      - name: Régénère products.json
+        if: steps.import.outputs.imported != '0' && steps.import.outputs.imported != ''
+        run: python tools/export_products.py
+
+      - name: Commit + push
+        if: steps.import.outputs.imported != '0' && steps.import.outputs.imported != ''
+        run: |
+          git config user.name "passeist-bot"
+          git config user.email "bot@passeist.com"
+          git add index.html netlify/functions/products.json
+          if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then git add img/; fi
+          git commit -m "import-manuel: ${{ steps.import.outputs.imported }} pièces manquantes | ${{ steps.import.outputs.imported_ids }}"
+          for i in 1 2 3; do
+            if git push; then break; fi
+            git pull --rebase origin main && sleep 2
+          done
