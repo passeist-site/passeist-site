@@ -131,31 +131,49 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
 def fetch_meta(url):
     """Fetch fiche Vestiaire via ScrapingBee → __NEXT_DATA__.
     Accept-Language: fr-FR force la version française sinon Vestiaire
-    renvoie EN (type='Top' au lieu de 'Haut')."""
-    params = {
-        'api_key': SCRAPINGBEE_API_KEY, 'url': url,
-        'premium_proxy': 'true', 'country_code': 'fr',
-        'forward_headers': 'true',
-    }
+    renvoie EN (type='Top' au lieu de 'Haut').
+
+    Stratégie 2 passes :
+    1. Premium proxy sans render_js (rapide, ~25 crédits) — suffit quand
+       Cloudflare laisse passer le proxy résidentiel.
+    2. Si __NEXT_DATA__ absent (Cloudflare challenge renvoyé) → retry avec
+       render_js=True (headless Chrome, bypass garanti, ~75 crédits)."""
     headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
-    try:
-        r = requests.get(SB_API, params=params, headers=headers, timeout=90)
-        if r.status_code != 200:
-            print(f'fetch_meta : ScrapingBee HTTP {r.status_code} pour {url}', file=sys.stderr)
-            return None
-        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
-        if not m:
-            print(f'fetch_meta : __NEXT_DATA__ introuvable pour {url}', file=sys.stderr)
-            return None
-        jd = json.loads(m.group(1))
-        queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
-        for q in queries:
-            d = q.get('state', {}).get('data')
-            if isinstance(d, dict) and d.get('id') and d.get('brand'):
-                return d
-    except Exception as e:
-        print(f'fetch_meta ERR: {e}', file=sys.stderr)
-    return None
+
+    def _try(extra_params, label):
+        params = {
+            'api_key': SCRAPINGBEE_API_KEY, 'url': url,
+            'premium_proxy': 'true', 'country_code': 'fr',
+            'forward_headers': 'true',
+        }
+        params.update(extra_params)
+        try:
+            r = requests.get(SB_API, params=params, headers=headers, timeout=120)
+            if r.status_code != 200:
+                print(f'fetch_meta [{label}] : ScrapingBee HTTP {r.status_code}', file=sys.stderr)
+                return None
+            m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
+            if not m:
+                print(f'fetch_meta [{label}] : __NEXT_DATA__ introuvable', file=sys.stderr)
+                return None
+            jd = json.loads(m.group(1))
+            queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
+            for q in queries:
+                d = q.get('state', {}).get('data')
+                if isinstance(d, dict) and d.get('id') and d.get('brand'):
+                    return d
+        except Exception as e:
+            print(f'fetch_meta [{label}] ERR: {e}', file=sys.stderr)
+        return None
+
+    # Passe 1 : sans render_js (rapide)
+    result = _try({}, 'pass1-no-js')
+    if result:
+        return result
+
+    # Passe 2 : avec render_js (bypass Cloudflare garanti)
+    print(f'  → Passe 1 échouée, retry avec render_js=True pour {url}')
+    return _try({'render_js': 'true'}, 'pass2-render-js')
 
 
 def extract_path_from_url(vestiaire_url):
