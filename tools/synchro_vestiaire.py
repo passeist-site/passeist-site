@@ -175,20 +175,28 @@ def scrape_profile():
             print(f'  -> Page {n}: {cnt} items')
             if cnt == 0: break
 
-        try:
-            sold_tab = page.locator('div,span,button,a,[role="button"]').filter(
-                has_text=re.compile(r'^(Articles vendus|Vendus|Sold items|Sold)$', re.IGNORECASE)
-            ).first
-            sold_tab.click(timeout=5000); time.sleep(2.5)
-            try:
-                page.locator('button:has-text("60")').first.click(timeout=5000); time.sleep(2.5)
-            except Exception: pass
+        # Sold tab : JS evaluate pour passer l'overlay privacy qui bloque les clics Playwright
+        clicked_sold = page.evaluate('''(() => {
+            const labels = ["Articles vendus", "Vendus", "Sold items", "Sold"];
+            const els = [...document.querySelectorAll('div,span,button,a,[role="button"]')];
+            const tab = els.find(el => labels.some(l => el.textContent.trim() === l));
+            if (tab) { tab.click(); return true; }
+            return false;
+        })()''')
+        if clicked_sold:
+            time.sleep(2.5)
+            # 60 items/page pour les vendus aussi
+            page.evaluate('''(() => {
+                const b = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === "60");
+                if (b) b.click();
+            })()''')
+            time.sleep(2)
             page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
             time.sleep(1.2)
             cnt = harvest(sd_urls)
             print(f'  -> Sold tab: {cnt} items')
-        except Exception as e:
-            print(f'  -> Sold tab ERR: {e}')
+        else:
+            print(f'  -> Sold tab: bouton introuvable')
 
     # Test connectivité proxy avant d'essayer Playwright
     proxy_reachable = False
