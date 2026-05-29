@@ -171,31 +171,30 @@ def fetch_meta(url):
     except Exception as e:
         print(f'fetch_meta [pass1-direct] ERR: {e}', file=sys.stderr)
 
-    # Passe 2 : Playwright + stealth + proxy Apify auto (bypass Cloudflare)
+    # Passe 2 : Playwright + stealth direct (même technique que scrape_profile qui marche)
     print(f'  → Passe 1 échouée, retry avec Playwright pour {url}', file=sys.stderr)
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            ctx_kwargs = {
-                'extra_http_headers': {'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
-                'user_agent': UA,
-                'viewport': {'width': 1920, 'height': 1080},
-            }
-            if APIFY_API_KEY:
-                ctx_kwargs['proxy'] = {
-                    'server': 'http://proxy.apify.com:8000',
-                    'username': 'auto',
-                    'password': APIFY_API_KEY,
-                }
-            context = browser.new_context(**ctx_kwargs)
+            context = browser.new_context(
+                extra_http_headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'},
+                user_agent=UA,
+                viewport={'width': 1920, 'height': 1080},
+            )
             page = context.new_page()
             from playwright_stealth import Stealth
             Stealth().apply_stealth_sync(page)
             page.route('**/*', lambda route: route.abort()
                        if route.request.resource_type in ['image', 'font', 'media']
                        else route.continue_())
-            page.goto(url, wait_until='domcontentloaded', timeout=90000)
+            page.goto(url, wait_until='domcontentloaded', timeout=60000)
+            # Debug : voir si on a la vraie page ou un challenge
+            try:
+                title = page.title()
+                print(f'  → Titre: {repr(title)}', file=sys.stderr)
+            except Exception:
+                pass
             content = page.content()
             browser.close()
         return _extract(content, 'pass2-playwright')
