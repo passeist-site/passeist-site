@@ -32,24 +32,18 @@ INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.ht
 
 
 def apify_fetch(url, premium=False):
-    """Fetch via Apify proxy. Retourne (status, resolved_url, html).
-    premium=False → tentative directe sans proxy (gratuit).
-    premium=True  → proxy résidentiel Apify (bypass Cloudflare)."""
-    headers = {'User-Agent': UA, 'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
-    if not premium:
-        try:
-            r = requests.get(url, headers=headers, timeout=30)
-            return r.status_code, r.url, r.text
-        except Exception as e:
-            return 0, url, f'ERROR: {e}'
-    else:
-        proxy_url = f'http://groups-RESIDENTIAL%2Ccountry-FR:{APIFY_API_KEY}@proxy.apify.com:8000'
-        proxies = {'http': proxy_url, 'https': proxy_url}
-        try:
-            r = requests.get(url, proxies=proxies, headers=headers, timeout=60)
-            return r.status_code, r.url, r.text
-        except Exception as e:
-            return 0, url, f'ERROR: {e}'
+    """Fetch fiche produit Vestiaire via curl-cffi (bypass Cloudflare TLS fingerprint).
+    Le paramètre premium est conservé pour compatibilité mais ignoré.
+    Retourne (status, resolved_url, html)."""
+    try:
+        from curl_cffi import requests as cf_requests
+        r = cf_requests.get(url, impersonate='chrome120',
+                            headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
+                                     'User-Agent': UA},
+                            timeout=30)
+        return r.status_code, str(r.url), r.text
+    except Exception as e:
+        return 0, url, f'ERROR: {e}'
 
 
 def load_site():
@@ -275,15 +269,12 @@ def verify_item(pid, by_id):
             return 'keep'
         path = f"/{path.strip('/')}/{slug}.shtml"
     url = f'https://fr.vestiairecollective.com{path if path.startswith("/") else "/" + path}'
-    # 1ère tentative : datacenter (1 credit)
-    status, resolved, html = apify_fetch(url, premium=False)
+    # curl-cffi (bypass Cloudflare TLS fingerprint, sans proxy)
+    status, resolved, html = apify_fetch(url)
     if status == 0:
-        return 'keep'  # erreur réseau, doute = sécurité
-    # Si bloqué (403, 429, 5xx) → retry avec premium proxy (25 credits)
+        return 'keep'  # erreur réseau, doute = sécurité (R1)
     if status not in (200, 301, 302):
-        status, resolved, html = apify_fetch(url, premium=True)
-        if status not in (200, 301, 302):
-            return 'keep'
+        return 'keep'  # bloqué ou erreur, doute = sécurité (R1)
     # Article supprimé : ID disparu de l'URL finale (redirect catégorie)
     if pid not in resolved:
         return 'deleted'
@@ -324,7 +315,7 @@ def main():
     if B_raw:
         print(f'\n  → Vérification individuelle des {len(B_raw)} candidats B (anti-faux-positif)...')
         from concurrent.futures import ThreadPoolExecutor as _TPE, as_completed as _ac
-        with _TPE(max_workers=8) as _ex:
+        with _TPE(max_workers=4) as _ex:
             _futs = {_ex.submit(verify_item, pid, by_id): pid for pid in B_raw}
             for _f in _ac(_futs):
                 _pid, _status = _futs[_f], _f.result()
@@ -382,7 +373,7 @@ def main():
             return pid, status
 
         false_positives = [0]
-        with ThreadPoolExecutor(max_workers=12) as ex:
+        with ThreadPoolExecutor(max_workers=4) as ex:
             futures = {ex.submit(worker, pid): pid for pid in to_verify}
             for fut in as_completed(futures):
                 pid, status = fut.result()
