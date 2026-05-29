@@ -105,7 +105,14 @@ def scrape_profile():
 
         print('  -> Navigation vers profil...')
         page.goto(PROFILE_URL, wait_until='load', timeout=120000)
-        time.sleep(2)
+        time.sleep(3)
+
+        # Debug : titre et début de body pour détecter Cloudflare challenge
+        try:
+            title = page.title()
+            print(f'  -> Titre page: {repr(title)}')
+        except Exception as e:
+            print(f'  -> Titre ERR: {e}')
 
         try:
             for txt in ['Accepter', 'Accept all', 'Accept cookies', 'Tout accepter']:
@@ -121,6 +128,7 @@ def scrape_profile():
             if m: fs_target = int(re.sub(r'[\s\xa0 ]', '', m.group(1)))
             m = re.search(r'(\d[\d\s\xa0 ]*)\s+(?:vendus|sold)\b', body)
             if m: sold_target = int(re.sub(r'[\s\xa0 ]', '', m.group(1)))
+            print(f'  -> Compteurs: {fs_target} for-sale, {sold_target} sold')
         except Exception as e:
             print(f'  -> compteurs ERR: {e}')
 
@@ -138,8 +146,14 @@ def scrape_profile():
                     target_set.add(u); cnt += 1
             return cnt
 
+        # Attendre que les produits soient rendus avant de harvester
+        try:
+            page.wait_for_selector('a[href*=".shtml"]', timeout=15000)
+        except Exception:
+            pass
+
         page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
-        time.sleep(0.8)
+        time.sleep(1.5)
         cnt = harvest(fs_urls)
         print(f'  -> Page 1: {cnt} items')
 
@@ -176,14 +190,29 @@ def scrape_profile():
         except Exception as e:
             print(f'  -> Sold tab ERR: {e}')
 
-    for label, ctx_extra in [
-        ('direct (sans proxy)', {}),
-        ('Apify proxy residentiel', {'proxy': {
+    # Test connectivité proxy avant d'essayer Playwright
+    proxy_reachable = False
+    if APIFY_API_KEY:
+        try:
+            test_r = requests.get(
+                'http://httpbin.org/ip',
+                proxies={'http': f'http://auto:{APIFY_API_KEY}@proxy.apify.com:8000',
+                         'https': f'http://auto:{APIFY_API_KEY}@proxy.apify.com:8000'},
+                timeout=15, headers={'User-Agent': UA})
+            print(f'  -> Proxy test: HTTP {test_r.status_code} — {test_r.text[:80]}')
+            proxy_reachable = test_r.status_code == 200
+        except Exception as e:
+            print(f'  -> Proxy test ERR: {e}')
+
+    proxy_attempts = [('direct (sans proxy)', {})]
+    if proxy_reachable:
+        proxy_attempts.append(('Apify proxy (auto)', {'proxy': {
             'server': 'http://proxy.apify.com:8000',
-            'username': 'groups-RESIDENTIAL,country-FR',
+            'username': 'auto',
             'password': APIFY_API_KEY,
-        }}),
-    ]:
+        }}))
+
+    for label, ctx_extra in proxy_attempts:
         print(f'  -> Tentative {label}...')
         try:
             with sync_playwright() as p:
