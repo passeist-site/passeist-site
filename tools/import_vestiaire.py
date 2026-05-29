@@ -154,22 +154,23 @@ def fetch_meta(url):
         return None
 
     headers = {
-        'User-Agent': UA,
         'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     }
 
-    # Passe 1 : direct sans proxy (rapide)
+    # Passe 1 : curl-cffi (imite fingerprint TLS Chrome → bypass Cloudflare sans proxy)
     try:
-        r = requests.get(url, headers=headers, timeout=30)
+        from curl_cffi import requests as cf_requests
+        r = cf_requests.get(url, impersonate='chrome120', headers=headers, timeout=30)
         if r.status_code == 200:
-            result = _extract(r.text, 'pass1-direct')
+            result = _extract(r.text, 'pass1-curl-cffi')
             if result:
                 return result
+            print(f'fetch_meta [pass1-curl-cffi] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
         else:
-            print(f'fetch_meta [pass1-direct] : HTTP {r.status_code}', file=sys.stderr)
+            print(f'fetch_meta [pass1-curl-cffi] : HTTP {r.status_code}', file=sys.stderr)
     except Exception as e:
-        print(f'fetch_meta [pass1-direct] ERR: {e}', file=sys.stderr)
+        print(f'fetch_meta [pass1-curl-cffi] ERR: {e}', file=sys.stderr)
 
     # Passe 2 : Playwright + stealth direct (même technique que scrape_profile qui marche)
     print(f'  → Passe 1 échouée, retry avec Playwright pour {url}', file=sys.stderr)
