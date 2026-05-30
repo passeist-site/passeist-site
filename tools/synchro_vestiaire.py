@@ -371,9 +371,12 @@ def main():
         if len(fb_sold) + len(fb_deleted) > MAX_BASCULES:
             print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER : {len(fb_sold)+len(fb_deleted)} > {MAX_BASCULES} → ABORT')
         else:
+            # Tous les items vérifiés individuellement → on les met en B directement
+            # (le workflow bascule toujours B, contrairement à D1 qui requiert fs_complete)
             for pid in fb_sold:
                 if pid not in B: B.append(pid)
-            D1.extend(list(fb_deleted))
+            for pid in fb_deleted:
+                if pid not in B: B.append(pid)
     elif scan_incomplete:
         print(f'\n  ⚠ SCAN INCOMPLET : {len(fs_map)}/{fs_target} URLs ({scan_ratio:.0%}). Vérif SKIPPED.')
     else:
