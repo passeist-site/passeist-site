@@ -340,7 +340,41 @@ def main():
     D1 = []
     B_extra = []
 
-    if scan_incomplete:
+    # Détection scan bloqué (IP Cloudflare) = 0 items scannés ET fs_target=0
+    scan_blocked = len(fs_map) == 0 and fs_target == 0
+
+    if scan_blocked:
+        # Mode fallback : profil inaccessible (IP bloquée par Cloudflare)
+        # On vérifie TOUS les items site_available via curl-cffi pour détecter les vendus
+        # sans avoir besoin du scan profil (curl-cffi fonctionne sur les fiches individuelles)
+        print(f'\n  ⚠ SCAN BLOQUÉ (IP Cloudflare). Mode fallback : vérif individuelle de tous les items...')
+        to_verify_fallback = sorted(site_available, key=lambda x: int(x))
+        print(f'  → Vérif {len(to_verify_fallback)} items via curl-cffi...')
+        fb_deleted = set()
+        fb_sold = set()
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            futs = {ex.submit(verify_item, pid, by_id): pid for pid in to_verify_fallback}
+            done_count = [0]
+            for f in as_completed(futs):
+                pid = futs[f]
+                status = f.result()
+                done_count[0] += 1
+                if status == 'sold':
+                    fb_sold.add(pid)
+                elif status == 'deleted':
+                    fb_deleted.add(pid)
+                if done_count[0] % 50 == 0:
+                    print(f'    [{done_count[0]}/{len(to_verify_fallback)}] sold={len(fb_sold)} deleted={len(fb_deleted)}')
+        print(f'  ✓ Fallback terminé : {len(fb_sold)} vendus, {len(fb_deleted)} supprimés')
+        # Circuit breaker
+        MAX_BASCULES = 15
+        if len(fb_sold) + len(fb_deleted) > MAX_BASCULES:
+            print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER : {len(fb_sold)+len(fb_deleted)} > {MAX_BASCULES} → ABORT')
+        else:
+            for pid in fb_sold:
+                if pid not in B: B.append(pid)
+            D1.extend(list(fb_deleted))
+    elif scan_incomplete:
         print(f'\n  ⚠ SCAN INCOMPLET : {len(fs_map)}/{fs_target} URLs ({scan_ratio:.0%}). Vérif SKIPPED.')
     else:
         if FULL_SCAN:
