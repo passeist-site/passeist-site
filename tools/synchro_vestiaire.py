@@ -281,7 +281,7 @@ def verify_item(pid, by_id):
     # Article vendu : JSON-LD availability OutOfStock
     m = re.search(r'"availability"\s*:\s*"([^"]+)"', html)
     avail = m.group(1) if m else None
-    if avail == 'OutOfStock':
+    if avail and 'OutOfStock' in avail:  # "OutOfStock" ou "https://schema.org/OutOfStock"
         return 'sold'
     # InStock ou indéterminé → on garde actif (R1: doute = sécurité)
     return 'keep'
