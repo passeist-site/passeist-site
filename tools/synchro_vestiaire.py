@@ -287,6 +287,32 @@ def verify_item(pid, by_id):
     return 'keep'
 
 
+def verify_item_debug(pid, by_id):
+    """Comme verify_item mais retourne aussi le code HTTP pour diagnostics."""
+    prod = by_id.get(pid)
+    if not prod or not prod.get('path'):
+        return 'keep', 0
+    path = prod['path']
+    if not path.endswith('.shtml'):
+        slug = prod.get('slug', '')
+        if not slug:
+            return 'keep', 0
+        path = f"/{path.strip('/')}/{slug}.shtml"
+    url = f'https://fr.vestiairecollective.com{path if path.startswith("/") else "/" + path}'
+    status, resolved, html = apify_fetch(url)
+    if status == 0:
+        return 'keep', 0
+    if status not in (200, 301, 302):
+        return 'keep', status
+    if pid not in resolved:
+        return 'deleted', status
+    m = re.search(r'"availability"\s*:\s*"([^"]+)"', html)
+    avail = m.group(1) if m else None
+    if avail and 'OutOfStock' in avail:
+        return 'sold', status
+    return 'keep', status
+
+
 def main():
     print('=== Chargement du site ===')
     site_all, site_sold, site_available, sold_stems, all_stems, by_id = load_site()
@@ -352,24 +378,30 @@ def main():
         print(f'  → Vérif {len(to_verify_fallback)} items via curl-cffi...')
         fb_deleted = set()
         fb_sold = set()
+        fb_keep = [0]
+        fb_blocked = [0]
         with ThreadPoolExecutor(max_workers=4) as ex:
-            futs = {ex.submit(verify_item, pid, by_id): pid for pid in to_verify_fallback}
+            futs = {ex.submit(verify_item_debug, pid, by_id): pid for pid in to_verify_fallback}
             done_count = [0]
             for f in as_completed(futs):
                 pid = futs[f]
-                status = f.result()
+                status, http_code = f.result()
                 done_count[0] += 1
                 if status == 'sold':
                     fb_sold.add(pid)
                 elif status == 'deleted':
                     fb_deleted.add(pid)
+                elif http_code in (403, 429, 503):
+                    fb_blocked[0] += 1
+                else:
+                    fb_keep[0] += 1
                 if done_count[0] % 50 == 0:
-                    print(f'    [{done_count[0]}/{len(to_verify_fallback)}] sold={len(fb_sold)} deleted={len(fb_deleted)}')
-        print(f'  ✓ Fallback terminé : {len(fb_sold)} vendus, {len(fb_deleted)} supprimés')
-        # Circuit breaker
-        MAX_BASCULES = 15
-        if len(fb_sold) + len(fb_deleted) > MAX_BASCULES:
-            print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER : {len(fb_sold)+len(fb_deleted)} > {MAX_BASCULES} → ABORT')
+                    print(f'    [{done_count[0]}/{len(to_verify_fallback)}] sold={len(fb_sold)} deleted={len(fb_deleted)} blocked={fb_blocked[0]}')
+        print(f'  ✓ Fallback terminé : {len(fb_sold)} vendus, {len(fb_deleted)} supprimés, {fb_blocked[0]} bloqués CF, {fb_keep[0]} instock')
+        # Circuit breaker élevé en mode fallback (tous vérifiés individuellement)
+        MAX_BASCULES_FALLBACK = 50
+        if len(fb_sold) + len(fb_deleted) > MAX_BASCULES_FALLBACK:
+            print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER : {len(fb_sold)+len(fb_deleted)} > {MAX_BASCULES_FALLBACK} → ABORT')
         else:
             # Tous les items vérifiés individuellement → on les met en B directement
             # (le workflow bascule toujours B, contrairement à D1 qui requiert fs_complete)
