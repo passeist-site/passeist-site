@@ -13,6 +13,22 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import requests
 
+# Pacing global pour les requêtes curl-cffi vers Vestiaire
+# Anti rate-limit Cloudflare : max 1 req/0.5s
+_cf_lock = threading.Lock()
+_cf_last = [0.0]
+CF_PACING = 0.5  # secondes entre requêtes
+
+def _cf_paced_get(url, **kwargs):
+    """Wrapper curl-cffi avec pacing global pour éviter le rate-limit Cloudflare."""
+    from curl_cffi import requests as cf_requests
+    with _cf_lock:
+        elapsed = time.time() - _cf_last[0]
+        if elapsed < CF_PACING:
+            time.sleep(CF_PACING - elapsed)
+        _cf_last[0] = time.time()
+    return cf_requests.get(url, **kwargs)
+
 # === CONFIG ===
 APIFY_API_KEY = os.environ.get('APIFY_API_KEY', '').strip()
 if not APIFY_API_KEY:
@@ -36,11 +52,10 @@ def apify_fetch(url, premium=False):
     Le paramètre premium est conservé pour compatibilité mais ignoré.
     Retourne (status, resolved_url, html)."""
     try:
-        from curl_cffi import requests as cf_requests
-        r = cf_requests.get(url, impersonate='chrome120',
-                            headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
-                                     'User-Agent': UA},
-                            timeout=30)
+        r = _cf_paced_get(url, impersonate='chrome120',
+                          headers={'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
+                                   'User-Agent': UA},
+                          timeout=30)
         return r.status_code, str(r.url), r.text
     except Exception as e:
         return 0, url, f'ERROR: {e}'
@@ -380,7 +395,7 @@ def main():
         fb_sold = set()
         fb_keep = [0]
         fb_blocked = [0]
-        with ThreadPoolExecutor(max_workers=4) as ex:
+        with ThreadPoolExecutor(max_workers=2) as ex:
             futs = {ex.submit(verify_item_debug, pid, by_id): pid for pid in to_verify_fallback}
             done_count = [0]
             for f in as_completed(futs):
