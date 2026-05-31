@@ -70,6 +70,7 @@ jobs:
         env:
           SYNC_REPORT_DIR: /tmp/sync_reports
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
           FULL_SCAN: ${{ github.event.inputs.full_scan || 'false' }}
         run: |
           python -u tools/synchro_vestiaire.py | tee /tmp/sync.log
@@ -166,6 +167,7 @@ jobs:
         id: import_e
         env:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: |
           python << 'PYEOF'
           import json, os, subprocess, sys
