@@ -36,11 +36,11 @@ SB_API = 'https://app.scrapingbee.com/api/v1/'
 
 
 def sb_fetch(url, premium=False):
-    """Fetch via ScrapingBee API direct. Retourne (status, resolved_url, html)."""
-    params = {'api_key': SCRAPINGBEE_API_KEY, 'url': url}
+    """Fetch via ScrapingBee API direct. Retourne (status, resolved_url, html).
+    country_code=fr TOUJOURS : évite les prix USD/taxes internationales."""
+    params = {'api_key': SCRAPINGBEE_API_KEY, 'url': url, 'country_code': 'fr'}
     if premium:
         params['premium_proxy'] = 'true'
-        params['country_code'] = 'fr'
     try:
         r = requests.get(SB_API, params=params, timeout=60)
         resolved = r.headers.get('spb-resolved-url') or url
