@@ -130,21 +130,20 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
 </div>`;
 }
 
-// ── Season + year as abbreviation (e.g. "AH2003", "PE1994") ───────────────
+// ── Season + year in French and English ───────────────────────────────────
+// Returns { fr: "Automne-Hiver 2003", en: "Fall-Winter 2003" } or null
 
-function seasonYearAbbrev(desc) {
+function seasonYear(desc) {
   if (!desc) return null;
   const text = desc.replace(/\s+/g, ' ');
 
   const seasons = [
-    { re: /\b(?:automne[\s\-]*hiver|a[\s\-]*h)\b/i,           abbrev: 'AH' },
-    { re: /\b(?:printemps[\s\-]*[eé]t[eé]|p[\s\-]*[eé])\b/i, abbrev: 'PE' },
-    { re: /\bautomne\b/i,    abbrev: 'A' },
-    { re: /\bhiver\b/i,      abbrev: 'H' },
-    { re: /\bprintemps\b/i,  abbrev: 'P' },
-    { re: /\b[eé]t[eé]\b/i, abbrev: 'E' },
-    { re: /\bfall[\s\-]*winter\b/i,   abbrev: 'AH' },
-    { re: /\bspring[\s\-]*summer\b/i, abbrev: 'PE' },
+    { re: /\b(?:automne[\s\-]*hiver|fall[\s\-]*winter)\b/i,           fr: 'Automne-Hiver', en: 'Fall-Winter' },
+    { re: /\b(?:printemps[\s\-]*[eé]t[eé]|spring[\s\-]*summer)\b/i,  fr: 'Printemps-Été', en: 'Spring-Summer' },
+    { re: /\bautomne\b/i,    fr: 'Automne',  en: 'Fall'   },
+    { re: /\bhiver\b/i,      fr: 'Hiver',    en: 'Winter' },
+    { re: /\bprintemps\b/i,  fr: 'Printemps',en: 'Spring' },
+    { re: /\b[eé]t[eé]\b/i, fr: 'Été',      en: 'Summer' },
   ];
 
   const yearMatch = text.match(/\b(19[6-9]\d|20[0-2]\d)\b/);
@@ -154,9 +153,55 @@ function seasonYearAbbrev(desc) {
   const pos = yearMatch.index;
   const win = text.slice(Math.max(0, pos - 40), pos + 44);
   for (const s of seasons) {
-    if (s.re.test(win)) return s.abbrev + year;
+    if (s.re.test(win)) return { fr: s.fr + ' ' + year, en: s.en + ' ' + year };
   }
-  return year;
+  return { fr: year, en: year };
+}
+
+// ── French → English translation tables ───────────────────────────────────
+
+const TYPE_FR_TO_EN = {
+  'pantalon': 'Trousers',   'veste': 'Jacket',        'manteau': 'Coat',
+  'robe': 'Dress',          'chemise': 'Shirt',        'chemisier': 'Blouse',
+  'pull': 'Sweater',        'pullover': 'Sweater',     'cardigan': 'Cardigan',
+  'jupe': 'Skirt',          'écharpe': 'Scarf',        'echarpe': 'Scarf',
+  'foulard': 'Scarf',       'cravate': 'Tie',          'costume': 'Suit',
+  'blazer': 'Blazer',       'short': 'Shorts',         'salopette': 'Overalls',
+  'combinaison': 'Jumpsuit','gilet': 'Vest',           'top': 'Top',
+  't-shirt': 'T-Shirt',     'tshirt': 'T-Shirt',       'polo': 'Polo',
+  'jean': 'Jeans',          'trench': 'Trench coat',   'doudoune': 'Down jacket',
+  'parka': 'Parka',         'kimono': 'Kimono',        'tunique': 'Tunic',
+  'legging': 'Leggings',    'leggings': 'Leggings',    'collant': 'Tights',
+  'chapeau': 'Hat',         'bonnet': 'Beanie',        'casquette': 'Cap',
+  'gants': 'Gloves',        'ceinture': 'Belt',        'sac': 'Bag',
+  'pochette': 'Clutch',     'blouson': 'Bomber jacket','sweat': 'Sweatshirt',
+  'sweatshirt': 'Sweatshirt','débardeur': 'Tank top',  'debardeur': 'Tank top',
+  'ensemble': 'Set',        'tailleur': 'Suit',        'imperméable': 'Raincoat',
+  'impermeable': 'Raincoat','veston': 'Jacket',        'cape': 'Cape',
+  'poncho': 'Poncho',       'châle': 'Shawl',          'chale': 'Shawl',
+  'bandeau': 'Headband',    'chapeau cloche': 'Cloche hat',
+};
+
+const MATERIAL_FR_TO_EN = {
+  'laine': 'Wool',       'coton': 'Cotton',     'lin': 'Linen',
+  'soie': 'Silk',        'polyester': 'Polyester','nylon': 'Nylon',
+  'cachemire': 'Cashmere','velours': 'Velvet',   'denim': 'Denim',
+  'cuir': 'Leather',     'satin': 'Satin',       'viscose': 'Viscose',
+  'acrylique': 'Acrylic','mohair': 'Mohair',     'alpaga': 'Alpaca',
+  'alpaca': 'Alpaca',    'angora': 'Angora',     'lycra': 'Lycra',
+  'organza': 'Organza',  'tweed': 'Tweed',       'jacquard': 'Jacquard',
+  'jersey': 'Jersey',    'dentelle': 'Lace',     'fourrure': 'Fur',
+  'mesh': 'Mesh',        'tulle': 'Tulle',       'flanelle': 'Flannel',
+  'gabardine': 'Gabardine','taffetas': 'Taffeta', 'mousseline': 'Chiffon',
+  'élasthanne': 'Elastane','elasthanne': 'Elastane','synthétique': 'Synthetic',
+};
+
+function translateType(fr) {
+  return TYPE_FR_TO_EN[fr.toLowerCase()] || fr;
+}
+
+function translateMaterial(fr) {
+  return MATERIAL_FR_TO_EN[fr.toLowerCase()] || fr;
 }
 
 // ── Apply product-specific SEO to the full HTML string ────────────────────
@@ -165,19 +210,29 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const url  = 'https://passeist.com/product/' + p.slug;
   const img  = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-  // Title: BRAND — BaseType Matière Genre AH2003 — passéist
-  const baseType = p.type.replace(/\s+en\s+.*$/i, '').trim();
-  const matMatch = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
-  const material = matMatch
-    ? matMatch[1].charAt(0).toUpperCase() + matMatch[1].slice(1).toLowerCase()
-    : null;
-  const gender  = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
-  const abbrev  = seasonYearAbbrev(p.desc || '');
-  const parts   = [baseType];
-  if (material) parts.push(material);
-  if (gender)   parts.push(gender);
-  if (abbrev)   parts.push(abbrev);
-  const title = p.brand + ' — ' + parts.join(' ') + ' — passéist';
+  // Shared components
+  const baseTypeFR = p.type.replace(/\s+en\s+.*$/i, '').trim();
+  const matMatch   = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
+  const matFR      = matMatch ? matMatch[1].charAt(0).toUpperCase() + matMatch[1].slice(1).toLowerCase() : null;
+  const sy         = seasonYear(p.desc || '');
+
+  // French <title>: BRAND — BaseType Matière Femme Automne-Hiver 2003 — passéist
+  const genderFR   = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
+  const partsFR    = [baseTypeFR];
+  if (matFR)    partsFR.push(matFR);
+  if (genderFR) partsFR.push(genderFR);
+  if (sy)       partsFR.push(sy.fr);
+  const title = p.brand + ' — ' + partsFR.join(' ') + ' — passéist';
+
+  // English og:title: BRAND — BaseType Material Women Fall-Winter 2003 — passéist
+  const baseTypeEN = translateType(baseTypeFR);
+  const matEN      = matFR ? translateMaterial(matFR) : null;
+  const genderEN   = p.gender === 'h' ? 'Men' : p.gender === 'f' ? 'Women' : null;
+  const partsEN    = [baseTypeEN];
+  if (matEN)    partsEN.push(matEN);
+  if (genderEN) partsEN.push(genderEN);
+  if (sy)       partsEN.push(sy.en);
+  const titleEN = p.brand + ' — ' + partsEN.join(' ') + ' — passéist';
 
   const short = (p.desc || '').replace(/\s+/g, ' ').trim().slice(0, 155);
   const desc  = short || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + '. Archive mode authentifiée par Passéist.');
@@ -214,7 +269,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   html = html.replace(/<meta\s+property="og:type"[^>]*>/,
     `<meta property="og:type" content="product">`);
   html = html.replace(/<meta\s+property="og:title"[^>]*>/,
-    `<meta property="og:title" content="${esc(title)}">`);
+    `<meta property="og:title" content="${esc(titleEN)}">`);
   html = html.replace(/<meta\s+property="og:description"[^>]*>/,
     `<meta property="og:description" content="${esc(desc)}">`);
   html = html.replace(/<meta\s+property="og:url"[^>]*>/,
@@ -222,7 +277,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   if (img) html = html.replace(/<meta\s+property="og:image"[^>]*>/,
     `<meta property="og:image" content="${img}">`);
   html = html.replace(/<meta\s+name="twitter:title"[^>]*>/,
-    `<meta name="twitter:title" content="${esc(title)}">`);
+    `<meta name="twitter:title" content="${esc(titleEN)}">`);
   html = html.replace(/<meta\s+name="twitter:description"[^>]*>/,
     `<meta name="twitter:description" content="${esc(desc)}">`);
   if (img) html = html.replace(/<meta\s+name="twitter:image"[^>]*>/,
