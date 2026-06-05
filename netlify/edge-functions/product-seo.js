@@ -95,9 +95,19 @@ export default async (request, context) => {
   ${isSold ? '<meta name="robots" content="noindex, follow">' : ''}
   <script type="application/ld+json">${jsonld}</script>`;
 
-  // Injecter avant </head> (remplace le <title> générique existant si présent)
-  let modified = html.replace(/<title>[^<]*<\/title>/, '');
-  modified = modified.replace('</head>', inject + '\n</head>');
+  // Remplacer les tags génériques + injecter les spécifiques au produit
+  let modified = html
+    // Supprimer title, description, og:* génériques pour éviter les doublons
+    .replace(/<title>[^<]*<\/title>/, '')
+    .replace(/<meta\s+name="description"[^>]*>/i, '')
+    .replace(/<link\s+rel="canonical"[^>]*>/i, '')
+    .replace(/<meta\s+property="og:title"[^>]*>/i, '')
+    .replace(/<meta\s+property="og:description"[^>]*>/i, '')
+    .replace(/<meta\s+property="og:url"[^>]*>/i, '')
+    .replace(/<meta\s+property="og:type"[^>]*>/i, '')
+    .replace(/<meta\s+property="og:image"[^>]*>/i, '');
+  // Injecter juste après <head> pour être en premier
+  modified = modified.replace('<head>', '<head>\n' + inject);
 
   const headers = new Headers(response.headers);
   headers.set('content-type', 'text/html; charset=utf-8');
