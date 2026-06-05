@@ -204,32 +204,45 @@ function translateMaterial(fr) {
   return MATERIAL_FR_TO_EN[fr.toLowerCase()] || fr;
 }
 
+// Scan description for a known material (fallback when p.type has no "en X")
+function extractMaterialFromDesc(desc) {
+  if (!desc) return null;
+  const mats = Object.keys(MATERIAL_FR_TO_EN).sort((a, b) => b.length - a.length);
+  for (const mat of mats) {
+    if (new RegExp('\\b' + mat + '\\b', 'i').test(desc)) {
+      return mat.charAt(0).toUpperCase() + mat.slice(1);
+    }
+  }
+  return null;
+}
+
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
   const url  = 'https://passeist.com/product/' + p.slug;
   const img  = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-  // Shared components
+  // Extract components
   const baseTypeFR = p.type.replace(/\s+en\s+.*$/i, '').trim();
-  const matMatch   = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
-  const matFR      = matMatch ? matMatch[1].charAt(0).toUpperCase() + matMatch[1].slice(1).toLowerCase() : null;
+  const matInType  = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
+  const matFR      = matInType
+    ? matInType[1].charAt(0).toUpperCase() + matInType[1].slice(1).toLowerCase()
+    : extractMaterialFromDesc(p.desc || '');
   const sy         = seasonYear(p.desc || '');
 
-  // French <title>: BRAND — BaseType Matière Femme Automne-Hiver 2003 — passéist
-  const genderFR   = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
-  const partsFR    = [baseTypeFR];
+  // French <title>: BRAND — Type Matière Genre Automne-Hiver 2003 — passéist
+  const genderFR = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
+  const partsFR  = [baseTypeFR];
   if (matFR)    partsFR.push(matFR);
   if (genderFR) partsFR.push(genderFR);
   if (sy)       partsFR.push(sy.fr);
   const title = p.brand + ' — ' + partsFR.join(' ') + ' — passéist';
 
-  // English og:title: BRAND — BaseType Material Women Fall-Winter 2003 — passéist
+  // English og:title: BRAND — Material Type Gender Fall-Winter 2003 — passéist
   const baseTypeEN = translateType(baseTypeFR);
   const matEN      = matFR ? translateMaterial(matFR) : null;
   const genderEN   = p.gender === 'h' ? 'Men' : p.gender === 'f' ? 'Women' : null;
-  const partsEN    = [baseTypeEN];
-  if (matEN)    partsEN.push(matEN);
+  const partsEN    = matEN ? [matEN, baseTypeEN] : [baseTypeEN];
   if (genderEN) partsEN.push(genderEN);
   if (sy)       partsEN.push(sy.en);
   const titleEN = p.brand + ' — ' + partsEN.join(' ') + ' — passéist';
@@ -258,7 +271,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   });
 
   // ── Replace SEO tags (all in <head>) ───────────────────────────────
-  html = html.replace(/<title>[^<]*<\/title>/,
+  html = html.replace(/<title>[\s\S]*?<\/title>/,
     `<title>${esc(title)}</title>`);
   html = html.replace(/<meta\s+name="description"[^>]*>/,
     `<meta name="description" content="${esc(desc)}">`);
