@@ -239,7 +239,8 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const title = p.brand + ' — ' + partsFR.join(' ') + ' — passéist';
 
   // English og:title: BRAND — Material Type Gender Fall-Winter 2003 — passéist
-  const baseTypeEN = translateType(baseTypeFR);
+  // Use p.type_en if available (already translated), else fall back to dictionary
+  const baseTypeEN = (p.type_en || translateType(baseTypeFR));
   const matEN      = matFR ? translateMaterial(matFR) : null;
   const genderEN   = p.gender === 'h' ? 'Men' : p.gender === 'f' ? 'Women' : null;
   const partsEN    = matEN ? [matEN, baseTypeEN] : [baseTypeEN];
@@ -247,8 +248,10 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   if (sy)       partsEN.push(sy.en);
   const titleEN = p.brand + ' — ' + partsEN.join(' ') + ' — passéist';
 
-  const short = (p.desc || '').replace(/\s+/g, ' ').trim().slice(0, 155);
-  const desc  = short || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + '. Archive mode authentifiée par Passéist.');
+  // Meta description: brand at top, then raw description text
+  const descRaw  = (p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const descFull = p.brand + ' — ' + partsFR.join(' ') + (descRaw ? '. ' + descRaw : '');
+  const desc     = descFull.slice(0, 160) || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + '. Archive mode authentifiée par Passéist.');
   const robots = sold ? 'noindex,nofollow' : 'index,follow';
 
   const jsonld = JSON.stringify({
