@@ -158,22 +158,39 @@ def fetch_meta(url):
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     }
 
-    # Passe 1 : curl-cffi (imite fingerprint TLS Chrome → bypass Cloudflare sans proxy)
+    # Passe 1 : ScrapingBee (bypass Cloudflare fiable, si API key dispo)
+    sb_key = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
+    if sb_key:
+        try:
+            r = requests.get('https://app.scrapingbee.com/api/v1/',
+                             params={'api_key': sb_key, 'url': url, 'render_js': 'false'},
+                             timeout=60)
+            if r.status_code == 200:
+                result = _extract(r.text, 'pass1-scrapingbee')
+                if result:
+                    return result
+                print(f'fetch_meta [pass1-scrapingbee] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
+            else:
+                print(f'fetch_meta [pass1-scrapingbee] : HTTP {r.status_code}', file=sys.stderr)
+        except Exception as e:
+            print(f'fetch_meta [pass1-scrapingbee] ERR: {e}', file=sys.stderr)
+
+    # Passe 2 : curl-cffi (imite fingerprint TLS Chrome → bypass Cloudflare sans proxy)
     try:
         from curl_cffi import requests as cf_requests
         r = cf_requests.get(url, impersonate='chrome120', headers=headers, timeout=30)
         if r.status_code == 200:
-            result = _extract(r.text, 'pass1-curl-cffi')
+            result = _extract(r.text, 'pass2-curl-cffi')
             if result:
                 return result
-            print(f'fetch_meta [pass1-curl-cffi] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
+            print(f'fetch_meta [pass2-curl-cffi] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
         else:
-            print(f'fetch_meta [pass1-curl-cffi] : HTTP {r.status_code}', file=sys.stderr)
+            print(f'fetch_meta [pass2-curl-cffi] : HTTP {r.status_code}', file=sys.stderr)
     except Exception as e:
-        print(f'fetch_meta [pass1-curl-cffi] ERR: {e}', file=sys.stderr)
+        print(f'fetch_meta [pass2-curl-cffi] ERR: {e}', file=sys.stderr)
 
-    # Passe 2 : Playwright + stealth direct (même technique que scrape_profile qui marche)
-    print(f'  → Passe 1 échouée, retry avec Playwright pour {url}', file=sys.stderr)
+    # Passe 3 : Playwright + stealth direct
+    print(f'  → Passes 1+2 échouées, retry avec Playwright pour {url}', file=sys.stderr)
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
