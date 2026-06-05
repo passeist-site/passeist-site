@@ -163,7 +163,8 @@ def fetch_meta(url):
     if sb_key:
         try:
             r = requests.get('https://app.scrapingbee.com/api/v1/',
-                             params={'api_key': sb_key, 'url': url, 'render_js': 'false'},
+                             params={'api_key': sb_key, 'url': url, 'render_js': 'false',
+                                     'country_code': 'fr'},  # force prix EU (évite conversion USD+taxes)
                              timeout=60)
             if r.status_code == 200:
                 result = _extract(r.text, 'pass1-scrapingbee')
