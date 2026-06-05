@@ -2,6 +2,9 @@
   publish = "."
   functions = "netlify/functions"
 
+[[plugins]]
+  package = "./netlify/plugins/generate-product-pages"
+
 [functions]
   node_bundler = "esbuild"
 

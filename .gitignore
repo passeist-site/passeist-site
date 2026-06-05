@@ -4,3 +4,6 @@ node_modules/
 *.log
 preview_marques.html
 preview_marques/
+
+# Generated at build time by the product-pages plugin
+product/
