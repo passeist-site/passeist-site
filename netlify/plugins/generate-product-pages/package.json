@@ -1,0 +1,6 @@
+{
+  "name": "generate-product-pages",
+  "version": "1.0.0",
+  "description": "Netlify build plugin — generate static product pages from PRODUCTS array in index.html",
+  "main": "index.js"
+}
