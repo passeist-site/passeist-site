@@ -4260,13 +4260,6 @@ const PRODUCTS = [
   {"id": "66384191", "brand": "COMME DES GARCONS", "type": "Pantalon", "size": "M", "price": "260", "gender": "Homme", "color": "Kaki", "path": "/vetements-homme/pantalons/comme-des-garcons/pantalon-comme-des-garcons-en-coton-kaki-66384191.shtml", "slug": "pantalon-comme-des-garcons-en-coton-kaki-66384191", "n": 15, "desc": "Comme des garçons\n\nCollection hiver 2010 ouverture du défilé homme plus\n\n(Photo disponible par message).\n\nTrès beau pantalon kaki/marron en corduroy de coton 100%. Boutons de cuir, deux ceinturons d’ajustement latéraux. Magnifique coupe tombe superbement.\n\nParfait état\n\ntaille indiquée M\n\nTaille 46cm\nHanches 60cm\nLongueur jambes 105cm et 77cm depuis l’entre jambe\nCheville 22cm", "desc_en": "Like boys\n\nWinter 2010 collection opening of the men's show more\n\n(Photo available via message).\n\nVery beautiful khaki/brown pants in 100% cotton corduroy. Leather buttons, two side adjustment belts. Magnificent cut falls superbly.\n\nPerfect condition\n\nsize indicated M\n\nSize 46cm\nHips 60cm\nLeg length 105cm and 77cm from the crotch\nAnkle 22cm", "type_en": "Pants", "size_en": "M", "sq": true}
 ];
 
-// Prices that weren't already round get a -5% discount, then floored to the nearest ten
-PRODUCTS.forEach(p => {
-  const n = parseInt(p.price);
-  if (!isNaN(n) && n % 10 !== 0) {
-    p.price = String(Math.floor((n * 0.95) / 10) * 10);
-  }
-});
 
 // ============ STATE ============
 let activeView = 'shop';          // 'shop' = available only  |  'archive' = sold only
