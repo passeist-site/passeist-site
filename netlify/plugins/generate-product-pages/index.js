@@ -130,42 +130,33 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
 </div>`;
 }
 
-// ── Extract season + year from description ─────────────────────────────────
-// Returns e.g. "Automne-Hiver 2003", "Printemps-Été 1994", or just "2003"
+// ── Season + year as abbreviation (e.g. "AH2003", "PE1994") ───────────────
 
-function extractSeasonYear(desc) {
+function seasonYearAbbrev(desc) {
   if (!desc) return null;
   const text = desc.replace(/\s+/g, ' ');
 
   const seasons = [
-    { re: /\b(?:automne[\s\-]*hiver|a[\s\-]*h)\b/i,      label: 'Automne-Hiver' },
-    { re: /\b(?:printemps[\s\-]*[eé]t[eé]|p[\s\-]*[eé])\b/i, label: 'Printemps-Été' },
-    { re: /\bautomne\b/i,                                 label: 'Automne' },
-    { re: /\bhiver\b/i,                                   label: 'Hiver' },
-    { re: /\bprintemps\b/i,                               label: 'Printemps' },
-    { re: /\b[eé]t[eé]\b/i,                              label: 'Été' },
-    { re: /\bfall[\s\-]*winter\b/i,                       label: 'Automne-Hiver' },
-    { re: /\bspring[\s\-]*summer\b/i,                     label: 'Printemps-Été' },
+    { re: /\b(?:automne[\s\-]*hiver|a[\s\-]*h)\b/i,           abbrev: 'AH' },
+    { re: /\b(?:printemps[\s\-]*[eé]t[eé]|p[\s\-]*[eé])\b/i, abbrev: 'PE' },
+    { re: /\bautomne\b/i,    abbrev: 'A' },
+    { re: /\bhiver\b/i,      abbrev: 'H' },
+    { re: /\bprintemps\b/i,  abbrev: 'P' },
+    { re: /\b[eé]t[eé]\b/i, abbrev: 'E' },
+    { re: /\bfall[\s\-]*winter\b/i,   abbrev: 'AH' },
+    { re: /\bspring[\s\-]*summer\b/i, abbrev: 'PE' },
   ];
 
   const yearMatch = text.match(/\b(19[6-9]\d|20[0-2]\d)\b/);
   if (!yearMatch) return null;
   const year = yearMatch[1];
 
-  // Look for season near the year (within 40 chars before or after)
   const pos = yearMatch.index;
-  const window = text.slice(Math.max(0, pos - 40), pos + 44);
+  const win = text.slice(Math.max(0, pos - 40), pos + 44);
   for (const s of seasons) {
-    if (s.re.test(window)) return s.label + ' ' + year;
+    if (s.re.test(win)) return s.abbrev + year;
   }
   return year;
-}
-
-// ── Extract material from type (e.g. "Veste en laine" → "laine") ──────────
-
-function extractMaterial(type) {
-  const m = type.match(/\ben\s+(\w+(?:\s+\w+)?)/i);
-  return m ? m[1].toLowerCase() : null;
 }
 
 // ── Apply product-specific SEO to the full HTML string ────────────────────
@@ -174,15 +165,18 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const url  = 'https://passeist.com/product/' + p.slug;
   const img  = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-  // Title: BRAND — type [matière] couleur archive [année] — passéist
+  // Title: BRAND — BaseType Matière Genre AH2003 — passéist
   const baseType = p.type.replace(/\s+en\s+.*$/i, '').trim();
-  const material = extractMaterial(p.type);
-  const year     = extractSeasonYear(p.desc);
-  const parts    = [baseType];
-  if (material)  parts.push(material);
-  if (p.color)   parts.push(p.color.toLowerCase());
-  parts.push('archive');
-  if (year)      parts.push(year);
+  const matMatch = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
+  const material = matMatch
+    ? matMatch[1].charAt(0).toUpperCase() + matMatch[1].slice(1).toLowerCase()
+    : null;
+  const gender  = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
+  const abbrev  = seasonYearAbbrev(p.desc || '');
+  const parts   = [baseType];
+  if (material) parts.push(material);
+  if (gender)   parts.push(gender);
+  if (abbrev)   parts.push(abbrev);
   const title = p.brand + ' — ' + parts.join(' ') + ' — passéist';
 
   const short = (p.desc || '').replace(/\s+/g, ' ').trim().slice(0, 155);
