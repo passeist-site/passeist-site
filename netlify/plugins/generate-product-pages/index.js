@@ -275,6 +275,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:availability>${avail}</g:availability>
       <g:condition>used</g:condition>
       <g:brand>${xmlesc(p.brand)}</g:brand>
+      <g:target_country>FR</g:target_country>
     </item>`;
   }).join('\n');
 
