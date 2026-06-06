@@ -242,8 +242,8 @@ function xmlesc(str) {
 }
 
 function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
-  const items = products.map(p => {
-    const sold  = soldIds.has(p.id) || p.sold === true;
+  const items = products.filter(p => !soldIds.has(p.id) && p.sold !== true).map(p => {
+    const sold  = false;
     const link  = 'https://passeist.com/product/' + productSlug(p);
     const imgRel = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
     const img    = imgRel ? (imgRel.startsWith('/') ? 'https://passeist.com' + imgRel : imgRel) : '';
