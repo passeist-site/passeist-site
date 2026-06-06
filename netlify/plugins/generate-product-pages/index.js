@@ -15,6 +15,22 @@ const fs   = require('fs');
 const path = require('path');
 const vm   = require('vm');
 
+// ── Replicate slugify() + productSlug() from the SPA ─────────────────────
+// Must stay in sync with the live SPA functions (grep: "productSlug = function")
+
+function slugify(s) {
+  return String(s || '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+function productSlug(p) {
+  return [slugify(p.brand), slugify(p.type), p.id].filter(Boolean).join('-');
+}
+
 // ── Replicate _vestiaireUrl() from the SPA ─────────────────────────────────
 
 function vestiaireUrl(product, photoNum, w, suffix) {
@@ -219,7 +235,7 @@ function extractMaterialFromDesc(desc) {
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
-  const url  = 'https://passeist.com/product/' + p.slug;
+  const url  = 'https://passeist.com/product/' + productSlug(p);
   const img  = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
 
   // Extract components
@@ -386,11 +402,12 @@ module.exports = {
 
     let count = 0;
     for (const p of products) {
-      if (!p.slug) continue;
+      if (!p.id) continue;
+      const slug = productSlug(p);
       const sold = soldIds.has(p.id) || p.sold === true;
       const page = applyProductSEO(baseHtml, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-      const dir = path.join(productDir, p.slug);
+      const dir = path.join(productDir, slug);
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, 'index.html'), page, 'utf8');
       count++;
