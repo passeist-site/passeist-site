@@ -232,6 +232,63 @@ function extractMaterialFromDesc(desc) {
   return null;
 }
 
+// ── Google Merchant Center feed (RSS 2.0 + g: namespace) ──────────────────
+
+function xmlesc(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  const items = products.map(p => {
+    const sold  = soldIds.has(p.id) || p.sold === true;
+    const link  = 'https://passeist.com/product/' + productSlug(p);
+    const imgRel = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
+    const img    = imgRel ? (imgRel.startsWith('/') ? 'https://passeist.com' + imgRel : imgRel) : '';
+
+    // Title: same formula as <title> tag minus "— passéist"
+    const baseType = p.type.replace(/\s+en\s+.*$/i, '').trim();
+    const matInType = p.type.match(/\ben\s+([a-zéèêëàâùûüïîôœæç]+)/i);
+    const mat  = matInType
+      ? matInType[1].charAt(0).toUpperCase() + matInType[1].slice(1).toLowerCase()
+      : extractMaterialFromDesc(p.desc || '');
+    const sy       = seasonYear(p.desc || '');
+    const gender   = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : null;
+    const parts    = [baseType];
+    if (mat)    parts.push(mat);
+    if (gender) parts.push(gender);
+    if (sy)     parts.push(sy.fr);
+    const title = xmlesc(p.brand + ' — ' + parts.join(' '));
+
+    const desc  = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
+    const price = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
+    const avail = sold ? 'out of stock' : 'in stock';
+
+    return `    <item>
+      <g:id>${xmlesc(p.id)}</g:id>
+      <title>${title}</title>
+      <description>${desc}</description>
+      <link>${xmlesc(link)}</link>${img ? '\n      <g:image_link>' + xmlesc(img) + '</g:image_link>' : ''}
+      <g:price>${price}</g:price>
+      <g:availability>${avail}</g:availability>
+      <g:condition>used</g:condition>
+      <g:brand>${xmlesc(p.brand)}</g:brand>
+    </item>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>passéist — Mode vintage japonaise</title>
+    <link>https://passeist.com</link>
+    <description>Vêtements vintage japonais archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake</description>
+${items}
+  </channel>
+</rss>`;
+}
+
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
@@ -414,6 +471,12 @@ module.exports = {
     }
 
     console.log('[generate-product-pages] Generated ' + count + ' product pages');
-    utils.status.show({ summary: 'Generated ' + count + ' product pages' });
+
+    // ── Generate Google Merchant Center feed ──────────────────────────
+    const feed = buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);
+    fs.writeFileSync(path.join(publishDir, 'feed.xml'), feed, 'utf8');
+    console.log('[generate-product-pages] Generated feed.xml (' + products.length + ' products)');
+
+    utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml' });
   }
 };
