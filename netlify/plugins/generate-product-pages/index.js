@@ -242,8 +242,10 @@ function xmlesc(str) {
 }
 
 function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
-  const items = products.filter(p => !soldIds.has(p.id) && p.sold !== true).map(p => {
-    const sold  = false;
+  const items = products
+    .filter(p => !soldIds.has(p.id) && p.sold !== true) // exclude sold
+    .filter(p => validatedLocal.has(p.id))               // only local images (Vestiaire CDN → 403, blocked by Google)
+    .map(p => {
     const link  = 'https://passeist.com/product/' + productSlug(p);
     const imgRel = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
     const img    = imgRel ? (imgRel.startsWith('/') ? 'https://passeist.com' + imgRel : imgRel) : '';
@@ -264,7 +266,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
 
     const desc  = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
     const price = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
-    const avail = sold ? 'out of stock' : 'in stock';
+    const avail = 'in stock';
 
     return `    <item>
       <g:id>${xmlesc(p.id)}</g:id>
