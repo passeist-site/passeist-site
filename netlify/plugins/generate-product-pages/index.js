@@ -263,9 +263,19 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     if (sy)     parts.push(sy.fr);
     const title = xmlesc(p.brand + ' — ' + parts.join(' '));
 
-    const desc  = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
-    const price = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
-    const avail = 'in stock';
+    const desc        = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
+    const price       = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
+    const genderFeed  = p.gender === 'h' ? 'male' : p.gender === 'f' ? 'female' : 'unisex';
+    const color       = xmlesc(p.color || '');
+
+    const euCountries = ['DE','BE','NL','LU','IT','ES','PT','AT','CH','DK','SE','NO','FI','PL','CZ','HU','GR'];
+
+    const shippingBlocks = [
+      `      <g:shipping>\n        <g:country>FR</g:country>\n        <g:service>Standard</g:service>\n        <g:price>15.00 EUR</g:price>\n        <g:min_transit_time>5</g:min_transit_time>\n        <g:max_transit_time>7</g:max_transit_time>\n      </g:shipping>`,
+      ...euCountries.map(c =>
+        `      <g:shipping>\n        <g:country>${c}</g:country>\n        <g:service>Standard</g:service>\n        <g:price>25.00 EUR</g:price>\n        <g:min_transit_time>7</g:min_transit_time>\n        <g:max_transit_time>14</g:max_transit_time>\n      </g:shipping>`
+      ),
+    ].join('\n');
 
     return `    <item>
       <g:id>${xmlesc(p.id)}</g:id>
@@ -273,10 +283,13 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <description>${desc}</description>
       <link>${xmlesc(link)}</link>${img ? '\n      <g:image_link>' + xmlesc(img) + '</g:image_link>' : ''}
       <g:price>${price}</g:price>
-      <g:availability>${avail}</g:availability>
+      <g:availability>in stock</g:availability>
       <g:condition>used</g:condition>
       <g:brand>${xmlesc(p.brand)}</g:brand>
       <g:target_country>FR</g:target_country>
+      <g:gender>${genderFeed}</g:gender>
+      <g:age_group>adult</g:age_group>${color ? '\n      <g:color>' + color + '</g:color>' : ''}
+${shippingBlocks}
     </item>`;
   }).join('\n');
 
