@@ -244,7 +244,6 @@ function xmlesc(str) {
 function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
   const items = products
     .filter(p => !soldIds.has(p.id) && p.sold !== true) // exclude sold
-    .filter(p => validatedLocal.has(p.id))               // only local images (Vestiaire CDN → 403, blocked by Google)
     .map(p => {
     const link  = 'https://passeist.com/product/' + productSlug(p);
     const imgRel = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
