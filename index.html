@@ -2492,20 +2492,24 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .detail-gallery .thumbs-row::-webkit-scrollbar { display: none; }
   .detail-gallery .thumb {
-    flex: 0 0 64px;        /* largeur fixe non-rétractable */
-    width: 64px !important;
-    height: 64px !important;
-    aspect-ratio: 1/1;
+    flex: 0 0 auto !important;
+    width: 80px !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    background: transparent !important;
     border: 1px solid transparent;
-    background: transparent;
+    padding: 0 !important;
+    display: block !important;
+    position: relative;
     overflow: hidden;
     cursor: pointer;
-    padding: 0;
-    position: relative;
   }
   .detail-gallery .thumb.is-active { border-color: #000; }
   .detail-gallery .thumb img {
-    width: 100%; height: 100%; object-fit: cover !important;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: initial !important;
+    display: block !important;
     transition: none;
   }
   .detail-gallery .thumb:hover img { transform: none; }
