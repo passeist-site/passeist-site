@@ -4677,13 +4677,17 @@ function _vestiaireUrl(product, i, w) {
 function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
-  // Local validé : priorité absolue. IDs 8 chiffres n'ont que xl (pas de sm/md).
+  const wantSquare = !!(opts && opts.square);
+  // Grille boutique : toujours photo Vestiaire CDN carrée fond blanc pour les IDs courts
+  if (wantSquare && product.id && product.id.length < 10) {
+    return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
+  }
+  // Fiche détail (ou produit Vinted 10 chiffres) : local si validé
+  // IDs 8 chiffres n'ont que xl (pas de sm/md).
   if (VALIDATED_LOCAL.has(product.id)) {
     const localSize = (product.id.length < 10) ? 'xl' : size;
     return '/img/' + product.id + '-' + i + '-' + localSize + '.webp';
   }
-  // Vestiaire CDN pour les produits sans local validé
-  // (IDs courts déjà détourés fond blanc carré — uniformité grilles)
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
 
