@@ -2493,10 +2493,11 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .detail-gallery .thumbs-row::-webkit-scrollbar { display: none; }
   .detail-gallery .thumb {
     flex: 0 0 64px;        /* largeur fixe non-rétractable */
-    width: 64px;
-    height: 64px;
+    width: 64px !important;
+    height: 64px !important;
+    aspect-ratio: 1/1;
     border: 1px solid transparent;
-    background: #fff;
+    background: transparent;
     overflow: hidden;
     cursor: pointer;
     padding: 0;
@@ -2504,7 +2505,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .detail-gallery .thumb.is-active { border-color: #000; }
   .detail-gallery .thumb img {
-    width: 100%; height: 100%; object-fit: cover;
+    width: 100%; height: 100%; object-fit: cover !important;
     transition: none;
   }
   .detail-gallery .thumb:hover img { transform: none; }
@@ -5466,10 +5467,9 @@ function openDetail(id) {
   // Pour la principale, fallback sur la première photo qui charge, on retire aussi
   // tous les thumbs qui ne chargent pas pour aligner le compteur.
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${p.type} photo 1" onerror="this.style.display='none'">`;
-  // Thumbs : skip la photo 0 puisqu'elle est déjà affichée en main (évite le doublon)
-  const thumbsHtml = photos.slice(1).map((src, idx) => {
-    const i = idx + 1;
-    return `<div class="thumb" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`;
+  // Thumbs : on inclut TOUTES les photos (y compris la photo 0) pour qu'on puisse revenir à la principale via le carrousel.
+  const thumbsHtml = photos.map((src, i) => {
+    return `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${p.type} photo ${i+1}" onerror="this.parentElement.remove()"></div>`;
   }).join('');
   // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
   // soit ancré sur la photo principale (et non sur l'ensemble de la galerie).
