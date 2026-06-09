@@ -2493,7 +2493,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .detail-gallery .thumbs-row::-webkit-scrollbar { display: none; }
   .detail-gallery .thumb {
     flex: 0 0 auto !important;
-    width: 80px !important;
+    width: 110px !important;
     height: auto !important;
     aspect-ratio: auto !important;
     background: transparent !important;
@@ -4675,8 +4675,9 @@ function _vestiaireUrl(product, i, w) {
   const reorder = IMG_REORDER[product.id];
   const photoNum = reorder ? reorder[i] : (i + 1);
   const suffix = IMG_SUFFIX[product.id] || '_2';
-  return 'https://images.vestiairecollective.com/images/resized/w=' + w +
-         ',q=90,f=auto,/produit/' + product.slug + '-' + photoNum + suffix + '.jpg';
+  const raw = 'https://images.vestiairecollective.com/images/resized/w=' + w +
+              ',q=90,f=auto,/produit/' + product.slug + '-' + photoNum + suffix + '.jpg';
+  return 'https://wsrv.nl/?url=' + encodeURIComponent(raw) + '&trim=10&w=' + w + '&output=webp';
 }
 
 function imgUrl(product, i, opts) {
