@@ -2492,10 +2492,10 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .detail-gallery .thumbs-row::-webkit-scrollbar { display: none; }
   .detail-gallery .thumb {
-    flex: 0 0 auto !important;
+    flex: 0 0 110px !important;
     width: 110px !important;
     height: auto !important;
-    aspect-ratio: auto !important;
+    aspect-ratio: 3 / 4 !important;
     background: transparent !important;
     border: 1px solid transparent;
     padding: 0 !important;
@@ -2508,7 +2508,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .detail-gallery .thumb img {
     width: 100% !important;
     height: auto !important;
-    object-fit: initial !important;
+    aspect-ratio: 3 / 4 !important;
+    object-fit: cover !important;
+    object-position: center !important;
     display: block !important;
     transition: none;
   }
