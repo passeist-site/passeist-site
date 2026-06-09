@@ -1145,6 +1145,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 /* Pas de zoom/hover sur les photos fiche produit (Tom n'aime pas) */
 .detail-gallery .thumb:hover img { transform: none; }
 .detail-gallery img:hover { transform: none; }
+/* Desktop : on cache le thumb correspondant à la photo principale
+   pour éviter le doublon (sur mobile on le garde pour pouvoir y revenir via le carrousel) */
+@media (min-width: 901px) {
+  .detail-gallery .thumb[data-idx="0"] {
+    display: none !important;
+  }
+}
 .detail-info { position: sticky; top: 112px; align-self: start; }
 
 /* ============ SIMILAR PRODUCTS CAROUSEL, boucle infinie type hero-marquee ============ */
