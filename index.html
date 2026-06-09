@@ -4677,18 +4677,13 @@ function _vestiaireUrl(product, i, w) {
 function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
-  const wantSquare = !!(opts && opts.square);
-  // Si on demande SQUARE et que l'ID est Vestiaire (< 10 chiffres) :
-  // toujours utiliser la photo Vestiaire CDN originale (déjà détourée fond blanc
-  // carré, qualité homogène). Garantit l'uniformité visuelle des grilles
-  // boutique/archive/carrousels même quand Tom a uploadé des HD pour la fiche.
-  if (wantSquare && product.id && product.id.length < 10) {
-    return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
-  }
-  // Sinon (fiche détail, ou produit Vinted 10 chiffres) : version locale si dispo
+  // Local validé : priorité absolue. IDs 8 chiffres n'ont que xl (pas de sm/md).
   if (VALIDATED_LOCAL.has(product.id)) {
-    return '/img/' + product.id + '-' + i + '-' + size + '.webp';
+    const localSize = (product.id.length < 10) ? 'xl' : size;
+    return '/img/' + product.id + '-' + i + '-' + localSize + '.webp';
   }
+  // Vestiaire CDN pour les produits sans local validé
+  // (IDs courts déjà détourés fond blanc carré — uniformité grilles)
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
 
