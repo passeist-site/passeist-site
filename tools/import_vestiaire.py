@@ -277,6 +277,9 @@ def main():
         seller_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = seller_cents / 100
     new_price = int(math.ceil((price_euros * 0.88) / 10) * 10)
+   if new_price > 1500:
+    print(f"  WARNING: new_price={new_price}€ anormal")
+    new_price = int(round(price_euros))
     desc = (meta.get('originalDescription') or meta.get('description') or '').strip()
     gender_raw = (meta.get('gender') or {}).get('name', '').lower() if isinstance(meta.get('gender'), dict) else ''
     gender = 'h' if 'homme' in gender_raw or 'men' in gender_raw else 'f' if 'femme' in gender_raw or 'women' in gender_raw else 'h'
