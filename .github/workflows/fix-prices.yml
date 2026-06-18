@@ -9,7 +9,7 @@ on:
         default: 'false'
         type: boolean
       last:
-        description: 'Vérifier les N derniers articles (0 = tous)'
+        description: 'Vérifier les N derniers articles (défaut: 30)'
         required: false
         default: '30'
       all_products:
@@ -18,13 +18,20 @@ on:
         default: 'false'
         type: boolean
 
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   fix-prices:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
 
       - uses: actions/setup-python@v5
         with:
