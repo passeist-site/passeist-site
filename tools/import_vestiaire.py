@@ -294,17 +294,18 @@ def main():
     import re as _re
     size = _re.sub(r'\s*International(e|s)?\b\s*', '', size, flags=_re.IGNORECASE).strip()
     color = (meta.get('color') or {}).get('name', '')
-    # Prix : utilise pricingBreakdown.sellerPrice (prix vendeur sans frais acheteur VC)
-    # puis -12% arrondi AU SUPÉRIEUR au 5€ le plus proche (se terminant par 0 ou 5)
+    # Prix : prix "pour vous" affiché sur la fiche VC (sellerPrice.cents),
+    # arrondi à la DIZAINE SUPÉRIEURE. Ex: 220€→220€, 223€→230€.
+    # NE PAS appliquer de coefficient (ex-0.88 supprimé).
     breakdown = meta.get('pricingBreakdown') or {}
     seller_cents = (breakdown.get('sellerPrice') or {}).get('cents', 0)
     if not seller_cents:
         seller_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = seller_cents / 100
-    new_price = int(math.ceil((price_euros * 0.88) / 10) * 10)
+    new_price = int(math.ceil(price_euros / 10) * 10)
     if new_price > 1500:
         print(f"  WARNING: new_price={new_price}€ anormal (prix brut={price_euros}€)")
-        new_price = int(round(price_euros))
+        new_price = int(round(price_euros / 10) * 10)
     desc = (meta.get('originalDescription') or meta.get('description') or '').strip()
     gender_raw = (meta.get('gender') or {}).get('name', '').lower() if isinstance(meta.get('gender'), dict) else ''
     gender = 'h' if 'homme' in gender_raw or 'men' in gender_raw else 'f' if 'femme' in gender_raw or 'women' in gender_raw else 'h'
