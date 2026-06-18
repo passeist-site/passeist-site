@@ -54,11 +54,12 @@ def load_products():
 
 
 def calc_price(seller_cents):
-    """Prix passeist = prix vendeur VC × 0.88, arrondi au 10€ supérieur.
-    seller_cents = pricingBreakdown.sellerPrice.cents (prix que le vendeur affiche,
-    sans les frais de service acheteur ajoutés par VC)."""
+    """Prix passeist = prix "pour vous" VC arrondi à la dizaine supérieure.
+    seller_cents = pricingBreakdown.sellerPrice.cents = prix affiché "pour vous"
+    sur la fiche VC (sans frais acheteur VC).
+    Ex : 220€ → 220€, 223€ → 230€."""
     euros = seller_cents / 100
-    return int(math.ceil((euros * 0.88) / 10) * 10)
+    return int(math.ceil(euros / 10) * 10)
 
 
 def fetch_seller_price(path, product_id):
