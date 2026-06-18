@@ -2472,14 +2472,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     overflow: hidden;  /* le scroll est délégué au .thumbs-row */
   }
   .detail-gallery .main-photo {
-    /* Réduit la largeur pour que la photo soit plus petite et qu'on voie
-       un peu d'info produit en dessous sans devoir scroller. Pas de cadre
-       blanc parce qu'on ne touche pas à object-fit. */
-    width: 88%;
-    max-width: 88%;
+    /* La photo remplit 100% du wrap (le wrap fait lui-même 88% centré).
+       Ainsi le clip du sold-stamp s'applique exactement sur le bord de la photo. */
+    width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
-    margin: 0 auto 10px;
+    margin: 0 0 10px;
     background: #fff;
   }
   /* Bandeau horizontal scrollable de thumbs (force le débordement et le swipe) */
@@ -2522,17 +2521,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .detail-gallery .thumb:hover img { transform: none; }
 
-  /* Mobile : badge VENDU sur la photo principale, en bas à droite */
+  /* Mobile : le wrap suit la photo (88% centré) → le clip coïncide avec le bord de la photo */
   .detail-gallery .main-photo-wrap {
     grid-column: auto;
     overflow: hidden;
     clip-path: inset(0);  /* force le clipping du ruban VENDU sur iOS Safari */
-  }
-  /* Ruban diagonal VENDU : la photo fait 88% de la largeur centrée (marge = 6% de chaque côté).
-     On décale le ruban de +6% vers la gauche pour l'aligner sur le coin haut-droit de la photo
-     et non sur le bord de l'écran. */
-  .detail-gallery .sold-stamp {
-    right: calc(-42px + 6%);
+    width: 88%;
+    margin: 0 auto;
   }
   .vendu-badge {
     bottom: 12px !important;
