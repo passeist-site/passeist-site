@@ -1,0 +1,47 @@
+name: Fix Prices
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run (ne pas écrire index.html)'
+        required: false
+        default: 'false'
+        type: boolean
+      limit:
+        description: 'Limiter à N produits (0 = tous)'
+        required: false
+        default: '0'
+
+jobs:
+  fix-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests Pillow
+
+      - name: Run fix_prices.py
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ github.event.inputs.limit }}" != "0" ]; then ARGS="$ARGS --limit ${{ github.event.inputs.limit }}"; fi
+          python3 tools/fix_prices.py $ARGS
+
+      - name: Commit corrections
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && echo "Aucun changement" || git commit -m "fix: corrections prix via fix_prices.py [skip ci]"
+          git push
