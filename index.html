@@ -1045,6 +1045,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .sold-stamp { top: 14px; right: -42px; padding: 4px 50px; font-size: 9px; }
 }
 .sold-badge {
+  display: none;
   position: absolute; top: 12px; right: 12px;
   background: var(--bg); color: var(--ink);
   font-family: var(--font-mono);
@@ -2529,6 +2530,10 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     width: 88%;
     margin: 0 auto;
   }
+  /* Mobile : ruban diagonal masqué (problèmes de clipping Safari iOS),
+     badge carré ancré en haut à droite de la photo à la place. */
+  .detail-gallery .sold-stamp { display: none; }
+  .detail-gallery .sold-badge  { display: block; top: 10px; right: 10px; }
   .vendu-badge {
     bottom: 12px !important;
     right: 12px !important;
@@ -5558,7 +5563,7 @@ function openDetail(id) {
   }).join('');
   // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
   // soit ancré sur la photo principale (et non sur l'ensemble de la galerie).
-  gal.innerHTML = `<div class="main-photo-wrap">${mainHtml}${isSold(p) ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}</div><div class="thumbs-row">${thumbsHtml}</div>`;
+  gal.innerHTML = `<div class="main-photo-wrap">${mainHtml}${isSold(p) ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span><span class="sold-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}</div><div class="thumbs-row">${thumbsHtml}</div>`;
 
   // ===== Articles similaires =====
   try {
