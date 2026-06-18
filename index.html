@@ -2525,9 +2525,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   /* Mobile : badge VENDU sur la photo principale, en bas à droite */
   .detail-gallery .main-photo-wrap {
     grid-column: auto;
-    width: 88%;         /* identique à .main-photo — le sold-stamp ne dépasse plus l'image */
-    margin: 0 auto;
-    overflow: hidden;   /* clip le ruban VENDU diagonal */
+    overflow: hidden;
+    clip-path: inset(0);  /* force le clipping du ruban VENDU sur iOS Safari */
   }
   .vendu-badge {
     bottom: 12px !important;
