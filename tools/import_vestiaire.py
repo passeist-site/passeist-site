@@ -125,7 +125,7 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
         return False
 
 
-def fetch_meta(url):
+def fetch_meta(url, expected_id=None):
     """Fetch fiche Vestiaire → __NEXT_DATA__.
     Accept-Language: fr-FR force la version française sinon Vestiaire
     renvoie EN (type='Top' au lieu de 'Haut').
@@ -145,8 +145,23 @@ def fetch_meta(url):
             queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
             for q in queries:
                 d = q.get('state', {}).get('data')
-                if isinstance(d, dict) and d.get('id') and d.get('brand'):
-                    return d
+                if not isinstance(d, dict):
+                    continue
+                # FILTRE CRITIQUE : seulement l'article attendu
+                # (évite de lire le prix d'un article recommandé en bas de page)
+                if expected_id and str(d.get('id', '')) != str(expected_id):
+                    continue
+                if not (d.get('id') and d.get('brand')):
+                    continue
+                # VÉRIFICATION DEVISE : rejette prix USD/autre (IP US)
+                breakdown = d.get('pricingBreakdown') or {}
+                seller = breakdown.get('sellerPrice') or {}
+                curr = seller.get('currency') or {}
+                curr_code = curr.get('code', 'EUR') if isinstance(curr, dict) else str(curr)
+                if curr_code and curr_code != 'EUR':
+                    print(f'fetch_meta [{label}] : devise {curr_code} ≠ EUR — rejeté', file=sys.stderr)
+                    continue
+                return d
         except Exception as e:
             print(f'fetch_meta [{label}] parse ERR: {e}', file=sys.stderr)
         return None
@@ -282,7 +297,7 @@ def main():
 
     # Fetch metadata
     print(f'Fetch fiche Vestiaire : {url}')
-    meta = fetch_meta(url)
+    meta = fetch_meta(url, expected_id=item_id)
     if not meta:
         print(f'{item_id}: pas de metadata (fiche introuvable ou proxy fail)', file=sys.stderr)
         sys.exit(1)
