@@ -1018,6 +1018,20 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   transition: opacity 0.4s var(--ease-out);
 }
 .product-card.sold .fav-btn { display: none; }
+/* Variante carte boutique : cœur inline sous le prix (non absolu) */
+.fav-btn--card {
+  position: static !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  width: auto !important; height: auto !important;
+  padding: 2px 0 !important;
+  margin: 1px 0 3px !important;
+  transform: none !important;
+  display: block;
+}
+.fav-btn--card:hover { background: none !important; transform: none !important; }
+.fav-btn--card svg { width: 15px !important; height: 15px !important; }
 .product-card.sold .product-size { visibility: hidden; }
 .product-card.sold .product-price-wrap { display: none; }
 .product-card.sold .product-name-row { justify-content: flex-start; }
@@ -5470,6 +5484,7 @@ function renderGrid() {
       </div>
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
+        ${sold ? '' : `<button class="fav-btn fav-btn--card ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg></button>`}
         <div class="product-name-row">
           <div class="product-name">${(window.tType ? window.tType(p) : p.type)}</div>
         </div>
