@@ -8,10 +8,15 @@ on:
         required: false
         default: 'false'
         type: boolean
-      limit:
-        description: 'Limiter à N produits (0 = tous)'
+      last:
+        description: 'Vérifier les N derniers articles (0 = tous)'
         required: false
-        default: '0'
+        default: '30'
+      all_products:
+        description: 'Vérifier TOUS les produits (ignore last, coûteux)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   fix-prices:
@@ -34,7 +39,11 @@ jobs:
         run: |
           ARGS=""
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
-          if [ "${{ github.event.inputs.limit }}" != "0" ]; then ARGS="$ARGS --limit ${{ github.event.inputs.limit }}"; fi
+          if [ "${{ github.event.inputs.all_products }}" = "true" ]; then
+            ARGS="$ARGS --all"
+          else
+            ARGS="$ARGS --last ${{ github.event.inputs.last }}"
+          fi
           python3 tools/fix_prices.py $ARGS
 
       - name: Commit corrections
@@ -43,5 +52,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet && echo "Aucun changement" || git commit -m "fix: corrections prix via fix_prices.py [skip ci]"
+          git diff --cached --quiet && echo "Aucun changement de prix" || git commit -m "fix: corrections prix via fix_prices.py [skip ci]"
           git push
