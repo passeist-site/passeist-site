@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry-run (ne pas écrire index.html)'
+        description: 'Dry-run (ne pas ecrire index.html)'
         required: false
         default: 'false'
         type: boolean
       last:
-        description: 'Vérifier les N derniers articles (défaut: 30)'
+        description: 'Verifier les N derniers articles (defaut: 30)'
         required: false
         default: '30'
       all_products:
-        description: 'Vérifier TOUS les produits (ignore last, coûteux)'
+        description: 'Verifier TOUS les produits (ignore last, couteux)'
         required: false
         default: 'false'
         type: boolean
@@ -27,10 +27,12 @@ env:
 jobs:
   fix-prices:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           fetch-depth: 1
 
       - uses: actions/setup-python@v5
@@ -54,7 +56,7 @@ jobs:
           python3 tools/fix_prices.py $ARGS
 
       - name: Commit corrections
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: github.event.inputs.dry_run != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
