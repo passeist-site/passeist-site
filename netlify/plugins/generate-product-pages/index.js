@@ -342,12 +342,15 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const desc     = descFull.slice(0, 160) || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + '. Archive mode authentifiée par Passéist.');
   const robots = sold ? 'noindex,nofollow' : 'index,follow';
 
+  // Ensure image URL is absolute for og:image, twitter:image and JSON-LD
+  const imgAbs = img ? (img.startsWith('/') ? 'https://passeist.com' + img : img) : '';
+
   const jsonld = JSON.stringify({
     '@context': 'https://schema.org',
     '@type':    'Product',
     name:       p.brand + ' — ' + p.type,
     brand:      { '@type': 'Brand', name: p.brand },
-    image:      img,
+    image:      imgAbs,
     description: desc,
     sku:        p.id,
     offers: {
@@ -378,14 +381,14 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
     `<meta property="og:description" content="${esc(desc)}">`);
   html = html.replace(/<meta\s+property="og:url"[^>]*>/,
     `<meta property="og:url" content="${url}">`);
-  if (img) html = html.replace(/<meta\s+property="og:image"[^>]*>/,
-    `<meta property="og:image" content="${img}">`);
+  if (imgAbs) html = html.replace(/<meta\s+property="og:image"[^>]*>/,
+    `<meta property="og:image" content="${imgAbs}">`);
   html = html.replace(/<meta\s+name="twitter:title"[^>]*>/,
     `<meta name="twitter:title" content="${esc(titleEN)}">`);
   html = html.replace(/<meta\s+name="twitter:description"[^>]*>/,
     `<meta name="twitter:description" content="${esc(desc)}">`);
-  if (img) html = html.replace(/<meta\s+name="twitter:image"[^>]*>/,
-    `<meta name="twitter:image" content="${img}">`);
+  if (imgAbs) html = html.replace(/<meta\s+name="twitter:image"[^>]*>/,
+    `<meta name="twitter:image" content="${imgAbs}">`);
 
   // Replace Store JSON-LD with Product JSON-LD
   html = html.replace(
