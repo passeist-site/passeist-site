@@ -317,7 +317,7 @@ def main():
     if not seller_cents:
         seller_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = seller_cents / 100
-    new_price = int(math.ceil(price_euros * 0.88 / 10) * 10)
+    new_price = int(math.ceil(price_euros / 10) * 10)  # sellerEarning already net
     if new_price > 1500:
         print(f"  WARNING: new_price={new_price}€ anormal (prix brut={price_euros}€)")
         new_price = int(round(price_euros / 10) * 10)
