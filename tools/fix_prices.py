@@ -54,15 +54,20 @@ def load_products():
 
 
 def calc_price(seller_cents):
+    """Prix passeist = prix vendeur VC × 0.88, arrondi au 10€ supérieur.
+    seller_cents = pricingBreakdown.sellerPrice.cents (prix que le vendeur affiche,
+    sans les frais de service acheteur ajoutés par VC)."""
     euros = seller_cents / 100
     return int(math.ceil((euros * 0.88) / 10) * 10)
 
 
-def fetch_seller_price(path):
-    """Fetch prix vendeur depuis __NEXT_DATA__ via ScrapingBee.
-    path = '/vetements-homme/chemises/issey-miyake/chemise-...-68044589.shtml'
-    Retourne (seller_cents, buyer_cents) ou (None, None) si échec."""
+def fetch_seller_price(path, product_id):
+    """Fetch le prix vendeur depuis __NEXT_DATA__ via ScrapingBee.
+    CRITIQUE : filtre par product_id pour éviter de lire le prix
+    d'un autre article (recommandations, etc.) dans le tableau queries.
+    Retourne seller_cents ou None si échec."""
     url = 'https://fr.vestiairecollective.com' + path
+    pid_str = str(product_id)
     try:
         r = requests.get(SB_API, params={
             'api_key': SCRAPINGBEE_API_KEY,
@@ -72,24 +77,27 @@ def fetch_seller_price(path):
         }, timeout=60)
         if r.status_code != 200:
             print(f'    SB HTTP {r.status_code}', file=sys.stderr)
-            return None, None
+            return None
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
         if not m:
-            return None, None
+            return None
         jd = json.loads(m.group(1))
         queries = jd.get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
         for q in queries:
             d = q.get('state', {}).get('data')
-            if isinstance(d, dict) and d.get('id'):
-                breakdown = d.get('pricingBreakdown') or {}
-                seller_cents = (breakdown.get('sellerPrice') or {}).get('cents', 0)
-                buyer_cents  = (d.get('price') or {}).get('cents', 0)
-                if seller_cents:
-                    return seller_cents, buyer_cents
-        return None, None
+            if not isinstance(d, dict):
+                continue
+            # FILTRE : seulement le produit correspondant à l'ID
+            if str(d.get('id', '')) != pid_str:
+                continue
+            breakdown = d.get('pricingBreakdown') or {}
+            seller_cents = (breakdown.get('sellerPrice') or {}).get('cents', 0)
+            if seller_cents:
+                return seller_cents
+        return None
     except Exception as e:
         print(f'    ERR: {e}', file=sys.stderr)
-        return None, None
+        return None
 
 
 def update_price_in_html(html, product_id, old_price_str, new_price_str):
@@ -144,7 +152,7 @@ def main():
 
         print(f'[{i}/{len(available)}] {pid} {brand} {ptype}  actuel={cur}€ ...', end=' ', flush=True)
 
-        seller_cents, buyer_cents = fetch_seller_price(path)
+        seller_cents = fetch_seller_price(path, pid)
 
         if seller_cents is None:
             print(f'SKIP (fetch fail)')
