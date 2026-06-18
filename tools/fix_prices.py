@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
-"""fix_prices.py — Vérifie et corrige les prix de tous les produits disponibles.
+"""fix_prices.py — Vérifie et corrige les prix de produits disponibles.
 
-Usage : python3 tools/fix_prices.py [--dry-run] [--limit N]
+Usage : python3 tools/fix_prices.py [--dry-run] [--last N] [--all]
 
-Pour chaque produit disponible (non vendu) :
+  --last N   Vérifie les N derniers articles importés (défaut : 30)
+             Les articles sont triés du plus récent au plus ancien dans PRODUCTS.
+  --all      Vérifie tous les produits disponibles (coûteux en crédits SB)
+  --dry-run  Affiche les corrections sans écrire index.html
+
+Pour chaque produit :
 1. Fetch la fiche Vestiaire via ScrapingBee (country_code=fr, render_js=false)
 2. Extrait pricingBreakdown.sellerPrice.cents depuis __NEXT_DATA__
 3. Recalcule le prix : ceil(sellerPrice * 0.88 / 10) * 10
 4. Si différent du prix actuel → corrige dans index.html
 
-Coût estimé : 1 crédit ScrapingBee par produit (datacenter, no JS).
-Exit 0 si OK (avec ou sans changements), exit 1 si erreur fatale.
+Coût : 1 crédit ScrapingBee par produit (datacenter, no JS).
+Exit 0 si OK, exit 1 si erreur fatale.
 """
 import sys, os, re, json, math, time, argparse
 import requests
@@ -105,19 +110,24 @@ def update_price_in_html(html, product_id, old_price_str, new_price_str):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true', help='Ne pas écrire index.html')
-    parser.add_argument('--limit', type=int, default=0, help='Limiter à N produits (test)')
+    parser.add_argument('--last', type=int, default=30,
+                        help='Vérifier les N derniers articles importés (défaut: 30)')
+    parser.add_argument('--all', action='store_true',
+                        help='Vérifier tous les produits (ignore --last)')
     args = parser.parse_args()
 
     html, products, sold_ids = load_products()
+    # PRODUCTS est trié du plus récent au plus ancien (insertion en tête)
     available = [p for p in products
                  if p['id'] not in sold_ids
                  and len(str(p['id'])) < 10
                  and p.get('path', '').endswith('.shtml')]
 
-    if args.limit:
-        available = available[:args.limit]
+    if not args.all:
+        available = available[:args.last]
 
-    print(f'Produits disponibles à vérifier : {len(available)}')
+    scope = 'tous les produits' if args.all else f'les {args.last} derniers importés'
+    print(f'Produits à vérifier ({scope}) : {len(available)}')
     if args.dry_run:
         print('MODE DRY-RUN — aucune écriture')
 
