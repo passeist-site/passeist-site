@@ -311,13 +311,13 @@ def main():
     color = (meta.get('color') or {}).get('name', '')
     # Prix : prix "pour vous" affiché sur la fiche VC (sellerPrice.cents),
     # arrondi à la DIZAINE SUPÉRIEURE. Ex: 220€→220€, 223€→230€.
-    # NE PAS appliquer de coefficient (ex-0.88 supprimé).
+    # ×0.88 = décote Passeist −12% vs prix VC, arrondi à la dizaine supérieure.
     breakdown = meta.get('pricingBreakdown') or {}
     seller_cents = (breakdown.get('sellerPrice') or {}).get('cents', 0)
     if not seller_cents:
         seller_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = seller_cents / 100
-    new_price = int(math.ceil(price_euros / 10) * 10)
+    new_price = int(math.ceil(price_euros * 0.88 / 10) * 10)
     if new_price > 1500:
         print(f"  WARNING: new_price={new_price}€ anormal (prix brut={price_euros}€)")
         new_price = int(round(price_euros / 10) * 10)
