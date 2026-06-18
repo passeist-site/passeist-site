@@ -156,25 +156,54 @@ def fetch_meta(url):
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     }
 
-    # Passe 1 : ScrapingBee (bypass Cloudflare fiable, si API key dispo)
     sb_key = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
-    if sb_key:
-        try:
-            r = requests.get('https://app.scrapingbee.com/api/v1/',
-                             params={'api_key': sb_key, 'url': url, 'render_js': 'false',
-                                     'country_code': 'fr'},  # force prix EU (évite conversion USD+taxes)
-                             timeout=60)
-            if r.status_code == 200:
-                result = _extract(r.text, 'pass1-scrapingbee')
-                if result:
-                    return result
-                print(f'fetch_meta [pass1-scrapingbee] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
-            else:
-                print(f'fetch_meta [pass1-scrapingbee] : HTTP {r.status_code}', file=sys.stderr)
-        except Exception as e:
-            print(f'fetch_meta [pass1-scrapingbee] ERR: {e}', file=sys.stderr)
 
-    # Passe 2 : curl-cffi (imite fingerprint TLS Chrome → bypass Cloudflare sans proxy)
+    if sb_key:
+        # ── RÈGLE ABSOLUE : quand SCRAPINGBEE_API_KEY est défini (GitHub Actions),
+        # on NE tombe JAMAIS sur curl-cffi ou Playwright.
+        # Les serveurs GitHub Actions sont aux USA → prix USD+taxes si fetch direct.
+        # Si ScrapingBee échoue → EXIT 1 plutôt que risquer un prix erroné.
+        # ──────────────────────────────────────────────────────────────────────────
+
+        # Passe 1 : datacenter + country_code=fr  (~1 crédit)
+        # Passe 1b : premium_proxy + country_code=fr (~10 crédits, si Cloudflare bloque)
+        for premium in (False, True):
+            label = 'scrapingbee-premium' if premium else 'scrapingbee'
+            try:
+                params = {
+                    'api_key': sb_key, 'url': url,
+                    'render_js': 'false',
+                    'country_code': 'fr',   # CRITIQUE : force prix EUR
+                }
+                if premium:
+                    params['premium_proxy'] = 'true'
+                r = requests.get('https://app.scrapingbee.com/api/v1/', params=params, timeout=60)
+                if r.status_code == 200:
+                    result = _extract(r.text, label)
+                    if result:
+                        return result
+                    print(f'fetch_meta [{label}] : 200 mais __NEXT_DATA__ absent', file=sys.stderr)
+                else:
+                    print(f'fetch_meta [{label}] : HTTP {r.status_code}', file=sys.stderr)
+            except Exception as e:
+                print(f'fetch_meta [{label}] ERR: {e}', file=sys.stderr)
+
+        # Les deux passes ScrapingBee ont échoué → stopper l'import.
+        # NE PAS tomber sur curl-cffi : prix potentiellement faux (IP US).
+        print(
+            f'FATAL: ScrapingBee indisponible (quota épuisé ou erreur réseau).\n'
+            f'Import annulé pour {url} — mieux vaut rater un import que mettre un prix erroné.',
+            file=sys.stderr
+        )
+        sys.exit(1)
+
+    # ── Pas de SCRAPINGBEE_API_KEY → mode développement local uniquement ────────
+    # ATTENTION : les passes ci-dessous utilisent l'IP locale (non-FR possible).
+    # Ne jamais utiliser en production / GitHub Actions.
+    print('⚠ SCRAPINGBEE_API_KEY absent → fetch direct (usage local uniquement, prix peut être non-EUR)',
+          file=sys.stderr)
+
+    # Passe 2 : curl-cffi (imite TLS Chrome, bypass Cloudflare)
     try:
         from curl_cffi import requests as cf_requests
         r = cf_requests.get(url, impersonate='chrome120', headers=headers, timeout=30)
@@ -188,7 +217,7 @@ def fetch_meta(url):
     except Exception as e:
         print(f'fetch_meta [pass2-curl-cffi] ERR: {e}', file=sys.stderr)
 
-    # Passe 3 : Playwright + stealth direct
+    # Passe 3 : Playwright + stealth
     print(f'  → Passes 1+2 échouées, retry avec Playwright pour {url}', file=sys.stderr)
     try:
         from playwright.sync_api import sync_playwright
@@ -206,17 +235,15 @@ def fetch_meta(url):
                        if route.request.resource_type in ['image', 'font', 'media']
                        else route.continue_())
             page.goto(url, wait_until='domcontentloaded', timeout=60000)
-            # Debug : voir si on a la vraie page ou un challenge
             try:
-                title = page.title()
-                print(f'  → Titre: {repr(title)}', file=sys.stderr)
+                print(f'  → Titre Playwright: {repr(page.title())}', file=sys.stderr)
             except Exception:
                 pass
             content = page.content()
             browser.close()
-        return _extract(content, 'pass2-playwright')
+        return _extract(content, 'pass3-playwright')
     except Exception as e:
-        print(f'fetch_meta [pass2-playwright] ERR: {e}', file=sys.stderr)
+        print(f'fetch_meta [pass3-playwright] ERR: {e}', file=sys.stderr)
 
     return None
 
