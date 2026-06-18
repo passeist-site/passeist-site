@@ -32,10 +32,8 @@ from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_b
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, 'index.html')
 OUT_IMG = os.path.join(ROOT, 'img')
+# APIFY_API_KEY n'est plus utilisé (fetch via ScrapingBee), gardé pour rétrocompat
 APIFY_API_KEY = os.environ.get('APIFY_API_KEY', '').strip()
-if not APIFY_API_KEY:
-    print('FATAL: APIFY_API_KEY env var manquante', file=sys.stderr)
-    sys.exit(1)
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
 # Mapping brand canonique → slug pour path
@@ -277,9 +275,9 @@ def main():
         seller_cents = (meta.get('price') or {}).get('cents', 0)
     price_euros = seller_cents / 100
     new_price = int(math.ceil((price_euros * 0.88) / 10) * 10)
-   if new_price > 1500:
-    print(f"  WARNING: new_price={new_price}€ anormal")
-    new_price = int(round(price_euros))
+    if new_price > 1500:
+        print(f"  WARNING: new_price={new_price}€ anormal (prix brut={price_euros}€)")
+        new_price = int(round(price_euros))
     desc = (meta.get('originalDescription') or meta.get('description') or '').strip()
     gender_raw = (meta.get('gender') or {}).get('name', '').lower() if isinstance(meta.get('gender'), dict) else ''
     gender = 'h' if 'homme' in gender_raw or 'men' in gender_raw else 'f' if 'femme' in gender_raw or 'women' in gender_raw else 'h'
