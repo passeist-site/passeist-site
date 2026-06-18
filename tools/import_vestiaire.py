@@ -313,13 +313,18 @@ def main():
     # arrondi à la DIZAINE SUPÉRIEURE. Ex: 220€→220€, 223€→230€.
     # ×0.88 = décote Passeist −12% vs prix VC, arrondi à la dizaine supérieure.
     breakdown = meta.get('pricingBreakdown') or {}
-    seller_cents = (breakdown.get('sellerPrice') or {}).get('cents', 0)
-    if not seller_cents:
-        seller_cents = (meta.get('price') or {}).get('cents', 0)
-    price_euros = seller_cents / 100
-    new_price = int(math.ceil(price_euros / 10) * 10)  # sellerEarning already net
+    # Prix passeist = ceil(sellerEarning / 10) × 10
+    # sellerEarning = ce que le vendeur reçoit sur VC (après commission VC)
+    # Ex: sellerPrice=110€ → sellerEarning=95€ → passeist=100€
+    earning_cents = (breakdown.get('sellerEarning') or {}).get('cents', 0)
+    if not earning_cents:
+        # Fallback: sellerPrice × 0.88 si sellerEarning absent
+        sp = (breakdown.get('sellerPrice') or {}).get('cents', 0) or (meta.get('price') or {}).get('cents', 0)
+        earning_cents = int(sp * 0.88)
+    price_euros = earning_cents / 100
+    new_price = int(math.ceil(price_euros / 10) * 10)
     if new_price > 1500:
-        print(f"  WARNING: new_price={new_price}€ anormal (prix brut={price_euros}€)")
+        print(f"  WARNING: new_price={new_price}€ anormal (sellerEarning={price_euros}€)")
         new_price = int(round(price_euros / 10) * 10)
     desc = (meta.get('originalDescription') or meta.get('description') or '').strip()
     gender_raw = (meta.get('gender') or {}).get('name', '').lower() if isinstance(meta.get('gender'), dict) else ''
