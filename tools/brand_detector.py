@@ -39,6 +39,7 @@ KNOWN_BRANDS = [
     ('LIMI FEU',            ['limi feu']),
     ('FINAL HOME',          ['final home']),
     ('ASPESI',              ['aspesi']),
+    ('JUN',                 ['jun a été fondé', 'jun was founded', 'fondé en 1958 par tadashi sasaki', 'founded in 1958 by tadashi sasaki']),
     # Belges / autres
     ('MAISON MARGIELA',     ['maison margiela', 'martin margiela']),
     ('HELMUT LANG',         ['helmut lang']),

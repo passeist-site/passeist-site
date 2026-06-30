@@ -78,6 +78,7 @@ BRAND_TO_SLUG = {
     'LIMI FEU': 'limi-feu',
     'FINAL HOME': 'final-home',
     'ASPESI': 'aspesi',
+    'JUN': 'jun',
     'NON SIGNÉ': 'non-signe-unsigned',
 }
 
@@ -334,7 +335,7 @@ def main():
     print(f'  type     : {ptype}')
     print(f'  prix     : {price_euros}€ → site {new_price}€')
 
-    # === Brand detection (NON SIGNÉ) ===
+    # === Brand detection ===
     final_brand = vc_brand.upper()
     if is_unsigned(vc_brand):
         detected, pattern, ctx = detect_brand_in_desc(desc)
@@ -345,6 +346,16 @@ def main():
         else:
             print(f'  ⚠ NON SIGNÉ + aucune brand détectée → EXIT 2 (Issue à ouvrir)')
             sys.exit(2)
+    else:
+        # Même pour les produits "signés" sur VC : si la description révèle
+        # une vraie marque différente (pattern connu, pas juste 1ère ligne),
+        # on l'utilise à la place. Ex : VC dit "Yohji Yamamoto" mais desc dit
+        # "JUN a été fondé en 1958 par Tadashi Sasaki."
+        detected_s, pattern_s, ctx_s = detect_brand_in_desc(desc)
+        if detected_s and pattern_s != 'FIRST_LINE' and detected_s.upper() != final_brand.upper():
+            print(f'  ⚠ OVERRIDE brand VC "{vc_brand}" → "{detected_s}" (détectée dans desc, pattern: {pattern_s!r})')
+            final_brand = detected_s
+            desc = clean_desc_after_brand_extraction(desc, detected_s)
 
     # Slug + path : remplace non-signe-unsigned par le slug brand détecté si applicable
     vestiaire_slug = extract_slug_from_url(url)
