@@ -3387,6 +3387,7 @@ const IMG_SUFFIX = {
 };
 
 const PRODUCTS = [
+  {"id": "68564283", "brand": "ISSEY MIYAKE", "type": "Maxi skirt", "size": "M", "price": "140", "gender": "h", "color": "Grey", "path": "/vetements-femme/jupes/issey-miyake/jupe-issey-miyake-en-coton-gris-68564283.shtml", "slug": "jupe-issey-miyake-en-coton-gris-68564283", "n": 13, "desc": "Plantation \n\nMarque créée en 1981 par Issey Miyake \n\nTrès belle jupe en coton 100%. Taille élastique à détails de pinces. Couleur gris chiné effet délavé. \n\nParfait état \n\nTaille indiquée M \n\nTaille de 32 à 44cm\nLongueur 80cm\nLargeur bas 102cm", "desc_en": "Planting \n\nBrand created in 1981 by Issey Miyake \n\nVery beautiful skirt in 100% cotton. Elastic waist with pleat details. Heather gray color with faded effect. \n\nPerfect condition \n\nSize indicated M \n\nSize from 32 to 44cm\nLength 80cm\nBottom width 102cm", "type_en": "Maxi skirt", "size_en": "M"},
   {"id": "68541388", "brand": "COMME DES GARÇONS", "type": "Mini skirt", "size": "Taille Unique", "price": "210", "gender": "h", "color": "Black", "path": "/vetements-femme/jupes/comme-des-garcons/jupe-comme-des-garcons-en-synthetique-noir-68541388.shtml", "slug": "jupe-comme-des-garcons-en-synthetique-noir-68541388", "n": 15, "desc": "Collection tricot probablement été 2006 \n\nSuperbe jupe en rayonne 100% très fine, fluide et transparente. Fond noir et fleurs multicolores. Montage par bande horizontale avec bords francs. \n\nComme neuf \n\nTaille élastiquée et cordon de serrage de 30 à 42cm\nLongueur max 71cm\nLargeur bas 94cm", "desc_en": "Knitting collection probably summer 2006 \n\nSuperb skirt in very fine, fluid and transparent 100% rayon. Black background and multicolored flowers. Mounting by horizontal strip with raw edges. \n\nLike new \n\nElasticated waist and drawstring from 30 to 42cm\nMax length 71cm\nBottom width 94cm", "type_en": "Mini skirt", "size_en": "One size"},
   {"id": "68541721", "brand": "YOHJI YAMAMOTO", "type": "Wool vest", "size": "M", "price": "320", "gender": "h", "color": "Beige", "path": "/vetements-homme/pulls-gilets-sweats/yohji-yamamoto/pullgiletsweat-yohji-yamamoto-en-laine-beige-68541721.shtml", "slug": "pullgiletsweat-yohji-yamamoto-en-laine-beige-68541721", "n": 15, "desc": "Yohji Yamamoto \n\nCollection Y’s for men des années 90 ou début 2000 \n\nUltra rare pull en laine épaisse 100% à capuche à zip central double voies. Détails de zip aux poignées. Très agréable au toucher. \n\nParfait état, juste une légère marque à l’intérieur du poignée gauche, c’est une trace d’oxydation du zip sur la laine mais du coup invisible une fois porté. \n\nTaille M \n\nDimensions :\n\n- épaule à épaule : 50cm\n- aisselle à aisselle : 61cm\n- longueur dos depuis bas du col : 68cm \n- longueur manche depuis épaule 61cm et depuis aisselle :51cm\n- ouverture bas :54cm", "desc_en": "Yohji Yamamoto \n\nY’s for men collection from the 90s or early 2000s \n\nUltra rare 100% thick wool hooded sweater with double-way central zip. Zip details on the handles. Very pleasant to the touch. \n\nPerfect condition, just a slight mark on the inside of the left handle, it is a trace of oxidation of the zip on the wool but therefore invisible once worn. \n\nSize M \n\nDimensions:\n\n- shoulder to shoulder: 50cm\n- armpit to armpit: 61cm\n- back length from the bottom of the collar: 68cm \n- sleeve length from shoulder 61cm and from armpit: 51cm\n- bottom opening: 54cm", "type_en": "Wool vest", "size_en": "M"},
   {"id": "68541815", "brand": "45RPM", "type": "Tight", "size": "", "price": "20", "gender": "h", "color": "Grey", "path": "/vetements-femme/lingerie/45rpm/lingerie-45rpm-en-synthetique-gris-68541815.shtml", "slug": "lingerie-45rpm-en-synthetique-gris-68541815", "n": 4, "desc": "45Rpm\n\nPaire de chaussettes neuve jamais portée.\n\nTaille 35/38", "desc_en": "45Rpm\n\nNew pair of socks, never worn.\n\nSize 35/38", "type_en": "Tight", "size_en": ""},
@@ -4431,6 +4432,7 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "68564283",
   "68541388",
   "68541721",
   "68541815",
@@ -5039,6 +5041,7 @@ window.tGender = function(p) {
 
 // IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
+  "66150763",
   "55380887",
   "67738714",
   "68246365",
