@@ -61,13 +61,35 @@ def is_unsigned(brand_name):
 def detect_brand_in_desc(desc):
     """Cherche une marque dans la description.
 
-    1) Match contre KNOWN_BRANDS d'abord (priorité aux patterns avec sous-marques).
-    2) Fallback : prend la 1ère ligne non vide comme marque (Tom écrit toujours
-       la marque au début de desc). Validation stricte 1-4 mots, 2-40 chars,
-       lettres présentes, pas de virgule/point-virgule, ne commence pas par chiffre."""
+    0) PRIORITÉ : si la 1ère ligne correspond à un pattern KNOWN_BRANDS, retourner
+       cette marque immédiatement (Tom écrit toujours la vraie marque en 1ère ligne).
+       Évite que 'issey miyake' (trouvé dans le corps) l'emporte sur 'plantation'
+       (trouvé en 1ère ligne) à cause de l'ordre de KNOWN_BRANDS.
+    1) Match contre KNOWN_BRANDS sur la description complète.
+    2) Fallback : prend la 1ère ligne non vide comme marque (FIRST_LINE).
+       Validation stricte 1-4 mots, 2-40 chars, lettres présentes,
+       pas de virgule/point-virgule, ne commence pas par chiffre."""
     if not desc:
         return None, None, None
     desc_lc = desc.lower()
+
+    # Étape 0 : 1ère ligne vs KNOWN_BRANDS (priorité absolue)
+    first_line_lc = ''
+    for raw in desc.split('\n'):
+        stripped = raw.strip()
+        if stripped:
+            first_line_lc = stripped.lower().rstrip('.,;:')
+            break
+    if first_line_lc:
+        for canonical, patterns in KNOWN_BRANDS:
+            for pat in patterns:
+                if first_line_lc == pat or first_line_lc.startswith(pat):
+                    idx = desc_lc.find(pat)
+                    ctx_start = max(0, idx - 30)
+                    ctx_end = min(len(desc), idx + len(pat) + 30)
+                    return canonical, pat, desc[ctx_start:ctx_end]
+
+    # Étape 1 : scan complet de la description
     for canonical, patterns in KNOWN_BRANDS:
         for pat in patterns:
             if pat in desc_lc:
@@ -75,6 +97,8 @@ def detect_brand_in_desc(desc):
                 ctx_start = max(0, idx - 30)
                 ctx_end = min(len(desc), idx + len(pat) + 30)
                 return canonical, pat, desc[ctx_start:ctx_end]
+
+    # Étape 2 : fallback FIRST_LINE
     for raw in desc.split('\n'):
         line = raw.strip().rstrip('.,;:')
         if not line: continue
