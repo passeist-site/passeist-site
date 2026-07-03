@@ -12,11 +12,30 @@ INDEX = os.path.join(ROOT, 'index.html')
 OUT = os.path.join(ROOT, 'netlify', 'functions', 'products.json')
 
 src = open(INDEX).read()
-m = re.search(r'^const PRODUCTS = (\[[\s\S]*?\n\]);', src, re.MULTILINE)
-if not m:
+
+# Parser robuste par comptage de brackets — fonctionne quelle que soit la mise
+# en forme de l'array (compact ou multi-lignes).
+start_kw = 'const PRODUCTS = ['
+start = src.find(start_kw)
+if start < 0:
     print('ERROR: PRODUCTS array not found in index.html', file=sys.stderr)
     sys.exit(1)
-products = json.loads(m.group(1))
+arr_start = src.index('[', start)
+depth = 0; in_str = False; esc = False; i = arr_start
+while i < len(src):
+    c = src[i]
+    if esc:   esc = False; i += 1; continue
+    if c == '\\': esc = True; i += 1; continue
+    if c == '"': in_str = not in_str; i += 1; continue
+    if not in_str:
+        if c == '[': depth += 1
+        elif c == ']':
+            depth -= 1
+            if depth == 0: arr_end = i + 1; break
+    i += 1
+
+raw = re.sub(r',\s*(\]|\})', r'\1', src[arr_start:arr_end])
+products = json.loads(raw)
 print(f'Found {len(products)} products')
 
 # Build a lightweight lookup: { id: { price, brand, type, size, slug } }
@@ -27,9 +46,9 @@ for p in products:
     lookup[str(pid)] = {
         'price': str(p.get('price', '')),
         'brand': p.get('brand', ''),
-        'type': p.get('type', ''),
-        'size': p.get('size', ''),
-        'slug': p.get('slug', ''),
+        'type':  p.get('type', ''),
+        'size':  p.get('size', ''),
+        'slug':  p.get('slug', ''),
     }
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
