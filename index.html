@@ -3387,6 +3387,7 @@ const IMG_SUFFIX = {
 };
 
 const PRODUCTS = [
+  {"id": "68774304", "brand": "COMME DES GARÇONS", "type": "Wool maxi skirt", "size": "L", "price": "250", "gender": "h", "color": "Black", "path": "/vetements-femme/jupes/comme-des-garcons/jupe-comme-des-garcons-en-laine-noir-68774304.shtml", "slug": "jupe-comme-des-garcons-en-laine-noir-68774304", "n": 13, "desc": "Collection dites « comme comme » automne hiver 2020  Très belle jupe maxi en laine 100% Marine en montages de larges bandes.   \n\nParfait état comme neuf   \n\nTaille indiquée L convient à tout le monde   \n\nTaille de 32 à 50cm \nLongueur 78cm", "desc_en": "Collection called “comme comme” fall winter 2020 Very beautiful maxi skirt in 100% Navy wool in wide band montages.   \n\nPerfect condition like new   \n\nSize indicated L is suitable for everyone   \n\nSize from 32 to 50cm \nLength 78cm", "type_en": "Wool maxi skirt", "size_en": "L"},
   {"id": "68728431", "brand": "PLANTATION", "type": "Shirt", "size": "L", "price": "130", "gender": "h", "color": "Multicolour", "path": "/vetements-homme/chemises/issey-miyake/chemise-issey-miyake-en-coton-multicolore-68728431.shtml", "slug": "chemise-issey-miyake-en-coton-multicolore-68728431", "n": 15, "desc": "Années 80 (période Issey Miyake)\n\nTrès belle chemise homme en coton épais 100% très belle matière si propre à Plantation du début des années 80. Jolis boutons épais de nacre.\n\nParfait état général malgré ce qu’on dirait une légère décoloration sur la poche. Je n’arrive pas à savoir si c’est d’origine dans le tissage.\n\nTaille indiquée L\n\nDimensions :\n\n- épaule à épaule : 55cm\n- aisselle à aisselle : 60cm\n- longueur dos depuis bas du col : 77cm\n- longueur manche depuis épaule 56cm et depuis aisselle :52cm\n- ouverture bas :66cm", "desc_en": "80s (Issey Miyake period)\n\nVery nice men's shirt in thick 100% cotton, very nice material so specific to Plantation from the early 80s. Pretty thick mother-of-pearl buttons.\n\nPerfect general condition despite what appears to be slight discoloration on the pocket. I can't tell if it's original to the weaving.\n\nSize indicated L\n\nDimensions:\n\n- shoulder to shoulder: 55cm\n- armpit to armpit: 60cm\n- back length from the bottom of the collar: 77cm\n- sleeve length from shoulder 56cm and from armpit: 52cm\n- bottom opening: 66cm", "type_en": "Shirt", "size_en": "L"},
   {"id": "68728336", "brand": "KIJIMA TAKAYUKI", "type": "Hat", "size": "One size", "price": "100", "gender": "h", "color": "Beige", "path": "/accessoires-homme/chapeaux-bonnets/kijima-takayuki/chapeaubonnet-kijima-takayuki-en-polyester-beige-68728336.shtml", "slug": "chapeaubonnet-kijima-takayuki-en-polyester-beige-68728336", "n": 13, "desc": "Hat maker \n\nMade in Japan \n\nTres belle casquette beige en polyester 100% effet suede. Douce et de grande qualité. Ceinture d’ajustement en cuir et boucle métal logoté du nom de la marque.  \n\nParfait état comme neuf \n\nTaille unique\n\nCirconférence intérieure de 60 à 64cm", "desc_en": "Hat maker \n\nMade in Japan \n\nVery beautiful beige cap in 100% suede effect polyester. Soft and high quality. Leather adjustment belt and metal buckle logoed with the brand name.  \n\nPerfect condition like new \n\nOne size\n\nInner circumference of 60 to 64cm", "type_en": "Hat", "size_en": "One size"},
   {"id": "68728397", "brand": "KIJIMA TAKAYUKI", "type": "Hat", "size": "One size", "price": "130", "gender": "h", "color": "Black", "path": "/accessoires-homme/chapeaux-bonnets/kijima-takayuki/chapeaubonnet-kijima-takayuki-en-coton-noir-68728397.shtml", "slug": "chapeaubonnet-kijima-takayuki-en-coton-noir-68728397", "n": 9, "desc": "Kijima Takayuki x ventile\n\nTrès belle casquette 5 panels skate wear. En coton ventile 100%. Fin et léger. Noir\n\nComme neuf\n\nTaille unique\n\nCirconférence intérieure de 57cm à 63cm", "desc_en": "Kijima Takayuki x ventilates\n\nVery nice 5 panel skate wear cap. In 100% ventilated cotton. Thin and light. Black\n\nLike new\n\nOne size\n\nInner circumference from 57cm to 63cm", "type_en": "Hat", "size_en": "One size"},
@@ -3449,6 +3450,7 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "68774304",
   "68728431",
   "68728336",
   "68728397",
@@ -4099,6 +4101,11 @@ window.tGender = function(p) {
 
 // IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
+  "68541496",
+  "54708545",
+  "67738270",
+  "65604168",
+  "59346360",
   "63093470",
   "68636884",
   "68636929",
