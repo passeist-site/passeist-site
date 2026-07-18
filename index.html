@@ -3387,6 +3387,7 @@ const IMG_SUFFIX = {
 };
 
 const PRODUCTS = [
+  {"id": "69104829", "brand": "ISSEY MIYAKE", "type": "Shirt", "size": "M", "price": "170", "gender": "h", "color": "Multicolour", "path": "/vetements-homme/chemises/issey-miyake/chemise-issey-miyake-en-coton-multicolore-69104829.shtml", "slug": "chemise-issey-miyake-en-coton-multicolore-69104829", "n": 15, "desc": "Issey Miyake \n\nCollection men 1991 \n\nTres belle chemise en coton 100%. Très jolis jeu de carreaux avec fils verts foncés, bruns et blancs. Tres belle poche pectoral gauche dissimulé dans une glissière à la boutonnière. \n\nParfait état, légère usures aux arêtes des poignées. \n\nTaille indiquée M \n\nDimensions :\n\n- épaule à épaule : 69cm\n- aisselle à aisselle : 65cm\n- longueur dos depuis bas du col : 75cm \n- longueur manche depuis épaule 50cm et depuis aisselle :48cm\n- ouverture bas :58cm", "desc_en": "Issey Miyake \n\nMen's collection 1991 \n\nVery nice 100% cotton shirt. Very pretty set of tiles with dark green, brown and white threads. Very nice left chest pocket hidden in a zipper at the buttonhole. \n\nPerfect condition, slight wear to the edges of the handles. \n\nSize indicated M \n\nDimensions:\n\n- shoulder to shoulder: 69cm\n- armpit to armpit: 65cm\n- back length from the bottom of the collar: 75cm \n- sleeve length from shoulder 50cm and from armpit: 48cm\n- bottom opening: 58cm", "type_en": "Shirt", "size_en": "M"},
   {"id": "68999314", "brand": "YOHJI YAMAMOTO", "type": "Jeans", "size": "42 - 44", "price": "290", "gender": "h", "color": "Anthracite", "path": "/vetements-homme/jeans/ys/jean-ys-en-coton-anthracite-68999314.shtml", "slug": "jean-ys-en-coton-anthracite-68999314", "n": 15, "desc": "Collection Y’s for men automne hiver 1998\n\nTrès rare salopette type charpentier en denim teint anthracite plutôt bon grammage. En coton 100%. Bretelles ajustables. Taille et jambe large\n\nParfait état\n\nConvient à un M/L\n\nHanches 62cm\nLargeur chevilles 19,5cm\nLongueur jambes 101cm et entre jambes 68cm", "desc_en": "Y’s for men fall winter 1998 collection\n\nVery rare carpenter type overalls in rather good weight anthracite dyed denim. In 100% cotton. Adjustable straps. Wide waist and leg\n\nPerfect condition\n\nFits an M/L\n\nHips 62cm\nAnkle width 19.5cm\nLeg length 101cm and between legs 68cm", "type_en": "Jeans", "size_en": "42 - 44"},
   {"id": "68998665", "brand": "ISSEY MIYAKE", "type": "Jewellery", "size": "", "price": "180", "gender": "h", "color": "Burgundy", "path": "/accessoires-homme/bijoux/issey-miyake/bijou-issey-miyake-en-polyester-bordeaux-68998665.shtml", "slug": "bijou-issey-miyake-en-polyester-bordeaux-68998665", "n": 8, "desc": "Issey Miyake \n\nCollection men 1994 \n\nLa fameuse première collection été 1994 de Naoki Takizawa, une collection sur la thématique du jazz. \n\nUne pièce similaire est mise en guise de noeud papillon sur une photo d’archive du défilé. (Si vous voulez la voir, merci de m’envoyer un message). \n\nNew old stock en provenance d’une collection particulière japonaise aux nombreuses pièces rares. \n\nBroche en rubans de polyester 100% de couleur bordeaux et brun enroulés et collés ensemble. Formant une broche organique. \n\nPetite pièce de musée", "desc_en": "Issey Miyake \n\nMen's collection 1994 \n\nNaoki Takizawa's famous first summer 1994 collection, a collection on the theme of jazz. \n\nA similar piece is worn as a bow tie in an archive photo from the show. (If you want to see it, please send me a message). \n\nNew old stock from a private Japanese collection with many rare pieces. \n\nBrooch made of 100% burgundy and brown polyester ribbons rolled and glued together. Forming an organic spindle. \n\nSmall museum piece", "type_en": "Jewelry", "size_en": ""},
   {"id": "68998714", "brand": "ISSEY MIYAKE", "type": "Tie", "size": "", "price": "150", "gender": "h", "color": "Navy", "path": "/accessoires-homme/cravates/issey-miyake/cravate-issey-miyake-en-coton-marine-68998714.shtml", "slug": "cravate-issey-miyake-en-coton-marine-68998714", "n": 12, "desc": "Issey Miyake\n\n\nCollection men 1996\n\nNeuf d’ancien stock provenant d’une collection particulière au Japon avec de nombreuses pièces introuvables aujourd’hui, à la typologie rare et à l’état neuf.\n\nTrès belle cravate barrette ultra slim en coton 65% et polyester 35%. Légèrement brillant. Couleur bleu gris\n\nTaille unique", "desc_en": "Issey Miyake\n\n\nMen's collection 1996\n\nNew from old stock from a private collection in Japan with many pieces not found today, rare typology and in new condition.\n\nVery beautiful ultra slim barrette tie in 65% cotton and 35% polyester. Slightly shiny. Color blue gray\n\nOne size", "type_en": "Tie", "size_en": ""},
@@ -3482,6 +3483,7 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "69104829",
   "68999314",
   "68998665",
   "68998714",
@@ -4165,6 +4167,11 @@ window.tGender = function(p) {
 
 // IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
+  "68825128",
+  "66151339",
+  "68564323",
+  "68774304",
+  "63094146",
   "64871318",
   "69000071",
   "62100872",
