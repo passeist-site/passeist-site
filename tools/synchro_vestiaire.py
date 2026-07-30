@@ -26,9 +26,9 @@ print(f'[debug] SCRAPINGBEE_API_KEY len={len(SCRAPINGBEE_API_KEY)} '
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
-# Full scan : dimanche automatiquement, ou forcé via env var FULL_SCAN=true (workflow_dispatch)
+# Full scan : mercredi + dimanche automatiquement, ou forcé via env var FULL_SCAN=true (workflow_dispatch)
 FULL_SCAN = (os.environ.get('FULL_SCAN', 'false').lower() == 'true'
-             or datetime.datetime.utcnow().weekday() == 6)  # 6 = dimanche
+             or datetime.datetime.utcnow().weekday() in (2, 6))  # 2 = mercredi, 6 = dimanche
 
 PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
