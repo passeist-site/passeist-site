@@ -3387,6 +3387,7 @@ const IMG_SUFFIX = {
 };
 
 const PRODUCTS = [
+  {"id": "69620392", "brand": "45RPM", "type": "Wool biker jacket", "size": "S", "price": "180", "gender": "h", "color": "Beige", "path": "/vetements-femme/blousons/45rpm/blouson-45rpm-en-laine-beige-69620392.shtml", "slug": "blouson-45rpm-en-laine-beige-69620392", "n": 15, "desc": "45Rpm\n\nbelle veste à grosse bouclettes en laine 70% et coton 30%, doublure intérieure bleu en laine 100%\n\nParfait état et grande qualité de fabrication\n\nTaille indiquée 1 pour un S\n\nDimensions :\n- épaule à épaule : 37cm\n- aisselle à aisselle : 48cm\n- longueur dos depuis bas du col : 58cm\n- longueur manche depuis épaule 55cm et depuis aisselle :43cm - ouverture bas :42cm", "desc_en": "45Rpm\n\nbeautiful jacket with large loops in 70% wool and 30% cotton, blue interior lining in 100% wool\n\nPerfect condition and great manufacturing quality\n\nSize indicated 1 for an S\n\nDimensions:\n- shoulder to shoulder: 37cm\n- armpit to armpit: 48cm\n- back length from the bottom of the collar: 58cm\n- sleeve length from shoulder 55cm and from armpit: 43cm - bottom opening: 42cm", "type_en": "Wool biker jacket", "size_en": "S"},
   {"id": "69475460", "brand": "KIJIMA TAKAYUKI", "type": "Cap", "size": "One size", "price": "100", "gender": "h", "color": "White", "path": "/accessoires-femme/chapeaux/kijima-takayuki/chapeaubonnet-kijima-takayuki-en-coton-blanc-69475460.shtml", "slug": "chapeaubonnet-kijima-takayuki-en-coton-blanc-69475460", "n": 15, "desc": "Photos portées disponible par message. \n\nEn collaboration avec la marque d’accessoires pour cheveux TRESSE. La casquette comporte  un ruban original TRESSE à motif de carreaux inspiré des carreaux de Madagascar. Le ruban peut être retiré.\n\n\nNuméro d'article : KT-01\n\nCouleur : Carrelage noir cassé\n\nTaille : Tour de tête de 53 cm à 57 cm\n\nMatière : 100 % coton / Foulard : 70 % rayonne 30 % lin\n\nPays d'origine : Fabriqué au Japon\n\nParfait état comme neuf", "desc_en": "Photos available by message. \n\nIn collaboration with the hair accessories brand TRESSE. The cap features an original BRAID ribbon with a check pattern inspired by Madagascar tiles. The tape can be removed.\n\n\nItem number: KT-01\n\nColor: Off-black tiles\n\nSize: Head circumference from 53 cm to 57 cm\n\nMaterial: 100% cotton / Scarf: 70% rayon 30% linen\n\nCountry of origin: Made in Japan\n\nPerfect condition like new", "type_en": "Cape", "size_en": "One size"},
   {"id": "69475404", "brand": "KIJIMA TAKAYUKI", "type": "Panama", "size": "59", "price": "110", "gender": "h", "color": "Beige", "path": "/accessoires-femme/chapeaux/sunspel/chapeaubonnet-sunspel-en-autre-beige-69475404.shtml", "slug": "chapeaubonnet-sunspel-en-autre-beige-69475404", "n": 14, "desc": "En collaboration avec la marque anglaise SUNSPEL \n\nravissant chapeau en washi (papier) à 83% effet paille. Hyper malléable et léger. \n\nParfait état. \nTaille indiquée M\n\nTour de tête 59cm", "desc_en": "In collaboration with the English brand SUNSPEL \n\nlovely hat in washi (paper) with 83% straw effect. Hyper malleable and light. \n\nPerfect condition. \nSize indicated M\n\nHead circumference 59cm", "type_en": "Panama", "size_en": "59"},
   {"id": "69476684", "brand": "YOHJI YAMAMOTO", "type": "Wool trousers", "size": "L", "price": "290", "gender": "h", "color": "Black", "path": "/vetements-homme/pantalons/ys/pantalon-ys-en-laine-noir-69476684.shtml", "slug": "pantalon-ys-en-laine-noir-69476684", "n": 15, "desc": "Collection Y’s for men des années 90 \n\nSuperbe pantalon jambes larges en laine 100% et doublure rayonne.  Taille à cordon de serrage. Motif de grille fragmentée, lignes multicolores indépendantes en fils flammés qui apparaissent et s'effacent de façon irrégulière sur fond noir, sans former de véritable quadrillage continu.\n\nCode produit MF-P11-118\n\n\nVéritablement comme neuf \n\nTaille de 30 à 52cm\nFourche avant 35cm\nLongueur de jambes 105cm et 77cm depuis l’entre jambe \nHanches 65cm\nLargeur chevilles 22cm", "desc_en": "Y’s for men collection from the 90s \n\nSuperb wide leg pants in 100% wool and rayon lining.  Drawstring waist. Fragmented grid pattern, independent multi-colored lines in slub threads which appear and fade irregularly on a black background, without forming a true continuous grid.\n\nProduct code MF-P11-118\n\n\nTruly like new \n\nSize from 30 to 52cm\nFront fork 35cm\nLeg length 105cm and 77cm from the crotch \nHips 65cm\nAnkle width 22cm", "type_en": "Wool pants", "size_en": "L"},
@@ -3527,6 +3528,7 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "69620392",
   "69475460",
   "69475404",
   "69476684",
@@ -4255,6 +4257,12 @@ window.tGender = function(p) {
 
 // IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
+  "59346452",
+  "68728296",
+  "65394192",
+  "68999314",
+  "68999702",
+  "69475265",
   "67288978",
   "66151497",
   "69348273",
