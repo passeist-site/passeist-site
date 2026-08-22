@@ -193,9 +193,8 @@ def scrape_profile():
     html2 = call_page_range(range(6, 11), 'fs')
 
     # Call 3 : pages 11-15 + sold tab via URL directe
-    SOLD_URL = PROFILE_URL.replace('tab=items-for-sale', 'tab=sold-items')
     html3 = call_page_range(range(11, 16), 'fs')
-    # Sold tab
+    # Sold tab : navigate vers PROFILE_URL + click H.sw() pour switcher l'onglet vendu
     setup_idem_sold = (
         "if(!window._fs)window._fs=new Set();"
         "if(!window._sd)window._sd=new Set();"
@@ -205,11 +204,12 @@ def scrape_profile():
     inst_sold = [
         {"evaluate": setup_idem_sold},
         {"evaluate": "H.ck()"}, {"wait": 1000},
+        {"evaluate": "H.sw()"}, {"wait": 2500},  # switch onglet vendu
         {"evaluate": "H.sc()"}, {"wait": 600},
         {"evaluate": "H.hs()"},
         {"evaluate": "H.dump()"},
     ]
-    html3 += call_sb_url(SOLD_URL, inst_sold, 'sold-tab')
+    html3 += call_sb_url(PROFILE_URL, inst_sold, 'sold-tab')
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
