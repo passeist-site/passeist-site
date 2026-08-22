@@ -149,26 +149,36 @@ def scrape_profile():
     # Call 2 : pages 6-10 — navigate directement via URL (plus robuste que clic bouton)
     # VC bloque la navigation par clic après page 5 depuis 2026-08-15
     def call_page_range(pages, label_prefix, harvest_fn="H.hf()"):
-        """Fetch a range of pages via direct URL navigation."""
-        # Utilise navigate pour aller directement à chaque page URL
-        # Setup sans réinitialiser _fs (idempotent)
+        """Fetch a range of pages: start at page 1, set s60, then navigate to target page URL.
+        Each call is independent (fresh SB session). Sequence:
+          1. Load PROFILE_URL (page 1)
+          2. Accept cookies + set 60/page → s60 cookie stored in session
+          3. navigate instruction → go to ?page=N (60/page cookie persists)
+          4. Re-init H (navigate resets window), harvest, dump
+        """
         setup_idem = (
             "if(!window._fs)window._fs=new Set();"
             "if(!window._sd)window._sd=new Set();"
             "if(!window._c)window._c={};"
-            + setup[setup.index("window.H="):]  # réutilise les helpers H
+            + setup[setup.index("window.H="):]
         )
         all_html = ""
         for n in pages:
-            page_url = PROFILE_URL + (f"&page={n}" if n > 1 else "")
+            page_url = PROFILE_URL + f"&page={n}"
             inst = [
+                # Step 1-2: page 1, accept cookies, set 60/page
                 {"evaluate": setup_idem},
                 {"evaluate": "H.ck()"}, {"wait": 1000},
+                {"evaluate": "H.s60()"}, {"wait": 2500},
+                # Step 3: navigate to target page (60/page cookie persists)
+                {"navigate": page_url}, {"wait": 2500},
+                # Step 4: re-init H (navigate resets window state)
+                {"evaluate": setup_idem},
                 {"evaluate": "H.sc()"}, {"wait": 600},
                 {"evaluate": harvest_fn},
                 {"evaluate": "H.dump()"},
             ]
-            all_html += call_sb_url(page_url, inst, f"{label_prefix}-p{n}")
+            all_html += call_sb_url(PROFILE_URL, inst, f"{label_prefix}-p{n}")
         return all_html
 
     def call_sb_url(url, instructions, label):
