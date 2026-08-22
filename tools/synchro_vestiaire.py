@@ -99,9 +99,9 @@ def scrape_profile():
         # Read counters
         "co:()=>{const t=document.body.innerText;const fs=t.match(/(\\d+)\\s+(?:articles?\\s+en\\s+vente|items?\\s+for\\s+sale)/);const sd=t.match(/(\\d+)\\s+(?:vendus|sold)\\b/);window._c.fs=fs?parseInt(fs[1]):0;window._c.sd=sd?parseInt(sd[1]):0},"
         # Click 60/page
-        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>x.textContent.trim()==='60'&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
+        "s60:()=>{const b=[...document.querySelectorAll('button,a,[role=\\"button\\"]')].find(x=>(x.textContent||x.innerText||'').trim()==='60'&&x.getAttribute('aria-current')!=='true'&&x.getAttribute('aria-selected')!=='true');if(b)b.click()},"
         # Click page N
-        "p:n=>{const bs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test(b.textContent.trim())&&+b.textContent.trim()<=20&&b.getAttribute('aria-current')!=='page');const b=bs.find(x=>x.textContent.trim()===String(n));if(b)b.click()},"
+        "p:n=>{""const S='button,a,[role=\\"button\\"]';const all=[...document.querySelectorAll(S)];""const byT=all.find(e=>{const t=(e.textContent||e.innerText||'').trim();return t===String(n)&&e.getAttribute('aria-current')!=='page'&&e.getAttribute('aria-selected')!=='true';});""if(byT){byT.click();return;}""const byL=all.find(e=>{const l=(e.getAttribute('aria-label')||'').toLowerCase();return l==='page '+n||l===String(n);});""if(byL){byL.click();return;}""const nx=all.find(e=>{const l=(e.getAttribute('aria-label')||'').toLowerCase();const t=(e.textContent||e.innerText||'').trim();return l.includes('next')||l.includes('suivant')||t==='›'||t==='→'||t==='>';});""if(nx)nx.click()},"
         # Scroll bottom
         "sc:()=>window.scrollTo(0,document.documentElement.scrollHeight),"
         # Harvest into target Set
@@ -158,38 +158,37 @@ def scrape_profile():
     html1 = call_sb(inst_1, 'pages 1-5')
 
     if FULL_SCAN:
-        # Call 2 : scroll infini pour charger les pages 6-15 (si VC = infinite scroll)
-        # 14 cycles de scroll, 2.5s chacun pour laisser le temps au réseau
-        inst_scroll = [
+        # Call 2 : pages 6-10 via H.p(n) mis à jour (button+a+[role=button] + fallback next)
+        inst_2 = [
             {"evaluate": setup},
-            {"evaluate": "H.ck()"}, {"wait": 1000},
+            {"evaluate": "H.ck()"}, {"wait": 1500},
             {"evaluate": "H.s60()"}, {"wait": 2500},
         ]
-        # Scroll de page 1 jusqu'au bout (la s60 a déjà chargé page 1 avec 60 items)
-        for _ in range(14):
-            inst_scroll += [
-                {"evaluate": "window.scrollTo(0,document.documentElement.scrollHeight)"},
-                {"wait": 2500},
-                {"evaluate": "H.hf()"},  # récolte au fur et à mesure
-            ]
-        inst_scroll += [
-            {"evaluate": "H.sc()"}, {"wait": 500},
-            {"evaluate": "H.hf()"},   # récolte finale
-            {"evaluate": "H.dump()"},
-        ]
-        html2 = call_sb(inst_scroll, 'scroll-infini-p6-15')
+        for n in range(2, 11):
+            inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
+            if n >= 6:
+                inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+        inst_2 += [{"evaluate": "H.dump()"}]
+        html2 = call_sb(inst_2, 'pages 6-10')
 
-        # Call 3 : sold tab
-        inst_sold = [
+        # Call 3 : pages 11-15 + sold tab
+        inst_3 = [
             {"evaluate": setup},
-            {"evaluate": "H.ck()"}, {"wait": 1000},
+            {"evaluate": "H.ck()"}, {"wait": 1500},
+            {"evaluate": "H.s60()"}, {"wait": 2500},
+        ]
+        for n in range(2, 16):
+            inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
+            if n >= 11:
+                inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+        inst_3 += [
             {"evaluate": "H.sw()"}, {"wait": 2500},
             {"evaluate": "H.s60()"}, {"wait": 2000},
-            {"evaluate": "H.sc()"}, {"wait": 600},
+            {"evaluate": "H.sc()"}, {"wait": 1200},
             {"evaluate": "H.hs()"},
             {"evaluate": "H.dump()"},
         ]
-        html3 = call_sb(inst_sold, 'sold-tab')
+        html3 = call_sb(inst_3, 'pages 11-15 + sold')
     else:
         html2 = ""
         html3 = ""
