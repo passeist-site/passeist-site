@@ -149,12 +149,15 @@ def scrape_profile():
     # Call 2 : pages 6-10 — navigate directement via URL (plus robuste que clic bouton)
     # VC bloque la navigation par clic après page 5 depuis 2026-08-15
     def call_page_range(pages, label_prefix, harvest_fn="H.hf()"):
-        """Fetch a range of pages: start at page 1, set s60, then navigate to target page URL.
-        Each call is independent (fresh SB session). Sequence:
+        """Fetch a range of pages: start at page 1, set s60, then navigate via window.location.href.
+        Each call is an independent SB session. Sequence:
           1. Load PROFILE_URL (page 1)
-          2. Accept cookies + set 60/page → s60 cookie stored in session
-          3. navigate instruction → go to ?page=N (60/page cookie persists)
-          4. Re-init H (navigate resets window), harvest, dump
+          2. Accept cookies + set 60/page (s60 sets cookie/localStorage)
+          3. window.location.href = page_url → browser navigates to ?page=N
+             (60/page preference persists via cookie within same domain)
+          4. wait for load, re-init H, harvest, dump
+        Note: ScrapingBee js_scenario does NOT support "navigate" instruction —
+        must use evaluate("window.location.href=...") instead.
         """
         setup_idem = (
             "if(!window._fs)window._fs=new Set();"
@@ -170,11 +173,11 @@ def scrape_profile():
                 {"evaluate": setup_idem},
                 {"evaluate": "H.ck()"}, {"wait": 1000},
                 {"evaluate": "H.s60()"}, {"wait": 2500},
-                # Step 3: navigate to target page (60/page cookie persists)
-                {"navigate": page_url}, {"wait": 2500},
-                # Step 4: re-init H (navigate resets window state)
+                # Step 3: navigate via JS (cookie persists → page N at 60/page)
+                {"evaluate": f"window.location.href='{page_url}'"}, {"wait": 3000},
+                # Step 4: re-init H (page reload resets window), harvest, dump
                 {"evaluate": setup_idem},
-                {"evaluate": "H.sc()"}, {"wait": 600},
+                {"evaluate": "H.sc()"}, {"wait": 800},
                 {"evaluate": harvest_fn},
                 {"evaluate": "H.dump()"},
             ]
