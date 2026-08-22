@@ -146,40 +146,70 @@ def scrape_profile():
     inst_1 += [{"evaluate": "H.dump()"}]
     html1 = call_sb(inst_1, 'pages 1-5')
 
-    # Call 2 : pages 6-10
-    inst_2 = [
-        {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-    ]
-    # Click pages 2,3,4,5 pour atteindre la 6, puis harvest 6-10
-    for n in range(2, 11):
-        inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
-        if n >= 6:
-            inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    inst_2 += [{"evaluate": "H.dump()"}]
-    html2 = call_sb(inst_2, 'pages 6-10')
+    # Call 2 : pages 6-10 — navigate directement via URL (plus robuste que clic bouton)
+    # VC bloque la navigation par clic après page 5 depuis 2026-08-15
+    def call_page_range(pages, label_prefix, harvest_fn="H.hf()"):
+        """Fetch a range of pages via direct URL navigation."""
+        # Utilise navigate pour aller directement à chaque page URL
+        # Setup sans réinitialiser _fs (idempotent)
+        setup_idem = (
+            "if(!window._fs)window._fs=new Set();"
+            "if(!window._sd)window._sd=new Set();"
+            "if(!window._c)window._c={};"
+            + setup[setup.index("window.H="):]  # réutilise les helpers H
+        )
+        all_html = ""
+        for n in pages:
+            page_url = PROFILE_URL + (f"&page={n}" if n > 1 else "")
+            inst = [
+                {"evaluate": setup_idem},
+                {"evaluate": "H.ck()"}, {"wait": 1000},
+                {"evaluate": "H.sc()"}, {"wait": 600},
+                {"evaluate": harvest_fn},
+                {"evaluate": "H.dump()"},
+            ]
+            all_html += call_sb_url(page_url, inst, f"{label_prefix}-p{n}")
+        return all_html
 
-    # Call 3 : pages 11-15 + sold tab
-    inst_3 = [
-        {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-    ]
-    # Navigation 2 → 15, harvest 11-15
-    for n in range(2, 16):
-        inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
-        if n >= 11:
-            inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    # Switch to sold + harvest
-    inst_3 += [
-        {"evaluate": "H.sw()"}, {"wait": 2500},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-        {"evaluate": "H.sc()"}, {"wait": 1200},
+    def call_sb_url(url, instructions, label):
+        """Single ScrapingBee call with custom URL."""
+        js_scenario = {"instructions": instructions}
+        params = {
+            'api_key': SCRAPINGBEE_API_KEY,
+            'url': url,
+            'premium_proxy': 'true', 'country_code': 'fr',
+            'render_js': 'true',
+            'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
+            'forward_headers': 'true',
+            'block_resources': 'false',
+        }
+        headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
+        print(f'  → SB call "{label}"...')
+        rr = requests.get(SB_API, params=params, headers=headers, timeout=180)
+        if rr.status_code != 200:
+            raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
+        return rr.text
+
+    html2 = call_page_range(range(6, 11), 'fs')
+
+    # Call 3 : pages 11-15 + sold tab via URL directe
+    SOLD_URL = PROFILE_URL.replace('tab=items-for-sale', 'tab=sold-items')
+    html3 = call_page_range(range(11, 16), 'fs')
+    # Sold tab
+    setup_idem_sold = (
+        "if(!window._fs)window._fs=new Set();"
+        "if(!window._sd)window._sd=new Set();"
+        "if(!window._c)window._c={};"
+        + setup[setup.index("window.H="):]
+    )
+    inst_sold = [
+        {"evaluate": setup_idem_sold},
+        {"evaluate": "H.ck()"}, {"wait": 1000},
+        {"evaluate": "H.sc()"}, {"wait": 600},
         {"evaluate": "H.hs()"},
         {"evaluate": "H.dump()"},
     ]
-    html3 = call_sb(inst_3, 'pages 11-15 + sold')
+    html3 += call_sb_url(SOLD_URL, inst_sold, 'sold-tab')
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
