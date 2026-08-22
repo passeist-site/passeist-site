@@ -133,59 +133,15 @@ def scrape_profile():
             raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
         return rr.text
 
-    # Call 1 : init + counters + pages 1-5
-    inst_1 = [
-        {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.co()"},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-    ]
-    for n in range(1, 6):
-        if n > 1: inst_1 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
-        inst_1 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    inst_1 += [{"evaluate": "H.dump()"}]
-    html1 = call_sb(inst_1, 'pages 1-5')
-
-    # Call 2 : pages 6-10 — navigate directement via URL (plus robuste que clic bouton)
-    # VC bloque la navigation par clic après page 5 depuis 2026-08-15
-    def call_page_range(pages, label_prefix, harvest_fn="H.hf()"):
-        """Fetch a range of pages: start at page 1, set s60, then navigate via window.location.href.
-        Each call is an independent SB session. Sequence:
-          1. Load PROFILE_URL (page 1)
-          2. Accept cookies + set 60/page (s60 sets cookie/localStorage)
-          3. window.location.href = page_url → browser navigates to ?page=N
-             (60/page preference persists via cookie within same domain)
-          4. wait for load, re-init H, harvest, dump
-        Note: ScrapingBee js_scenario does NOT support "navigate" instruction —
-        must use evaluate("window.location.href=...") instead.
-        """
-        setup_idem = (
-            "if(!window._fs)window._fs=new Set();"
-            "if(!window._sd)window._sd=new Set();"
-            "if(!window._c)window._c={};"
-            + setup[setup.index("window.H="):]
-        )
-        all_html = ""
-        for n in pages:
-            page_url = PROFILE_URL + f"&page={n}"
-            inst = [
-                # Step 1-2: page 1, accept cookies, set 60/page
-                {"evaluate": setup_idem},
-                {"evaluate": "H.ck()"}, {"wait": 1000},
-                {"evaluate": "H.s60()"}, {"wait": 2500},
-                # Step 3: navigate via JS (cookie persists → page N at 60/page)
-                {"evaluate": f"window.location.href='{page_url}'"}, {"wait": 3000},
-                # Step 4: re-init H (page reload resets window), harvest, dump
-                {"evaluate": setup_idem},
-                {"evaluate": "H.sc()"}, {"wait": 800},
-                {"evaluate": harvest_fn},
-                {"evaluate": "H.dump()"},
-            ]
-            all_html += call_sb_url(PROFILE_URL, inst, f"{label_prefix}-p{n}")
-        return all_html
+    # Stratégie : un appel SB par page, URL directe ?page=N (pas de clic pagination).
+    # VC a changé sa pagination côté client depuis ~08-15 : H.p(n) et H.s60() ne fonctionnent plus.
+    # Solution : chaque appel SB démarre DIRECTEMENT sur la page cible via son URL.
+    # VC affiche 60 items/page par défaut sur les profils — pas besoin de s60.
+    # ScrapingBee js_scenario ne supporte pas "navigate" et window.location.href
+    # ne persiste pas entre instructions → seule approche fiable = URL de départ.
 
     def call_sb_url(url, instructions, label):
-        """Single ScrapingBee call with custom URL."""
+        """Single ScrapingBee call starting at given URL."""
         js_scenario = {"instructions": instructions}
         params = {
             'api_key': SCRAPINGBEE_API_KEY,
@@ -203,26 +159,53 @@ def scrape_profile():
             raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
         return rr.text
 
-    html2 = call_page_range(range(6, 11), 'fs')
-
-    # Call 3 : pages 11-15 + sold tab via URL directe
-    html3 = call_page_range(range(11, 16), 'fs')
-    # Sold tab : navigate vers PROFILE_URL + click H.sw() pour switcher l'onglet vendu
-    setup_idem_sold = (
+    setup_idem = (
         "if(!window._fs)window._fs=new Set();"
         "if(!window._sd)window._sd=new Set();"
         "if(!window._c)window._c={};"
         + setup[setup.index("window.H="):]
     )
-    inst_sold = [
-        {"evaluate": setup_idem_sold},
+
+    def scan_page(n, harvest_fn="H.hf()"):
+        """Un appel SB → une page du profil VC (page N, 60 items/page par défaut)."""
+        page_url = PROFILE_URL + (f"&page={n}" if n > 1 else "")
+        inst = [
+            {"evaluate": setup_idem},
+            {"evaluate": "H.ck()"}, {"wait": 800},
+            {"evaluate": "H.sc()"}, {"wait": 600},
+            {"evaluate": harvest_fn},
+            {"evaluate": "H.dump()"},
+        ]
+        return call_sb_url(page_url, inst, f"p{n}")
+
+    # Call 1 : page 1 + counters (toujours)
+    inst_1 = [
+        {"evaluate": setup},     # reset complet + définit window.H
         {"evaluate": "H.ck()"}, {"wait": 1000},
-        {"evaluate": "H.sw()"}, {"wait": 2500},  # switch onglet vendu
+        {"evaluate": "H.co()"},  # lit fs_target et sold_target
         {"evaluate": "H.sc()"}, {"wait": 600},
-        {"evaluate": "H.hs()"},
+        {"evaluate": "H.hf()"},
         {"evaluate": "H.dump()"},
     ]
-    html3 += call_sb_url(PROFILE_URL, inst_sold, 'sold-tab')
+    html1 = call_sb(inst_1, 'p1-counters')
+
+    # Pages 2-5 : toujours (non-FULL_SCAN couvre les ~300 items les plus récents)
+    html2 = "".join(scan_page(n) for n in range(2, 6))
+
+    # Pages 6-15 + sold : seulement en FULL_SCAN
+    if FULL_SCAN:
+        html3 = "".join(scan_page(n) for n in range(6, 16))
+        inst_sold = [
+            {"evaluate": setup_idem},
+            {"evaluate": "H.ck()"}, {"wait": 800},
+            {"evaluate": "H.sw()"}, {"wait": 2500},
+            {"evaluate": "H.sc()"}, {"wait": 600},
+            {"evaluate": "H.hs()"},
+            {"evaluate": "H.dump()"},
+        ]
+        html3 += call_sb_url(PROFILE_URL, inst_sold, 'sold-tab')
+    else:
+        html3 = ""
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
