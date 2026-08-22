@@ -133,78 +133,65 @@ def scrape_profile():
             raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
         return rr.text
 
-    # Stratégie : un appel SB par page, URL directe ?page=N (pas de clic pagination).
-    # VC a changé sa pagination côté client depuis ~08-15 : H.p(n) et H.s60() ne fonctionnent plus.
-    # Solution : chaque appel SB démarre DIRECTEMENT sur la page cible via son URL.
-    # VC affiche 60 items/page par défaut sur les profils — pas besoin de s60.
-    # ScrapingBee js_scenario ne supporte pas "navigate" et window.location.href
-    # ne persiste pas entre instructions → seule approche fiable = URL de départ.
+    # Stratégie 2026-08-23 : VC a cassé la pagination par clic bouton (~08-15).
+    # ?page=N ignoré (SPA React). Approche : scroll infini dans UN seul appel SB.
+    # Si VC charge plus d'items au scroll, on récolte tout en une passe.
+    # Sinon (pagination classique), on reste avec pages 1-5 (call 1 via clics qui marchent encore).
+    #
+    # CALL 1 : pages 1-5 via boutons (fonctionne encore) + counters
+    # CALL 2 (FULL_SCAN) : scroll infini × 14 pour atteindre ~840 items
+    # CALL 3 (FULL_SCAN) : sold tab
+    #
+    # Avantage scroll infini : 1 seul appel SB au lieu de 12, moins de crédits.
 
-    def call_sb_url(url, instructions, label):
-        """Single ScrapingBee call starting at given URL."""
-        js_scenario = {"instructions": instructions}
-        params = {
-            'api_key': SCRAPINGBEE_API_KEY,
-            'url': url,
-            'premium_proxy': 'true', 'country_code': 'fr',
-            'render_js': 'true',
-            'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
-            'forward_headers': 'true',
-            'block_resources': 'false',
-        }
-        headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
-        print(f'  → SB call "{label}"...')
-        rr = requests.get(SB_API, params=params, headers=headers, timeout=180)
-        if rr.status_code != 200:
-            raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
-        return rr.text
+    # Call 1 : init + counters + pages 1-5 via clics (fonctionne encore)
+    inst_1 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.co()"},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    for n in range(1, 6):
+        if n > 1: inst_1 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
+        inst_1 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    inst_1 += [{"evaluate": "H.dump()"}]
+    html1 = call_sb(inst_1, 'pages 1-5')
 
-    setup_idem = (
-        "if(!window._fs)window._fs=new Set();"
-        "if(!window._sd)window._sd=new Set();"
-        "if(!window._c)window._c={};"
-        + setup[setup.index("window.H="):]
-    )
-
-    def scan_page(n, harvest_fn="H.hf()"):
-        """Un appel SB → une page du profil VC (page N, 60 items/page par défaut)."""
-        page_url = PROFILE_URL + (f"&page={n}" if n > 1 else "")
-        inst = [
-            {"evaluate": setup_idem},
-            {"evaluate": "H.ck()"}, {"wait": 800},
-            {"evaluate": "H.sc()"}, {"wait": 600},
-            {"evaluate": harvest_fn},
+    if FULL_SCAN:
+        # Call 2 : scroll infini pour charger les pages 6-15 (si VC = infinite scroll)
+        # 14 cycles de scroll, 2.5s chacun pour laisser le temps au réseau
+        inst_scroll = [
+            {"evaluate": setup},
+            {"evaluate": "H.ck()"}, {"wait": 1000},
+            {"evaluate": "H.s60()"}, {"wait": 2500},
+        ]
+        # Scroll de page 1 jusqu'au bout (la s60 a déjà chargé page 1 avec 60 items)
+        for _ in range(14):
+            inst_scroll += [
+                {"evaluate": "window.scrollTo(0,document.documentElement.scrollHeight)"},
+                {"wait": 2500},
+                {"evaluate": "H.hf()"},  # récolte au fur et à mesure
+            ]
+        inst_scroll += [
+            {"evaluate": "H.sc()"}, {"wait": 500},
+            {"evaluate": "H.hf()"},   # récolte finale
             {"evaluate": "H.dump()"},
         ]
-        return call_sb_url(page_url, inst, f"p{n}")
+        html2 = call_sb(inst_scroll, 'scroll-infini-p6-15')
 
-    # Call 1 : page 1 + counters (toujours)
-    inst_1 = [
-        {"evaluate": setup},     # reset complet + définit window.H
-        {"evaluate": "H.ck()"}, {"wait": 1000},
-        {"evaluate": "H.co()"},  # lit fs_target et sold_target
-        {"evaluate": "H.sc()"}, {"wait": 600},
-        {"evaluate": "H.hf()"},
-        {"evaluate": "H.dump()"},
-    ]
-    html1 = call_sb(inst_1, 'p1-counters')
-
-    # Pages 2-5 : toujours (non-FULL_SCAN couvre les ~300 items les plus récents)
-    html2 = "".join(scan_page(n) for n in range(2, 6))
-
-    # Pages 6-15 + sold : seulement en FULL_SCAN
-    if FULL_SCAN:
-        html3 = "".join(scan_page(n) for n in range(6, 16))
+        # Call 3 : sold tab
         inst_sold = [
-            {"evaluate": setup_idem},
-            {"evaluate": "H.ck()"}, {"wait": 800},
+            {"evaluate": setup},
+            {"evaluate": "H.ck()"}, {"wait": 1000},
             {"evaluate": "H.sw()"}, {"wait": 2500},
+            {"evaluate": "H.s60()"}, {"wait": 2000},
             {"evaluate": "H.sc()"}, {"wait": 600},
             {"evaluate": "H.hs()"},
             {"evaluate": "H.dump()"},
         ]
-        html3 += call_sb_url(PROFILE_URL, inst_sold, 'sold-tab')
+        html3 = call_sb(inst_sold, 'sold-tab')
     else:
+        html2 = ""
         html3 = ""
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
