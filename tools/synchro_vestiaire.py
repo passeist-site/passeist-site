@@ -36,17 +36,24 @@ SB_API = 'https://app.scrapingbee.com/api/v1/'
 
 
 def sb_fetch(url, premium=False):
-    """Fetch via ScrapingBee API direct. Retourne (status, resolved_url, html).
-    country_code=fr TOUJOURS : évite les prix USD/taxes internationales."""
+    """Fetch via ScrapingBee API direct.
+    Retourne (status, resolved_url, html, had_resolved).
+
+    `had_resolved` dit si ScrapingBee a bien renvoye l'entete spb-resolved-url.
+    Sans elle, `resolved` retombe sur l'URL d'origine — qui contient toujours
+    l'ID produit — et le test "ID disparu de l'URL finale" ne peut plus rien
+    detecter. Il faut le savoir pour basculer sur le test HTML.
+
+    country_code=fr TOUJOURS : evite les prix USD/taxes internationales."""
     params = {'api_key': SCRAPINGBEE_API_KEY, 'url': url, 'country_code': 'fr'}
     if premium:
         params['premium_proxy'] = 'true'
     try:
         r = requests.get(SB_API, params=params, timeout=60)
-        resolved = r.headers.get('spb-resolved-url') or url
-        return r.status_code, resolved, r.text
+        hdr = r.headers.get('spb-resolved-url')
+        return r.status_code, (hdr or url), r.text, bool(hdr)
     except Exception as e:
-        return 0, url, f'ERROR: {e}'
+        return 0, url, f'ERROR: {e}', False
 
 
 def load_site():
@@ -221,24 +228,52 @@ def verify_item(pid, by_id):
             return 'keep'
         path = f"/{path.strip('/')}/{slug}.shtml"
     url = f'https://fr.vestiairecollective.com{path if path.startswith("/") else "/" + path}'
-    # 1ère tentative : datacenter (1 credit)
-    status, resolved, html = sb_fetch(url, premium=False)
+
+    def is_deleted(pid, resolved, html, had_resolved):
+        """Une fiche VC vivante contient TOUJOURS son propre ID, dans l'URL
+        finale et dans le HTML. Supprimee, VC redirige vers la categorie :
+        l'ID disparait des deux.
+
+        Garde-fou : on n'accepte le verdict que si le HTML ressemble vraiment
+        a une page VC (sinon une page captcha/blocage vide ferait basculer
+        a tort tout le catalogue)."""
+        looks_like_vc = 'vestiairecollective' in html.lower()
+        if not looks_like_vc:
+            return False
+        if pid not in html:
+            return True
+        if had_resolved and pid not in resolved:
+            return True
+        return False
+
+    # 1ere tentative : datacenter (1 credit)
+    status, resolved, html, had_res = sb_fetch(url, premium=False)
     if status == 0:
-        return 'keep'  # erreur réseau, doute = sécurité
-    # Si bloqué (403, 429, 5xx) → retry avec premium proxy (25 credits)
+        return 'keep'  # erreur reseau, doute = securite
+
+    # 404 : VC redirige les fiches supprimees vers la page categorie, qui
+    # renvoie parfois 404. L'ancien code traitait ce cas comme "bloque" et
+    # retournait 'keep' -> les suppressions passaient sous le radar.
+    if status == 404:
+        return 'deleted' if is_deleted(pid, resolved, html, had_res) else 'keep'
+
+    # Si bloque (403, 429, 5xx) -> retry avec premium proxy (25 credits)
     if status not in (200, 301, 302):
-        status, resolved, html = sb_fetch(url, premium=True)
+        status, resolved, html, had_res = sb_fetch(url, premium=True)
+        if status == 404:
+            return 'deleted' if is_deleted(pid, resolved, html, had_res) else 'keep'
         if status not in (200, 301, 302):
             return 'keep'
-    # Article supprimé : ID disparu de l'URL finale (redirect catégorie)
-    if pid not in resolved:
+
+    # Article supprime : ID disparu de l'URL finale et/ou du HTML
+    if is_deleted(pid, resolved, html, had_res):
         return 'deleted'
     # Article vendu : JSON-LD availability OutOfStock
     m = re.search(r'"availability"\s*:\s*"([^"]+)"', html)
     avail = m.group(1) if m else None
     if avail and 'OutOfStock' in avail:  # schema.org URL ou valeur courte
         return 'sold'
-    # InStock ou indéterminé → on garde actif (R1: doute = sécurité)
+    # InStock ou indetermine -> on garde actif (R1: doute = securite)
     return 'keep'
 
 
