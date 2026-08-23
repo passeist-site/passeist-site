@@ -147,7 +147,7 @@ def scrape_profile():
         'render_js': 'true',
         'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
         'forward_headers': 'true',
-        'block_resources': 'true',
+        'block_resources': 'false',
     }
     headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
     print(f'  -> SB call API ({len(instructions)} instructions)...')
