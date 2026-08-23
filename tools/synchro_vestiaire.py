@@ -160,26 +160,29 @@ def scrape_profile():
     inst_2 += [{"evaluate": "H.dump()"}]
     html2 = call_sb(inst_2, 'pages 6-10')
 
-    # Call 3 : pages 11-15 + sold tab
+    # Call 3 : pages 11+ via H.pl() + sold tab
+    # Stratégie : H.pl() clique directement sur la DERNIÈRE page visible depuis page 1
+    # (ex: "Page 12" = bouton toujours visible depuis page 1 dans VC).
+    # Puis depuis la dernière page, le bouton "11" est visible → 1 clic de plus.
+    # Total : 2 clics page au lieu de 13 → beaucoup moins de risque anti-bot.
     inst_3 = [
         {"evaluate": setup},
         {"evaluate": "H.ck()"}, {"wait": 1500},
         {"evaluate": "H.s60()"}, {"wait": 2500},
-    ]
-    # Navigation 2 → 15, harvest 11-15
-    for n in range(2, 16):
-        inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
-        if n >= 11:
-            inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    # Switch to sold + harvest
-    inst_3 += [
-        {"evaluate": "H.sw()"}, {"wait": 2500},
+        # Sauter directement à la dernière page (ex: bouton "12" visible depuis page 1)
+        {"evaluate": "H.pl()"}, {"wait": 2500},
+        {"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"},
+        # Depuis la dernière page (ex: 12), le bouton "11" est visible → clic
+        {"evaluate": "H.p(11)"}, {"wait": 2500},
+        {"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"},
+        # Sold tab
+        {"evaluate": "H.sw()"}, {"wait": 3000},
         {"evaluate": "H.s60()"}, {"wait": 2500},
         {"evaluate": "H.sc()"}, {"wait": 1200},
         {"evaluate": "H.hs()"},
         {"evaluate": "H.dump()"},
     ]
-    html3 = call_sb(inst_3, 'pages 11-15 + sold')
+    html3 = call_sb(inst_3, 'pages 11+ + sold')
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
