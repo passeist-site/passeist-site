@@ -110,7 +110,7 @@ def scrape_profile():
         # Switch to Sold tab
         "sw:()=>{const t=[...document.querySelectorAll('div,span,button,a,[role=\"button\"]')].find(e=>{const x=(e.textContent||'').trim();return /^(Articles vendus|Vendus|Sold items|Sold)$/i.test(x)&&x.length<30});if(t)t.click()},"
         # Final: dump URLs + counters as meta tags
-        "dump:()=>{const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],['_h_c',window._c]];a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;m.content=JSON.stringify(v);document.head.appendChild(m)})}"
+        "pl:()=>{const pbs=[...document.querySelectorAll('button')].filter(b=>/^Page \\d+$/.test((b.textContent||b.innerText||'').trim()));if(!pbs.length)return;const nums=pbs.map(b=>+((b.textContent||b.innerText||'').trim().replace('Page ','')));const mx=Math.max(...nums);const last=pbs.find(b=>+((b.textContent||b.innerText||'').trim().replace('Page ',''))===mx);if(last)last.click()},""dump:()=>{const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],['_h_c',window._c]];a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;m.content=JSON.stringify(v);document.head.appendChild(m)})}"
         "}"
     )
 
