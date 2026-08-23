@@ -99,17 +99,9 @@ def scrape_profile():
         # Read counters
         "co:()=>{const t=document.body.innerText;const fs=t.match(/(\\d+)\\s+(?:articles?\\s+en\\s+vente|items?\\s+for\\s+sale)/);const sd=t.match(/(\\d+)\\s+(?:vendus|sold)\\b/);window._c.fs=fs?parseInt(fs[1]):0;window._c.sd=sd?parseInt(sd[1]):0},"
         # Click 60/page
-        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>(x.textContent||x.innerText||'').includes('60')&&x.getAttribute('aria-pressed')!=='true'&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
+        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>(x.textContent||'').trim().includes('60')&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
         # Click page N
-        # Click page N — VC utilise 'Page N' comme texte bouton depuis 2026-08
-        "p:n=>{const all=[...document.querySelectorAll('button,a')];"
-        "const pn='Page '+String(n),sn=String(n);"
-        "const b=all.find(e=>{const t=(e.textContent||'').trim();"
-        "return (t===pn||t===sn)&&e.getAttribute('aria-current')!=='page'&&e.getAttribute('aria-current')!=='true';});"
-        "if(b){b.click();return;}"
-        "const nx=all.find(e=>{const l=(e.getAttribute('aria-label')||e.textContent||'').toLowerCase();"
-        "return l.includes('next')||l.includes('suivant');});"
-        "if(nx)nx.click()}",
+        "p:n=>{const bs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test(b.textContent.trim())&&+b.textContent.trim()<=20&&b.getAttribute('aria-current')!=='page');const b=bs.find(x=>(x.textContent.trim()==='Page '+String(n)||x.textContent.trim()===String(n)));if(b)b.click()},"
         # Scroll bottom
         "sc:()=>window.scrollTo(0,document.documentElement.scrollHeight),"
         # Harvest into target Set
@@ -141,18 +133,7 @@ def scrape_profile():
             raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
         return rr.text
 
-    # Stratégie 2026-08-23 : VC a cassé la pagination par clic bouton (~08-15).
-    # ?page=N ignoré (SPA React). Approche : scroll infini dans UN seul appel SB.
-    # Si VC charge plus d'items au scroll, on récolte tout en une passe.
-    # Sinon (pagination classique), on reste avec pages 1-5 (call 1 via clics qui marchent encore).
-    #
-    # CALL 1 : pages 1-5 via boutons (fonctionne encore) + counters
-    # CALL 2 (FULL_SCAN) : scroll infini × 14 pour atteindre ~840 items
-    # CALL 3 (FULL_SCAN) : sold tab
-    #
-    # Avantage scroll infini : 1 seul appel SB au lieu de 12, moins de crédits.
-
-    # Call 1 : init + counters + pages 1-5 via clics (fonctionne encore)
+    # Call 1 : init + counters + pages 1-5
     inst_1 = [
         {"evaluate": setup},
         {"evaluate": "H.ck()"}, {"wait": 1500},
@@ -165,41 +146,40 @@ def scrape_profile():
     inst_1 += [{"evaluate": "H.dump()"}]
     html1 = call_sb(inst_1, 'pages 1-5')
 
-    if FULL_SCAN:
-        # Call 2 : pages 6-10 via H.p(n) mis à jour (button+a+[role=button] + fallback next)
-        inst_2 = [
-            {"evaluate": setup},
-            {"evaluate": "H.ck()"}, {"wait": 1500},
-            {"evaluate": "H.s60()"}, {"wait": 2500},
-        ]
-        for n in range(2, 11):
-            inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
-            if n >= 6:
-                inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-        inst_2 += [{"evaluate": "H.dump()"}]
-        html2 = call_sb(inst_2, 'pages 6-10')
+    # Call 2 : pages 6-10
+    inst_2 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    # Click pages 2,3,4,5 pour atteindre la 6, puis harvest 6-10
+    for n in range(2, 11):
+        inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
+        if n >= 6:
+            inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    inst_2 += [{"evaluate": "H.dump()"}]
+    html2 = call_sb(inst_2, 'pages 6-10')
 
-        # Call 3 : pages 11-15 + sold tab
-        inst_3 = [
-            {"evaluate": setup},
-            {"evaluate": "H.ck()"}, {"wait": 1500},
-            {"evaluate": "H.s60()"}, {"wait": 2500},
-        ]
-        for n in range(2, 16):
-            inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
-            if n >= 11:
-                inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-        inst_3 += [
-            {"evaluate": "H.sw()"}, {"wait": 2500},
-            {"evaluate": "H.s60()"}, {"wait": 2000},
-            {"evaluate": "H.sc()"}, {"wait": 1200},
-            {"evaluate": "H.hs()"},
-            {"evaluate": "H.dump()"},
-        ]
-        html3 = call_sb(inst_3, 'pages 11-15 + sold')
-    else:
-        html2 = ""
-        html3 = ""
+    # Call 3 : pages 11-15 + sold tab
+    inst_3 = [
+        {"evaluate": setup},
+        {"evaluate": "H.ck()"}, {"wait": 1500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+    ]
+    # Navigation 2 → 15, harvest 11-15
+    for n in range(2, 16):
+        inst_3 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
+        if n >= 11:
+            inst_3 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
+    # Switch to sold + harvest
+    inst_3 += [
+        {"evaluate": "H.sw()"}, {"wait": 2500},
+        {"evaluate": "H.s60()"}, {"wait": 2500},
+        {"evaluate": "H.sc()"}, {"wait": 1200},
+        {"evaluate": "H.hs()"},
+        {"evaluate": "H.dump()"},
+    ]
+    html3 = call_sb(inst_3, 'pages 11-15 + sold')
     r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
     # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
