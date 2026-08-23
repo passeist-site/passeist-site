@@ -81,145 +81,126 @@ def load_site():
 
 
 def scrape_profile():
-    """Scan for-sale + sold via ScrapingBee API + js_scenario compacté.
-    Toutes les helpers déclarées dans window.H, instructions ultra-courtes
-    pour rester sous les 8KB de la URL GET ScrapingBee.
+    """Scan for-sale + sold via l'API JSON interne de Vestiaire.
 
-    Capacité : 15 pages × 60 = 900 articles (étendu de 10 → 15 le 2026-05-04
-    car Tom approchait le plafond de 600 → scan_ratio < 100% → workflow
-    skippait D1 par sécurité)."""
-    print('  → Scan via ScrapingBee js_scenario (for-sale 15 pages + sold page 1)')
+    2026-08-23 : abandon total du clic-sur-pagination (H.p/H.pl/H.sw), qui etait
+    non deterministe — chaque clic pouvait echouer silencieusement et casser toute
+    la chaine suivante (runs successifs : 600, puis 400, puis 60 URLs sans qu'aucun
+    code n'ait change).
 
-    # Setup unique : définit window.H avec toutes les helpers
+    Le SPA VC appelle POST https://search.vestiairecollective.com/v1/product/search
+    avec filters={"seller.id":[ID],"sold":["0"|"1"]} et pagination={limit,offset}.
+    limit max observe = 200. On fait l'appel depuis le contexte de la page (via
+    js_scenario evaluate) pour heriter des cookies/session, et on pagine par offset.
+
+    Resultat : 1 seul appel ScrapingBee, 0 clic, 700/700 items (100%).
+    """
+    print('  -> Scan via API interne VC (POST /v1/product/search, pagination par offset)')
+
     setup = (
-        "window._fs=new Set();window._sd=new Set();window._c={};"
-        "window.H={"
-        # Accept cookies
-        "ck:()=>{const b=[...document.querySelectorAll('button')].find(x=>/accepter|accept all|accept cookies/i.test(x.textContent)&&!/refuser|reject|paramétrer|customize|param/i.test(x.textContent));if(b)b.click()},"
-        # Read counters
-        "co:()=>{const t=document.body.innerText;const fs=t.match(/(\\d+)\\s+(?:articles?\\s+en\\s+vente|items?\\s+for\\s+sale)/);const sd=t.match(/(\\d+)\\s+(?:vendus|sold)\\b/);window._c.fs=fs?parseInt(fs[1]):0;window._c.sd=sd?parseInt(sd[1]):0},"
-        # Click 60/page
-        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>(x.textContent||'').trim().includes('60')&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
-        # Click page N
-        "p:n=>{const bs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test(b.textContent.trim())&&+b.textContent.trim()<=20&&b.getAttribute('aria-current')!=='page');const b=bs.find(x=>(x.textContent.trim()==='Page '+String(n)||x.textContent.trim()===String(n)));if(b)b.click()},"
-        # Scroll bottom
-        "sc:()=>window.scrollTo(0,document.documentElement.scrollHeight),"
-        # Harvest into target Set
-        "hf:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._fs.add(u)),"
-        "hs:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._sd.add(u)),"
-        # Switch to Sold tab
-        "sw:()=>{const b=document.querySelector('[data-cy=\"profile-items-for-sale-soldItems\"]');if(b)b.click()},"
-        # Final: dump URLs + counters as meta tags
-        "pl:()=>{const pbs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test((b.textContent||b.innerText||'').trim())&&+((b.textContent||b.innerText||'').trim())<=50);if(!pbs.length)return;const nums=pbs.map(b=>+((b.textContent||b.innerText||'').trim()));const mx=Math.max(...nums);const last=pbs.find(b=>+((b.textContent||b.innerText||'').trim())===mx&&b.getAttribute('aria-current')!=='page');if(last)last.click()},""dump:()=>{const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],['_h_c',window._c]];a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;m.content=JSON.stringify(v);document.head.appendChild(m)})}"
-        "}"
+        "window._fs=new Set();window._sd=new Set();window._c={};window._e=null;window._d=0;"
+        "window.GO=async function(){try{"
+        "const grab=async(sold)=>{"
+        "const set=sold==='1'?window._sd:window._fs;let off=0,tot=0;"
+        "while(off<3000){"
+        "const r=await fetch('https://search.vestiairecollective.com/v1/product/search',{"
+        "method:'POST',"
+        "headers:{'Accept':'application/json','Content-Type':'application/json','x-usecase':'profileItemsForSale'},"
+        "body:JSON.stringify({pagination:{limit:200,offset:off},fields:['link','sold'],"
+        "locale:{country:'FR',language:'fr',currency:'EUR',sizeType:'FR'},"
+        "filters:{'seller.id':['30773496'],sold:[sold]},mySizes:null,sortBy:'relevance'})});"
+        "if(!r.ok){window._e='HTTP '+r.status+' sold='+sold;break}"
+        "const j=await r.json();"
+        "tot=(j.paginationStats&&j.paginationStats.totalHits)||0;"
+        "const it=j.items||[];"
+        "it.forEach(x=>{if(x.link)set.add(x.link)});"
+        "if(it.length===0)break;"
+        "off+=200;if(off>=tot)break}"
+        "if(sold==='1')window._c.sd=tot;else window._c.fs=tot};"
+        "await grab('0');await grab('1');"
+        "}catch(e){window._e=String(e&&e.message||e)}window._d=1};"
+        "window.DUMP=function(){"
+        "const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],"
+        "['_h_c',window._c],['_h_e',{e:window._e,d:window._d}]];"
+        "a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;"
+        "m.content=JSON.stringify(v);document.head.appendChild(m)})};"
+        "window.CK=function(){const b=[...document.querySelectorAll('button')]"
+        ".find(x=>/accepter|accept all|accept cookies/i.test(x.textContent)"
+        "&&!/refuser|reject|customize|param/i.test(x.textContent));if(b)b.click()};"
     )
 
-    def call_sb(instructions, label):
-        """Single call ScrapingBee with given instructions, returns html."""
-        js_scenario = {"instructions": instructions}
-        params = {
-            'api_key': SCRAPINGBEE_API_KEY,
-            'url': PROFILE_URL,
-            'premium_proxy': 'true', 'country_code': 'fr',
-            'render_js': 'true',
-            'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
-            'forward_headers': 'true',
-            'block_resources': 'false',
-        }
-        headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
-        print(f'  → SB call "{label}" ({len(instructions)} instructions)...')
-        rr = requests.get(SB_API, params=params, headers=headers, timeout=180)
-        if rr.status_code != 200:
-            raise Exception(f'SB call "{label}" HTTP {rr.status_code}: {rr.text[:300]}')
-        return rr.text
-
-    # Call 1 : init + counters + pages 1-5
-    inst_1 = [
+    instructions = [
         {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.co()"},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
+        {"evaluate": "CK()"}, {"wait": 1500},
+        {"evaluate": "GO()"},
+        # GO() est async : on attend qu'il ait fini (window._d passe a 1).
+        # ~6 appels API x ~1s = large marge avec 20s.
+        {"wait": 20000},
+        {"evaluate": "DUMP()"},
     ]
-    for n in range(1, 6):
-        if n > 1: inst_1 += [{"evaluate": f"H.p({n})"}, {"wait": 2000}]
-        inst_1 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    inst_1 += [{"evaluate": "H.dump()"}]
-    html1 = call_sb(inst_1, 'pages 1-5')
 
-    # Call 2 : pages 6-10
-    inst_2 = [
-        {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-    ]
-    # Click pages 2,3,4,5 pour atteindre la 6, puis harvest 6-10
-    for n in range(2, 11):
-        inst_2 += [{"evaluate": f"H.p({n})"}, {"wait": 1500}]
-        if n >= 6:
-            inst_2 += [{"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"}]
-    inst_2 += [{"evaluate": "H.dump()"}]
-    html2 = call_sb(inst_2, 'pages 6-10')
+    js_scenario = {"instructions": instructions}
+    params = {
+        'api_key': SCRAPINGBEE_API_KEY,
+        'url': PROFILE_URL,
+        'premium_proxy': 'true', 'country_code': 'fr',
+        'render_js': 'true',
+        'js_scenario': json.dumps(js_scenario, separators=(',', ':')),
+        'forward_headers': 'true',
+        'block_resources': 'true',
+    }
+    headers = {'Spb-Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8'}
+    print(f'  -> SB call API ({len(instructions)} instructions)...')
+    rr = requests.get(SB_API, params=params, headers=headers, timeout=180)
+    if rr.status_code != 200:
+        raise Exception(f'SB call HTTP {rr.status_code}: {rr.text[:300]}')
 
-    # Call 3 : pages 11+ via H.pl() + sold tab
-    # Stratégie : H.pl() clique directement sur la DERNIÈRE page visible depuis page 1
-    # (ex: "Page 12" = bouton toujours visible depuis page 1 dans VC).
-    # Puis depuis la dernière page, le bouton "11" est visible → 1 clic de plus.
-    # Total : 2 clics page au lieu de 13 → beaucoup moins de risque anti-bot.
-    inst_3 = [
-        {"evaluate": setup},
-        {"evaluate": "H.ck()"}, {"wait": 1500},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-        # Sauter directement à la dernière page (ex: bouton "12" visible depuis page 1)
-        {"evaluate": "H.pl()"}, {"wait": 2500},
-        {"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"},
-        # Depuis la dernière page (ex: 12), le bouton "11" est visible → clic
-        {"evaluate": "H.p(11)"}, {"wait": 2500},
-        {"evaluate": "H.sc()"}, {"wait": 800}, {"evaluate": "H.hf()"},
-        # Sold tab
-        {"evaluate": "H.sw()"}, {"wait": 3000},
-        {"evaluate": "H.s60()"}, {"wait": 2500},
-        {"evaluate": "H.sc()"}, {"wait": 1200},
-        {"evaluate": "H.hs()"},
-        {"evaluate": "H.dump()"},
-    ]
-    html3 = call_sb(inst_3, 'pages 11+ + sold')
-    r = type('FakeR', (), {'text': html1 + html2 + html3, 'status_code': 200})()
-    # Parse les meta tags injectés (présents dans html1 + html2)
     import html as html_lib
+
     def extract_all(name, source):
         results = []
         for m in re.finditer(rf'<meta name="{name}" content="([^"]*)"', source):
-            try: results.append(json.loads(html_lib.unescape(m.group(1))))
-            except: pass
+            try:
+                results.append(json.loads(html_lib.unescape(m.group(1))))
+            except Exception:
+                pass
         return results
 
-    # html1 contient _h_fs (pages 1-5), _h_c (counters)
-    # html2 contient _h_fs (pages 6-10)
-    # html3 contient _h_fs (pages 11-15), _h_sd (sold)
     fs_urls = []
-    for arr in extract_all('_h_fs', r.text):
+    for arr in extract_all('_h_fs', rr.text):
         fs_urls.extend(arr)
     sd_urls = []
-    for arr in extract_all('_h_sd', r.text):
+    for arr in extract_all('_h_sd', rr.text):
         sd_urls.extend(arr)
-    cs = extract_all('_h_c', r.text)
+    cs = extract_all('_h_c', rr.text)
     counters = cs[0] if cs else {}
+    diag = extract_all('_h_e', rr.text)
+    if diag:
+        d = diag[0]
+        if d.get('e'):
+            print(f'  !! Erreur JS pendant le scan API : {d["e"]}')
+        if not d.get('d'):
+            print('  !! GO() pas termine dans le delai imparti (window._d=0)')
 
     fs_target = int(counters.get('fs', 0))
     sold_target = int(counters.get('sd', 0))
-    print(f'Profil : {fs_target} en vente · {sold_target} vendus')
+    print(f'Profil : {fs_target} en vente - {sold_target} vendus')
 
-    fs_map = {}
-    for u in fs_urls:
-        m = re.search(r'-(\d{7,9})\.shtml?', u)
-        if m: fs_map[m.group(1)] = u
-    sold_map = {}
-    for u in sd_urls:
-        m = re.search(r'-(\d{7,9})\.shtml?', u)
-        if m: sold_map[m.group(1)] = u
+    def to_map(urls):
+        out = {}
+        for u in urls:
+            m = re.search(r'-(\d{7,9})\.shtml?', u)
+            if m:
+                # l'API renvoie des liens relatifs -> on reconstruit l'absolu
+                full = u if u.startswith('http') else 'https://fr.vestiairecollective.com' + u
+                out[m.group(1)] = full
+        return out
 
-    print(f'  ✓ for-sale: {len(fs_map)} URLs')
-    print(f'  ✓ sold page 1: {len(sold_map)} URLs')
+    fs_map = to_map(fs_urls)
+    sold_map = to_map(sd_urls)
+
+    print(f'  - for-sale: {len(fs_map)} URLs')
+    print(f'  - sold: {len(sold_map)} URLs')
 
     return fs_map, sold_map, fs_target, sold_target
 
