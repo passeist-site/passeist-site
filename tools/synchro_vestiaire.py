@@ -402,7 +402,13 @@ def main():
         print(f'    ✓ Vérif terminée : {len(deleted_set)} supprimés, {len(sold_set)} vendus')
 
         # === CIRCUIT BREAKER (R2) ===
-        MAX_BASCULES = 15
+        # 2026-08-23 : 15 -> 30. Le run precedent a fait exactement 15 et est
+        # passe a un article pres. Avec 8 suppressions en retard a rattraper +
+        # les ventes courantes, 15 etait trop serre : au moindre depassement,
+        # AUCUNE bascule n'est appliquee. 30 garde la protection contre une
+        # bascule massive accidentelle (scan casse) tout en laissant passer
+        # un rattrapage normal.
+        MAX_BASCULES = 30
         total = len(deleted_set) + len(sold_set)
         if total > MAX_BASCULES:
             print(f'\n  ⚠⚠⚠ CIRCUIT BREAKER : {total} > {MAX_BASCULES} → AUCUNE bascule appliquée.')
