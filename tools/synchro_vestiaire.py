@@ -101,6 +101,109 @@ def scrape_profile():
         # Click 60/page
         "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>(x.textContent||x.innerText||'').includes('60')&&x.getAttribute('aria-pressed')!=='true'&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
         # Click page N
+        "p:n=>{const all=[...document.querySelectorAll('button,a')];const pn='Page '+String(n);const sn=String(n);const b=all.find(e=>{const t=(e.textContent||e.innerText||'').trim();const ac=e.getAttribute('aria-current');return (t===pn||t===sn)&&ac!=='page'&&ac!=='true';});if(b){b.click();return;}const nx=all.find(e=>{const l=(e.getAttribute('aria-label')||e.textContent||e.innerText||'').toLowerCase();return l.includes('next')||l.includes('suivant')||l==='>';});if(nx)nx.click()},"/usr/bin/env python3
+"""Synchro Vestiaire — version ScrapingBee API + js_scenario (refactor 2026-05-03).
+
+Architecture :
+- ScrapingBee API + js_scenario pour le scan profil (1 appel = ~75 crédits)
+- ScrapingBee API direct (datacenter, 1 credit) pour vérifier chaque item
+- Anti-faux-positifs : circuit breaker à 15, classification stricte (R1)
+
+Plus de Playwright, plus de Decodo, plus de cookies CF à warmup. ScrapingBee
+gère tout en interne. Seul env var requis : SCRAPINGBEE_API_KEY.
+
+Coût ~1000 crédits/run × 3 runs/jour × 30 jours = 90K/mois (plan 49$ = 250K).
+"""
+import re, json, os, time, datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
+import requests
+
+# === CONFIG ===
+SCRAPINGBEE_API_KEY = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
+if not SCRAPINGBEE_API_KEY:
+    raise SystemExit('FATAL: SCRAPINGBEE_API_KEY env var manquante.')
+
+print(f'[debug] SCRAPINGBEE_API_KEY len={len(SCRAPINGBEE_API_KEY)} '
+      f'first={SCRAPINGBEE_API_KEY[:4]!r} last={SCRAPINGBEE_API_KEY[-4:]!r}')
+
+UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
+      '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+# Full scan : mercredi + dimanche automatiquement, ou forcé via env var FULL_SCAN=true (workflow_dispatch)
+FULL_SCAN = (os.environ.get('FULL_SCAN', 'false').lower() == 'true'
+             or datetime.datetime.utcnow().weekday() in (2, 6))  # 2 = mercredi, 6 = dimanche
+
+PROFILE_URL = 'https://fr.vestiairecollective.com/profile/30773496/?sortBy=relevance&tab=items-for-sale'
+INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'index.html')
+SB_API = 'https://app.scrapingbee.com/api/v1/'
+
+
+def sb_fetch(url, premium=False):
+    """Fetch via ScrapingBee API direct. Retourne (status, resolved_url, html).
+    country_code=fr TOUJOURS : évite les prix USD/taxes internationales."""
+    params = {'api_key': SCRAPINGBEE_API_KEY, 'url': url, 'country_code': 'fr'}
+    if premium:
+        params['premium_proxy'] = 'true'
+    try:
+        r = requests.get(SB_API, params=params, timeout=60)
+        resolved = r.headers.get('spb-resolved-url') or url
+        return r.status_code, resolved, r.text
+    except Exception as e:
+        return 0, url, f'ERROR: {e}'
+
+
+def load_site():
+    with open(INDEX) as f: html = f.read()
+    start = html.find('const PRODUCTS = [')
+    arr_start = html.find('[', start)
+    depth = 0; in_str = False; esc = False; i = arr_start
+    while i < len(html):
+        c = html[i]
+        if esc: esc = False; i += 1; continue
+        if c == '\\': esc = True; i += 1; continue
+        if c == '"': in_str = not in_str; i += 1; continue
+        if not in_str:
+            if c == '[': depth += 1
+            elif c == ']':
+                depth -= 1
+                if depth == 0: arr_end = i + 1; break
+        i += 1
+    raw = re.sub(r',\s*(\]|\})', r'\1', html[arr_start:arr_end])
+    products = json.loads(raw)
+    m = re.search(r'const SOLD_IDS = new Set\(\[(.*?)\]\);', html, re.DOTALL)
+    sold_ids = set(re.findall(r'"(\d+)"', m.group(1)))
+    vestiaire_products = [p for p in products if len(str(p['id'])) < 10]
+    site_all = {p['id'] for p in vestiaire_products}
+    site_sold = sold_ids & site_all
+    site_available = site_all - site_sold
+    def stem(slug, pid): return slug.rsplit('-' + pid, 1)[0] if ('-' + pid) in slug else slug
+    sold_stems = {stem(p['slug'], p['id']) for p in vestiaire_products if p['id'] in site_sold}
+    all_stems = {stem(p['slug'], p['id']) for p in vestiaire_products}
+    by_id = {p['id']: p for p in vestiaire_products}
+    return site_all, site_sold, site_available, sold_stems, all_stems, by_id
+
+
+def scrape_profile():
+    """Scan for-sale + sold via ScrapingBee API + js_scenario compacté.
+    Toutes les helpers déclarées dans window.H, instructions ultra-courtes
+    pour rester sous les 8KB de la URL GET ScrapingBee.
+
+    Capacité : 15 pages × 60 = 900 articles (étendu de 10 → 15 le 2026-05-04
+    car Tom approchait le plafond de 600 → scan_ratio < 100% → workflow
+    skippait D1 par sécurité)."""
+    print('  → Scan via ScrapingBee js_scenario (for-sale 15 pages + sold page 1)')
+
+    # Setup unique : définit window.H avec toutes les helpers
+    setup = (
+        "window._fs=new Set();window._sd=new Set();window._c={};"
+        "window.H={"
+        # Accept cookies
+        "ck:()=>{const b=[...document.querySelectorAll('button')].find(x=>/accepter|accept all|accept cookies/i.test(x.textContent)&&!/refuser|reject|paramétrer|customize|param/i.test(x.textContent));if(b)b.click()},"
+        # Read counters
+        "co:()=>{const t=document.body.innerText;const fs=t.match(/(\\d+)\\s+(?:articles?\\s+en\\s+vente|items?\\s+for\\s+sale)/);const sd=t.match(/(\\d+)\\s+(?:vendus|sold)\\b/);window._c.fs=fs?parseInt(fs[1]):0;window._c.sd=sd?parseInt(sd[1]):0},"
+        # Click 60/page
+        "s60:()=>{const b=[...document.querySelectorAll('button')].find(x=>(x.textContent||x.innerText||'').includes('60')&&x.getAttribute('aria-pressed')!=='true'&&x.getAttribute('aria-current')!=='true');if(b)b.click()},"
+        # Click page N
         "p:n=>{""const S='button,a,[role=\\"button\\"]';const all=[...document.querySelectorAll(S)];""const byT=all.find(e=>{const t=(e.textContent||e.innerText||'').trim();return (t===`Page ${n}`||t===String(n))&&e.getAttribute('aria-current')!=='page'&&e.getAttribute('aria-selected')!=='true'&&e.getAttribute('aria-pressed')!=='true';});""if(byT){byT.click();return;}""const byL=all.find(e=>{const l=(e.getAttribute('aria-label')||'').toLowerCase();return l==='page '+n||l===String(n);});""if(byL){byL.click();return;}""const nx=all.find(e=>{const l=(e.getAttribute('aria-label')||'').toLowerCase();const t=(e.textContent||e.innerText||'').trim();return l.includes('next')||l.includes('suivant')||t==='›'||t==='→'||t==='>';});""if(nx)nx.click()},"
         # Scroll bottom
         "sc:()=>window.scrollTo(0,document.documentElement.scrollHeight),"
