@@ -108,7 +108,7 @@ def scrape_profile():
         "hf:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._fs.add(u)),"
         "hs:()=>[...document.querySelectorAll('a[href]')].map(a=>a.href).filter(u=>/-\\d{7,9}\\.shtml/.test(u)).forEach(u=>window._sd.add(u)),"
         # Switch to Sold tab
-        "sw:()=>{const t=[...document.querySelectorAll('div,span,button,a,[role=\"button\"]')].find(e=>{const x=(e.textContent||'').trim();return /^(Articles vendus|Vendus|Sold items|Sold)$/i.test(x)&&x.length<30});if(t)t.click()},"
+        "sw:()=>{const b=document.querySelector('[data-cy=\"profile-items-for-sale-soldItems\"]');if(b)b.click()},"
         # Final: dump URLs + counters as meta tags
         "pl:()=>{const pbs=[...document.querySelectorAll('button')].filter(b=>/^\\d+$/.test((b.textContent||b.innerText||'').trim())&&+((b.textContent||b.innerText||'').trim())<=50);if(!pbs.length)return;const nums=pbs.map(b=>+((b.textContent||b.innerText||'').trim()));const mx=Math.max(...nums);const last=pbs.find(b=>+((b.textContent||b.innerText||'').trim())===mx&&b.getAttribute('aria-current')!=='page');if(last)last.click()},""dump:()=>{const a=[['_h_fs',[...window._fs]],['_h_sd',[...window._sd]],['_h_c',window._c]];a.forEach(([n,v])=>{const m=document.createElement('meta');m.name=n;m.content=JSON.stringify(v);document.head.appendChild(m)})}"
         "}"
