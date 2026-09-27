@@ -43,6 +43,23 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
   #fff, `object-fit: contain`, aucun `cover`, aucun `scale`, aucun zoom ;
 - coins arrondis **6 px** (`.product-img`).
 
+## 3 bis. Carrousel de l'accueil (`.hero-marquee`)
+
+Même règle que les cartes des grilles :
+
+- chaque carte montre **la photo 1 de la fiche** (même fichier, via
+  `imgUrl(p, 0, …)` + `srcset` `imgSrcset(p, 0)`, seule la largeur chargée
+  change) ;
+- cadre **3:4 portrait identique pour toutes les cartes** (largeur = hauteur ×
+  3/4 : 171×228 px sur desktop, 127,5×170 px sur mobile), fond **#fff**,
+  `object-fit: contain`, photo entière, **aucun zoom ni recadrage**, aucune
+  opacité ou filtre ; coins arrondis **6 px** ;
+- hauteur du carrousel inchangée (240 px desktop, 170 px mobile), défilement
+  infini et drag conservés ; la longueur d'un tour est mesurée à la position
+  de la première carte dupliquée (boucle sans saut).
+
+Le bouton EXPLORE (`.hero-cta`) a lui aussi des coins arrondis de 6 px.
+
 ## 4. Photos 2+ de la fiche produit
 
 Grande photo quand une photo 2+ est affichée, et vignettes 2+, sur mobile et

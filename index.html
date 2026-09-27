@@ -561,7 +561,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   font-weight: 500;
   cursor: pointer;
   border: none;
-  border-radius: 0;
+  border-radius: 6px;  /* comme les photos */
   font-family: var(--font-sans);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
@@ -593,25 +593,28 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   display: flex; gap: 32px; width: max-content; height: 100%;
   padding: 6px 0; will-change: transform;
 }
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
+/* Cartes du carrousel = photo 1 de la fiche produit (même fichier), dans un
+   cadre 3:4 identique pour toutes les cartes (largeur = hauteur × 3/4), fond
+   blanc, contain : photo entière, aucun zoom ni recadrage. */
 .hero-marquee-card {
   flex: 0 0 auto; height: 100%;
-  background: var(--bg-deep);
+  aspect-ratio: 3 / 4;
+  background: #fff;
   border: none;
   overflow: hidden;
   border-radius: 6px;
   cursor: pointer;
   transition: transform 0.45s var(--ease-out);
-  display: inline-flex; position: relative;
+  display: block; position: relative;
 }
 /* Hover sans translation, la carte reste en place */
 .hero-marquee-card:hover { transform: none; }
 .hero-marquee-card img {
-  height: 100%; width: auto; display: block;
-  transition: opacity 0.4s var(--ease-out), filter 0.4s var(--ease-out);
-  opacity: 0.86;
-  filter: contrast(0.97);
+  width: 100%; height: 100%; display: block;
+  object-fit: contain;
+  object-position: center;
 }
-.hero-marquee-card:hover img { opacity: 1; filter: contrast(1); }
 
 /* ============ SHOP LAYOUT ============ */
 .shop { display: none; }
@@ -1898,8 +1901,10 @@ body[data-page="home"] .home-brands-strip { display: block; }
 }
 .hbs-cta:hover { opacity: 0.85; }
 @media (max-width: 880px) {
+  /* Mobile : le hero prend sa hauteur naturelle (plus de bloc plein écran),
+     la liste des marques suit directement le carrousel. */
   body[data-page="home"] .hero {
-    min-height: calc(100vh - var(--topbar-h) - 80px);
+    min-height: 0;
   }
   .home-brands-strip {
     margin-top: -20px;
@@ -2451,7 +2456,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     display: flex; flex-direction: column;
   }
   body[data-page="home"] .hero {
-    flex: 1 1 auto; min-height: 0;
+    flex: 0 0 auto; min-height: 0; height: auto;  /* hauteur naturelle, pas plein écran */
     display: flex; flex-direction: column;
     justify-content: flex-start;
   }
@@ -2577,7 +2582,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   /* Bloc passéist + sous-titre + CTA descendu dans la page */
   .hero-content {
-    padding: 140px 16px 0 16px; flex: 0 0 auto; text-align: center;
+    padding: 48px 16px 0 16px; flex: 0 0 auto; text-align: center;
     display: flex; flex-direction: column; align-items: center;
   }
   .hero-eyebrow { margin-bottom: 10px; }
@@ -2591,13 +2596,16 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     position: static;
     flex: 0 0 auto;
     height: 170px; width: 100%;
-    margin: auto 0;
+    /* Juste sous EXPLORE (68px), puis 48px visibles avant la liste des
+       marques (qui remonte de 20px : margin-top -20px). */
+    margin: 68px 0 68px;
     padding: 0;
     overflow: hidden;
   }
   .hero-marquee-track { gap: 8px; padding: 0; height: 100%; align-items: stretch; }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .hero-marquee-card { height: 100%; flex: 0 0 auto; }
-  .hero-marquee-card img { height: 100%; width: auto; display: block; object-fit: contain; }
+  .hero-marquee-card img { width: 100%; height: 100%; display: block; object-fit: contain; }
   .hero-marquee-track { gap: 10px; padding: 0; }
 
   .main { padding: 12px 20px 100px; }
@@ -2881,7 +2889,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .hero { padding: 0; }
   .hero-marquee {
     height: 170px; width: 100%; bottom: auto; top: auto;
-    position: static; margin: auto 0;   /* centré verticalement */
+    position: static; margin: 68px 0 68px;   /* juste sous EXPLORE */
   }
   /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .grid { gap: 32px 10px; }
@@ -6853,7 +6861,7 @@ function renderHeroMarquee() {
   const order = pool.slice(0, target);
   const cards = order.map(p => `
     <div class="hero-marquee-card" data-id="${p.id}" title="${p.brand}, ${p.type}">
-      <img src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" fetchpriority="low">
+      <img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="200px" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" fetchpriority="low" draggable="false">
     </div>
   `).join('');
   const track = document.getElementById('hero-marquee-track');
@@ -6884,8 +6892,13 @@ const marqueeState = {
 function startMarqueeLoop(track) {
   const marquee = track.parentElement;
   // Compute the width of one lap (half the track since we duplicated)
+  // Longueur exacte d'un tour = position de la 1re carte dupliquée (inclut
+  // l'écart entre les deux listes), pour une boucle sans saut.
   const measure = () => {
-    marqueeState.half = track.scrollWidth / 2;
+    const n = track.children.length / 2;
+    marqueeState.half = (n >= 1 && track.children[n])
+      ? track.children[n].offsetLeft - track.children[0].offsetLeft
+      : track.scrollWidth / 2;
   };
   measure();
   window.addEventListener('resize', measure);
