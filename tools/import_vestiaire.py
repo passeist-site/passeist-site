@@ -283,6 +283,45 @@ def extract_slug_from_url(vestiaire_url):
     return m.group(1) if m else ''
 
 
+# Vestiaire force en théorie le français via Accept-Language (cf fetch_meta),
+# mais le champ "name" d'une fiche est du texte libre saisi par le vendeur :
+# certaines fiches (surtout récentes) sont titrées en anglais même récupérées
+# en contexte FR. Bug trouvé le 27/09/2026 (audit passeist.com) : le pipeline
+# traduisait alors ce texte anglais FR→EN sans le savoir, produisant un
+# charabia utilisé tel quel comme champ 'type'/'desc' FRANÇAIS du site.
+# Détection légère (sans dépendance supplémentaire) : présence d'accents ou de
+# mots-clés mode français = FR quasi certain ; sinon, mots-clés mode anglais
+# non ambigus = probablement déjà EN.
+_FR_HINT_WORDS = {
+    'veste', 'manteau', 'pull', 'pullover', 'chemise', 'pantalon', 'jupe', 'robe',
+    'gilet', 'blouson', 'ensemble', 'tailleur', 'écharpe', 'chapeau', 'sac',
+    'chaussures', 'bottes', 'baskets', 'maille', 'laine', 'coton', 'cuir',
+    'débardeur', 'haut', 'gants', 'ceinture', 'cravate', 'avec', 'pour', 'et',
+    'de', 'du', 'des', 'le', 'la', 'les', 'un', 'une', 'sans',
+}
+_EN_HINT_WORDS = {
+    'jacket', 'coat', 'sweater', 'shirt', 'pants', 'trousers', 'skirt', 'dress',
+    'vest', 'blouse', 'cardigan', 'jeans', 'shorts', 'scarf', 'hat', 'bag',
+    'shoes', 'boots', 'sneakers', 'knit', 'wool', 'cotton', 'leather', 'denim',
+    'trench', 'parka', 'hoodie', 'sweatshirt', 'tank', 'gloves', 'belt', 'tie',
+    'with', 'and', 'the', 'for',
+}
+
+
+def _looks_already_english(text):
+    t = (text or '').strip().lower()
+    if not t:
+        return False
+    if any(c in t for c in 'àâäéèêëîïôöùûüçœ'):
+        return False  # accent = FR quasi certain
+    tokens = re.findall(r"[a-z]+", t)
+    if not tokens:
+        return False
+    fr_hits = sum(1 for w in tokens if w in _FR_HINT_WORDS)
+    en_hits = sum(1 for w in tokens if w in _EN_HINT_WORDS)
+    return en_hits > 0 and fr_hits == 0
+
+
 def main():
     if len(sys.argv) < 3:
         print('Usage: import_vestiaire.py <ID> <URL>', file=sys.stderr)
@@ -393,11 +432,25 @@ def main():
         from deep_translator import GoogleTranslator
         tr = GoogleTranslator(source='fr', target='en')
         if ptype:
-            try: type_en = tr.translate(ptype) or ''
-            except: pass
+            if _looks_already_english(ptype):
+                print(f'  ⚠ type déjà en anglais ("{ptype}") → EN→FR au lieu de FR→EN')
+                type_en = ptype
+                try:
+                    ptype = GoogleTranslator(source='en', target='fr').translate(ptype) or ptype
+                except: pass
+            else:
+                try: type_en = tr.translate(ptype) or ''
+                except: pass
         if desc:
-            try: desc_en = tr.translate(desc) or ''
-            except: pass
+            if _looks_already_english(desc):
+                print('  ⚠ description déjà en anglais → EN→FR au lieu de FR→EN')
+                desc_en = desc
+                try:
+                    desc = GoogleTranslator(source='en', target='fr').translate(desc) or desc
+                except: pass
+            else:
+                try: desc_en = tr.translate(desc) or ''
+                except: pass
         # Size : pas la peine de traduire les tokens courts (ils restent identiques en EN)
         # Mais on remplace "Taille unique" → "One size"
         if size:
