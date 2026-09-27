@@ -1121,9 +1121,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .detail-gallery .thumbs-row { display: contents; }
 .detail-gallery img {
   width: 100%;
-  /* Recadrage uniforme 2:3 portrait (carrées croppées sur les côtés,
-     paysages croppées en haut/bas, tout normalisé). */
-  aspect-ratio: 2 / 3;
+  /* Recadrage uniforme 3:4 portrait (format Vestiaire "classique" depuis
+     leur changement de format photo, ex-2:3 "Leica" avant migration). */
+  aspect-ratio: 3 / 4;
   object-fit: cover;
   height: auto;
   cursor: zoom-in; background: transparent;
@@ -1468,9 +1468,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .lightbox.open { display: flex; animation: fadeIn 0.3s var(--ease); }
 .lightbox img {
-  /* Recadrage 2:3 portrait uniforme dans le lightbox (les photos avec bords
+  /* Recadrage 3:4 portrait uniforme dans le lightbox (les photos avec bords
      blancs cyclorama sont croppées au format produit, plus de cadre blanc). */
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 3 / 4;
   height: 92vh;
   max-width: 92vw;
   object-fit: cover;
