@@ -830,13 +830,23 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 96px 36px;
 }
-/* Une pièce mise en avant, seule et plus grande, tous les 8 articles
-   (inspiré des lookbooks qui glissent une photo grand format dans la grille produits). */
-.grid .product-card:nth-child(8n) {
-  grid-column: 1 / -1;
-  max-width: 640px;
-  width: 100%;
-  margin: 0 auto;
+/* Une pièce mise en avant, plus grande (2x2 cases tous les 8 articles sur desktop)
+   (inspiré des lookbooks qui glissent une photo grand format dans la grille produits).
+   Desktop : grid-auto-flow: dense fait combler les cases libres par les cartes
+   suivantes, pour ne laisser aucun trou.
+   Mobile (2 colonnes) : 4 cartes normales (2 lignes de 2) puis 1 carte pleine
+   largeur, et on recommence, donc jamais de carte seule avec un trou à côté. */
+@media (min-width: 901px) {
+  .grid { grid-auto-flow: dense; }
+  .grid .product-card:nth-child(8n) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+@media (max-width: 900px) {
+  .grid .product-card:nth-child(5n) {
+    grid-column: 1 / -1;
+  }
 }
 .product-card {
   cursor: pointer; background: transparent; border: none;
