@@ -1130,15 +1130,18 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   border: none; border-radius: 0;
   display: block;
 }
-/* Photo principale : taille naturelle, pas de crop. Scroll libre :
-   en haut de page elle est alignée sous la topbar, et passe sous la
-   barre quand on descend (comportement scroll normal). */
+/* Photo principale : même boîte 3:4 que les secondaires, mais jamais
+   recadrée (object-fit: contain + fond blanc qui se fond avec le
+   cyclorama). Ainsi la taille reste fixe d'une photo à l'autre (plus
+   de "saut" de taille), et les anciennes photos au format 3:2 "Leica"
+   s'affichent entières avec juste un peu plus de marge blanche sur
+   les côtés, sans jamais être coupées ni casser la mise en page. */
 .detail-gallery > img:first-child,
 .detail-gallery .main-photo {
   grid-column: 1 / -1;
-  aspect-ratio: auto;
-  height: auto;
-  object-fit: initial;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: #fff;
 }
 /* Photos secondaires : bordures blanches rognées server-side (wsrv.nl?trim=10).
    L'image s'affiche dans sa proportion naturelle, en général portrait ~1070x1600
@@ -1484,9 +1487,12 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   -ms-touch-action: none;
 }
 .lightbox img.zoomed { cursor: zoom-out; }
-/* Photo principale (index 0) : pas de crop même en lightbox, comme dans
-   la galerie (Tom : "sauf la première"). */
-.lightbox img.lb-main { aspect-ratio: auto; object-fit: initial; }
+/* Photo principale (index 0) : même boîte 3:4 que les autres photos du
+   lightbox, mais jamais recadrée (object-fit: contain + fond blanc),
+   comme dans la galerie (Tom : "sauf la première"). Fonctionne pareil
+   pour les anciennes photos au format 3:2 "Leica" : entières, juste
+   un peu plus de marge blanche sur les côtés. */
+.lightbox img.lb-main { object-fit: contain; background: #fff; }
 @keyframes lbIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 .lb-close {
   position: absolute; top: 28px; right: 32px;
@@ -2491,10 +2497,14 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .detail-gallery .main-photo {
     /* La photo remplit 100% du wrap (le wrap fait lui-même 88% centré).
-       Ainsi le clip du sold-stamp s'applique exactement sur le bord de la photo. */
+       Ainsi le clip du sold-stamp s'applique exactement sur le bord de la photo.
+       Mobile : on garde la taille naturelle (pas de boîte 3:4 fixe comme sur
+       desktop), sinon le clip du sold-stamp ne coïnciderait plus avec le bord. */
     width: 100%;
     max-width: 100%;
+    aspect-ratio: auto;
     height: auto;
+    object-fit: initial;
     display: block;
     margin: 0 0 10px;
     background: #fff;
