@@ -19,6 +19,9 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - Nouvelles pages `marques/jun-men.html` et `marques/final-home.html` (texte Jun Men complété via jun.co.jp + Wikipedia JA, texte Final Home rédigé via sources publiques sur Kosuke Tsumura). Ajoutées au listing `marques.html`, au menu `index.html`, et à `STATIC_ROUTES` du plugin sitemap.
 - Commit `eddff54`.
 
+### Bandeau cookies RGPD
+- tawk.to (seul cookie tiers du site) se chargeait sans consentement. Ajout d'un bandeau bas de page (Accepter/Refuser, FR/EN) : le script tawk.to n'est injecté qu'après clic "Accepter" (`localStorage.passeist_cookie_consent`). Le lanceur de chat topbar ouvre le bandeau si pas encore répondu. Commit `8c99c5d`.
+
 ### Note token GitHub (R7)
 Le token PAT fourni par Tom a servi à plusieurs pushes dans cette session (au lieu d'un usage unique). À révoquer par Tom après le push final de cette session — pas fait automatiquement, je n'ai pas les droits pour révoquer le token moi-même.
 
