@@ -2580,7 +2580,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     position: fixed; top: 0; left: 0; bottom: 0; right: auto;
     width: min(84vw, 340px);
     /* Même couleur que le fond, légèrement transparente + flou */
-    background: rgba(28,34,48,0.78);
+    /* Dégradé de transparence : plus opaque sur le bord gauche, plus
+       transparent vers la droite (Tom). */
+    background: linear-gradient(90deg, rgba(28,34,48,0.95) 0%, rgba(28,34,48,0.80) 55%, rgba(28,34,48,0.58) 100%);
     -webkit-backdrop-filter: blur(16px) saturate(120%);
     backdrop-filter: blur(16px) saturate(120%);
     border-right: 1px solid var(--line);
@@ -2968,6 +2970,45 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .grid { gap: 32px 10px; }
 }
+
+/* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
+   Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
+   Le fond (bleu nuit) ne change pas. */
+
+/* 2. Ombre douce sous les photos : elles se détachent du fond */
+.product-img,
+.hero-marquee-card {
+  box-shadow: 0 26px 40px -12px rgba(0,0,0,0.85), 0 6px 14px rgba(0,0,0,0.45);
+}
+/* Carrousel d'accueil : l'ombre peut déborder vers le bas, sans créer de
+   défilement horizontal (clip sur l'axe x seulement). */
+.hero-marquee { overflow-x: clip !important; overflow-y: visible !important; }
+
+/* 3. Liseré : filet de lumière sous le header (remplace le trait plein),
+   reflets et ombres sur les panneaux et boutons */
+.topbar { border-bottom-color: transparent !important; box-shadow: 0 10px 24px -12px rgba(0,0,0,0.7); }
+.topbar::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,241,236,0.55), transparent);
+  pointer-events: none;
+}
+.filter-mobile-toggle {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 14px -6px rgba(0,0,0,0.6);
+  background: rgba(244,241,236,0.07);
+}
+.filter-sheet {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 -24px 50px rgba(0,0,0,0.6);
+  border-top-color: transparent;
+  border-radius: 16px 16px 0 0;
+}
+.mobile-nav { box-shadow: inset -1px 0 0 rgba(255,255,255,0.35), 24px 0 50px rgba(0,0,0,0.55); border-right-color: transparent !important; }
+.hero-cta { box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 12px 24px -8px rgba(0,0,0,0.7); }
+
+/* 5. Contraste du texte : marques plus lumineuses, textes secondaires moins éteints */
+:root { --text-dim: #f2eee8; --text-mute: #d4d1cb; }
+.product-brand .brand-name, .hbs-headliners a { color: #ffffff; }
+.product-name { color: #f2eee8; }
+.product-size, .hbs-others { color: #d4d1cb; }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>

@@ -42,6 +42,8 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
 - **même rendu** que `.main-photo[data-idx="0"]` sur mobile : cadre 3:4, fond
   #fff, `object-fit: contain`, aucun `cover`, aucun `scale`, aucun zoom ;
 - coins arrondis **6 px** (`.product-img`).
+- ombre douce sous les photos (`box-shadow`, choix de Tom, 2026-09-28) :
+  elle ne change ni le cadrage ni le rendu de l'image.
 
 ## 3 bis. Carrousel de l'accueil (`.hero-marquee`)
 
