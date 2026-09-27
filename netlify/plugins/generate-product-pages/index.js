@@ -257,7 +257,7 @@ const STATIC_ROUTES = [
     'issey-miyake', 'yohji-yamamoto', 'comme-des-garcons', '45rpm', 'junko-koshino',
     'kansai-yamamoto', 'blue-blue-japan', 'zucca', 'kijima-takayuki', 'tsumori-chisato',
     'yoshiki-hishinuma', 'limi-feu', 'junya-watanabe', 'maison-mihara-yasuhiro',
-    'fumito-ganryu', 'noir-kei-ninomiya', 'tigre-brocante',
+    'fumito-ganryu', 'noir-kei-ninomiya', 'tigre-brocante', 'jun-men', 'final-home',
   ].map(slug => ({ loc: 'https://passeist.com/marques/' + slug, changefreq: 'weekly', priority: '0.7' })),
 ];
 
