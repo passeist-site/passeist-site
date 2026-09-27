@@ -1509,46 +1509,58 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .lb-close:hover { color: var(--ink); border-color: var(--ink); }
 
 /* ============ BANDEAU COOKIES (RGPD) ============ */
+/* Modale centrée avec fond assombri (plus visible qu'un simple bandeau bas de
+   page) : le choix est mis en avant, mais Accepter et Refuser restent de
+   poids visuel équivalent et ferment tous les deux la modale instantanément,
+   avec accès identique au site ensuite (pas de "cookie wall" CNIL). */
 .cookie-banner {
-  position: fixed; left: 0; right: 0; bottom: 0;
+  position: fixed; inset: 0;
   z-index: 900;
-  background: rgba(28,34,48,0.97); backdrop-filter: blur(8px);
-  border-top: 1px solid var(--line-strong);
-  padding: 20px 24px;
+  background: rgba(10,13,20,0.78); backdrop-filter: blur(3px);
+  padding: 24px;
   display: none;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
   animation: fadeIn 0.3s var(--ease);
 }
 .cookie-banner.open { display: flex; }
+.cookie-banner-card {
+  background: rgba(28,34,48,0.99);
+  border: 1px solid var(--line-strong);
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.35s var(--ease);
+}
 .cookie-banner-text {
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.6;
-  max-width: 620px;
+  font-size: 12px;
+  line-height: 1.7;
   letter-spacing: 0.01em;
 }
 .cookie-banner-text a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
 .cookie-banner-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .cookie-banner-actions button {
+  flex: 1 1 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   cursor: pointer;
-  padding: 10px 18px;
+  padding: 13px 18px;
   border-radius: 0;
   transition: border-color 0.25s, color 0.25s, background 0.25s;
 }
 .cookie-banner-actions .cb-reject {
   background: transparent;
-  color: var(--text-mute);
+  color: var(--ink);
   border: 1px solid var(--line-strong);
 }
-.cookie-banner-actions .cb-reject:hover { color: var(--ink); border-color: var(--ink); }
+.cookie-banner-actions .cb-reject:hover { border-color: var(--ink); }
 .cookie-banner-actions .cb-accept {
   background: var(--ink);
   color: var(--bg);
@@ -1557,8 +1569,10 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .cookie-banner-actions .cb-accept:hover { background: var(--hover); border-color: var(--hover); }
 @media (max-width: 640px) {
-  .cookie-banner { padding: 16px; justify-content: flex-start; }
-  .cookie-banner-text { font-size: 10.5px; }
+  .cookie-banner { padding: 16px; }
+  .cookie-banner-card { padding: 24px 20px; }
+  .cookie-banner-text { font-size: 11px; }
+  .cookie-banner-actions { flex-direction: column; }
 }
 /* Flèches de navigation : petits boutons discrets en bas du lightbox,
    de part et d'autre du compteur. Réduit, non intrusifs. */
@@ -2700,14 +2714,16 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
-<div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Consentement cookies">
-  <div class="cookie-banner-text">
-    <span class="lang-fr">Nous utilisons des cookies pour le chat en ligne (tawk.to) et la mesure d'audience (Google Analytics). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
-    <span class="lang-en">We use cookies for live chat (tawk.to) and audience measurement (Google Analytics). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
-  </div>
-  <div class="cookie-banner-actions">
-    <button type="button" class="cb-reject" id="cookie-reject"><span class="lang-fr">Refuser</span><span class="lang-en">Reject</span></button>
-    <button type="button" class="cb-accept" id="cookie-accept"><span class="lang-fr">Accepter</span><span class="lang-en">Accept</span></button>
+<div class="cookie-banner" id="cookie-banner" role="dialog" aria-modal="true" aria-label="Consentement cookies">
+  <div class="cookie-banner-card">
+    <div class="cookie-banner-text">
+      <span class="lang-fr">Nous utilisons des cookies pour le chat en ligne (tawk.to) et la mesure d'audience (Google Analytics). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
+      <span class="lang-en">We use cookies for live chat (tawk.to) and audience measurement (Google Analytics). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
+    </div>
+    <div class="cookie-banner-actions">
+      <button type="button" class="cb-reject" id="cookie-reject"><span class="lang-fr">Refuser</span><span class="lang-en">Reject</span></button>
+      <button type="button" class="cb-accept" id="cookie-accept"><span class="lang-fr">Accepter</span><span class="lang-en">Accept</span></button>
+    </div>
   </div>
 </div>
 
