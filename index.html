@@ -2,6 +2,29 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<!-- Google Analytics (GA4) + Consent Mode v2 (RGPD) : gtag chargé tout de suite,
+     mais aucun cookie analytics tant que le visiteur n'a pas accepté
+     (analytics_storage 'denied' par défaut, 'granted' au clic sur Accepter). -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VHD9P911L4"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied',
+  wait_for_update: 500
+});
+try {
+  if (localStorage.getItem('passeist_cookie_consent') === 'accepted') {
+    gtag('consent', 'update', { analytics_storage: 'granted' });
+  }
+} catch (e) {}
+gtag('js', new Date());
+gtag('config', 'G-VHD9P911L4');
+gtag('config', 'G-J3DSYD6B68'); // ancienne propriété, gardée pour l'historique
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <title>passéist, mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake</title>
@@ -7977,22 +8000,6 @@ window.__loadTawk = function(){
   s0.parentNode.insertBefore(s1,s0);
 };
 </script>
-<!-- Google Analytics (GA4) : chargement différé, cf __loadGA4 plus bas -->
-<script>
-window.__loadGA4 = function(){
-  if (window.__ga4Loaded) return;
-  window.__ga4Loaded = true;
-  var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J3DSYD6B68';
-  document.head.appendChild(s);
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  gtag('config', 'G-J3DSYD6B68');
-};
-</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
@@ -8012,7 +8019,6 @@ window.__loadGA4 = function(){
     var consent = getConsent();
     if (consent === 'accepted') {
       if (window.__loadTawk) window.__loadTawk();
-      if (window.__loadGA4) window.__loadGA4();
     } else if (consent !== 'rejected') {
       showBanner();
     }
@@ -8022,7 +8028,8 @@ window.__loadGA4 = function(){
       setConsent('accepted');
       hideBanner();
       if (window.__loadTawk) window.__loadTawk();
-      if (window.__loadGA4) window.__loadGA4();
+      // Consent Mode v2 : GA4 (déjà chargé dans le <head>) peut poser ses cookies
+      if (typeof window.gtag === 'function') window.gtag('consent', 'update', { analytics_storage: 'granted' });
     });
     if (rejectBtn) rejectBtn.addEventListener('click', function(){
       setConsent('rejected');
