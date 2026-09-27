@@ -167,3 +167,24 @@ body.no-scroll { overflow: hidden; }
   .bc-body { padding-top: 8px; }
   .bc-meta { padding-top: 4px; }
 }
+
+/* ---- Bouton « Voir toutes les pièces <marque> » : même style que EXPLORER
+   de l'accueil (.hero-cta) : bleu ardoise, texte crème, coins 6px. ---- */
+.cta-shop { text-align: center; margin-top: 36px; }
+.cta-shop a {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px 28px !important;
+  background: #5a7593 !important; color: #f4f1ec !important;
+  border: none !important; border-radius: 6px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12px !important; font-weight: 500 !important;
+  text-transform: uppercase; letter-spacing: var(--tracking-wide) !important;
+  text-decoration: none !important; line-height: 1.4;
+  max-width: 100%;
+  transition: background 0.25s ease, transform 0.35s ease;
+}
+.cta-shop a::after { content: '→'; font-size: 14px; font-weight: 300; }
+.cta-shop a:hover { background: #738ba8 !important; transform: scale(1.02); }
+@media (max-width: 600px) {
+  .cta-shop a { padding: 13px 22px !important; font-size: 11px !important; }
+}

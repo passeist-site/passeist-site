@@ -5683,10 +5683,12 @@ function goPage(p) {
       const params = new URLSearchParams(location.search);
       const urlBrand = params.get('brand');
       if (urlBrand && p === 'shop') {
-        const decoded = decodeURIComponent(urlBrand);
-        if (PRODUCTS.some(prod => prod.brand === decoded)) {
-          activeBrand = decoded;
-        }
+        // Comparaison sans accents ni casse : les liens des pages Auteurs
+        // écrivent par ex. "COMME DES GARCONS" pour "COMME DES GARÇONS".
+        const norm = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+        const wanted = norm(decodeURIComponent(urlBrand));
+        const match = PRODUCTS.find(prod => norm(prod.brand) === wanted);
+        if (match) activeBrand = match.brand;
       }
     } catch(e) {}
     renderFilters();
