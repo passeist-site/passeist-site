@@ -1688,9 +1688,23 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
-/* Idem pour le texte de la marque (bio) */
-html[lang="en"] .brand-bio.lang-fr { display: none !important; }
-html[lang="fr"] .brand-bio.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2771,10 +2785,10 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">FINAL HOME</h1>
   <section class="brand-overview">
-    <figure class="brand-portrait"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-final-home-en-coton-vert-62736301-1_2.jpg" alt="Pièce FINAL HOME, archive passéist" loading="lazy"><figcaption class="portrait-caption">Pièce d'archive FINAL HOME, collection passéist</figcaption></figure>
+    <figure class="brand-portrait"><img src="https://images.vestiairecollective.com/images/resized/w=800,q=90,f=auto,/produit/vesteblouson-final-home-en-coton-vert-62736301-1_2.jpg" alt="Pièce FINAL HOME, archive passéist" loading="lazy"><figcaption class="portrait-caption"><span class="lang-fr">Pièce d'archive FINAL HOME, collection passéist</span><span class="lang-en">Archive FINAL HOME piece, passéist collection</span></figcaption></figure>
     <div class="brand-bio lang-fr"><p>Kosuke Tsumura remporte le prix Soen à 23 ans puis rejoint en 1983 le Miyake Design Studio comme assistant créateur d'Issey Miyake.</p>
         <p>En 1994, toujours soutenu par le studio, il lance sa marque éponyme <strong>Final Home</strong>. Le vêtement signature, un parka transparent à 44 poches (<strong>Home 1</strong>), est pensé comme un abri portable en cas de catastrophe : les poches se remplissent de journaux pour l'isolation, de nourriture ou de médicaments. Tsumura teste lui-même le prototype en dormant dehors, à Central Park, New York.</p>
         <p>Chaque pièce porte une étiquette invitant à la rapporter une fois usée, pour qu'elle soit reversée à des personnes sans-abri ou réfugiées. Le parka Final Home entre depuis dans les collections du MoMA, du Powerhouse Museum et du Kyoto Costume Institute.</p>
@@ -2786,14 +2800,17 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
     <div style="clear:both;"></div>
     
   </section>
-  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+  <section class='brand-expert'><div class='expert-eyebrow'><span class="lang-fr">Pour les amateurs</span><span class="lang-en">For collectors</span></div><h2 class='expert-title'><span class="lang-fr">Lignes et déclinaisons</span><span class="lang-en">Lines and variations</span></h2><div class="brand-lines">
 <div class="lines-group">
-  <h3 class="lines-heading">Pièce signature</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">Pièce signature</span><span class="lang-en">Signature piece</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">1994</td><td class="lt-name">Home 1</td><td class="lt-desc">Parka transparent à 44 poches, pensé comme abri d'urgence. Pièce fondatrice de la marque, aujourd'hui au MoMA.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">1994</td><td class="lt-name">Home 1</td><td class="lt-desc">Transparent 44-pocket parka, designed as an emergency shelter. The brand's founding piece, now held by MoMA.</td></tr>
+  </table>
 </div></div></section>
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection FINAL HOME</h2>
@@ -2810,7 +2827,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
         <a href="/shop?brand=FINAL%20HOME">Voir toutes les pièces FINAL HOME</a>
       </div>
     </section>
-</div></div>
+</div>
 
 <footer class="footer">
   <div>© passeist, Curation mode d'auteur japonaise · Paris 2026</div>

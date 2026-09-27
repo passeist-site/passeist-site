@@ -1688,6 +1688,23 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2768,27 +2785,35 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">TIGRE BROCANTE</h1>
   <section class="brand-overview">
     <figure class="brand-portrait color"><img src="/img/portrait-tigre-brocante.jpg" alt="Portrait, TIGRE BROCANTE" loading="lazy"><figcaption class="portrait-caption"></figcaption></figure>
-    <div class="brand-bio"><p>Marque japonaise fondée le <strong>25 février 1998</strong> dans le quartier de Yakuin à <strong>Fukuoka</strong>, sur l'île de Kyushu. Société-mère : <strong>株式会社天空丸 (Tenkumaru)</strong>, dirigée par <strong>Masamoto Nozaki (野崎 正光)</strong>. Le nom est un double clin d'œil franco-japonais : 1998 était l'année du Tigre dans le calendrier zodiacal japonais, combiné à <em>« brocante »</em> en référence aux antiquaires européens (la boutique d'origine était décorée de mobilier ancien européen).</p>
+    <div class="brand-bio lang-fr"><p>Marque japonaise fondée le <strong>25 février 1998</strong> dans le quartier de Yakuin à <strong>Fukuoka</strong>, sur l'île de Kyushu. Société-mère : <strong>株式会社天空丸 (Tenkumaru)</strong>, dirigée par <strong>Masamoto Nozaki (野崎 正光)</strong>. Le nom est un double clin d'œil franco-japonais : 1998 était l'année du Tigre dans le calendrier zodiacal japonais, combiné à <em>« brocante »</em> en référence aux antiquaires européens (la boutique d'origine était décorée de mobilier ancien européen).</p>
         <p>Tigre Brocante incarne une fusion textile élargie : traditions japonaises de teinture indigo, teinture à la boue et tissages anciens sur métiers traditionnels, croisées avec des savoir-faire d'Inde, de Thaïlande et du Népal. Vocabulaire visuel : workwear européen revisité, patchworks, teintures naturelles, palette terreuse, esprit <em>« brocante »</em>, vêtements qui évoquent une nostalgie travaillée tout en restant portables au quotidien adulte.</p>
         <p>Représentative du mouvement japonais <em>slow fashion / heritage</em> de la fin des années 90, parallèle à 45rpm mais avec un ADN plus pan-asiatique. Toujours active aujourd'hui, à profil discret hors du Japon mais culte chez les amateurs de mode artisanale japonaise et asiatique.</p></div>
+    <div class="brand-bio lang-en"><p>Japanese brand founded on <strong>February 25, 1998</strong> in the Yakuin district of <strong>Fukuoka</strong>, on the island of Kyushu. Parent company: <strong>株式会社天空丸 (Tenkumaru)</strong>, headed by <strong>Masamoto Nozaki (野崎 正光)</strong>. The name is a double French-Japanese nod: 1998 was the Year of the Tiger in the Japanese zodiac calendar, combined with <em>"brocante"</em> (French for flea-market antiques), a reference to European antique dealers (the original store was decorated with old European furniture).</p>
+        <p>Tigre Brocante embodies a broader textile fusion: Japanese traditions of indigo dyeing, mud dyeing, and antique weaving on traditional looms, crossed with craftsmanship from India, Thailand, and Nepal. Visual vocabulary: reworked European workwear, patchwork, natural dyes, an earthy palette, a <em>"brocante"</em> spirit, garments that evoke a worked-in nostalgia while staying wearable for everyday adult life.</p>
+        <p>Representative of the Japanese <em>slow fashion / heritage</em> movement of the late 1990s, running parallel to 45rpm but with a more pan-Asian DNA. Still active today, low-profile outside Japan but cult status among enthusiasts of Japanese and Asian artisanal fashion.</p></div>
     <div style="clear:both;"></div>
     
   </section>
-  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+  <section class='brand-expert'><div class='expert-eyebrow'><span class="lang-fr">Pour les amateurs</span><span class="lang-en">For collectors</span></div><h2 class='expert-title'><span class="lang-fr">Lignes et déclinaisons</span><span class="lang-en">Lines and variations</span></h2><div class="brand-lines">
 <div class="lines-group">
-  <h3 class="lines-heading">Boutiques</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">Boutiques</span><span class="lang-en">Stores</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">Fukuoka</td><td class="lt-name">Magasin principal</td><td class="lt-desc">Siège historique.</td></tr>
     <tr><td class="lt-year">Hakata</td><td class="lt-name">Lapin Brocante</td><td class="lt-desc">Boutique en gare de Hakata.</td></tr>
     <tr><td class="lt-year">Kumamoto</td><td class="lt-name">Dragon Brocante</td><td class="lt-desc">Boutique de Kumamoto.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">Fukuoka</td><td class="lt-name">Magasin principal</td><td class="lt-desc">Historic flagship.</td></tr>
+    <tr><td class="lt-year">Hakata</td><td class="lt-name">Lapin Brocante</td><td class="lt-desc">Store in Hakata station.</td></tr>
+    <tr><td class="lt-year">Kumamoto</td><td class="lt-name">Dragon Brocante</td><td class="lt-desc">Kumamoto store.</td></tr>
+  </table>
   <p style="font-size:13px;color:#555;margin-top:14px;line-height:1.55;">Distribution dans plusieurs select shops japonais : TAKANNA, 6DIRECTIONS, t.m.p.coop, 3bre.</p>
 </div></div></section>
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
 </div>
 

@@ -1688,6 +1688,23 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2768,19 +2785,23 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">JUNYA WATANABE</h1>
   <section class="brand-overview">
-    <figure class="brand-portrait"><img src="/img/portrait-junya-watanabe.webp" alt="Portrait, JUNYA WATANABE" loading="lazy"><figcaption class="portrait-caption">Photo : Johnny Dufort, The New York Times (2016)</figcaption></figure>
-    <div class="brand-bio"><p>Junya Watanabe naît en 1961 à <strong>Fukushima</strong>. Diplômé de Bunka Fashion College en 1984, il rejoint immédiatement Comme des Garçons comme pattern-maker, sous le mentorat direct de <strong>Rei Kawakubo</strong>. Trois ans plus tard, en 1987, il devient directeur créatif de la ligne <em>Tricot Comme des Garçons</em>, puis prendra plus tard la direction artistique de Comme des Garçons HOMME (à partir de 2003).</p>
+    <figure class="brand-portrait"><img src="/img/portrait-junya-watanabe.webp" alt="Portrait, JUNYA WATANABE" loading="lazy"><figcaption class="portrait-caption"><span class="lang-fr">Photo : Johnny Dufort, The New York Times (2016)</span><span class="lang-en">Photo: Johnny Dufort, The New York Times (2016)</span></figcaption></figure>
+    <div class="brand-bio lang-fr"><p>Junya Watanabe naît en 1961 à <strong>Fukushima</strong>. Diplômé de Bunka Fashion College en 1984, il rejoint immédiatement Comme des Garçons comme pattern-maker, sous le mentorat direct de <strong>Rei Kawakubo</strong>. Trois ans plus tard, en 1987, il devient directeur créatif de la ligne <em>Tricot Comme des Garçons</em>, puis prendra plus tard la direction artistique de Comme des Garçons HOMME (à partir de 2003).</p>
         <p><strong>Naissance de la signature.</strong> En 1992, Kawakubo lui confie sa propre ligne : il présente sa première collection sous son nom dans le concourse de la gare de Ryogoku à Tokyo. La ligne devient officiellement <em>Junya Watanabe Comme des Garçons</em> en 1993, défilée à Paris la même année. La ligne homme, <em>Junya Watanabe Comme des Garçons MAN</em>, est lancée en 2001.</p>
         <p><strong>Le pionnier de la techno-couture.</strong> Watanabe est considéré comme le fondateur d'une nouvelle école : la <em>techno-couture</em>, où les matières synthétiques, les innovations technologiques et les savoir-faire textiles traditionnels se croisent. Il a notamment dessiné en 2016 une veste à panneaux solaires intégrés pour sa collection FW.</p>
         <p><strong>Le maître de la collaboration.</strong> Sa ligne MAN est devenue, par ses collaborations, une référence absolue du genre, étudiée par toute une génération de designers contemporains. <em>Levi's</em> (l'une des collaborations mode les plus organiques du XXIᵉ siècle), <em>Brooks Brothers</em> (capsule 2020), <em>Carhartt</em>, <em>Moncler</em>, <em>The North Face</em>, <em>Karrimor</em>… L'art de Watanabe est de prendre des silhouettes utilitaires et de les transformer en pièces de luxe sans en trahir l'esprit.</p></div>
+    <div class="brand-bio lang-en"><p>Junya Watanabe was born in 1961 in <strong>Fukushima</strong>. A graduate of Bunka Fashion College in 1984, he joined Comme des Garçons immediately as a pattern-maker, under the direct mentorship of <strong>Rei Kawakubo</strong>. Three years later, in 1987, he became creative director of the <em>Tricot Comme des Garçons</em> line, and would later take over the artistic direction of Comme des Garçons HOMME (from 2003 onward).</p>
+        <p><strong>Birth of the signature.</strong> In 1992, Kawakubo entrusted him with his own line: he presented his first collection under his own name in the concourse of Ryogoku station in Tokyo. The line officially became <em>Junya Watanabe Comme des Garçons</em> in 1993, shown in Paris that same year. The menswear line, <em>Junya Watanabe Comme des Garçons MAN</em>, launched in 2001.</p>
+        <p><strong>The pioneer of techno-couture.</strong> Watanabe is considered the founder of a new school: <em>techno-couture</em>, where synthetic materials, technological innovation, and traditional textile craftsmanship intersect. In 2016 he notably designed a jacket with built-in solar panels for his FW collection.</p>
+        <p><strong>The master of collaboration.</strong> Through its collaborations, his MAN line has become an absolute benchmark of the genre, studied by an entire generation of contemporary designers. <em>Levi's</em> (one of the most organic fashion collaborations of the 21st century), <em>Brooks Brothers</em> (2020 capsule), <em>Carhartt</em>, <em>Moncler</em>, <em>The North Face</em>, <em>Karrimor</em>… Watanabe's art lies in taking utilitarian silhouettes and transforming them into luxury pieces without betraying their spirit.</p></div>
     <div style="clear:both;"></div>
     
   </section>
   
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection JUNYA WATANABE</h2>

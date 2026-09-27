@@ -1688,6 +1688,23 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2768,20 +2785,25 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">LIMI FEU</h1>
   <section class="brand-overview">
     <figure class="brand-portrait"><img src="/img/portrait-limi-feu.jpg" alt="Portrait, LIMI FEU" loading="lazy"><figcaption class="portrait-caption"></figcaption></figure>
-    <div class="brand-bio"><p>Limi Yamamoto, née en 1974, est la fille de Yohji Yamamoto. Elle adopte plus tard le nom de scène <em>« Feu »</em>, mot trouvé au hasard dans un dictionnaire, presque un jeu d'enfant.</p>
+    <div class="brand-bio lang-fr"><p>Limi Yamamoto, née en 1974, est la fille de Yohji Yamamoto. Elle adopte plus tard le nom de scène <em>« Feu »</em>, mot trouvé au hasard dans un dictionnaire, presque un jeu d'enfant.</p>
         <p><strong>Une enfance loin du père.</strong> Ses parents divorcent quand elle a deux ans. Elle grandit avec sa mère dans une petite ville de Kyushu, ne voyant Yohji qu'une fois tous les trois ans environ. La fashion semble alors un univers étranger.</p>
         <p><strong>La révélation.</strong> Année de terminale : Yohji l'emmène à New York assister à un de ses défilés. Pour la première fois, elle voit le travail de son père sur le runway. <em>« I was so overcome, I just started crying. »</em> Sur place, elle décide de devenir designer.</p>
         <p><strong>Formation et lancement.</strong> Elle étudie à Bunka Fashion College, puis travaille comme pattern-maker dans plusieurs maisons. En 2000, elle fonde son propre label <strong>Limi feu</strong> sous l'aile du groupe Yohji Yamamoto. Défilés à Tokyo Fashion Week de 2000 à 2007, puis débuts à Paris Fashion Week en octobre 2007, accueil très favorable de la critique.</p>
         <p>Esthétique : tailoring structuré, asymétries féminines, palette dominée par le noir, silhouettes amples et bottes militaires, un romantisme punk rock plus terrestre que celui de son père. Limi le formule ainsi : <em>« Mon père dessine pour la femme idéale. Moi je dessine, en tant que femme, pour la femme réelle. »</em></p></div>
+    <div class="brand-bio lang-en"><p>Limi Yamamoto, born in 1974, is the daughter of Yohji Yamamoto. She later adopted the stage name <em>"Feu"</em> ("fire" in French), a word found at random in a dictionary, almost a child's game.</p>
+        <p><strong>A childhood far from her father.</strong> Her parents divorced when she was two. She grew up with her mother in a small town in Kyushu, seeing Yohji only about once every three years. Fashion then seemed a foreign world.</p>
+        <p><strong>The revelation.</strong> In her final year of school, Yohji took her to New York to see one of his shows. For the first time, she saw her father's work on the runway. <em>"I was so overcome, I just started crying."</em> On the spot, she decided to become a designer.</p>
+        <p><strong>Training and launch.</strong> She studied at Bunka Fashion College, then worked as a pattern-maker at several fashion houses. In 2000, she founded her own label <strong>Limi feu</strong> under the wing of the Yohji Yamamoto group. She showed at Tokyo Fashion Week from 2000 to 2007, then made her Paris Fashion Week debut in October 2007, to a very warm critical reception.</p>
+        <p>Aesthetic: structured tailoring, feminine asymmetries, a palette dominated by black, loose silhouettes and combat boots, a punk-rock romanticism more grounded than her father's. Limi puts it this way: <em>"My father designs for the ideal woman. I design, as a woman, for the real woman."</em></p></div>
     <div style="clear:both;"></div>
     
   </section>
   
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection LIMI FEU</h2>

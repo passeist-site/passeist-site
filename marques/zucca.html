@@ -1688,6 +1688,23 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2768,17 +2785,19 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">ZUCCA</h1>
   <section class="brand-overview">
-    <figure class="brand-portrait"><img src="/img/portrait-zucca.jpg" alt="Portrait, ZUCCA" loading="lazy"><figcaption class="portrait-caption">Akira Onozuka, fondateur de ZUCCA</figcaption></figure>
-    <div class="brand-bio"><p>Fondée en 1988 par Akira Onozuka, longtemps assistant historique d'Issey Miyake. Distribuée par A-NET, filiale du groupe Miyake. Débuts parisiens en 1989.</p>
+    <figure class="brand-portrait"><img src="/img/portrait-zucca.jpg" alt="Portrait, ZUCCA" loading="lazy"><figcaption class="portrait-caption"><span class="lang-fr">Akira Onozuka, fondateur de ZUCCA</span><span class="lang-en">Akira Onozuka, founder of ZUCCA</span></figcaption></figure>
+    <div class="brand-bio lang-fr"><p>Fondée en 1988 par Akira Onozuka, longtemps assistant historique d'Issey Miyake. Distribuée par A-NET, filiale du groupe Miyake. Débuts parisiens en 1989.</p>
         <p>Tissus techniques, plissages, coupes asymétriques : Zucca hérite du vocabulaire architectural et dépouillé de Miyake, avec une signature plus discrète. La ligne homme s'arrête en 2017, la femme vers 2022.</p></div>
+    <div class="brand-bio lang-en"><p>Founded in 1988 by Akira Onozuka, for a long time Issey Miyake's historic assistant. Distributed by A-NET, a subsidiary of the Miyake group. Paris debut in 1989.</p>
+        <p>Technical fabrics, pleating, asymmetric cuts: Zucca inherits Miyake's architectural, pared-down vocabulary, with a more understated signature. The menswear line ended in 2017, womenswear around 2022.</p></div>
     <div style="clear:both;"></div>
     
   </section>
   
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection ZUCCA</h2>

@@ -1688,6 +1688,25 @@ body[data-page="home"] .home-brands-strip { display: block; }
 /* Cache les sections About de la langue inactive */
 html[lang="en"] .about.lang-fr { display: none !important; }
 html[lang="fr"] .about.lang-en { display: none !important; }
+/* Idem pour le texte de la marque (bio, tableau de lignes, libellés) */
+html[lang="en"] .brand-bio.lang-fr,
+html[lang="en"] .brand-timeline.lang-fr,
+html[lang="en"] .lines-table.lang-fr,
+html[lang="en"] .breadcrumb .lang-fr,
+html[lang="en"] .accuracy-note .lang-fr,
+html[lang="en"] .expert-eyebrow .lang-fr,
+html[lang="en"] .expert-title .lang-fr,
+html[lang="en"] .lines-heading .lang-fr,
+html[lang="en"] .portrait-caption .lang-fr { display: none !important; }
+html[lang="fr"] .brand-bio.lang-en,
+html[lang="fr"] .brand-timeline.lang-en,
+html[lang="fr"] .lines-table.lang-en,
+html[lang="fr"] .breadcrumb .lang-en,
+html[lang="fr"] .accuracy-note .lang-en,
+html[lang="fr"] .expert-eyebrow .lang-en,
+html[lang="fr"] .expert-title .lang-en,
+html[lang="fr"] .lines-heading .lang-en,
+html[lang="fr"] .portrait-caption .lang-en { display: none !important; }
 /* i18n inline pour nav */
 html[lang="en"] .top-nav .lang-fr,
 html[lang="en"] .footer .lang-fr { display: none !important; }
@@ -2768,36 +2787,50 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </script>
 
 <div class="container">
-  <div class="breadcrumb"><a href="/marques">← Toutes nos marques</a></div>
+  <div class="breadcrumb"><a href="/marques"><span class="lang-fr">← Toutes nos marques</span><span class="lang-en">← All brands</span></a></div>
   <h1 class="brand-name">ISSEY MIYAKE</h1>
   <section class="brand-overview">
-    <figure class="brand-portrait"><img src="https://fuckingyoung.es/wp-content/uploads/2022/08/b10fdb04e9739e2204bfe0438902f7b4-irving-penn-issey-miyake.jpg" alt="Portrait, ISSEY MIYAKE" loading="lazy"><figcaption class="portrait-caption">Photo : Irving Penn</figcaption></figure>
-    <div class="brand-bio"><p>Né à Hiroshima en 1938, survivant de la bombe atomique à 7 ans. Diplômé de Tama Art University en design graphique, il se forme à Paris (assistant chez Guy Laroche puis Givenchy, 1965-69) et à New York (Geoffrey Beene, 1969-70). Il fonde Miyake Design Studio à Tokyo en 1970 et défile à Paris dès 1973.</p>
+    <figure class="brand-portrait"><img src="https://fuckingyoung.es/wp-content/uploads/2022/08/b10fdb04e9739e2204bfe0438902f7b4-irving-penn-issey-miyake.jpg" alt="Portrait, ISSEY MIYAKE" loading="lazy"><figcaption class="portrait-caption"><span class="lang-fr">Photo : Irving Penn</span><span class="lang-en">Photo: Irving Penn</span></figcaption></figure>
+    <div class="brand-bio lang-fr"><p>Né à Hiroshima en 1938, survivant de la bombe atomique à 7 ans. Diplômé de Tama Art University en design graphique, il se forme à Paris (assistant chez Guy Laroche puis Givenchy, 1965-69) et à New York (Geoffrey Beene, 1969-70). Il fonde Miyake Design Studio à Tokyo en 1970 et défile à Paris dès 1973.</p>
         <p>Sa philosophie : <em>« A Piece of Cloth »</em>, un seul morceau de tissu pour habiller le corps. Théoricien autant que praticien, il bouleverse la relation entre vêtement, corps et matière. Le plissé thermique permanent de Pleats Please (1993) deviendra sa signature mondiale. Il s'éteint en août 2022.</p></div>
+    <div class="brand-bio lang-en"><p>Born in Hiroshima in 1938, a survivor of the atomic bomb at age 7. A graphic design graduate of Tama Art University, he trained in Paris (assistant at Guy Laroche then Givenchy, 1965-69) and in New York (Geoffrey Beene, 1969-70). He founded Miyake Design Studio in Tokyo in 1970 and showed in Paris from 1973.</p>
+        <p>His philosophy: <em>"A Piece of Cloth"</em>, a single piece of fabric to clothe the body. As much a theorist as a practitioner, he transformed the relationship between garment, body and material. The permanent heat-pleating of Pleats Please (1993) would become his worldwide signature. He passed away in August 2022.</p></div>
     <div style="clear:both;"></div>
-    <details class="brand-timeline" open><summary>Chronologie</summary><ul><li><strong>1938</strong> · naissance à Hiroshima</li><li><strong>1964</strong> · diplôme de Tama Art University, Tokyo</li><li><strong>1965-1970</strong> · formation à Paris (Laroche, Givenchy) puis à New York (Geoffrey Beene)</li><li><strong>1970</strong> · fonde Miyake Design Studio à Tokyo</li><li><strong>Années 80</strong> · dessine les uniformes des employés des usines Sony</li><li><strong>1985</strong> · exposition « Bodyworks » à Los Angeles, Tokyo, San Francisco, le vêtement comme sculpture</li><li><strong>1988</strong> · lance ses recherches sur le plissé thermique permanent</li><li><strong>1992</strong> · parfum L'Eau d'Issey, succès planétaire</li><li><strong>1992</strong> · uniformes de l'équipe nationale lituanienne aux JO de Barcelone, l'iconique tenue de l'équipe de basket avec le « Slam Dunkin' Skeleton »</li><li><strong>Mid 90s</strong> · Steve Jobs lui commande une centaine de cols roulés noirs après avoir été marqué par les uniformes Sony, naissance de l'icône vestimentaire d'Apple</li><li><strong>1994</strong> · quitte la création homme pour se consacrer à la recherche et l'innovation textile</li><li><strong>1999</strong> · quitte aussi la création femme, transmet la direction artistique de la maison</li><li><strong>2010</strong> · expose à la Triennale di Milano</li><li><strong>2016</strong> · rétrospective majeure « Issey Miyake, The Work » au National Art Center, Tokyo</li></ul></details>
+    <details class="brand-timeline lang-fr" open><summary>Chronologie</summary><ul><li><strong>1938</strong> · naissance à Hiroshima</li><li><strong>1964</strong> · diplôme de Tama Art University, Tokyo</li><li><strong>1965-1970</strong> · formation à Paris (Laroche, Givenchy) puis à New York (Geoffrey Beene)</li><li><strong>1970</strong> · fonde Miyake Design Studio à Tokyo</li><li><strong>Années 80</strong> · dessine les uniformes des employés des usines Sony</li><li><strong>1985</strong> · exposition « Bodyworks » à Los Angeles, Tokyo, San Francisco, le vêtement comme sculpture</li><li><strong>1988</strong> · lance ses recherches sur le plissé thermique permanent</li><li><strong>1992</strong> · parfum L'Eau d'Issey, succès planétaire</li><li><strong>1992</strong> · uniformes de l'équipe nationale lituanienne aux JO de Barcelone, l'iconique tenue de l'équipe de basket avec le « Slam Dunkin' Skeleton »</li><li><strong>Mid 90s</strong> · Steve Jobs lui commande une centaine de cols roulés noirs après avoir été marqué par les uniformes Sony, naissance de l'icône vestimentaire d'Apple</li><li><strong>1994</strong> · quitte la création homme pour se consacrer à la recherche et l'innovation textile</li><li><strong>1999</strong> · quitte aussi la création femme, transmet la direction artistique de la maison</li><li><strong>2010</strong> · expose à la Triennale di Milano</li><li><strong>2016</strong> · rétrospective majeure « Issey Miyake, The Work » au National Art Center, Tokyo</li></ul></details>
+<details class="brand-timeline lang-en" open><summary>Timeline</summary><ul><li><strong>1938</strong> · born in Hiroshima</li><li><strong>1964</strong> · graduates from Tama Art University, Tokyo</li><li><strong>1965-1970</strong> · trains in Paris (Laroche, Givenchy), then New York (Geoffrey Beene)</li><li><strong>1970</strong> · founds Miyake Design Studio in Tokyo</li><li><strong>1980s</strong> · designs the uniforms for Sony factory workers</li><li><strong>1985</strong> · "Bodyworks" exhibition in Los Angeles, Tokyo and San Francisco, clothing as sculpture</li><li><strong>1988</strong> · begins his research into permanent heat-set pleating</li><li><strong>1992</strong> · L'Eau d'Issey perfume, a worldwide hit</li><li><strong>1992</strong> · uniforms for the Lithuanian national team at the Barcelona Olympics, the iconic basketball kit with the "Slam Dunkin' Skeleton"</li><li><strong>Mid-90s</strong> · Steve Jobs, struck by the Sony uniforms, commissions around a hundred black turtlenecks from him, birth of Apple's clothing icon</li><li><strong>1994</strong> · steps back from menswear to focus on textile research and innovation</li><li><strong>1999</strong> · also steps back from womenswear, hands over the house's artistic direction</li><li><strong>2010</strong> · exhibits at the Triennale di Milano</li><li><strong>2016</strong> · major retrospective "Issey Miyake, The Work" at the National Art Center, Tokyo</li></ul></details>
   </section>
-  <section class='brand-expert'><div class='expert-eyebrow'>Pour les amateurs</div><h2 class='expert-title'>Lignes et déclinaisons</h2><div class="brand-lines">
+  <section class='brand-expert'><div class='expert-eyebrow'><span class="lang-fr">Pour les amateurs</span><span class="lang-en">For collectors</span></div><h2 class='expert-title'><span class="lang-fr">Lignes et déclinaisons</span><span class="lang-en">Lines and variations</span></h2><div class="brand-lines">
 <div class="lines-group">
-  <h3 class="lines-heading">Lignes principales</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">Lignes principales</span><span class="lang-en">Main lines</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">1971</td><td class="lt-name">Issey Miyake</td><td class="lt-desc">Ligne principale femme, première collection à Tokyo, débuts Paris en 1973. Directeurs créatifs successifs : <strong>Naoki Takizawa</strong> (SS 2000 - SS 2007), <strong>Dai Fujiwara</strong> (AW 2007 - AW 2011), <strong>Yoshiyuki Miyamae</strong> (SS 2012 - AW 2019), <strong>Satoshi Kondo</strong> (SS 2020-actuel).</td></tr>
     <tr><td class="lt-year">1976</td><td class="lt-name">Issey Miyake Men</td><td class="lt-desc">Ligne principale homme. Issey Miyake quitte la création homme en 1994.</td></tr>
     <tr><td class="lt-year">déc. 1981</td><td class="lt-name">Plantation</td><td class="lt-desc">Lancée par Issey Miyake, ligne quotidienne unisexe en matières naturelles, dessinée par Naoki Takizawa à partir de 1983. Sous la filiale A-net Inc. depuis 1996.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">1971</td><td class="lt-name">Issey Miyake</td><td class="lt-desc">Main womenswear line, first collection in Tokyo, Paris debut in 1973. Successive creative directors: <strong>Naoki Takizawa</strong> (SS 2000 - SS 2007), <strong>Dai Fujiwara</strong> (AW 2007 - AW 2011), <strong>Yoshiyuki Miyamae</strong> (SS 2012 - AW 2019), <strong>Satoshi Kondo</strong> (SS 2020-present).</td></tr>
+    <tr><td class="lt-year">1976</td><td class="lt-name">Issey Miyake Men</td><td class="lt-desc">Main menswear line. Issey Miyake left menswear design in 1994.</td></tr>
+    <tr><td class="lt-year">Dec. 1981</td><td class="lt-name">Plantation</td><td class="lt-desc">Launched by Issey Miyake, a unisex everyday line in natural materials, designed by Naoki Takizawa from 1983 onward. Under the A-net Inc. subsidiary since 1996.</td></tr>
+  </table>
 </div>
 <div class="lines-group">
-  <h3 class="lines-heading">Plissé et innovation textile</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">Plissé et innovation textile</span><span class="lang-en">Pleating and textile innovation</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">1993</td><td class="lt-name">Pleats Please Issey Miyake</td><td class="lt-desc">Plissé thermique permanent femme. Signature mondiale de la maison.</td></tr>
     <tr><td class="lt-year">2013</td><td class="lt-name">Homme Plissé Issey Miyake</td><td class="lt-desc">Équivalent homme du Pleats Please. Pièces plissées thermiquement, infroissables et séchage rapide, classiques masculins repensés.</td></tr>
     <tr><td class="lt-year">2010</td><td class="lt-name">132 5. ISSEY MIYAKE</td><td class="lt-desc">Vêtements géométriques pliables, en collaboration avec le Reality Lab.</td></tr>
     <tr><td class="lt-year">2010</td><td class="lt-name">Bao Bao Issey Miyake</td><td class="lt-desc">Sacs à structure modulaire, polygones interconnectés.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">1993</td><td class="lt-name">Pleats Please Issey Miyake</td><td class="lt-desc">Permanent heat-pleated womenswear. The house's worldwide signature.</td></tr>
+    <tr><td class="lt-year">2013</td><td class="lt-name">Homme Plissé Issey Miyake</td><td class="lt-desc">Menswear equivalent of Pleats Please. Heat-pleated, crease-resistant, quick-drying pieces, reimagined menswear classics.</td></tr>
+    <tr><td class="lt-year">2010</td><td class="lt-name">132 5. ISSEY MIYAKE</td><td class="lt-desc">Foldable geometric garments, developed with the Reality Lab.</td></tr>
+    <tr><td class="lt-year">2010</td><td class="lt-name">Bao Bao Issey Miyake</td><td class="lt-desc">Bags with a modular structure of interlocking polygons.</td></tr>
+  </table>
 </div>
 <div class="lines-group">
-  <h3 class="lines-heading">A-POC et lignes contemporaines</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">A-POC et lignes contemporaines</span><span class="lang-en">A-POC and contemporary lines</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">2000</td><td class="lt-name">A-POC</td><td class="lt-desc">Avec Dai Fujiwara, sur le principe "A Piece of Cloth" : un vêtement issu d'un seul tissu tubulaire continu.</td></tr>
     <tr><td class="lt-year">2000</td><td class="lt-name">HaaT</td><td class="lt-desc">Marque de Makiko Minagawa, ancienne directrice textile du Miyake Design Studio. Vêtements et accessoires en collaboration avec des artisans japonais et indiens. Le nom mêle "Heart" (Japon), "HaaTH" (la main, en hindi) et "haat" (marché de village, en sanskrit).</td></tr>
     <tr><td class="lt-year">2000</td><td class="lt-name">me ISSEY MIYAKE</td><td class="lt-desc">Ligne diffusion femme axée sur des tops légers, compacts et faciles d'entretien, pensés pour le quotidien.</td></tr>
@@ -2805,15 +2838,27 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
     <tr><td class="lt-year">2021</td><td class="lt-name">A-POC ABLE Issey Miyake</td><td class="lt-desc">Relance contemporaine du concept A-POC.</td></tr>
     <tr><td class="lt-year">2021</td><td class="lt-name">IM Men</td><td class="lt-desc">Ligne homme contemporaine de la maison.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">2000</td><td class="lt-name">A-POC</td><td class="lt-desc">With Dai Fujiwara, built on the "A Piece of Cloth" principle: a garment made from a single continuous tubular fabric.</td></tr>
+    <tr><td class="lt-year">2000</td><td class="lt-name">HaaT</td><td class="lt-desc">Brand by Makiko Minagawa, former textile director of Miyake Design Studio. Clothing and accessories made with Japanese and Indian artisans. The name blends "Heart" (Japan), "HaaTH" (hand, in Hindi) and "haat" (village market, in Sanskrit).</td></tr>
+    <tr><td class="lt-year">2000</td><td class="lt-name">me ISSEY MIYAKE</td><td class="lt-desc">Womenswear diffusion line focused on lightweight, compact, easy-care tops designed for everyday wear.</td></tr>
+    <tr><td class="lt-year">2018</td><td class="lt-name">GOOD GOODS Issey Miyake</td><td class="lt-desc">Accessories project exploring what makes a product "good." Handwork: weaving, braiding, assembly.</td></tr>
+    <tr><td class="lt-year">2021</td><td class="lt-name">A-POC ABLE Issey Miyake</td><td class="lt-desc">Contemporary revival of the A-POC concept.</td></tr>
+    <tr><td class="lt-year">2021</td><td class="lt-name">IM Men</td><td class="lt-desc">The house's contemporary menswear line.</td></tr>
+  </table>
 </div>
 <div class="lines-group">
-  <h3 class="lines-heading">Sous-lignes vintage</h3>
-  <table class="lines-table">
+  <h3 class="lines-heading"><span class="lang-fr">Sous-lignes vintage</span><span class="lang-en">Vintage sub-lines</span></h3>
+  <table class="lines-table lang-fr">
     <tr><td class="lt-year">1976</td><td class="lt-name">I.S. / Issey Sport</td><td class="lt-desc">Première ligne sportswear, dessinée à l'origine par Tsumori Chisato.</td></tr>
     <tr><td class="lt-year">~1977<br>-90s</td><td class="lt-name">Hai Sporting Gear</td><td class="lt-desc">Sous-ligne sportswear « Americana », culte chez les collectionneurs vintage. Produite sous l'égide du Miyake Design Studio, la paternité créative d'Issey Miyake lui-même reste débattue, la marque n'apparaissant pas dans la liste officielle de ses lignes.</td></tr>
   </table>
+  <table class="lines-table lang-en">
+    <tr><td class="lt-year">1976</td><td class="lt-name">I.S. / Issey Sport</td><td class="lt-desc">First sportswear line, originally designed by Tsumori Chisato.</td></tr>
+    <tr><td class="lt-year">~1977<br>-90s</td><td class="lt-name">Hai Sporting Gear</td><td class="lt-desc">"Americana" sportswear sub-line, a cult name among vintage collectors. Produced under the aegis of Miyake Design Studio; Issey Miyake's own creative authorship remains debated, as the brand does not appear in the official list of his lines.</td></tr>
+  </table>
 </div></div></section>
-  <p class="accuracy-note">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</p>
+  <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
       <h2 class="carousel-title">Notre sélection ISSEY MIYAKE</h2>
