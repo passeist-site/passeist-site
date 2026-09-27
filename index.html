@@ -2716,21 +2716,25 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     transition: none;
   }
   .detail-gallery .thumb:hover img { transform: none; }
-  /* Mobile : même format pour toutes les photos de la fiche (grande photo et
-     vignettes, photo 1 comprise) : cadre 3:4 portrait, fond blanc, contain.
-     Jamais de recadrage : les photos 2+ sont rognées de leurs bandes blanches
-     (trimWhiteBorders) puis posées entières dans le cadre ; la photo 1 carrée
-     a simplement du blanc au-dessus et en dessous. Pas de saut de taille. */
-  .detail-gallery .main-photo,
+  /* Photos 2+ : plein cadre 3:4 sans marge blanche (grande photo et vignettes) */
   .detail-gallery .main-photo:not([data-idx="0"]) {
     aspect-ratio: 3 / 4;
-    height: auto;
+    object-fit: cover;
+  }
+  .detail-gallery .thumbs-row { align-items: flex-start; }
+  .detail-gallery .thumb:not([data-idx="0"]) img {
+    aspect-ratio: 3 / 4 !important;
+    object-fit: cover !important;
+  }
+  /* Photo 1 (carrée, bords déjà blancs) : même cadre 3:4 que les photos
+     suivantes, posée entière (contain) sur fond blanc → blanc ajouté
+     au-dessus et en dessous, pas de saut de taille ni de recadrage. */
+  .detail-gallery .main-photo[data-idx="0"] {
+    aspect-ratio: 3 / 4;
     object-fit: contain;
     background: #fff;
   }
-  .detail-gallery .thumbs-row { align-items: flex-start; }
-  .detail-gallery .thumb { background: #fff !important; }
-  .detail-gallery .thumb img {
+  .detail-gallery .thumb[data-idx="0"] img {
     aspect-ratio: 3 / 4 !important;
     object-fit: contain !important;
     background: #fff;
