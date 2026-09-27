@@ -293,6 +293,70 @@ ${productUrls.join('\n')}
 
 // ── Google Merchant Center feed (RSS 2.0 + g: namespace) ──────────────────
 
+// Zones et délais d'expédition : source de vérité = CGV (§6) et
+// netlify/functions/create-checkout-session.js (SHIPPING_RATES / EU_COUNTRIES /
+// allowed_countries). À garder synchronisé avec ces deux endroits.
+const SHIP_HANDLING = { min: 2, max: 5 };               // préparation, jours ouvrés
+const SHIP_ZONES = [
+  { price: '15.00 EUR', min: 2, max: 3,  countries: ['FR'] },
+  { price: '25.00 EUR', min: 5, max: 7,  countries: [
+    'AT','BE','BG','HR','CY','CZ','DK','EE','FI','DE','GR','HU','IE','IT','LV','LT',
+    'LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO'] },
+  { price: '55.00 EUR', min: 7, max: 10, countries: ['US','CA','JP','KR','AU','NZ','SG','HK'] },
+];
+// Retours acceptés (CGV §7) : France métropolitaine + Union européenne, 14 jours,
+// frais de renvoi à la charge de l'acheteur.
+const RETURN_COUNTRIES = ['FR','AT','BE','BG','HR','CY','CZ','DK','EE','FI','DE','GR',
+  'HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE'];
+
+// Catégorie produit à partir du type (FR), même logique que getCategory() du SPA.
+function productKind(type) {
+  const t = String(type || '').toLowerCase();
+  // Ordre important : "Echarpe & pochette" est une écharpe, pas un sac.
+  if (/étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou/.test(t)) return 'scarf';
+  if (/\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie/.test(t)) return 'bag';
+  if (/chapeau|bonnet|panama|casquette|\bcap\b|béret|beret/.test(t)) return 'hat';
+  if (/ceinture/.test(t)) return 'belt';
+  if (/cravate/.test(t)) return 'tie';
+  if (/gants?\b|moufles?/.test(t)) return 'gloves';
+  if (/bracelet|boucles? d'oreilles|bague|collier|breloque|broche|pendentif|bijou/.test(t)) return 'jewelry';
+  if (/botte|boots|basket|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|bottine|sneaker|espadrille|tongs?\b/.test(t)) return 'shoes';
+  return 'clothing';
+}
+const GOOGLE_CATEGORY = {
+  clothing: 'Apparel & Accessories > Clothing',
+  shoes:    'Apparel & Accessories > Shoes',
+  bag:      'Apparel & Accessories > Handbags, Wallets & Cases',
+  hat:      'Apparel & Accessories > Clothing Accessories > Hats',
+  scarf:    'Apparel & Accessories > Clothing Accessories > Scarves & Shawls',
+  belt:     'Apparel & Accessories > Clothing Accessories > Belts',
+  tie:      'Apparel & Accessories > Clothing Accessories > Neckties',
+  gloves:   'Apparel & Accessories > Clothing Accessories > Gloves & Mittens',
+  jewelry:  'Apparel & Accessories > Jewelry',
+};
+const KIND_FR = { clothing: 'Vêtements', shoes: 'Chaussures', bag: 'Sacs', hat: 'Chapeaux',
+  scarf: 'Foulards et écharpes', belt: 'Ceintures', tie: 'Cravates', gloves: 'Gants',
+  jewelry: 'Bijoux' };
+
+// Taille affichée (FR), alignée sur formatSize() du SPA pour la taille unique.
+function sizeFR(size) {
+  let s = String(size || '').replace(/\s*International(e|s)?\b\s*/gi, '').trim();
+  if (!s || /^(taille\s*unique|one\s*size|tu|os)(\s*fr)?$/i.test(s)) return 'Taille unique';
+  return s;
+}
+
+// Couleurs harmonisées en français (flux ciblant la France).
+const COLOR_FR = {
+  black: 'Noir', navy: 'Marine', grey: 'Gris', gray: 'Gris', white: 'Blanc', brown: 'Marron',
+  khaki: 'Kaki', blue: 'Bleu', green: 'Vert', yellow: 'Jaune', purple: 'Violet', burgundy: 'Bordeaux',
+  red: 'Rouge', pink: 'Rose', silver: 'Argent', gold: 'Or', ecru: 'Écru', multicolour: 'Multicolore',
+  multicolor: 'Multicolore', other: 'Autre', beige: 'Beige', camel: 'Camel', orange: 'Orange',
+};
+function colorFR(c) {
+  const k = String(c || '').trim();
+  return COLOR_FR[k.toLowerCase()] || k;
+}
+
 function xmlesc(str) {
   return String(str || '')
     .replace(/&/g, '&amp;')
@@ -325,16 +389,16 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     const desc        = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
     const price       = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
     const genderFeed  = p.gender === 'h' ? 'male' : p.gender === 'f' ? 'female' : 'unisex';
-    const color       = xmlesc(p.color || '');
+    const color       = xmlesc(colorFR(p.color));
+    const kind        = productKind(p.type);
+    // Taille obligatoire pour les vêtements et chaussures en France
+    const sizeTag     = (kind === 'clothing' || kind === 'shoes')
+      ? '\n      <g:size>' + xmlesc(sizeFR(p.size)) + '</g:size>' : '';
+    const productType = xmlesc(KIND_FR[kind] + ' > ' + (gender || 'Unisexe') + ' > ' + p.brand);
 
-    const euCountries = ['DE','BE','NL','LU','IT','ES','PT','AT','CH','DK','SE','NO','FI','PL','CZ','HU','GR'];
-
-    const shippingBlocks = [
-      `      <g:shipping>\n        <g:country>FR</g:country>\n        <g:service>Standard</g:service>\n        <g:price>15.00 EUR</g:price>\n        <g:min_transit_time>5</g:min_transit_time>\n        <g:max_transit_time>7</g:max_transit_time>\n      </g:shipping>`,
-      ...euCountries.map(c =>
-        `      <g:shipping>\n        <g:country>${c}</g:country>\n        <g:service>Standard</g:service>\n        <g:price>25.00 EUR</g:price>\n        <g:min_transit_time>7</g:min_transit_time>\n        <g:max_transit_time>14</g:max_transit_time>\n      </g:shipping>`
-      ),
-    ].join('\n');
+    const shippingBlocks = SHIP_ZONES.flatMap(z => z.countries.map(c =>
+      `      <g:shipping>\n        <g:country>${c}</g:country>\n        <g:service>Standard</g:service>\n        <g:price>${z.price}</g:price>\n        <g:min_handling_time>${SHIP_HANDLING.min}</g:min_handling_time>\n        <g:max_handling_time>${SHIP_HANDLING.max}</g:max_handling_time>\n        <g:min_transit_time>${z.min}</g:min_transit_time>\n        <g:max_transit_time>${z.max}</g:max_transit_time>\n      </g:shipping>`
+    )).join('\n');
 
     return `    <item>
       <g:id>${xmlesc(p.id)}</g:id>
@@ -345,9 +409,11 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:availability>in stock</g:availability>
       <g:condition>used</g:condition>
       <g:brand>${xmlesc(p.brand)}</g:brand>
-      <g:target_country>FR</g:target_country>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:google_product_category>${xmlesc(GOOGLE_CATEGORY[kind])}</g:google_product_category>
+      <g:product_type>${productType}</g:product_type>
       <g:gender>${genderFeed}</g:gender>
-      <g:age_group>adult</g:age_group>${color ? '\n      <g:color>' + color + '</g:color>' : ''}
+      <g:age_group>adult</g:age_group>${color ? '\n      <g:color>' + color + '</g:color>' : ''}${sizeTag}
 ${shippingBlocks}
     </item>`;
   }).join('\n');
@@ -409,9 +475,11 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
     '@type':    'Product',
     name:       p.brand + ' — ' + p.type,
     brand:      { '@type': 'Brand', name: p.brand },
-    image:      imgAbs,
+    image:      imgAbs ? [imgAbs] : undefined,
     description: desc,
     sku:        p.id,
+    color:      p.color ? colorFR(p.color) : undefined,
+    size:       sizeFR(p.size),
     offers: {
       '@type':        'Offer',
       priceCurrency:  'EUR',
@@ -419,7 +487,27 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
       availability:   sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
       url:            url,
       itemCondition:  'https://schema.org/UsedCondition',
-      seller:         { '@type': 'Organization', name: 'Passeist' }
+      seller:         { '@type': 'Organization', name: 'Passeist' },
+      // Mêmes zones, prix et délais que feed.xml (CGV §6)
+      shippingDetails: SHIP_ZONES.map(z => ({
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: z.price.split(' ')[0], currency: 'EUR' },
+        shippingDestination: z.countries.map(c => ({ '@type': 'DefinedRegion', addressCountry: c })),
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: SHIP_HANDLING.min, maxValue: SHIP_HANDLING.max, unitCode: 'DAY' },
+          transitTime:  { '@type': 'QuantitativeValue', minValue: z.min, maxValue: z.max, unitCode: 'DAY' }
+        }
+      })),
+      // Politique de retour (CGV §7)
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: RETURN_COUNTRIES,
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility'
+      }
     }
   });
 
