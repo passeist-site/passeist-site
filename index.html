@@ -3031,6 +3031,18 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .product-name { color: #f2eee8; }
 .product-size, .hbs-others { color: #d4d1cb; }
 
+/* « Filtres + tri » compact : 3/4 de la hauteur au maximum, le haut de
+   l'écran reste libre (Tom). Défile à l'intérieur si l'écran est petit. */
+.filter-sheet { max-height: 75vh; max-height: 75dvh; padding: 10px 20px 18px; }
+.filter-sheet-handle { margin-bottom: 10px; }
+.filter-sheet-header { margin-bottom: 12px; padding-bottom: 8px; }
+.filter-sheet .filter-field--search { margin-bottom: 12px; }
+.filter-search-box { height: 44px; }
+.filter-sheet .filter-field { margin-bottom: 8px; }
+.filter-sheet .filter-field .filter-select { height: 40px; }
+.filter-sheet .filter-field:has(#m-sort-select) { margin-top: 12px; padding-top: 10px; }
+.filter-sheet .filter-sheet-apply { margin-top: 12px; padding: 11px; }
+
 /* ---- Verre dépoli progressif (« Liquid Glass ») : le flou lui-même est en
    dégradé, fort sur le bord d'ancrage, qui s'efface vers le côté ouvert, et
    il apparaît en douceur à l'ouverture. Deux calques : un flou léger partout,
