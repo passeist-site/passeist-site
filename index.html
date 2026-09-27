@@ -848,6 +848,12 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     grid-column: 1 / -1;
   }
 }
+/* Page Favoris : aucune pièce mise en avant, toutes les cartes au format normal. */
+body[data-page="favorites"] .grid .product-card:nth-child(8n),
+body[data-page="favorites"] .grid .product-card:nth-child(5n) {
+  grid-column: auto;
+  grid-row: auto;
+}
 .product-card {
   cursor: pointer; background: transparent; border: none;
   color: inherit; text-decoration: none; /* neutralise les styles par défaut de <a> */
@@ -4790,7 +4796,7 @@ function trimWhiteBorders(imgEl) {
   if (url.origin !== location.origin || !imgEl.naturalWidth) return Promise.resolve(null);
   const W = imgEl.naturalWidth, H = imgEl.naturalHeight;
   // Détection sur une version réduite (rapide), puis découpe en pleine résolution.
-  const k = Math.min(1, 200 / Math.max(W, H));
+  const k = Math.min(1, 240 / Math.max(W, H));
   const sw = Math.max(1, Math.round(W * k)), sh = Math.max(1, Math.round(H * k));
   const c = document.createElement('canvas');
   c.width = sw; c.height = sh;
@@ -4798,7 +4804,7 @@ function trimWhiteBorders(imgEl) {
   ctx.drawImage(imgEl, 0, 0, sw, sh);
   let data;
   try { data = ctx.getImageData(0, 0, sw, sh).data; } catch (e) { return Promise.resolve(null); }
-  // Une colonne/ligne est "blanche" si tous ses pixels sont quasi blancs.
+  // 1) Bandes de remplissage : colonnes/lignes entièrement quasi blanches.
   const isWhite = (i) => data[i] >= 246 && data[i + 1] >= 246 && data[i + 2] >= 246;
   const colWhite = (x) => { for (let y = 0; y < sh; y++) if (!isWhite((y * sw + x) * 4)) return false; return true; };
   const rowWhite = (y) => { for (let x = 0; x < sw; x++) if (!isWhite((y * sw + x) * 4)) return false; return true; };
@@ -4807,6 +4813,32 @@ function trimWhiteBorders(imgEl) {
   while (r > l && colWhite(r)) r--;
   while (t < b && rowWhite(t)) t++;
   while (b > t && rowWhite(b)) b--;
+  // 2) Fond blanc de la prise de vue (vêtement posé sur du blanc) : on resserre
+  //    le cadre bord par bord (le bord le plus blanc d'abord) jusqu'à ce
+  //    qu'aucun des 4 bords ne contienne de blanc, puis on ajuste en 3:4
+  //    (format d'affichage) en rognant le côté le plus clair. Ainsi le cover
+  //    3:4 n'a plus rien à couper et la photo remplit le cadre bord à bord.
+  //    Si le vêtement est lui-même blanc (le cadre fondrait), on garde l'étape 1.
+  const base = [l, r, t, b];
+  const isBg = (i) => data[i] >= 236 && data[i + 1] >= 236 && data[i + 2] >= 236;
+  const colFrac = (x) => { let n = 0; for (let y = t; y <= b; y++) if (isBg((y * sw + x) * 4)) n++; return n / (b - t + 1); };
+  const rowFrac = (y) => { let n = 0; for (let x = l; x <= r; x++) if (isBg((y * sw + x) * 4)) n++; return n / (r - l + 1); };
+  const TARGET = 3 / 4, TOL = 0.01, MAX_BG = 0.01;
+  let flip = false;
+  for (let guard = 0; guard < 2 * (sw + sh); guard++) {
+    if (r - l < sw * 0.35 || b - t < sh * 0.35) { [l, r, t, b] = base; break; }
+    const fl = colFrac(l), fr = colFrac(r), ft = rowFrac(t), fb = rowFrac(b);
+    const m = Math.max(fl, fr, ft, fb);
+    if (m > MAX_BG) {
+      if (m === fl) l++; else if (m === fr) r--; else if (m === ft) t++; else b--;
+      continue;
+    }
+    const ratio = (r - l + 1) / (b - t + 1);
+    flip = !flip;
+    if (ratio > TARGET * (1 + TOL)) { if (fl > fr || (fl === fr && flip)) l++; else r--; }
+    else if (ratio < TARGET * (1 - TOL)) { if (ft > fb || (ft === fb && flip)) t++; else b--; }
+    else break;
+  }
   // +1 px réduit de marge de sécurité pour ne garder aucun liseré blanc.
   const x0 = l > 0 ? Math.ceil((l + 1) / k) : 0, x1 = r < sw - 1 ? Math.floor(r / k) : W;
   const y0 = t > 0 ? Math.ceil((t + 1) / k) : 0, y1 = b < sh - 1 ? Math.floor(b / k) : H;
