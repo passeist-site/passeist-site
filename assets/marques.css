@@ -25,6 +25,7 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
     grid-template-columns: 40px 40px 1fr 40px 40px !important;
     align-items: center; gap: 0 !important;
     flex-wrap: nowrap !important;
+    border-bottom-color: transparent !important;  /* plus de trait sous le header */
   }
   .topbar-right, .topbar-icons { display: contents !important; }
   .top-nav { display: none !important; }

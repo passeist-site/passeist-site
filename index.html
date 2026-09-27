@@ -2712,10 +2712,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     border-bottom: none;  /* épuré : plus de trait sous la barre de filtres */
     gap: 8px;
   }
-  /* Épuré : pas de trait sous le header quand la barre de filtres le suit */
-  body[data-page="shop"] .topbar,
-  body[data-page="archive"] .topbar,
-  body[data-page="favorites"] .topbar { border-bottom-color: transparent; }
+  /* Épuré : plus de trait sous le header mobile, sur toutes les pages */
+  .topbar { border-bottom-color: transparent; }
   /* Compense la hauteur du filter-bar fixed (≈44 px) avec marge minimale */
   .shop .main, .archive .main {
     padding-top: 50px !important;
