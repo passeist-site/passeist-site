@@ -60,6 +60,17 @@ Même règle que les cartes des grilles :
 
 Le bouton EXPLORE (`.hero-cta`) a lui aussi des coins arrondis de 6 px.
 
+## 3 ter. Carrousel des pages Auteurs (`/marques/<marque>`)
+
+Même règle que les cartes des grilles, avec le même texte que les cartes de la
+Boutique (marque + étiquette prix, nom, trait, taille · genre, FR/EN) :
+
+- photo 1 de la fiche (même fichier, `srcset` 400 / 800 / 1600), cadre 3:4,
+  fond #fff, `object-fit: contain`, coins 6 px (`assets/marques.css`) ;
+- les cartes sont **régénérées à chaque build** par
+  `netlify/plugins/generate-product-pages` (pièces en vente de la marque,
+  24 max) et renvoient directement vers la fiche produit.
+
 ## 4. Photos 2+ de la fiche produit
 
 Grande photo quand une photo 2+ est affichée, et vignettes 2+, sur mobile et
@@ -87,8 +98,9 @@ desktop :
 - **Desktop (> 900 px)** : toutes les cartes au format normal, **aucune carte
   agrandie** (pas de pièce mise en avant, pas de `grid-auto-flow: dense`).
 - **Mobile (≤ 900 px)** : une carte **pleine largeur tous les 5 articles**
-  (`.product-card:nth-child(5n)`, `grid-column: 1 / -1`), **sauf sur la page
-  Favoris** (`body[data-page="favorites"]`) où toutes les cartes sont normales.
+  (`.product-card:nth-child(5n)`, `grid-column: 1 / -1`) sur la Boutique,
+  **sauf sur les pages Favoris et Vendu** (`body[data-page="favorites"]`,
+  `body[data-page="archive"]`) où toutes les cartes sont normales.
 - **Espacements** :
   - écart vertical entre rangées : **48 px** desktop, **32 px** mobile ; écart
     horizontal inchangé (36 px desktop, 14 px ≤ 900 px, 10 px ≤ 480 px) ;

@@ -2723,6 +2723,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   }
 
 </style>
+<link rel="stylesheet" href="/assets/marques.css">
 </head>
 <body class="marques-page">
 
@@ -2751,22 +2752,40 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
       <button class="topbar-icon topbar-icon-chat" type="button" onclick="window.location.href='/'" aria-label="Ouvrir le chat" title="Chat">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
       </button>
-      <button class="topbar-icon" onclick="window.location.href='/'" aria-label="Recherche" title="Recherche">
+      <button class="topbar-icon topbar-icon-search" onclick="window.location.href='/shop'" aria-label="Recherche" title="Recherche">
         <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
-      <button class="topbar-icon" onclick="window.location.href='/'" aria-label="Favoris" title="Favoris">
+      <button class="topbar-icon topbar-icon-fav" onclick="window.location.href='/favorites'" aria-label="Favoris" title="Favoris">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>
-      <button class="topbar-icon" onclick="window.location.href='/'" aria-label="Panier" title="Panier">
+      <button class="topbar-icon cart-btn" onclick="window.location.href='/'" aria-label="Panier" title="Panier">
         <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 12H6.5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
       </button>
       <button class="lang-toggle" type="button" aria-label="Changer la langue / Change language" title="FR / EN" onclick="(function(){var c=document.documentElement.getAttribute('lang')||'fr';var n=c==='fr'?'en':'fr';document.documentElement.setAttribute('lang',n);try{localStorage.setItem('passeist_lang',n);}catch(e){}})()">
         <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
       </button>
     </div>
-    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.top-nav').classList.toggle('mobile-open')"><span></span></button>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Menu" aria-expanded="false"><span></span></button>
   </div>
 </div>
+<!-- MOBILE NAV (panneau latéral gauche, mobile uniquement) : cf. assets/marques.js -->
+<div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true"></div>
+<nav class="mobile-nav" id="mobile-nav" aria-hidden="true" aria-label="Menu">
+  <button class="mobile-nav-close" id="mobile-nav-close" type="button" aria-label="Fermer le menu / Close menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+  </button>
+  <a href="/"><span class="lang-fr">Accueil</span><span class="lang-en">Home</span></a>
+  <a href="/shop"><span class="lang-fr">Boutique</span><span class="lang-en">Shop</span></a>
+  <a href="/archive"><span class="lang-fr">Vendu</span><span class="lang-en">Sold</span></a>
+  <a href="/marques" class="active"><span class="lang-fr">Auteurs</span><span class="lang-en">Authors</span></a>
+  <a href="/about"><span class="lang-fr">À propos</span><span class="lang-en">About</span></a>
+  <div class="mobile-nav-foot">
+    <a class="mobile-nav-contact" href="/">Contact</a>
+    <button class="lang-toggle mobile-nav-lang" id="mobile-nav-lang" type="button" aria-label="Changer la langue / Change language">
+      <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
+    </button>
+  </div>
+</nav>
 <script>
 (function(){
   function detectLang(){
@@ -2888,5 +2907,6 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   </nav>
 </footer>
 
+<script src="/assets/marques.js" defer></script>
 </body>
 </html>

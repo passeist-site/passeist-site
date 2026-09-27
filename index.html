@@ -191,6 +191,9 @@ a { color: inherit; }
   position: static !important;
 }
 .topbar-icon:hover { opacity: 0.55; }
+/* Le pictogramme panier est plus étroit que le cœur : on l'agrandit pour
+   qu'ils paraissent de même taille. */
+.topbar .cart-btn svg { width: 24px; height: 24px; }
 .topbar-icon .nav-ink,
 .topbar-icon .cart-label { display: none !important; }
 .topbar-icon .cart-count {
@@ -255,7 +258,7 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 }
 .logo {
   font-family: var(--font-sans);
-  font-size: 26px; font-weight: 200;
+  font-size: 29px; font-weight: 200;
   letter-spacing: -0.045em; line-height: 0.86;
   color: var(--ink);
   text-transform: none;
@@ -861,12 +864,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 /* Mobile uniquement (2 colonnes) : une pièce mise en avant en pleine largeur
    tous les 5 articles (4 cartes normales, 2 lignes de 2, puis 1 grande), donc
    jamais de carte seule avec un trou à côté. Desktop : toutes les cartes au
-   format normal. Page Favoris : aucune mise en avant. */
+   format normal. Pages Favoris et Vendu : aucune mise en avant. */
 @media (max-width: 900px) {
   .grid .product-card:nth-child(5n) {
     grid-column: 1 / -1;
   }
-  body[data-page="favorites"] .grid .product-card:nth-child(5n) {
+  body[data-page="favorites"] .grid .product-card:nth-child(5n),
+  body[data-page="archive"] .grid .product-card:nth-child(5n) {
     grid-column: auto;
   }
 }
@@ -2486,11 +2490,12 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .topbar .topbar-icon { width: 40px; height: 40px; justify-self: center; grid-row: 1; }
   .topbar .topbar-icon svg { width: 20px; height: 20px; }
+  .topbar .cart-btn svg { width: 24px; height: 24px; }
   .topbar .topbar-icon-search { grid-column: 2; }
   .topbar .topbar-icon-fav { grid-column: 4; }
   .topbar .cart-btn { grid-column: 5; }
   .topbar .topbar-icon .cart-count { top: 4px; right: 1px; }
-  .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; }
+  .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; font-size: 31px; }
   .hero, .shop, .about { margin-top: var(--topbar-h-mobile); }
   .detail { margin-top: 0; }
 
@@ -2638,9 +2643,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     background: #1C2230;
     margin: 0;
     padding: 8px 20px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: none;  /* épuré : plus de trait sous la barre de filtres */
     gap: 8px;
   }
+  /* Épuré : pas de trait sous le header quand la barre de filtres le suit */
+  body[data-page="shop"] .topbar,
+  body[data-page="archive"] .topbar,
+  body[data-page="favorites"] .topbar { border-bottom-color: transparent; }
   /* Compense la hauteur du filter-bar fixed (≈44 px) avec marge minimale */
   .shop .main, .archive .main {
     padding-top: 50px !important;
@@ -2662,6 +2671,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     padding: 8px 12px;
     font-size: 10px;
     letter-spacing: 0.1em;
+    border-radius: 6px;
   }
   /* Badge nombre de filtres masqué (inutile en UX) */
   .filter-mobile-toggle .filter-count { display: none !important; }
@@ -3033,7 +3043,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     <div class="filter-search-row" hidden></div>
     <div class="filter-bar">
       <button class="filter-mobile-toggle" id="filter-mobile-toggle" type="button" aria-expanded="false" aria-controls="filter-sheet">
-        <span>Filtres + tri</span>
+        <span class="filter-toggle-label">Filtres + tri</span>
         <span class="filter-count" id="filter-count" hidden>0</span>
       </button>
       <div class="filter-field filter-search-inline">
@@ -7679,10 +7689,11 @@ window.updateSEO = function(p) {
     window.openDetail = function(id, fromHistory) {
       const cameFromHome = !fromHistory && document.body.dataset.page === 'home';
       if (cameFromHome) {
-        // Mémorise l'ID cliqué pour restauration carrousel + scroll homepage
+        // Retour depuis une fiche ouverte via le carrousel d'accueil : on revient
+        // sur la Boutique, à l'endroit de la pièce (Tom). L'entrée d'historique
+        // de l'accueil devient donc la Boutique (bouton retour du navigateur).
         window.__homeCarouselScrollId = String(id);
-        const tr = document.getElementById('hero-marquee-track');
-        if (tr) window.__homeCarouselScrollLeft = tr.scrollLeft || 0;
+        try { history.replaceState({ t:'page', p:'shop', scrollToId: String(id) }, '', '/shop'); } catch(e){}
       }
       _od.call(window, id);
       document.body.classList.add('detail-open');
@@ -7711,26 +7722,24 @@ window.updateSEO = function(p) {
       document.body.style.width = '';
       document.documentElement.style.overflow = '';
       if (cameFromHome) {
-        _gp.call(window, 'home');
-        document.body.dataset.page = 'home';
-        try { history.pushState({ t:'page', p:'home' }, '', '/'); } catch(e){}
-        // Restaure la position du carrousel sur la carte cliquée
-        requestAnimationFrame(() => {
-          const tr = document.getElementById('hero-marquee-track');
-          if (!tr) return;
-          if (window.__homeCarouselScrollId) {
-            const card = tr.querySelector('[data-id="' + window.__homeCarouselScrollId + '"]');
-            if (card && card.scrollIntoView) {
-              card.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
-              return;
-            }
-          }
-          if (typeof window.__homeCarouselScrollLeft === 'number') {
-            tr.scrollLeft = window.__homeCarouselScrollLeft;
-          }
-        });
+        // Fiche ouverte depuis le carrousel d'accueil : retour sur la Boutique,
+        // à l'endroit de la pièce.
+        _gp.call(window, 'shop');
+        document.body.dataset.page = 'shop';
+        try { history.pushState({ t:'page', p:'shop' }, '', '/shop'); } catch(e){}
+        scrollToShopCard(window.__homeCarouselScrollId);
       }
     };
+  }
+  // Fait défiler la Boutique jusqu'à la carte d'une pièce (centrée à l'écran)
+  function scrollToShopCard(id) {
+    if (!id) return;
+    const go = (tries) => {
+      const card = document.querySelector('#grid .product-card[data-id="' + id + '"]');
+      if (card) card.scrollIntoView({ behavior: 'auto', block: 'center' });
+      else if (tries > 0) setTimeout(() => go(tries - 1), 80);
+    };
+    requestAnimationFrame(() => go(10));
   }
   // Gère back/forward
   window.addEventListener('popstate', function(ev){
@@ -7749,6 +7758,8 @@ window.updateSEO = function(p) {
       _gp.call(window, p);
       document.body.dataset.page = p;
       updateSEO(null);
+      // Retour navigateur depuis une fiche ouverte via le carrousel d'accueil
+      if (s && s.scrollToId) scrollToShopCard(s.scrollToId);
     }
   });
   // État initial (au chargement), supporte les URLs propres /shop, /archive, /product/{slug}
@@ -8004,7 +8015,7 @@ window.__loadTawk = function(){
       'filter.gender': 'Genre', 'filter.brand': 'Marque', 'filter.category': 'Catégorie',
       'filter.color': 'Couleur', 'filter.sort': 'Trier par', 'filter.search': 'Recherche',
       'filter.reset': 'Réinitialiser', 'filter.results': 'Voir les résultats',
-      'filter.title': 'Filtres & tri', 'filter.close': 'Fermer',
+      'filter.title': 'Filtres & tri', 'filter.close': 'Fermer', 'filter.toggle': 'Filtres + tri',
       'filter.all_genders': 'Tous genres', 'filter.all_brands': 'Toutes marques',
       'filter.all_cats': 'Toutes catégories', 'filter.all_colors': 'Toutes couleurs',
       'sort.newest': 'Nouveautés', 'sort.price_asc': 'Prix croissant',
@@ -8047,7 +8058,7 @@ window.__loadTawk = function(){
       'filter.gender': 'Gender', 'filter.brand': 'Brand', 'filter.category': 'Category',
       'filter.color': 'Color', 'filter.sort': 'Sort by', 'filter.search': 'Search',
       'filter.reset': 'Reset', 'filter.results': 'View results',
-      'filter.title': 'Filters & sort', 'filter.close': 'Close',
+      'filter.title': 'Filters & sort', 'filter.close': 'Close', 'filter.toggle': 'Filters + sort',
       'filter.all_genders': 'All genders', 'filter.all_brands': 'All brands',
       'filter.all_cats': 'All categories', 'filter.all_colors': 'All colors',
       'sort.newest': 'Newest', 'sort.price_asc': 'Price low to high',
@@ -8164,6 +8175,8 @@ window.__loadTawk = function(){
     if (apply) apply.textContent = t('filter.results');
     const fsTitle = document.querySelector('.filter-sheet-title');
     if (fsTitle) fsTitle.textContent = t('filter.title');
+    const ftLabel = document.querySelector('.filter-toggle-label');
+    if (ftLabel) ftLabel.textContent = t('filter.toggle');
     const fsClose = document.getElementById('filter-sheet-close');
     if (fsClose) fsClose.textContent = t('filter.close');
     // Sort options

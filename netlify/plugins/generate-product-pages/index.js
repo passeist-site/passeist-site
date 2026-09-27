@@ -429,6 +429,73 @@ ${items}
 </rss>`;
 }
 
+// ── Pages Auteurs : carrousel "Notre sélection" au format des cartes Boutique ─
+// REGLE FIGEE par Tom, voir PHOTOS.md : chaque carte montre la photo 1 de la
+// fiche (même fichier, seule la largeur change via srcset), cadre 3:4 blanc,
+// contain, coins 6px (styles dans assets/marques.css). Seules les pièces en
+// vente sont listées ; le lien ouvre directement la fiche produit.
+
+function normBrand(b) {
+  return String(b || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+}
+
+function brandCardImg(p, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  if (!p.n) return { src: '', srcset: '' };
+  if (validatedLocal.has(p.id) && fs.existsSync(path.join(publishDir, 'img', p.id + '-0-md.webp'))) {
+    const base = '/img/' + p.id + '-0-';
+    return { src: base + 'md.webp', srcset: base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w' };
+  }
+  const reorder = imgReorder[p.id];
+  const photoNum = reorder ? reorder[0] : 1;
+  const suffix = imgSuffix[p.id] || '_2';
+  return {
+    src: vestiaireUrl(p, photoNum, 800, suffix),
+    srcset: [400, 800, 1600].map(w => vestiaireUrl(p, photoNum, w, suffix) + ' ' + w + 'w').join(', ')
+  };
+}
+
+function buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  const img = brandCardImg(p, imgReorder, imgSuffix, validatedLocal, publishDir);
+  const size = sizeFR(p.size);
+  const sizeEN = size === 'Taille unique' ? 'One size' : size;
+  const gFR = p.gender === 'h' ? 'Homme' : p.gender === 'f' ? 'Femme' : '';
+  const gEN = p.gender === 'h' ? 'Men' : p.gender === 'f' ? 'Women' : '';
+  const typeEN = p.type_en || p.type;
+  return `
+        <a class="carousel-card bc-card" href="/product/${esc(productSlug(p))}">
+          <div class="bc-img"><img src="${esc(img.src)}" srcset="${esc(img.srcset)}" sizes="200px" alt="${esc(p.brand + ' ' + p.type)}" loading="lazy" decoding="async"></div>
+          <div class="bc-body">
+            <div class="bc-brand"><span class="bc-brand-name">${esc(p.brand)}</span><span class="bc-price">${esc(p.price)} €</span></div>
+            <div class="bc-name"><span class="lang-fr">${esc(p.type)}</span><span class="lang-en">${esc(typeEN)}</span></div>
+            <div class="bc-meta"><span class="lang-fr">${esc(size)}${gFR ? ' · ' + gFR : ''}</span><span class="lang-en">${esc(sizeEN)}${gEN ? ' · ' + gEN : ''}</span></div>
+          </div>
+        </a>`;
+}
+
+function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  const dir = path.join(publishDir, 'marques');
+  if (!fs.existsSync(dir)) return 0;
+  let updated = 0;
+  fs.readdirSync(dir).filter(f => f.endsWith('.html')).forEach(f => {
+    const file = path.join(dir, f);
+    const html = fs.readFileSync(file, 'utf8');
+    const re = /(<div class="carousel"[^>]*>)([\s\S]*?<\/a>\s*)(<\/div>)/;
+    const m = html.match(re);
+    const brandParam = html.match(/href="\/shop\?brand=([^"&]+)"/);
+    if (!m || !brandParam) return;
+    const brand = normBrand(decodeURIComponent(brandParam[1]));
+    const items = products
+      .filter(p => normBrand(p.brand) === brand && !soldIds.has(p.id) && p.sold !== true)
+      .slice(0, 24);
+    const cards = items.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('');
+    const open = items.length ? '<div class="carousel">' : '<div class="carousel" style="display:none">';
+    // Remplacement par fonction : aucun motif "$" des textes produits n'est interprété
+    fs.writeFileSync(file, html.replace(re, () => open + cards + '\n      </div>'), 'utf8');
+    updated++;
+  });
+  return updated;
+}
+
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
@@ -647,6 +714,10 @@ module.exports = {
     fs.writeFileSync(path.join(publishDir, 'sitemap.xml'), sitemap, 'utf8');
     const sitemapCount = (sitemap.match(/<loc>/g) || []).length;
     console.log('[generate-product-pages] Generated sitemap.xml (' + sitemapCount + ' urls)');
+
+    // ── Pages Auteurs : carrousel "Notre sélection" régénéré à chaque build ─
+    const brandPages = buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);
+    console.log('[generate-product-pages] Updated brand carousels (' + brandPages + ' pages)');
 
     utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml + sitemap.xml' });
   }

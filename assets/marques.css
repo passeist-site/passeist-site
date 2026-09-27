@@ -1,0 +1,166 @@
+/* Pages Auteurs (/marques, /marques/*) : mêmes header mobile, menu latéral et
+   cartes produits que le reste du site (index.html). Chargé après les styles
+   inline de ces pages, d'où quelques !important pour écraser l'ancienne copie. */
+
+/* ---- Tous écrans : tailles du logo et du panier comme index.html ---- */
+.topbar .logo { font-size: 29px; }
+.topbar .topbar-icon svg { position: static !important; }
+.topbar .cart-btn svg { width: 24px; height: 24px; }
+.mobile-nav, .mobile-nav-backdrop { display: none; }
+
+/* ---- Langue (FR/EN) pour le menu et les cartes ---- */
+html[lang="en"] .mobile-nav .lang-fr,
+html[lang="en"] .bc-card .lang-fr { display: none !important; }
+html[lang="fr"] .mobile-nav .lang-en,
+html[lang="fr"] .bc-card .lang-en { display: none !important; }
+html[lang] .mobile-nav .mobile-nav-lang .lang-fr,
+html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
+
+/* ---- Header mobile sur une ligne : [menu][loupe]  passéist.  [favoris][panier] ---- */
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 6px !important;
+    height: var(--topbar-h-mobile) !important; min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 40px 40px 1fr 40px 40px !important;
+    align-items: center; gap: 0 !important;
+    flex-wrap: nowrap !important;
+  }
+  .topbar-right, .topbar-icons { display: contents !important; }
+  .top-nav { display: none !important; }
+  .topbar-icon-chat, .topbar .lang-toggle { display: none !important; }
+  .nav-toggle {
+    display: flex !important;
+    grid-column: 1; grid-row: 1;
+    width: 40px; height: 40px; justify-self: center;
+    align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; cursor: pointer;
+  }
+  .topbar .topbar-icon { width: 40px !important; height: 40px !important; justify-self: center; grid-row: 1; }
+  .topbar .topbar-icon svg { width: 20px; height: 20px; }
+  .topbar .cart-btn svg { width: 24px; height: 24px; }
+  .topbar .topbar-icon-search { grid-column: 2; }
+  .topbar .topbar-icon-fav { grid-column: 4; }
+  .topbar .cart-btn { grid-column: 5; }
+  .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; font-size: 31px; }
+  body.marques-page { padding-top: calc(var(--topbar-h-mobile) + 16px) !important; }
+
+  /* Panneau menu : glisse depuis la gauche, voile sur le reste de la page */
+  .mobile-nav-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(10,12,18,0.55);
+    z-index: 260;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+  .mobile-nav-backdrop.open { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
+  .mobile-nav {
+    display: flex !important;
+    position: fixed; top: 0; left: 0; bottom: 0; right: auto;
+    width: min(84vw, 340px);
+    background: var(--bg);
+    border-right: 1px solid var(--line);
+    z-index: 261;
+    transform: translateX(-100%); opacity: 1;
+    visibility: hidden; pointer-events: none;
+    transition: transform 0.35s ease, visibility 0s linear 0.35s;
+    padding: 64px 28px calc(24px + env(safe-area-inset-bottom));
+    flex-direction: column; gap: 0;
+    overflow-y: auto;
+  }
+  .mobile-nav.open {
+    transform: translateX(0);
+    visibility: visible; pointer-events: auto;
+    transition: transform 0.35s ease, visibility 0s;
+  }
+  .mobile-nav > a {
+    color: var(--ink); text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: var(--tracking-wide);
+    padding: 14px 0; align-self: flex-start;
+  }
+  .mobile-nav > a.active {
+    font-weight: 700; text-decoration: underline;
+    text-decoration-thickness: 1px; text-underline-offset: 6px;
+  }
+  .mobile-nav-close {
+    position: absolute; top: 7px; left: 14px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; cursor: pointer;
+  }
+  .mobile-nav-close svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 1.2; stroke-linecap: round; fill: none; }
+  .mobile-nav-foot {
+    margin-top: auto; padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .mobile-nav-contact {
+    color: var(--ink); text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 13px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: var(--tracking-wide);
+    padding: 8px 0;
+  }
+}
+body.no-scroll { overflow: hidden; }
+
+/* ---- Carrousel "Notre sélection" : cartes au format Boutique ----
+   REGLE FIGEE par Tom, voir PHOTOS.md : photo 1 de la fiche, cadre 3:4, fond
+   blanc, contain, coins 6px ; texte comme les cartes de la Boutique.
+   Les cartes sont générées au build (netlify/plugins/generate-product-pages). */
+.carousel .bc-card {
+  flex: 0 0 200px;
+  background: transparent;
+  color: var(--ink); text-decoration: none;
+  scroll-snap-align: start;
+  display: block;
+}
+.carousel .bc-card:hover { transform: none; }
+.bc-img {
+  aspect-ratio: 3 / 4;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.bc-img img {
+  width: 100%; height: 100%; display: block;
+  object-fit: contain; object-position: center;
+}
+.bc-body { padding: 12px 0 0; line-height: 1.45; }
+.bc-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 800;
+  margin-bottom: 6px;
+}
+.bc-brand .bc-brand-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bc-price {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  background: #f4f1ec; color: #1C2230;
+  font-size: 10px; font-weight: 700;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  white-space: nowrap;
+}
+.bc-name {
+  font-family: var(--font-sans);
+  font-size: 14px; color: var(--text-dim); font-weight: 300;
+  font-style: italic; letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.bc-meta {
+  border-top: 1px solid var(--line);
+  padding-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px; color: var(--text-mute); font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+@media (max-width: 600px) {
+  .carousel .bc-card { flex-basis: 42vw; }
+  .bc-brand { font-size: 9px; gap: 6px; margin-bottom: 4px; }
+  .bc-name { font-size: 13px; margin-bottom: 4px; }
+  .bc-body { padding-top: 8px; }
+  .bc-meta { padding-top: 4px; }
+}
