@@ -18,6 +18,21 @@
 //   au succès l'utilisateur revient sur /success?session_id=...
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { getStore, connectLambda } = require('@netlify/blobs');
+
+// Pièces déjà vendues sur le site (enregistrées par stripe-webhook dans Netlify
+// Blobs). En cas d'erreur de lecture, on ne bloque pas le paiement.
+async function findSoldIds(event, ids) {
+  try {
+    connectLambda(event);
+    const store = getStore('passeist-sold');
+    const found = await Promise.all(ids.map(async id => ((await store.get(String(id))) ? String(id) : null)));
+    return found.filter(Boolean);
+  } catch (err) {
+    console.error('Lecture vendus (Blobs) impossible :', err.message);
+    return [];
+  }
+}
 
 // Source de vérité des prix côté serveur (généré depuis index.html via tools/export_products.py)
 // IMPORTANT : on N'UTILISE JAMAIS le prix envoyé par le client — il est trivialement
@@ -71,6 +86,22 @@ exports.handler = async (event) => {
 
     const baseUrl = process.env.URL || 'https://passeist.com';
     const lang = locale === 'en' ? 'en' : 'fr';
+
+    // Anti double vente : refuse une pièce déjà vendue sur le site
+    const soldIds = await findSoldIds(event, items.map(i => String(i.id || '')).filter(Boolean));
+    if (soldIds.length > 0) {
+      return {
+        statusCode: 409,
+        headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: 'sold',
+          sold: soldIds,
+          message: lang === 'en'
+            ? 'Sorry, this piece has just been sold.'
+            : 'Désolé, cette pièce vient d\'être vendue.',
+        }),
+      };
+    }
     const ship = shippingForCountry(country);
 
     // Validation cancelUrl : doit être une URL passeist.com (sécu : pas de redirection ouverte)
@@ -167,14 +198,8 @@ exports.handler = async (event) => {
       shipping_options: shippingOptions,
       billing_address_collection: 'required',
       phone_number_collection: { enabled: true },
-      // Récupération auto du panier abandonné : Stripe envoie un email
-      // de relance ~24h après abandon si le client a saisi son email
-      after_expiration: {
-        recovery: {
-          enabled: true,
-          allow_promotion_codes: false,
-        },
-      },
+      // Pas de relance de panier abandonné : un client qui avait ouvert le
+      // paiement deux fois recevait un « lien de paiement » après avoir payé.
       locale: lang,
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: safeCancelUrl,

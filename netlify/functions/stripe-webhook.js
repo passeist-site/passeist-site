@@ -15,6 +15,20 @@
 // Events à écouter : checkout.session.completed
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { getStore, connectLambda } = require('@netlify/blobs');
+
+// Stockage des pièces vendues (Netlify Blobs, store "passeist-sold") :
+// une clé par id produit. Lu par /.netlify/functions/sold-ids (affichage
+// immédiat en « vendu ») et par create-checkout-session (anti double vente).
+// C'est la source rapide ; le commit GitHub SOLD_IDS reste l'archive durable.
+async function markSoldInBlobs(event, productIds, sessionId) {
+  connectLambda(event);
+  const store = getStore('passeist-sold');
+  const at = new Date().toISOString();
+  await Promise.all(productIds.map(id =>
+    store.setJSON(String(id), { at, session: sessionId })
+  ));
+}
 
 const GITHUB_REPO = process.env.GITHUB_REPO || 'passeist-site/passeist-site';
 
@@ -113,6 +127,14 @@ exports.handler = async (event) => {
         basculeStatus = `skipped (test mode): ${productIds.join(',')}`;
         console.log('Mode TEST détecté → pas de bascule SOLD');
       } else {
+        // 1. Vendu immédiat (quelques secondes) via Netlify Blobs
+        try {
+          await markSoldInBlobs(event, productIds, session.id);
+          console.log('✓ Vendu enregistré (Blobs) :', productIds.join(','));
+        } catch (err) {
+          console.error('Erreur enregistrement vendu (Blobs) :', err.message);
+        }
+        // 2. Archive durable dans index.html (commit GitHub → republication)
         try {
           await basculeSoldIdsOnGitHub(productIds);
           basculeStatus = `ok: ${productIds.join(',')}`;
