@@ -2637,15 +2637,24 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     transition: none;
   }
   .detail-gallery .thumb:hover img { transform: none; }
-  /* Photos 2+ : plein cadre 3:4 sans marge blanche (grande photo et vignettes) */
+  /* Mobile : même format pour toutes les photos de la fiche (grande photo et
+     vignettes, photo 1 comprise) : cadre 3:4 portrait, fond blanc, contain.
+     Jamais de recadrage : les photos 2+ sont rognées de leurs bandes blanches
+     (trimWhiteBorders) puis posées entières dans le cadre ; la photo 1 carrée
+     a simplement du blanc au-dessus et en dessous. Pas de saut de taille. */
+  .detail-gallery .main-photo,
   .detail-gallery .main-photo:not([data-idx="0"]) {
     aspect-ratio: 3 / 4;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
+    background: #fff;
   }
   .detail-gallery .thumbs-row { align-items: flex-start; }
-  .detail-gallery .thumb:not([data-idx="0"]) img {
+  .detail-gallery .thumb { background: #fff !important; }
+  .detail-gallery .thumb img {
     aspect-ratio: 3 / 4 !important;
-    object-fit: cover !important;
+    object-fit: contain !important;
+    background: #fff;
   }
 
   /* Mobile : le wrap suit la photo (88% centré) → le clip coïncide avec le bord de la photo */
