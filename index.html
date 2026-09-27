@@ -2979,11 +2979,11 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .hero {
     height: auto;
     min-height: calc(100vh - var(--topbar-h));
-    padding-bottom: calc(var(--hero-card-h, 393px) + 88px);
+    padding-bottom: calc(var(--hero-card-h, 393px) + 132px);
   }
   .hero-marquee {
     height: calc(var(--hero-card-h, 393px) + 12px);
-    bottom: 28px;
+    bottom: 72px;  /* de l'air sous le carrousel (Tom) */
   }
 }
 
@@ -2991,8 +2991,12 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
 
-/* 2. Ombre douce sous les photos : elles se détachent du fond */
-.product-img,
+/* 2. Ombre douce sous les photos : elles se détachent du fond.
+   Grilles : ombre courte et légère (peu d'espace entre les cartes) ;
+   carrousel d'accueil : ombre plus marquée (il a de la place autour). */
+.product-img {
+  box-shadow: 0 12px 20px -10px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.28);
+}
 .hero-marquee-card {
   box-shadow: 0 26px 40px -12px rgba(0,0,0,0.85), 0 6px 14px rgba(0,0,0,0.45);
 }
@@ -6772,6 +6776,16 @@ async function checkoutWithStripe() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items, locale: lang, country, cancelUrl }),
     });
+    if (res.status === 409) {
+      // Pièce(s) vendue(s) entre-temps : on les retire du panier et on prévient
+      let info = {};
+      try { info = await res.json(); } catch (e) {}
+      (info.sold || []).forEach(id => { SOLD_IDS.add(String(id)); removeFromCart(String(id)); });
+      alert(info.message || (lang === 'en' ? 'Sorry, this piece has just been sold.' : 'Désolé, cette pièce vient d\'être vendue.'));
+      if (btn) { btn.disabled = false; btn.textContent = originalText; }
+      if (typeof renderGrid === 'function') renderGrid();
+      return;
+    }
     if (!res.ok) {
       const err = await res.text();
       throw new Error('Stripe session error: ' + err);
@@ -8062,6 +8076,25 @@ renderFilters();
 renderGrid();
 renderCart();
 renderHeroMarquee();
+
+// Pièces vendues sur le site depuis la dernière republication (Netlify Blobs,
+// enregistrées par le webhook Stripe) : affichées tout de suite comme vendues.
+fetch('/.netlify/functions/sold-ids', { cache: 'no-store' })
+  .then(r => r.ok ? r.json() : { ids: [] })
+  .then(data => {
+    const fresh = (data.ids || []).map(String).filter(id => !SOLD_IDS.has(id));
+    if (!fresh.length) return;
+    fresh.forEach(id => SOLD_IDS.add(id));
+    // Retire du panier une pièce vendue entre-temps
+    const inCart = cart.filter(c => fresh.includes(String(c.id)));
+    inCart.forEach(c => removeFromCart(c.id));
+    if (typeof renderFilters === 'function') renderFilters();
+    if (typeof renderGrid === 'function') renderGrid();
+    // Fiche produit ouverte sur une pièce qui vient d'être vendue : on la rouvre
+    const cur = currentProduct;
+    if (cur && fresh.includes(String(cur.id)) && document.body.classList.contains('detail-open') && typeof openDetail === 'function') openDetail(cur.id);
+  })
+  .catch(() => {});
 
 </script>
 <!-- Tawk.to (la bulle par défaut est cachée, on utilise l'icône dans la topbar) -->
