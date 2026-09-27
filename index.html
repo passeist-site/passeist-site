@@ -853,29 +853,17 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 96px 36px;
 }
-/* Une pièce mise en avant, plus grande (2x2 cases tous les 8 articles sur desktop)
-   (inspiré des lookbooks qui glissent une photo grand format dans la grille produits).
-   Desktop : grid-auto-flow: dense fait combler les cases libres par les cartes
-   suivantes, pour ne laisser aucun trou.
-   Mobile (2 colonnes) : 4 cartes normales (2 lignes de 2) puis 1 carte pleine
-   largeur, et on recommence, donc jamais de carte seule avec un trou à côté. */
-@media (min-width: 901px) {
-  .grid { grid-auto-flow: dense; }
-  .grid .product-card:nth-child(8n) {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-}
+/* Mobile uniquement (2 colonnes) : une pièce mise en avant en pleine largeur
+   tous les 5 articles (4 cartes normales, 2 lignes de 2, puis 1 grande), donc
+   jamais de carte seule avec un trou à côté. Desktop : toutes les cartes au
+   format normal. Page Favoris : aucune mise en avant. */
 @media (max-width: 900px) {
   .grid .product-card:nth-child(5n) {
     grid-column: 1 / -1;
   }
-}
-/* Page Favoris : aucune pièce mise en avant, toutes les cartes au format normal. */
-body[data-page="favorites"] .grid .product-card:nth-child(8n),
-body[data-page="favorites"] .grid .product-card:nth-child(5n) {
-  grid-column: auto;
-  grid-row: auto;
+  body[data-page="favorites"] .grid .product-card:nth-child(5n) {
+    grid-column: auto;
+  }
 }
 .product-card {
   cursor: pointer; background: transparent; border: none;
@@ -967,9 +955,9 @@ body[data-page="favorites"] .grid .product-card:nth-child(5n) {
   overflow: hidden; border-radius: 6px;
   display: block;
   border: none;
-  /* Force le carré pour uniformité visuelle des cards boutique/archive
-     peu importe le ratio source (Vestiaire CDN peut renvoyer portrait/paysage selon item). */
-  aspect-ratio: 1 / 1;
+  /* Format portrait 3:4 pour toutes les cartes (comme les vignettes de la fiche
+     produit), quel que soit le ratio source. */
+  aspect-ratio: 3 / 4;
 }
 .product-img::before {
   content: ''; position: absolute; inset: 0;
@@ -987,7 +975,10 @@ body[data-page="favorites"] .grid .product-card:nth-child(5n) {
 }
 .product-img-primary {
   width: 100%; height: 100%; display: block;
-  object-fit: contain;  /* Letterbox blanc auto si photo non-carrée (le bg du parent est blanc) */
+  /* Sources carrées (portrait 3:4 centré + bandes blanches latérales) :
+     le cover 3:4 centré ne coupe que ces bandes. Aucun rognage JS. */
+  object-fit: cover;
+  object-position: center;
   opacity: 0;
   transition: opacity 0.4s var(--ease-out);
   filter: none;
