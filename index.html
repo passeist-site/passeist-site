@@ -1484,6 +1484,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   -ms-touch-action: none;
 }
 .lightbox img.zoomed { cursor: zoom-out; }
+/* Photo principale (index 0) : pas de crop même en lightbox, comme dans
+   la galerie (Tom : "sauf la première"). */
+.lightbox img.lb-main { aspect-ratio: auto; object-fit: initial; }
 @keyframes lbIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 .lb-close {
   position: absolute; top: 28px; right: 32px;
@@ -5895,7 +5898,9 @@ function closeDetail() {
 // ============ LIGHTBOX ============
 function openLB(i) {
   lbIdx = i;
-  document.getElementById('lb-img').src = lbPhotos[i];
+  const lbImg = document.getElementById('lb-img');
+  lbImg.src = lbPhotos[i];
+  lbImg.classList.toggle('lb-main', i === 0); // photo principale : pas de crop, cf .lb-main
   document.getElementById('lb-counter').textContent = (i+1).toString().padStart(2,'0') + ' / ' + lbPhotos.length.toString().padStart(2,'0');
   document.getElementById('lightbox').classList.add('open');
 }
