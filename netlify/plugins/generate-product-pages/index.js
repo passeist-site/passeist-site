@@ -232,6 +232,65 @@ function extractMaterialFromDesc(desc) {
   return null;
 }
 
+// ── sitemap.xml (static routes + one <url> per in-stock product) ──────────
+// FIX 2026-09-27 : sitemap.xml était un fichier statique commité une seule
+// fois (avril 2026, cf DEPLOY.md), jamais régénéré. productSlug() a changé
+// depuis (p.type reclassé par les imports), donc les 755 URLs du sitemap ne
+// correspondaient plus à AUCUNE page réellement générée (0/755 match exact,
+// vérifié). Résultat : Google recevait 755 URLs qui retombaient toutes sur
+// le fallback SPA (_redirects "/product/* -> /index.html 200"), donc sur du
+// contenu dupliqué de la homepage, pendant que les vraies fiches produit
+// (avec leur propre <title>/canonical/JSON-LD, cf applyProductSEO ci-dessus)
+// n'étaient listées nulle part. En générant le sitemap ici, à chaque build,
+// à partir des mêmes `products` et du même productSlug() que les pages
+// elles-mêmes, il ne peut plus jamais diverger de ce qui est réellement en ligne.
+
+const STATIC_ROUTES = [
+  { loc: 'https://passeist.com/',        changefreq: 'daily',   priority: '1.0' },
+  { loc: 'https://passeist.com/shop',    changefreq: 'daily',   priority: '0.95' },
+  { loc: 'https://passeist.com/archive', changefreq: 'weekly',  priority: '0.7' },
+  { loc: 'https://passeist.com/about',   changefreq: 'monthly', priority: '0.5' },
+  { loc: 'https://passeist.com/marques', changefreq: 'weekly',  priority: '0.85' },
+  // Une entrée par page marque statique servie via _redirects ("/marques/* -> /marques/:splat.html").
+  // Si une marque est ajoutée/retirée dans marques/*.html, mettre à jour cette liste.
+  ...[
+    'issey-miyake', 'yohji-yamamoto', 'comme-des-garcons', '45rpm', 'junko-koshino',
+    'kansai-yamamoto', 'blue-blue-japan', 'zucca', 'kijima-takayuki', 'tsumori-chisato',
+    'yoshiki-hishinuma', 'limi-feu', 'junya-watanabe', 'maison-mihara-yasuhiro',
+    'fumito-ganryu', 'noir-kei-ninomiya', 'tigre-brocante',
+  ].map(slug => ({ loc: 'https://passeist.com/marques/' + slug, changefreq: 'weekly', priority: '0.7' })),
+];
+
+function buildSitemap(products, soldIds) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const staticUrls = STATIC_ROUTES.map(r => `  <url>
+    <loc>${r.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${r.changefreq}</changefreq>
+    <priority>${r.priority}</priority>
+  </url>`);
+
+  // Uniquement les pièces disponibles : les fiches vendues sont en
+  // robots "noindex,nofollow" (cf applyProductSEO), donc pas de raison
+  // de les pousser dans le sitemap non plus.
+  const productUrls = products
+    .filter(p => p.id && !soldIds.has(p.id) && p.sold !== true)
+    .map(p => `  <url>
+    <loc>https://passeist.com/product/${productSlug(p)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls.join('\n')}
+${productUrls.join('\n')}
+</urlset>
+`;
+}
+
 // ── Google Merchant Center feed (RSS 2.0 + g: namespace) ──────────────────
 
 function xmlesc(str) {
@@ -495,6 +554,12 @@ module.exports = {
     fs.writeFileSync(path.join(publishDir, 'feed.xml'), feed, 'utf8');
     console.log('[generate-product-pages] Generated feed.xml (' + products.length + ' products)');
 
-    utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml' });
+    // ── Generate sitemap.xml (replaces the old static, never-updated file) ─
+    const sitemap = buildSitemap(products, soldIds);
+    fs.writeFileSync(path.join(publishDir, 'sitemap.xml'), sitemap, 'utf8');
+    const sitemapCount = (sitemap.match(/<loc>/g) || []).length;
+    console.log('[generate-product-pages] Generated sitemap.xml (' + sitemapCount + ' urls)');
+
+    utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml + sitemap.xml' });
   }
 };
