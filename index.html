@@ -2628,7 +2628,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
   }
   .mobile-nav-contact {
-    background: none; border: none; padding: 8px 0; cursor: pointer;
+    background: none; border: none; padding: 8px 0; cursor: pointer; text-decoration: none;
     color: var(--ink);
     font-family: var(--font-sans);
     font-size: 13px; font-weight: 500;
@@ -3154,7 +3154,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   <a href="/marques"><span><span class="lang-fr">Auteurs</span><span class="lang-en">Authors</span></span></a>
   <a data-page="about"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-j)"/></svg><span>À propos</span></a>
   <div class="mobile-nav-foot">
-    <button class="mobile-nav-contact" id="mobile-nav-contact" type="button">Contact</button>
+    <a class="mobile-nav-contact" id="mobile-nav-contact" href="mailto:info@passeist.com">Contact</a>
     <button class="lang-toggle mobile-nav-lang" id="mobile-nav-lang" type="button" aria-label="Changer la langue / Change language">
       <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
     </button>
@@ -7347,13 +7347,9 @@ window.startSimilarMarqueeLoop = function() {
       setOpen(false);
     });
   });
-  // Contact = même action que la bulle de chat de la topbar
+  // Contact = e-mail (info@passeist.com) ; la discussion Tawk reste sur la bulle du header
   const contactBtn = document.getElementById('mobile-nav-contact');
-  if (contactBtn) contactBtn.addEventListener('click', () => {
-    setOpen(false);
-    const chat = document.getElementById('chat-launcher-top');
-    if (chat) chat.click();
-  });
+  if (contactBtn) contactBtn.addEventListener('click', () => setOpen(false));
   // FR / EN = même action que le sélecteur de langue de la topbar
   const langBtn = document.getElementById('mobile-nav-lang');
   if (langBtn) langBtn.addEventListener('click', () => {
