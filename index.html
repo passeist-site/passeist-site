@@ -848,11 +848,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .sheet-backdrop.open { display: block; opacity: 1; }
 
 /* ============ GRID ============ */
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 48px 36px;
 }
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 /* Mobile uniquement (2 colonnes) : une pièce mise en avant en pleine largeur
    tous les 5 articles (4 cartes normales, 2 lignes de 2, puis 1 grande), donc
    jamais de carte seule avec un trou à côté. Desktop : toutes les cartes au
@@ -949,6 +951,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   /* plus d'effet filter/opacity au survol : couleurs natives toujours affichées */
 }
 
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 .product-img {
   position: relative;
   background: #fff;
@@ -973,6 +976,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   from { background-position: -120% 0; }
   to   { background-position: 120% 0; }
 }
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 .product-img-primary {
   width: 100%; height: 100%; display: block;
   /* Les cartes montrent la photo 1 : photo studio qui occupe tout le carré.
@@ -986,6 +990,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .product-img-primary.loaded { opacity: 1; }
 
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 .product-body { padding: 12px 0 0; line-height: 1.45; }
 .product-brand {
   font-family: var(--font-sans);
@@ -1164,6 +1169,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   border: none; border-radius: 0;
   display: block;
 }
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 /* Photo principale : même boîte 3:4 que les secondaires, mais jamais
    recadrée (object-fit: contain + fond blanc qui se fond avec le
    cyclorama). Ainsi la taille reste fixe d'une photo à l'autre (plus
@@ -1177,6 +1183,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   object-fit: contain;
   background: #fff;
 }
+/* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 /* Photos 2+ (grande photo et vignettes) : la source est un carré avec un
    portrait 3:4 centré et des bandes blanches de exactement 12,5 % de chaque
    côté. Le cover 3:4 centré tombe pile sur le bord de la bande, d'où un
@@ -2657,6 +2664,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     padding: 6px 0 8px; font-size: 13px;
   }
 
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 32px 14px;
@@ -2668,6 +2676,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .product-price-wrap { padding: 3px 9px; }
   .product-price { font-size: 9.5px; }
   .product-size { font-size: 9px; }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .product-body { padding: 8px 0 0; }
   .product-name-row { margin-bottom: 4px; }
   .product-meta { padding-top: 4px; }
@@ -2750,6 +2759,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     transition: none;
   }
   .detail-gallery .thumb:hover img { transform: none; }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   /* Photos 2+ : plein cadre 3:4 sans marge blanche (grande photo et vignettes) */
   .detail-gallery .main-photo:not([data-idx="0"]) {
     aspect-ratio: 3 / 4;
@@ -2762,6 +2772,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     object-fit: cover !important;
     object-position: center !important;
   }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   /* Photo 1 (carrée, bords déjà blancs) : même cadre 3:4 que les photos
      suivantes, posée entière (contain) sur fond blanc → blanc ajouté
      au-dessus et en dessous, pas de saut de taille ni de recadrage. */
@@ -2872,6 +2883,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     height: 170px; width: 100%; bottom: auto; top: auto;
     position: static; margin: auto 0;   /* centré verticalement */
   }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
   .grid { gap: 32px 10px; }
 }
 </style>
@@ -4809,6 +4821,7 @@ function imgUrl(product, i, opts) {
   if (VALIDATED_LOCAL.has(product.id)) {
     // exactSize : taille demandée telle quelle (sm/md existent aussi pour ces IDs,
     // mêmes fichiers réduits) ; sinon xl comme la fiche produit.
+    // REGLE FIGEE par Tom, voir PHOTOS.md : cartes = même fichier que la photo 1 de la fiche
     const localSize = (product.id.length < 10 && !(opts && opts.exactSize)) ? 'xl' : size;
     return '/img/' + product.id + '-' + i + '-' + localSize + '.webp';
   }
