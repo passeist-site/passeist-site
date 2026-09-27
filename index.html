@@ -851,7 +851,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 96px 36px;
+  gap: 48px 36px;
 }
 /* Mobile uniquement (2 colonnes) : une pièce mise en avant en pleine largeur
    tous les 5 articles (4 cartes normales, 2 lignes de 2, puis 1 grande), donc
@@ -986,11 +986,11 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .product-img-primary.loaded { opacity: 1; }
 
-.product-body { padding: 22px 0 0; line-height: 1.45; }
+.product-body { padding: 12px 0 0; line-height: 1.45; }
 .product-brand {
   font-family: var(--font-sans);
   font-size: 14px; color: var(--ink);
-  margin-bottom: 12px; font-weight: 800;
+  margin-bottom: 6px; font-weight: 800;
   letter-spacing: 0;
   display: flex; align-items: center; gap: 10px;
 }
@@ -999,7 +999,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .brand-mark { display: none; }
 .product-name-row {
   display: flex; justify-content: space-between; align-items: center;
-  gap: 12px; margin-bottom: 14px;
+  gap: 12px; margin-bottom: 8px;
 }
 .product-name {
   font-family: var(--font-sans);
@@ -1010,10 +1010,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .product-meta {
   display: flex; justify-content: space-between; align-items: center;
-  line-height: 1.4; padding-top: 14px;
+  line-height: 1.4; padding-top: 6px;
   border-top: 1px solid var(--line);
   gap: 12px;
-  min-height: 48px;
 }
 .product-size {
   font-family: var(--font-mono);
@@ -2660,16 +2659,18 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 56px 14px;
+    gap: 32px 14px;
     margin-top: 32px;
   }
-  .product-brand { font-size: 9px; letter-spacing: 0; gap: 6px; margin-bottom: 8px; }
+  .product-brand { font-size: 9px; letter-spacing: 0; gap: 6px; margin-bottom: 4px; }
   .product-brand .brand-mark { width: 10px; height: 2px; }
   .product-name { font-size: 13px; }
   .product-price-wrap { padding: 3px 9px; }
   .product-price { font-size: 9.5px; }
   .product-size { font-size: 9px; }
-  .product-body { padding: 18px 0 0; }
+  .product-body { padding: 8px 0 0; }
+  .product-name-row { margin-bottom: 4px; }
+  .product-meta { padding-top: 4px; }
 
   /* Sur mobile on cache entièrement le bandeau de fiche produit :
      le retour se fait via le swipe back iOS ou le bouton retour navigateur */
@@ -2871,7 +2872,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     height: 170px; width: 100%; bottom: auto; top: auto;
     position: static; margin: auto 0;   /* centré verticalement */
   }
-  .grid { gap: 48px 10px; }
+  .grid { gap: 32px 10px; }
 }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
@@ -4864,9 +4865,11 @@ function getGender(p) {
 // Retire le mot "International" / "Internationale" (souvent suffixe Vestiaire inutile)
 // Si pas de taille définie → "Taille unique" (FR) / "One size" (EN)
 window.formatSize = function(size) {
-  if (!size || !size.toString().trim()) {
-    return (window.__lang === 'en') ? 'One size' : 'Taille unique';
-  }
+  const oneSize = (window.__lang === 'en') ? 'One size' : 'Taille unique';
+  if (!size || !size.toString().trim()) return oneSize;
+  // Certaines fiches ont la taille unique écrite en dur ("Taille Unique",
+  // "Taille Unique FR", "One size") : on la traduit selon la langue courante.
+  if (/^\s*(taille\s*unique|one\s*size|tu|os)(\s*fr)?\s*$/i.test(size)) return oneSize;
   // Retire "International" et variantes (case insensitive)
   let s = size.replace(/\s*International(e|s)?\b\s*/gi, '').trim();
   if (!s) return (window.__lang === 'en') ? 'One size' : 'Taille unique';
@@ -5785,7 +5788,8 @@ function renderGrid() {
   }
   grid.innerHTML = filtered.map(p => {
     const sold = isSold(p);
-    const genderTxt = getGender(p);
+    // Genre traduit comme sur la fiche produit (Homme/Femme → Men/Women en EN)
+    const genderTxt = getGender(p) ? (window.tGender ? window.tGender(p) : getGender(p)) : '';
     const sizeLine = (window.formatSize ? window.formatSize(p.size) : p.size) + (genderTxt ? ' · ' + genderTxt : '');
     const fav = isFavorite(p.id);
     const slug = (typeof productSlug === 'function') ? productSlug(p) : p.id;
