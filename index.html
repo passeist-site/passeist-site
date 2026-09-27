@@ -2971,6 +2971,22 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .grid { gap: 32px 10px; }
 }
 
+/* ============ CARROUSEL D'ACCUEIL SUR ORDINATEUR (Tom, 2026-09-28) ============
+   Cartes de la même taille que les photos de la Boutique (--hero-card-h,
+   calculé en JS d'après la grille : colonnes de 260px min, écart 36px,
+   largeur max 1568px). Le hero s'agrandit pour les accueillir. */
+@media (min-width: 901px) {
+  .hero {
+    height: auto;
+    min-height: calc(100vh - var(--topbar-h));
+    padding-bottom: calc(var(--hero-card-h, 393px) + 88px);
+  }
+  .hero-marquee {
+    height: calc(var(--hero-card-h, 393px) + 12px);
+    bottom: 28px;
+  }
+}
+
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
@@ -7002,6 +7018,19 @@ window.addEventListener('touchend', (e) => {
 document.documentElement.style.overscrollBehaviorX = 'contain';
 
 // ============ HERO MARQUEE ============
+// Hauteur des cartes du carrousel sur ordinateur = hauteur des photos de la
+// Boutique (même calcul que la grille : auto-fill minmax(260px, 1fr), écart
+// 36px, marges de .main, largeur max 1568px) → variable CSS --hero-card-h.
+function updateHeroCardSize() {
+  const vw = document.documentElement.clientWidth;
+  if (vw <= 900) return;
+  const W = Math.min(vw - (vw <= 1100 ? 64 : 112), 1568);
+  const cols = Math.max(1, Math.floor((W + 36) / (260 + 36)));
+  const w = (W - (cols - 1) * 36) / cols;
+  document.documentElement.style.setProperty('--hero-card-h', (w * 4 / 3).toFixed(1) + 'px');
+}
+updateHeroCardSize();
+window.addEventListener('resize', updateHeroCardSize);
 function renderHeroMarquee() {
   const available = PRODUCTS.filter(p => !isSold(p));
   const byPriceDesc = (a, b) => (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
