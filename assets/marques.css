@@ -41,9 +41,12 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
   .topbar .topbar-icon svg { width: 20px; height: 20px; }
   .topbar .cart-btn svg { width: 24px; height: 24px; }
   .topbar .topbar-icon-chat { grid-column: 2; }
-  .topbar .topbar-icon-fav { grid-column: 4; }
-  .topbar .cart-btn { grid-column: 5; }
-  .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; font-size: 31px; }
+  /* Favoris tout à droite, panier juste avant */
+  .topbar .cart-btn { grid-column: 4; }
+  .topbar .topbar-icon-fav { grid-column: 5; }
+  /* Remonté de 3px : le centre visuel du logo (hauteur des minuscules)
+     s'aligne sur celui des icônes (mesuré au pixel). */
+  .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; font-size: 31px; position: relative; top: -3px; }
   body.marques-page { padding-top: calc(var(--topbar-h-mobile) + 16px) !important; }
 
   /* Panneau menu : glisse depuis la gauche, voile sur le reste de la page */

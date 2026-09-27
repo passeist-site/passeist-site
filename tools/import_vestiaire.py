@@ -368,7 +368,14 @@ def main():
         new_price = int(round(price_euros / 10) * 10)
     desc = (meta.get('originalDescription') or meta.get('description') or '').strip()
     gender_raw = (meta.get('gender') or {}).get('name', '').lower() if isinstance(meta.get('gender'), dict) else ''
-    gender = 'h' if 'homme' in gender_raw or 'men' in gender_raw else 'f' if 'femme' in gender_raw or 'women' in gender_raw else 'h'
+    # Tester « femme/women » AVANT « homme/men » : "women" contient "men"
+    # (bug corrigé le 2026-09-28 : toutes les pièces femme étaient importées en 'h').
+    if 'femme' in gender_raw or 'women' in gender_raw:
+        gender = 'f'
+    elif 'homme' in gender_raw or 'men' in gender_raw:
+        gender = 'h'
+    else:
+        gender = ''  # déduit plus bas de la catégorie Vestiaire (chemin de l'URL)
 
     print(f'  brand VC : {vc_brand}')
     print(f'  type     : {ptype}')
@@ -399,6 +406,9 @@ def main():
     # Slug + path : remplace non-signe-unsigned par le slug brand détecté si applicable
     vestiaire_slug = extract_slug_from_url(url)
     vestiaire_path = extract_path_from_url(url)
+    if not gender:
+        vp = vestiaire_path.lower()
+        gender = 'f' if ('-femme/' in vp or '/women-' in vp) else 'h'
     new_brand_slug = brand_to_slug(final_brand)
     site_slug = vestiaire_slug.replace('non-signe-unsigned', new_brand_slug)
     site_path = vestiaire_path.replace('non-signe-unsigned', new_brand_slug)
