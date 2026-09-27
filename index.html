@@ -2702,8 +2702,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 <body>
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Consentement cookies">
   <div class="cookie-banner-text">
-    <span class="lang-fr">Nous utilisons un cookie pour le chat en ligne (tawk.to). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
-    <span class="lang-en">We use a cookie for live chat (tawk.to). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
+    <span class="lang-fr">Nous utilisons des cookies pour le chat en ligne (tawk.to) et la mesure d'audience (Google Analytics). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
+    <span class="lang-en">We use cookies for live chat (tawk.to) and audience measurement (Google Analytics). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
   </div>
   <div class="cookie-banner-actions">
     <button type="button" class="cb-reject" id="cookie-reject"><span class="lang-fr">Refuser</span><span class="lang-en">Reject</span></button>
@@ -2990,7 +2990,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   <p class="about-body"><strong>Finalités.</strong> Traitement des commandes, préparation de la livraison, communication relative au suivi. Aucune donnée n'est revendue ou transmise à des tiers à des fins commerciales.</p>
   <p class="about-body"><strong>Destinataires.</strong> Prestataire de paiement (Stripe), transporteur (La Poste / Chronopost / Colissimo), et passeist seule.</p>
   <p class="about-body"><strong>Durée de conservation.</strong> Les données liées à une commande sont conservées 3 ans à des fins de gestion commerciale et 10 ans pour les documents comptables (obligation légale).</p>
-  <p class="about-body"><strong>Cookies.</strong> Le site utilise uniquement des cookies strictement nécessaires à son fonctionnement (session, panier). Aucun cookie de suivi tiers n'est déposé.</p>
+  <p class="about-body"><strong>Cookies.</strong> Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier), ainsi que des outils de mesure d'audience (Cloudflare Web Analytics, sans cookie ni donnée personnelle) et de fonctionnalité (chat en ligne tawk.to, Google Analytics) soumis à votre consentement via le bandeau affiché lors de votre première visite. Vous pouvez à tout moment refuser ces derniers ; cela n'affecte pas votre navigation ni vos commandes.</p>
   <p class="about-body"><strong>Vos droits.</strong> Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</p>
   <p class="about-body"><strong>Sécurité.</strong> Paiements chiffrés SSL. Les données bancaires sont gérées exclusivement par le prestataire de paiement et ne sont jamais stockées par passeist.</p>
 </section>
@@ -3004,7 +3004,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   <p class="about-body"><strong>Purposes.</strong> Order processing, shipping preparation, tracking communication. No data is resold or transferred to third parties for commercial purposes.</p>
   <p class="about-body"><strong>Recipients.</strong> Payment provider (Stripe), carrier (La Poste / Chronopost / Colissimo), and passéist alone.</p>
   <p class="about-body"><strong>Retention period.</strong> Order-related data is retained 3 years for commercial management and 10 years for accounting documents (legal obligation).</p>
-  <p class="about-body"><strong>Cookies.</strong> The site uses only strictly necessary cookies (session, cart). No third-party tracking cookies are set.</p>
+  <p class="about-body"><strong>Cookies.</strong> The site uses strictly necessary cookies (session, cart), as well as audience measurement (Cloudflare Web Analytics, cookie-free and anonymous) and functionality tools (tawk.to live chat, Google Analytics) subject to your consent via the banner shown on your first visit. You may decline these at any time; this does not affect browsing or ordering.</p>
   <p class="about-body"><strong>Your rights.</strong> Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</p>
   <p class="about-body"><strong>Security.</strong> SSL-encrypted payments. Banking data is handled exclusively by the payment provider and never stored by passéist.</p>
 </section>
@@ -7694,6 +7694,22 @@ window.__loadTawk = function(){
   s0.parentNode.insertBefore(s1,s0);
 };
 </script>
+<!-- Google Analytics (GA4) : chargement différé, cf __loadGA4 plus bas -->
+<script>
+window.__loadGA4 = function(){
+  if (window.__ga4Loaded) return;
+  window.__ga4Loaded = true;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=G-J3DSYD6B68';
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', 'G-J3DSYD6B68');
+};
+</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
@@ -7713,6 +7729,7 @@ window.__loadTawk = function(){
     var consent = getConsent();
     if (consent === 'accepted') {
       if (window.__loadTawk) window.__loadTawk();
+      if (window.__loadGA4) window.__loadGA4();
     } else if (consent !== 'rejected') {
       showBanner();
     }
@@ -7722,6 +7739,7 @@ window.__loadTawk = function(){
       setConsent('accepted');
       hideBanner();
       if (window.__loadTawk) window.__loadTawk();
+      if (window.__loadGA4) window.__loadGA4();
     });
     if (rejectBtn) rejectBtn.addEventListener('click', function(){
       setConsent('rejected');
