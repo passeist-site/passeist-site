@@ -1507,6 +1507,59 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   z-index: 3;
 }
 .lb-close:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ============ BANDEAU COOKIES (RGPD) ============ */
+.cookie-banner {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 900;
+  background: rgba(28,34,48,0.97); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line-strong);
+  padding: 20px 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.3s var(--ease);
+}
+.cookie-banner.open { display: flex; }
+.cookie-banner-text {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  max-width: 620px;
+  letter-spacing: 0.01em;
+}
+.cookie-banner-text a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.cookie-banner-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.cookie-banner-actions button {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 0;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+.cookie-banner-actions .cb-reject {
+  background: transparent;
+  color: var(--text-mute);
+  border: 1px solid var(--line-strong);
+}
+.cookie-banner-actions .cb-reject:hover { color: var(--ink); border-color: var(--ink); }
+.cookie-banner-actions .cb-accept {
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  font-weight: 500;
+}
+.cookie-banner-actions .cb-accept:hover { background: var(--hover); border-color: var(--hover); }
+@media (max-width: 640px) {
+  .cookie-banner { padding: 16px; justify-content: flex-start; }
+  .cookie-banner-text { font-size: 10.5px; }
+}
 /* Flèches de navigation : petits boutons discrets en bas du lightbox,
    de part et d'autre du compteur. Réduit, non intrusifs. */
 .lb-nav {
@@ -2647,6 +2700,16 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
+<div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Consentement cookies">
+  <div class="cookie-banner-text">
+    <span class="lang-fr">Nous utilisons un cookie pour le chat en ligne (tawk.to). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
+    <span class="lang-en">We use a cookie for live chat (tawk.to). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
+  </div>
+  <div class="cookie-banner-actions">
+    <button type="button" class="cb-reject" id="cookie-reject"><span class="lang-fr">Refuser</span><span class="lang-en">Reject</span></button>
+    <button type="button" class="cb-accept" id="cookie-accept"><span class="lang-fr">Accepter</span><span class="lang-en">Accept</span></button>
+  </div>
+</div>
 
 <!-- Filtres SVG d'encre (turbulence pour bords irréguliers) -->
 <svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -2692,7 +2755,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   </nav>
   <div class="topbar-right">
     <div class="topbar-icons" aria-label="Accès rapides">
-      <button class="topbar-icon topbar-icon-chat" id="chat-launcher-top" type="button" onclick="if(window.Tawk_API&&Tawk_API.maximize){Tawk_API.maximize();if(typeof __showChatBackdrop==='function')__showChatBackdrop();}" aria-label="Ouvrir le chat" title="Chat">
+      <button class="topbar-icon topbar-icon-chat" id="chat-launcher-top" type="button" onclick="if(window.Tawk_API&&Tawk_API.maximize){Tawk_API.maximize();if(typeof __showChatBackdrop==='function')__showChatBackdrop();}else if(window.__promptCookieConsent){__promptCookieConsent();}" aria-label="Ouvrir le chat" title="Chat">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
       </button>
       <button class="topbar-icon" onclick="openSearchFromRail()" aria-label="Recherche" title="Recherche">
@@ -7618,13 +7681,53 @@ Tawk_API.onChatMaximized = function(){ __showChatBackdrop(); };
 Tawk_API.onChatMinimized = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
 Tawk_API.onChatEnded = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
 Tawk_API.onBeforeLoad = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
+// Chargement différé : le script tiers tawk.to (et les cookies qu'il pose)
+// n'est injecté qu'après consentement cookies (cf bandeau RGPD plus bas).
+window.__loadTawk = function(){
+  if (window.__tawkLoaded) return;
+  window.__tawkLoaded = true;
+  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+  s1.async=true;
+  s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
+  s1.charset='UTF-8';
+  s1.setAttribute('crossorigin','*');
+  s0.parentNode.insertBefore(s1,s0);
+};
+</script>
+<!-- ============ BANDEAU COOKIES (RGPD) ============ -->
+<script>
 (function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
+  var KEY = 'passeist_cookie_consent';
+  function getConsent(){ try { return localStorage.getItem(KEY); } catch(e){ return null; } }
+  function setConsent(v){ try { localStorage.setItem(KEY, v); } catch(e){} }
+  function showBanner(){
+    var el = document.getElementById('cookie-banner');
+    if (el) el.classList.add('open');
+  }
+  function hideBanner(){
+    var el = document.getElementById('cookie-banner');
+    if (el) el.classList.remove('open');
+  }
+  window.__promptCookieConsent = showBanner;
+  document.addEventListener('DOMContentLoaded', function(){
+    var consent = getConsent();
+    if (consent === 'accepted') {
+      if (window.__loadTawk) window.__loadTawk();
+    } else if (consent !== 'rejected') {
+      showBanner();
+    }
+    var acceptBtn = document.getElementById('cookie-accept');
+    var rejectBtn = document.getElementById('cookie-reject');
+    if (acceptBtn) acceptBtn.addEventListener('click', function(){
+      setConsent('accepted');
+      hideBanner();
+      if (window.__loadTawk) window.__loadTawk();
+    });
+    if (rejectBtn) rejectBtn.addEventListener('click', function(){
+      setConsent('rejected');
+      hideBanner();
+    });
+  });
 })();
 </script>
 <!-- ============ I18N FR/EN ============ -->
