@@ -4807,7 +4807,9 @@ function imgUrl(product, i, opts) {
   // Fiche détail (ou produit Vinted 10 chiffres) : local si validé
   // IDs 8 chiffres n'ont que xl (pas de sm/md).
   if (VALIDATED_LOCAL.has(product.id)) {
-    const localSize = (product.id.length < 10) ? 'xl' : size;
+    // exactSize : taille demandée telle quelle (sm/md existent aussi pour ces IDs,
+    // mêmes fichiers réduits) ; sinon xl comme la fiche produit.
+    const localSize = (product.id.length < 10 && !(opts && opts.exactSize)) ? 'xl' : size;
     return '/img/' + product.id + '-' + i + '-' + localSize + '.webp';
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
@@ -5798,7 +5800,7 @@ function renderGrid() {
 
       <div class="product-img loading">
         ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
-        <img class="product-img-primary" src="${imgUrl(p, 0, {square: true})}" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
+        <img class="product-img-primary" src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="(max-width: 900px) 50vw, 25vw" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
       </div>
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
