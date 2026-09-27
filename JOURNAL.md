@@ -4,6 +4,26 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ---
 
+## 2026-09-27
+
+### Audit technique du site (SEO, photos, données)
+- **Sitemap.xml désynchronisé du vrai catalogue** : fichier statique jamais régénéré, les slugs produits avaient changé depuis (0/755 URLs correspondaient à une vraie page). Google recevait donc 755 URLs qui tombaient sur le fallback SPA (contenu dupliqué homepage) au lieu des 1318 vraies fiches produit. Sitemap régénéré + plugin patché pour le régénérer à chaque `onPostBuild` (`buildSitemap()` dans `netlify/plugins/generate-product-pages/index.js`), ne peut plus diverger. Commit `d12707c`.
+- **Photos produit** : Vestiaire a changé son format de photo secondaire (2:3 "Leica" → 3:4 "classique"). Ratio galerie + lightbox mis à jour en conséquence (commits `c24df2d`, `710f291`). Photo principale (galerie + lightbox) passée en boîte fixe 3:4 avec `object-fit: contain` + fond blanc : taille constante d'une fiche à l'autre, aucune photo (ancien ou nouveau format) n'est jamais recadrée. Commit `f6ff05d`.
+- **Doublons marque (accents à l'import)** : COMME DES GARCONS/GARÇONS (174 produits, + le calcul du slug marque dans le breadcrumb JSON-LD était cassé pour la version accentuée) et MIHARA YASUHIRO/MAISON MIHARA YASUHIRO (6 produits). Fusionnés vers l'orthographe correcte/existante. Commits `d65ec03`, `eddff54`.
+- **Bug de traduction sur les imports récents** : `tools/import_vestiaire.py` traduisait FR→EN le champ `type` en supposant qu'il était toujours en français, alors que Vestiaire renvoie parfois déjà de l'anglais (texte libre du vendeur) malgré `Accept-Language: fr` forcé. Résultat : 339/1318 produits affichaient un type anglais brut sur le site FR (ex. "YOHJI YAMAMOTO Vest"). Ajout d'une détection heuristique avant traduction (`_looks_already_english()`) + correction rétroactive des 339 produits (traduction manuelle des 83 valeurs distinctes, pas automatique, pour garantir le vocabulaire mode correct). Commit `d65ec03`.
+- **Hreflang EN trompeur retiré** : le switch FR/EN est purement client-side (le HTML servi reste identique en français), les balises `hreflang="en"` promettaient à Google une version indexable qui n'existe pas server-side. Commit `d65ec03`.
+- **Points restants identifiés, non traités cette session** : pas de GA4/Meta Pixel (bloqué en attente des IDs de Tom), dépendance photos hotlinkées Vestiaire (chantier plus lourd), bandeau cookies RGPD (à faire).
+
+### Réorganisation marques Auteurs (demande Tom)
+- Fusions brand field : Y'S + GROUND Y + ASPESI → YOHJI YAMAMOTO, PLEATS PLEASE + HAI → ISSEY MIYAKE, JUN → JUN MEN. 3 produits mal classés Issey Miyake (mention explicite "Plantation" dans la desc) → PLANTATION. Nouvelle marque DIVERS (Asdic, Kriff Mayer, Gucci, Hermès, Remi Relief, Yves Saint Laurent, 7 pièces).
+- Nouvelles pages `marques/jun-men.html` et `marques/final-home.html` (texte Jun Men complété via jun.co.jp + Wikipedia JA, texte Final Home rédigé via sources publiques sur Kosuke Tsumura). Ajoutées au listing `marques.html`, au menu `index.html`, et à `STATIC_ROUTES` du plugin sitemap.
+- Commit `eddff54`.
+
+### Note token GitHub (R7)
+Le token PAT fourni par Tom a servi à plusieurs pushes dans cette session (au lieu d'un usage unique). À révoquer par Tom après le push final de cette session — pas fait automatiquement, je n'ai pas les droits pour révoquer le token moi-même.
+
+---
+
 ## 2026-05-01
 
 ### Incident & recovery — auto-bascule de 184 faux positifs
