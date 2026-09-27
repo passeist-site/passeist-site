@@ -831,6 +831,34 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .filter-sheet .filter-label { font-size: 10px !important; }
 .filter-sheet .filter-input,
 .filter-sheet .filter-select { width: 100%; padding: 5px 0 7px !important; font-size: 13px !important; }
+/* Recherche en tête de « Filtres + tri », mise en avant : champ clair arrondi,
+   loupe, texte en 16px (lisible, et évite le zoom automatique d'iOS). */
+.filter-sheet .filter-field--search { margin-bottom: 20px; }
+.filter-sheet .filter-field--search .filter-label {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+.filter-search-box {
+  display: flex; align-items: center; gap: 10px;
+  height: 48px; padding: 0 14px;
+  background: rgba(244,241,236,0.10);
+  border: 1px solid rgba(244,241,236,0.30);
+  border-radius: 6px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.filter-search-box:focus-within { border-color: var(--ink); background: rgba(244,241,236,0.15); }
+.filter-search-box svg {
+  flex: 0 0 auto; width: 18px; height: 18px;
+  stroke: var(--ink); fill: none; stroke-width: 1.6; stroke-linecap: round;
+}
+.filter-sheet .filter-search-box .filter-input {
+  flex: 1; min-width: 0; height: 100%;
+  border: none !important; background: transparent;
+  padding: 0 !important; font-size: 16px !important; font-weight: 400;
+  color: var(--ink);
+}
+.filter-sheet .filter-search-box .filter-input::placeholder { color: rgba(244,241,236,0.62); }
+.filter-search-box .filter-input::-webkit-search-cancel-button { filter: invert(1); }
 .filter-sheet-apply {
   width: 100%; margin-top: 8px;
   padding: 12px;
@@ -2482,7 +2510,9 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   }
   .topbar-right, .topbar-icons { display: contents; }
   .top-nav { display: none !important; }
-  .topbar-icon-chat, .topbar .lang-toggle { display: none !important; }
+  /* Bulle de discussion (Tawk) à la place de la loupe : la recherche reste
+     dans « Filtres + tri ». FR/EN passe dans le panneau menu. */
+  .topbar .topbar-icon-search, .topbar .lang-toggle { display: none !important; }
   .nav-toggle {
     display: flex !important;
     grid-column: 1; grid-row: 1;
@@ -2491,7 +2521,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .topbar .topbar-icon { width: 40px; height: 40px; justify-self: center; grid-row: 1; }
   .topbar .topbar-icon svg { width: 20px; height: 20px; }
   .topbar .cart-btn svg { width: 24px; height: 24px; }
-  .topbar .topbar-icon-search { grid-column: 2; }
+  .topbar .topbar-icon-chat { grid-column: 2; }
   .topbar .topbar-icon-fav { grid-column: 4; }
   .topbar .cart-btn { grid-column: 5; }
   .topbar .topbar-icon .cart-count { top: 4px; right: 1px; }
@@ -2503,7 +2533,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .mobile-nav-backdrop {
     display: block;
     position: fixed; inset: 0;
-    background: rgba(10,12,18,0.55);
+    background: rgba(10,12,18,0.35);
     z-index: 260;
     opacity: 0; visibility: hidden;
     transition: opacity 0.3s var(--ease), visibility 0s linear 0.3s;
@@ -2516,7 +2546,10 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     display: flex;
     position: fixed; top: 0; left: 0; bottom: 0; right: auto;
     width: min(84vw, 340px);
-    background: var(--bg);
+    /* Même couleur que le fond, légèrement transparente + flou */
+    background: rgba(28,34,48,0.78);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    backdrop-filter: blur(16px) saturate(120%);
     border-right: 1px solid var(--line);
     z-index: 261;
     transform: translateX(-100%); opacity: 1;
@@ -3088,6 +3121,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
         <div class="filter-sheet-title">Filtres & tri</div>
         <button class="filter-sheet-close" id="filter-sheet-close" type="button">Fermer</button>
       </div>
+      <div class="filter-field filter-field--search">
+        <label class="filter-label" for="m-search-input">Recherche</label>
+        <div class="filter-search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+          <input class="filter-input" id="m-search-input" type="search" placeholder="Rechercher une pièce, une marque…" autocomplete="off" enterkeyhint="search">
+        </div>
+      </div>
       <div class="filter-field">
         <label class="filter-label" for="m-gender-select">Genre</label>
         <select class="filter-select" id="m-gender-select"></select>
@@ -3112,10 +3152,6 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
           <option value="price-desc">Prix décroissant</option>
           <option value="random">Aléatoire</option>
         </select>
-      </div>
-      <div class="filter-field">
-        <label class="filter-label" for="m-search-input">Recherche</label>
-        <input class="filter-input" id="m-search-input" type="text" placeholder="Recherche" autocomplete="off">
       </div>
       <button class="filter-sheet-apply" id="filter-sheet-apply" type="button">Voir les résultats</button>
       <button class="filter-sheet-close" id="filter-sheet-reset" type="button" style="display:block;margin:8px auto 0;padding:4px 10px;font-weight:700;">Réinitialiser</button>
@@ -7217,6 +7253,10 @@ window.startSimilarMarqueeLoop = function() {
   const mColor  = document.getElementById('m-color-select');
   const mSort   = document.getElementById('m-sort-select');
   const mSearch = document.getElementById('m-search-input');
+  // Touche « Rechercher » / Entrée du clavier = Voir les résultats
+  if (mSearch) mSearch.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); if (applyBtn) applyBtn.click(); }
+  });
 
   function mirrorOptions() {
     mGender.innerHTML = document.getElementById('gender-select').innerHTML;
@@ -7953,6 +7993,27 @@ window.__loadTawk = function(){
   s0.parentNode.insertBefore(s1,s0);
 };
 </script>
+<script>
+// Lien /?chat=1 (bulle des pages Auteurs, où Tawk n'est pas chargé) : ouvre la
+// discussion dès que Tawk est prêt, ou demande d'abord le consentement cookies.
+document.addEventListener('DOMContentLoaded', function(){
+  var u;
+  try { u = new URL(location.href); } catch(e){ return; }
+  if (u.searchParams.get('chat') !== '1') return;
+  u.searchParams.delete('chat');
+  try { history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch(e){}
+  var consent = null;
+  try { consent = localStorage.getItem('passeist_cookie_consent'); } catch(e){}
+  if (consent !== 'accepted') { if (window.__promptCookieConsent) window.__promptCookieConsent(); return; }
+  var tries = 0;
+  (function openChat(){
+    if (window.Tawk_API && typeof Tawk_API.maximize === 'function') {
+      Tawk_API.maximize();
+      if (typeof __showChatBackdrop === 'function') __showChatBackdrop();
+    } else if (++tries < 40) setTimeout(openChat, 250);
+  })();
+});
+</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
@@ -8016,6 +8077,7 @@ window.__loadTawk = function(){
       'filter.color': 'Couleur', 'filter.sort': 'Trier par', 'filter.search': 'Recherche',
       'filter.reset': 'Réinitialiser', 'filter.results': 'Voir les résultats',
       'filter.title': 'Filtres & tri', 'filter.close': 'Fermer', 'filter.toggle': 'Filtres + tri',
+      'filter.search_ph': 'Rechercher une pièce, une marque…',
       'filter.all_genders': 'Tous genres', 'filter.all_brands': 'Toutes marques',
       'filter.all_cats': 'Toutes catégories', 'filter.all_colors': 'Toutes couleurs',
       'sort.newest': 'Nouveautés', 'sort.price_asc': 'Prix croissant',
@@ -8059,6 +8121,7 @@ window.__loadTawk = function(){
       'filter.color': 'Color', 'filter.sort': 'Sort by', 'filter.search': 'Search',
       'filter.reset': 'Reset', 'filter.results': 'View results',
       'filter.title': 'Filters & sort', 'filter.close': 'Close', 'filter.toggle': 'Filters + sort',
+      'filter.search_ph': 'Search a piece, a brand…',
       'filter.all_genders': 'All genders', 'filter.all_brands': 'All brands',
       'filter.all_cats': 'All categories', 'filter.all_colors': 'All colors',
       'sort.newest': 'Newest', 'sort.price_asc': 'Price low to high',
@@ -8175,6 +8238,8 @@ window.__loadTawk = function(){
     if (apply) apply.textContent = t('filter.results');
     const fsTitle = document.querySelector('.filter-sheet-title');
     if (fsTitle) fsTitle.textContent = t('filter.title');
+    const mSearch = document.getElementById('m-search-input');
+    if (mSearch) mSearch.placeholder = t('filter.search_ph');
     const ftLabel = document.querySelector('.filter-toggle-label');
     if (ftLabel) ftLabel.textContent = t('filter.toggle');
     const fsClose = document.getElementById('filter-sheet-close');

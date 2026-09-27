@@ -28,7 +28,8 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
   }
   .topbar-right, .topbar-icons { display: contents !important; }
   .top-nav { display: none !important; }
-  .topbar-icon-chat, .topbar .lang-toggle { display: none !important; }
+  /* Bulle de discussion à la place de la loupe (comme index.html) */
+  .topbar .topbar-icon-search, .topbar .lang-toggle { display: none !important; }
   .nav-toggle {
     display: flex !important;
     grid-column: 1; grid-row: 1;
@@ -39,7 +40,7 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
   .topbar .topbar-icon { width: 40px !important; height: 40px !important; justify-self: center; grid-row: 1; }
   .topbar .topbar-icon svg { width: 20px; height: 20px; }
   .topbar .cart-btn svg { width: 24px; height: 24px; }
-  .topbar .topbar-icon-search { grid-column: 2; }
+  .topbar .topbar-icon-chat { grid-column: 2; }
   .topbar .topbar-icon-fav { grid-column: 4; }
   .topbar .cart-btn { grid-column: 5; }
   .topbar .logo { grid-column: 3; grid-row: 1; justify-self: center; font-size: 31px; }
@@ -49,7 +50,7 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
   .mobile-nav-backdrop {
     display: block;
     position: fixed; inset: 0;
-    background: rgba(10,12,18,0.55);
+    background: rgba(10,12,18,0.35);
     z-index: 260;
     opacity: 0; visibility: hidden;
     transition: opacity 0.3s ease, visibility 0s linear 0.3s;
@@ -59,7 +60,9 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
     display: flex !important;
     position: fixed; top: 0; left: 0; bottom: 0; right: auto;
     width: min(84vw, 340px);
-    background: var(--bg);
+    background: rgba(28,34,48,0.78);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    backdrop-filter: blur(16px) saturate(120%);
     border-right: 1px solid var(--line);
     z-index: 261;
     transform: translateX(-100%); opacity: 1;
