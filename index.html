@@ -635,7 +635,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 }
 .shop-header {
   margin-bottom: 40px; padding-bottom: 28px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: none;  /* épuré : plus de trait sous « Tous les articles » */
   display: block;
   position: relative;
 }
@@ -831,6 +831,36 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .filter-sheet .filter-label { font-size: 10px !important; }
 .filter-sheet .filter-input,
 .filter-sheet .filter-select { width: 100%; padding: 5px 0 7px !important; font-size: 13px !important; }
+/* « Filtres + tri » lisible : intitulés petits et discrets (mono, gris),
+   choix dans de vrais boutons encadrés et arrondis, le tri séparé des filtres. */
+.filter-sheet .filter-field { margin-bottom: 14px; }
+.filter-sheet .filter-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px !important; font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.14em;
+  margin-bottom: 2px;
+}
+.filter-sheet .filter-field .filter-select {
+  height: 46px;
+  padding: 0 40px 0 14px !important;
+  font-size: 15px !important; font-weight: 500;
+  color: var(--ink);
+  background-color: rgba(244,241,236,0.06);
+  border: 1px solid rgba(244,241,236,0.22);
+  border-radius: 6px;
+  background-position: right 16px center;
+}
+.filter-sheet .filter-field .filter-select:focus,
+.filter-sheet .filter-field .filter-select.active {
+  border-color: var(--ink);
+  background-color: rgba(244,241,236,0.12);
+}
+.filter-sheet .filter-field:has(#m-sort-select) {
+  margin-top: 22px; padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.filter-sheet .filter-sheet-apply { border-radius: 6px; margin-top: 18px; }
 /* Recherche en tête de « Filtres + tri », mise en avant : champ clair arrondi,
    loupe, texte en 16px (lisible, et évite le zoom automatique d'iOS). */
 .filter-sheet .filter-field--search { margin-bottom: 20px; }
@@ -1949,12 +1979,12 @@ body[data-page="home"] .home-brands-strip { display: block; }
     flex-direction: column;
     gap: 0;
     margin-bottom: 24px;
-    border-top: 1px solid rgba(10,10,8,0.12);
+    border-top: none;  /* épuré : plus de traits entre les grandes marques */
   }
   .hbs-headliners a {
     text-align: center;
     padding: 10px 8px;
-    border-bottom: 1px solid rgba(10,10,8,0.12);
+    border-bottom: none;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: -0.005em;
