@@ -3014,6 +3014,35 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .product-brand .brand-name, .hbs-headliners a { color: #ffffff; }
 .product-name { color: #f2eee8; }
 .product-size, .hbs-others { color: #d4d1cb; }
+
+/* ---- Verre dépoli progressif (« Liquid Glass ») : le flou lui-même est en
+   dégradé, fort sur le bord d'ancrage, qui s'efface vers le côté ouvert, et
+   il apparaît en douceur à l'ouverture. Deux calques : un flou léger partout,
+   un flou fort masqué en dégradé. (Tom, 2026-09-28) ---- */
+.mobile-nav, .filter-sheet {
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+.mobile-nav::before, .mobile-nav::after,
+.filter-sheet::before, .filter-sheet::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.mobile-nav::before, .filter-sheet::before {
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+}
+.mobile-nav::after {
+  -webkit-backdrop-filter: blur(28px) saturate(130%); backdrop-filter: blur(28px) saturate(130%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 100%);
+}
+.filter-sheet::after {
+  -webkit-backdrop-filter: blur(28px) saturate(130%); backdrop-filter: blur(28px) saturate(130%);
+  -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 35%, transparent 100%);
+  mask-image: linear-gradient(0deg, #000 0%, #000 35%, transparent 100%);
+}
+.mobile-nav.open::before, .mobile-nav.open::after,
+.filter-sheet.open::before, .filter-sheet.open::after { opacity: 1; }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
