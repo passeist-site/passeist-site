@@ -3166,6 +3166,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 #chat-overlay { background: rgba(10,12,18,0.18); backdrop-filter: none; -webkit-backdrop-filter: none; align-items: flex-end; }
 #chat-overlay .chat-box { height: min(560px, 50dvh); min-height: 340px; }
 #chat-overlay .chat-sub { margin-bottom: 8px; }
+/* Croix de fermeture en bas à droite, sous le pouce (Tom) : les champs du
+   bas lui laissent la place. */
+#chat-overlay .checkout-close {
+  top: auto; bottom: 12px; right: 14px; width: 44px; height: 44px; font-size: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+#chat-overlay .chat-form, #chat-overlay .chat-start { margin-right: 54px; }
 @media (max-width: 600px) {
   #chat-overlay { padding: 0 8px 8px; }
   #chat-overlay .chat-box { max-width: 100%; padding: 16px 14px 12px; }
