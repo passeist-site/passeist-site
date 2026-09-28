@@ -6237,7 +6237,8 @@ function openDetail(id) {
   const altBase = [p.brand, (window.tType ? window.tType(p) : p.type)].filter(Boolean).join(' ') + ' vintage';
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
   // Thumbs : on inclut TOUTES les photos (y compris la photo 0) pour qu'on puisse revenir à la principale via le carrousel.
-  const thumbsHtml = photos.map((src, i) => {
+  // Une seule photo (pièce vendue) : pas de vignette, elle répéterait la photo principale (Tom).
+  const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) => {
     return `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${altBase} — photo ${i+1}" onerror="this.parentElement.remove()"></div>`;
   }).join('');
   // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
