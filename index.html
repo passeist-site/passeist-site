@@ -114,9 +114,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0;
   overflow-x: clip;  /* Tom 2026-05-14 : clip au lieu de hidden — ne crée pas de scrolling context (fix scroll Firefox Android) */
-  /* Coupe l'effet élastique/bounce iOS quand on arrive en bout de page.
-     contain au lieu de none = autorise le scroll normal mais bloque le bounce */
-  overscroll-behavior-y: contain;
+  /* Tirer vers le bas en haut de page rafraîchit la page (Tom, 2026-09-28) :
+     on laisse le comportement natif du navigateur (auto). */
+  overscroll-behavior-y: auto;
 }
 body { position: relative; }
 body.no-scroll { overflow: hidden; }
@@ -236,10 +236,10 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
   .topbar-icon svg { width: 18px; height: 18px; }
 }
 
-/* Bulle de chat, animation wiggle toutes les 10 s */
+/* Bulle de chat : fixe, plus de secousse (Tom, 2026-09-28) */
 .topbar-icon-chat svg {
   transform-origin: 50% 85%; /* pivote par le bas de la bulle */
-  animation: chatWiggle 6s ease-in-out infinite;
+  animation: none;
 }
 .topbar-icon-chat:hover svg { animation-play-state: paused; }
 @keyframes chatWiggle {

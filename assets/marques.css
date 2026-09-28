@@ -229,3 +229,6 @@ body.no-scroll { overflow: hidden; }
 
 /* ---- Étiquettes de prix : biseau + coins arrondis 4px, partout ---- */
 .product-price-wrap, .detail-price-wrap, .bc-price { border-radius: 4px; }
+
+/* ---- Bulle de chat fixe, plus de secousse (comme index.html) ---- */
+.topbar-icon-chat svg { animation: none !important; }
