@@ -3118,7 +3118,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   display: flex; align-items: center; justify-content: center;
   background: rgba(244,241,236,0.08); color: var(--ink);
 }
-#chat-overlay .checkout-title { font-size: 24px; letter-spacing: -0.03em; }
+#chat-overlay .checkout-title { font-size: 18px; letter-spacing: -0.01em; margin: 2px 50px 10px 0; line-height: 1.3; }
 .chat-dot { color: #5a7593; }
 .chat-sub { font-size: 13px; color: var(--text-dim); font-weight: 300; margin: 4px 0 12px; }
 html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display: none; }
@@ -3128,7 +3128,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 .chat-msg { max-width: 84%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-wrap: break-word; }
 .chat-msg.client { align-self: flex-end; background: #f4f1ec; color: #1C2230; border-bottom-right-radius: 4px; }
-.chat-msg.passeist { align-self: flex-start; background: rgba(244,241,236,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
+.chat-msg.passeist { align-self: flex-start; background: #5a7593; color: #f4f1ec; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); border-bottom-left-radius: 4px; }
+/* Nom de l'auteur au-dessus de chaque bloc de messages. Côté visiteur : ses
+   messages à droite, passéist à gauche (dans /messagerie/, l'inverse) (Tom) */
+.chat-who { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: var(--tracking-narrow);
+  color: var(--text-mute); margin: 6px 4px -4px; }
+.chat-who.client { align-self: flex-end; }
+.chat-who.passeist { align-self: flex-start; font-family: var(--font-sans); font-size: 12px; text-transform: none; letter-spacing: 0; }
 .chat-msg.note { align-self: center; background: none; color: var(--text-mute); font-size: 12px; text-align: center; padding: 4px 8px; }
 .chat-form { display: flex; flex-direction: column; gap: 8px; }
 .chat-email, .chat-name, .chat-row textarea {
@@ -3177,7 +3183,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 @media (max-width: 600px) {
   #chat-overlay { padding: 0 8px 8px; }
   #chat-overlay .chat-box { max-width: 100%; padding: 16px 14px 12px; }
-  #chat-overlay .checkout-title { font-size: 20px; }
+  #chat-overlay .checkout-title { font-size: 17px; }
 }
 @media (min-width: 601px) {
   #chat-overlay { justify-content: flex-end; padding: 0 24px 24px; }
@@ -4159,8 +4165,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 <div class="checkout-overlay" id="chat-overlay" aria-hidden="true">
   <div class="checkout-box chat-box" role="dialog" aria-label="Discussion avec passéist">
     <button class="checkout-close" type="button" onclick="closeChat()" aria-label="Fermer">✕</button>
-    <div class="checkout-eyebrow">Discussion</div>
-    <h2 class="checkout-title">passéist<span class="chat-dot">.</span></h2>
+    <h2 class="checkout-title chat-title"><span class="chat-title-txt">Votre discussion avec</span> passéist<span class="chat-dot">.</span></h2>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
       <div class="chat-row">
@@ -7483,10 +7488,19 @@ function chatAdd(m) {
   const key = m.from + m.at;
   if (chatShown.has(key)) return;
   chatShown.add(key);
+  const box = document.getElementById('chat-msgs');
+  // Nouveau bloc d'auteur : on affiche son nom
+  if (m.from !== 'note' && box.dataset.last !== m.from) {
+    const who = document.createElement('div');
+    who.className = 'chat-who ' + m.from;
+    let nm = ''; try { nm = localStorage.getItem('passeist_chat_name') || ''; } catch (e) {}
+    who.textContent = m.from === 'passeist' ? 'passéist' : (nm || (window.__lang === 'en' ? 'You' : 'Vous'));
+    box.appendChild(who);
+    box.dataset.last = m.from;
+  }
   const el = document.createElement('div');
   el.className = 'chat-msg ' + m.from;
   el.textContent = m.text;
-  const box = document.getElementById('chat-msgs');
   box.appendChild(el);
   box.scrollTop = box.scrollHeight;
   if (m.at > chatSince) chatSince = m.at;
@@ -7548,6 +7562,7 @@ document.getElementById('chat-start').addEventListener('submit', e => {
   try {
     localStorage.setItem('passeist_chat_name', name);
   } catch (err) {}
+  document.querySelectorAll('#chat-msgs .chat-who.client').forEach(w => { w.textContent = name; });
   chatAdd({ from: 'passeist', at: 1, text: (window.__lang === 'en' ? 'Hello ' : 'Bonjour ') + name + ' !' });
   document.getElementById('chat-overlay').classList.add('chat-ready');
   if (chatPending) {
@@ -8966,8 +8981,8 @@ document.addEventListener('DOMContentLoaded', function(){
       const EN = document.documentElement.lang === 'en';
       const hbsCta = document.querySelector('.hbs-cta span:not(.arrow-symbol)');
       if (hbsCta) hbsCta.textContent = EN ? 'See all' : 'Tout voir';
-      const chEye = document.querySelector('#chat-overlay .checkout-eyebrow');
-      if (chEye) chEye.textContent = EN ? 'Chat' : 'Discussion';
+      const chTitle = document.querySelector('#chat-overlay .chat-title-txt');
+      if (chTitle) chTitle.textContent = EN ? 'Your chat with' : 'Votre discussion avec';
       const chName = document.getElementById('chat-name');
       if (chName) chName.placeholder = EN ? 'Your first name' : 'Votre prénom';
       const chText = document.getElementById('chat-text');
