@@ -8933,6 +8933,23 @@ document.addEventListener('DOMContentLoaded', function(){
     // Home, "Les Auteurs" eyebrow
     const hbsEyebrow = document.querySelector('.hbs-eyebrow');
     if (hbsEyebrow) hbsEyebrow.textContent = t('home.authors');
+    // Textes ajoutés le 2026-09-28 (Tout voir, chat, barre d'achat)
+    {
+      const EN = document.documentElement.lang === 'en';
+      const hbsCta = document.querySelector('.hbs-cta span:not(.arrow-symbol)');
+      if (hbsCta) hbsCta.textContent = EN ? 'See all' : 'Tout voir';
+      const chEye = document.querySelector('#chat-overlay .checkout-eyebrow');
+      if (chEye) chEye.textContent = EN ? 'Chat' : 'Discussion';
+      const chName = document.getElementById('chat-name');
+      if (chName) chName.placeholder = EN ? 'Your first name' : 'Votre prénom';
+      const chText = document.getElementById('chat-text');
+      if (chText) chText.placeholder = EN ? 'Your message…' : 'Votre message…';
+      const bb = document.getElementById('buy-bar-cta');
+      if (bb && typeof currentProduct !== 'undefined' && currentProduct)
+        bb.textContent = (EN ? 'Add to cart' : 'Ajouter au panier') + ' · ' + currentProduct.price + ' €';
+      const bf = document.getElementById('buy-bar-fav');
+      if (bf) bf.setAttribute('aria-label', EN ? 'Favourites' : 'Favoris');
+    }
     // Detail static
     const sizeLab = document.querySelector('.detail-attrs > div:nth-child(1) .attr-label');
     const genLab  = document.querySelector('.detail-attrs > div:nth-child(2) .attr-label');
