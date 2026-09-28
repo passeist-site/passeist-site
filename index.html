@@ -6945,6 +6945,17 @@ function pruneFavorites() {
   if (typeof activeView !== 'undefined' && activeView === 'favorites' && typeof renderGrid === 'function') renderGrid();
 }
 pruneFavorites();
+// Panier : restauré depuis le navigateur, sans les pièces vendues entre-temps
+(function restoreCart() {
+  if (!PRODUCTS.length) return;
+  let ids = [];
+  try { ids = JSON.parse(localStorage.getItem('passeist_cart') || '[]'); } catch (e) {}
+  if (!Array.isArray(ids) || !ids.length) return;
+  const byId = new Map(PRODUCTS.map(p => [String(p.id), p]));
+  cart = ids.map(id => byId.get(String(id))).filter(p => p && !isSold(p));
+  const draw = () => { try { renderCart(); } catch (e) {} };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', draw); else draw();
+})();
 function toggleFavorite(id, e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   const sid = String(id);
@@ -7022,6 +7033,9 @@ if (document.readyState === 'loading') {
   renderFavCount();
 }
 function renderCart() {
+  // Panier gardé dans le navigateur : il survit au retour arrière, au
+  // rechargement et à la fermeture de l'onglet (Tom)
+  try { localStorage.setItem('passeist_cart', JSON.stringify(cart.map(c => String(c.id)))); } catch (e) {}
   const cc = document.getElementById('cart-count');
   cc.textContent = cart.length;
   cc.dataset.zero = cart.length === 0 ? 'true' : 'false';
