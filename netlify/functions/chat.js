@@ -43,7 +43,7 @@ async function notifyPhone(store, conv, text) {
   if (!pub || !priv) return [{ error: 'clés VAPID absentes' }];
   webpush.setVapidDetails('mailto:info@passeist.com', pub, priv);
   const payload = JSON.stringify({
-    title: 'passéist · nouveau message',
+    title: 'passéist · ' + (conv.name || 'nouveau message'),
     body: (conv.product ? conv.product + ' · ' : '') + text.slice(0, 140),
     url: '/messagerie/#' + conv.id,
     tag: conv.id,
@@ -89,9 +89,11 @@ exports.handler = async (event) => {
       if (!CONV_RE.test(id) || !text) return json(400, { error: 'invalid' });
       const now = Date.now();
       const conv = (await store.get('conv/' + id, { type: 'json' })) || {
-        id, createdAt: now, messages: [], email: '', product: '',
+        id, createdAt: now, messages: [], name: '', email: '', product: '',
       };
       if (conv.messages.length >= MAX_MESSAGES) return json(429, { error: 'too many messages' });
+      const name = clean(body.name, 60);
+      if (name) conv.name = name;
       const email = clean(body.email, 200);
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) conv.email = email;
       const product = clean(body.product, 200);
@@ -123,7 +125,7 @@ exports.handler = async (event) => {
       return json(200, {
         convs: convs.slice(0, 100).map(c => {
           const last = c.messages[c.messages.length - 1] || {};
-          return { id: c.id, updatedAt: c.updatedAt, email: c.email, product: c.product,
+          return { id: c.id, updatedAt: c.updatedAt, name: c.name || '', email: c.email, product: c.product,
                    unread: c.unread || 0, last: String(last.text || '').slice(0, 120), lastFrom: last.from };
         }),
       });

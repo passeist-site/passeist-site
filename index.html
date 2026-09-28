@@ -3137,7 +3137,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   background: rgba(244,241,236,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
   padding: 10px 12px; outline: none;
 }
-.chat-email { font-size: 13px; }
+.chat-email { font-size: 13px; min-width: 0; }
+.chat-ids { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
 .chat-email:focus, .chat-row textarea:focus { border-color: rgba(244,241,236,0.55); }
 .chat-row { display: flex; gap: 8px; align-items: flex-end; }
 .chat-row textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; border-radius: 12px; }
@@ -4064,7 +4065,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <p class="chat-sub"><span class="lang-fr">Écrivez-nous, nous répondons en direct.</span><span class="lang-en">Write to us, we reply live.</span></p>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-form" id="chat-form">
-      <input type="email" id="chat-email" class="chat-email" placeholder="Votre e-mail (facultatif, si vous quittez le site)" autocomplete="email">
+      <div class="chat-ids">
+        <input type="text" id="chat-name" class="chat-email" placeholder="Prénom" autocomplete="given-name" maxlength="60" required>
+        <input type="email" id="chat-email" class="chat-email" placeholder="E-mail (facultatif)" autocomplete="email">
+      </div>
       <div class="chat-row">
         <textarea id="chat-text" rows="1" placeholder="Votre message…" required></textarea>
         <button type="submit" class="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
@@ -7315,7 +7319,12 @@ function openChat() {
       : 'Bonjour ! Une question sur une pièce, une taille, des photos supplémentaires ? Nous répondons ici en quelques minutes en journée.' });
   }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
-  document.getElementById('chat-email').placeholder = en ? 'Your e-mail (optional, if you leave the site)' : 'Votre e-mail (facultatif, si vous quittez le site)';
+  document.getElementById('chat-email').placeholder = en ? 'E-mail (optional)' : 'E-mail (facultatif)';
+  document.getElementById('chat-name').placeholder = en ? 'First name' : 'Prénom';
+  try {
+    const n = localStorage.getItem('passeist_chat_name'); if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
+    const m = localStorage.getItem('passeist_chat_email'); if (m && !document.getElementById('chat-email').value) document.getElementById('chat-email').value = m;
+  } catch (e) {}
   document.getElementById('chat-overlay').classList.add('open');
   chatPoll();
   clearInterval(chatTimer);
@@ -7344,10 +7353,16 @@ document.getElementById('chat-form').addEventListener('submit', e => {
   ta.value = ''; ta.style.height = '';
   fetch(CHAT_API + '?action=send', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ conv, text, product, email: document.getElementById('chat-email').value.trim() }),
+    body: JSON.stringify({ conv, text, product,
+      name: document.getElementById('chat-name').value.trim(),
+      email: document.getElementById('chat-email').value.trim() }),
   }).then(r => r.json()).then(d => {
     if (!d.ok) throw new Error(d.error || 'send');
-    try { localStorage.setItem('passeist_chat_conv', conv); } catch (err) {}
+    try {
+      localStorage.setItem('passeist_chat_conv', conv);
+      localStorage.setItem('passeist_chat_name', document.getElementById('chat-name').value.trim());
+      localStorage.setItem('passeist_chat_email', document.getElementById('chat-email').value.trim());
+    } catch (err) {}
     chatAdd({ from: 'client', text, at: d.at });
   }).catch(() => {
     ta.value = text;

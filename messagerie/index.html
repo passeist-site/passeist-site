@@ -141,7 +141,7 @@ async function showList() {
   if (current) return;
   $('main').innerHTML = convs.length ? convs.map(c => `
     <div class="card${c.unread ? ' unread' : ''}" data-id="${c.id}">
-      <div class="top"><span class="who">${c.unread ? '<span class="dot"></span>' : ''}${esc(c.email || 'Visiteur')}${c.product ? ' · ' + esc(c.product) : ''}</span><span>${when(c.updatedAt)}</span></div>
+      <div class="top"><span class="who">${c.unread ? '<span class="dot"></span>' : ''}${esc(c.name || c.email || 'Visiteur')}${c.product ? ' · ' + esc(c.product) : ''}</span><span>${when(c.updatedAt)}</span></div>
       <div class="last">${c.lastFrom === 'passeist' ? 'Vous : ' : ''}${esc(c.last)}</div>
     </div>`).join('') : '<p class="empty">Aucune conversation pour l\'instant.<br>Les messages du chat du site arrivent ici.</p>';
   document.querySelectorAll('.card').forEach(el => el.onclick = () => { location.hash = el.dataset.id; });
@@ -153,7 +153,7 @@ async function showConv(id) {
   const { conv } = await api('get', { qs: '&conv=' + encodeURIComponent(id) });
   if (current !== id || !conv) return;
   const atBottom = $('main').scrollHeight - $('main').scrollTop - $('main').clientHeight < 80;
-  const ctx = [conv.product ? 'Pièce : ' + esc(conv.product) : '', conv.email ? 'E-mail : <a href="mailto:' + esc(conv.email) + '">' + esc(conv.email) + '</a>' : 'Pas d\'e-mail laissé']
+  const ctx = [conv.name ? '<strong>' + esc(conv.name) + '</strong>' : '', conv.product ? 'Pièce : ' + esc(conv.product) : '', conv.email ? 'E-mail : <a href="mailto:' + esc(conv.email) + '">' + esc(conv.email) + '</a>' : 'Pas d\'e-mail laissé']
     .filter(Boolean).join('<br>');
   $('main').innerHTML = `<div class="msgs"><p class="ctx">${ctx}</p>${conv.messages.map(m =>
     `<div class="m ${m.from}">${esc(m.text)}<time>${when(m.at)}</time></div>`).join('')}</div>`;
