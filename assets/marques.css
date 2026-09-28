@@ -201,7 +201,8 @@ body.no-scroll { overflow: hidden; }
 .topbar { border-bottom-color: transparent !important; box-shadow: 0 10px 24px -12px rgba(0,0,0,0.7); }
 .topbar::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,241,236,0.55), transparent);
+  /* Filet fondu : invisible sur les bords, lumineux seulement au centre */
+  background: linear-gradient(90deg, transparent 0%, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%, transparent 100%);
   pointer-events: none;
 }
 .mobile-nav { box-shadow: inset -1px 0 0 rgba(255,255,255,0.35), 24px 0 50px rgba(0,0,0,0.55); border-right-color: transparent !important; }

@@ -3009,7 +3009,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .topbar { border-bottom-color: transparent !important; box-shadow: 0 10px 24px -12px rgba(0,0,0,0.7); }
 .topbar::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,241,236,0.55), transparent);
+  /* Filet fondu : invisible sur les bords, lumineux seulement au centre */
+  background: linear-gradient(90deg, transparent 0%, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%, transparent 100%);
   pointer-events: none;
 }
 .filter-mobile-toggle {
@@ -3789,7 +3790,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
       </select></label></div>
       <div class="checkout-row"><label>Téléphone (optionnel)<input type="tel"></label></div>
       <div class="checkout-payment">
-        <div class="checkout-payment-title">Livraison (calculée selon le pays) <span class="ship-note">+20&nbsp;% à partir de 3 articles</span></div>
+        <div class="checkout-payment-title">Livraison (calculée selon le pays)</div>
         <div class="checkout-payment-options ship-options" id="ship-options">
           <div class="ship-row" data-zone="15"><span class="ship-dot"></span><span>France</span><span class="ship-price">15 €</span></div>
           <div class="ship-row" data-zone="25"><span class="ship-dot"></span><span>Europe</span><span class="ship-price">25 €</span></div>
@@ -6808,14 +6809,13 @@ function renderCheckoutSummary() {
   const shipEl = document.getElementById('ship-input');
   const shipBase = shipEl ? parseInt(shipEl.value) : 15;
   const shipLabel = shipEl ? shipEl.dataset.label : 'France';
-  // Règle : même prix pour 1 ou 2 articles, +20 % à partir de 3 articles
-  const shipCost = cart.length <= 2 ? shipBase : Math.ceil(shipBase * 1.2);
+  // Tarif unique par zone, quel que soit le nombre d'articles (CGV §6, Stripe)
+  const shipCost = shipBase;
   const total = subtotal + shipCost;
   document.getElementById('checkout-summary').innerHTML =
     cart.map(p => `<div class="checkout-summary-item"><span>${p.brand}, ${p.type}</span><span>${p.price} €</span></div>`).join('') +
     `<div class="checkout-summary-item"><span>Livraison · ${shipLabel}</span><span>${shipCost} €</span></div>` +
-    `<div class="checkout-summary-item checkout-summary-total"><span>Total</span><span>${total} €</span></div>` +
-    `<div class="checkout-summary-note">Livraison&nbsp;+20&nbsp;% à partir du 3ᵉ article.</div>`;
+    `<div class="checkout-summary-item checkout-summary-total"><span>Total</span><span>${total} €</span></div>`;
 }
 function openCheckout() {
   if (cart.length === 0) { alert('Votre panier est vide.'); return; }
@@ -6871,7 +6871,7 @@ function submitOrder(e) {
   const shipEl = document.getElementById('ship-input');
   const shipBase = shipEl ? parseInt(shipEl.value) : 15;
   const shipZone = shipEl ? shipEl.dataset.label : 'France';
-  const shipCost = cart.length <= 2 ? shipBase : Math.ceil(shipBase * 1.2);
+  const shipCost = shipBase;  // tarif unique par zone (CGV §6, Stripe)
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const total = subtotal + shipCost;
   const details = 'RÉFÉRENCE : ' + ref + '\n\n'
