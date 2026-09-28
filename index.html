@@ -3224,6 +3224,21 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   body.buy-bar-on #detail { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 }
 
+/* Tirer pour rafraîchir sur la fiche produit (elle défile dans son propre
+   cadre, le geste natif du navigateur n'y agit pas) (Tom) */
+.ptr {
+  position: fixed; left: 50%; top: calc(var(--actual-topbar-h, var(--topbar-h-mobile, 56px)) + 6px);
+  width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; z-index: 30;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(40,48,66,0.92); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 20px -6px rgba(0,0,0,0.7);
+  opacity: 0; transform: translateY(-20px) scale(0.8); pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.ptr svg { width: 18px; height: 18px; stroke: #f4f1ec; fill: none; stroke-width: 1.6; transition: transform 0.15s linear; }
+.ptr.ready svg { stroke: #ffffff; }
+.ptr.spin svg { animation: ptrSpin 0.8s linear infinite; }
+@keyframes ptrSpin { to { transform: rotate(360deg); } }
+
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
@@ -4168,6 +4183,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <button class="buy-bar-icon" type="button" aria-label="Discussion" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg></button>
   <button class="buy-bar-cta" id="buy-bar-cta" type="button" onclick="if(currentProduct) addToCart(currentProduct.id)"></button>
 </div>
+
+<div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></div>
 
 <footer class="footer">
   <div>© passeist. Curation mode d'auteur japonaise · Paris 2026</div>
@@ -6806,8 +6823,17 @@ document.addEventListener('keydown', e => {
 });
 
 // ============ CART ============
+// Retour arrière avec le panier ouvert : ferme le panier et reste sur la page
+// (une entrée d'historique est ajoutée à l'ouverture) (Tom)
+function cartHistoryPush() {
+  try { history.pushState(Object.assign({}, history.state || {}, { overlay: 'cart' }), '', location.href); } catch (e) {}
+}
+function cartHistoryPop() {
+  if (history.state && history.state.overlay === 'cart') { window.__skipPop = true; history.back(); }
+}
 function toggleCart() {
   const open = document.getElementById('cart-panel').classList.toggle('open');
+  if (open) cartHistoryPush(); else cartHistoryPop();
   let bd = document.getElementById('cart-backdrop');
   if (!bd) {
     bd = document.createElement('div');
@@ -6830,6 +6856,7 @@ document.addEventListener('mousedown', (e) => {
   if (document.getElementById('contact-overlay') && document.getElementById('contact-overlay').classList.contains('open')) return;
   panel.classList.remove('open');
   const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open');
+  cartHistoryPop();
 });
 function flyToCart() {
   // Image source (vignette qui vole) : détail > marquee > carte produit
@@ -7272,6 +7299,10 @@ function openCheckout() {
   if (cart.length === 0) { alert('Votre panier est vide.'); return; }
   document.getElementById('cart-panel').classList.remove('open');
   { const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open'); }
+  if (history.state && history.state.overlay === 'cart') {
+    const st = Object.assign({}, history.state); delete st.overlay;
+    try { history.replaceState(st, '', location.href); } catch (e) {}
+  }
   document.getElementById('checkout-form').style.display = 'flex';
   document.getElementById('checkout-success').classList.remove('open');
   document.getElementById('checkout-title').textContent = 'Votre commande';
@@ -7400,6 +7431,38 @@ function submitContact(e) {
     alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com.');
   });
 }
+
+// ============ TIRER POUR RAFRAÎCHIR (fiche produit, mobile) ============
+(function () {
+  const det = document.getElementById('detail'), ind = document.getElementById('ptr');
+  if (!det || !ind) return;
+  const THRESHOLD = 80;
+  let y0 = null, x0 = 0, dy = 0;
+  det.addEventListener('touchstart', e => {
+    if (det.scrollTop > 0 || e.touches.length !== 1) { y0 = null; return; }
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0;
+  }, { passive: true });
+  det.addEventListener('touchmove', e => {
+    if (y0 === null) return;
+    dy = e.touches[0].clientY - y0;
+    const dx = Math.abs(e.touches[0].clientX - x0);
+    if (dy <= 0 || dx > dy || det.scrollTop > 0) { ind.style.opacity = ''; ind.style.transform = ''; return; }
+    const p = Math.min(dy / THRESHOLD, 1);
+    ind.style.opacity = String(p);
+    ind.style.transform = 'translateY(' + (Math.min(dy, 110) * 0.45 - 20) + 'px) scale(' + (0.8 + 0.2 * p) + ')';
+    ind.querySelector('svg').style.transform = 'rotate(' + (p * 270) + 'deg)';
+    ind.classList.toggle('ready', dy >= THRESHOLD);
+  }, { passive: true });
+  det.addEventListener('touchend', () => {
+    if (y0 !== null && dy >= THRESHOLD && det.scrollTop <= 0) {
+      ind.classList.add('spin');
+      setTimeout(() => location.reload(), 250);
+    } else {
+      ind.style.opacity = ''; ind.style.transform = ''; ind.classList.remove('ready');
+    }
+    y0 = null; dy = 0;
+  }, { passive: true });
+})();
 
 // ============ DISCUSSION EN DIRECT ============
 // Messages stockés par netlify/functions/chat.js ; passéist répond depuis
@@ -8514,6 +8577,15 @@ window.updateSEO = function(p) {
   }
   // Gère back/forward
   window.addEventListener('popstate', function(ev){
+    // Fermeture du panier par la croix : le retour d'historique est silencieux
+    if (window.__skipPop) { window.__skipPop = false; return; }
+    // Retour arrière panier ouvert : on ferme le panier, on reste sur la page
+    const cp = document.getElementById('cart-panel');
+    if (cp && cp.classList.contains('open')) {
+      cp.classList.remove('open');
+      const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open');
+      return;
+    }
     const s = ev.state;
     if (s && s.t === 'detail' && _od) {
       _od.call(window, s.id);
