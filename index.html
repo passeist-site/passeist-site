@@ -3148,9 +3148,47 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7);
 }
 .chat-send svg { width: 18px; height: 18px; fill: #1C2230; }
+/* Au plus la moitié de l'écran, ancrée en bas : on continue de voir la
+   pièce au-dessus (voile léger, sans flou) (Tom). */
+#chat-overlay { background: rgba(10,12,18,0.18); backdrop-filter: none; -webkit-backdrop-filter: none; align-items: flex-end; }
+#chat-overlay .chat-box { height: min(560px, 50dvh); min-height: 340px; }
+#chat-overlay .chat-sub { margin-bottom: 8px; }
 @media (max-width: 600px) {
-  #chat-overlay { padding: 12px 10px; align-items: flex-end; }
-  #chat-overlay .chat-box { height: calc(100dvh - 90px); max-width: 100%; }
+  #chat-overlay { padding: 0 8px 8px; }
+  #chat-overlay .chat-box { max-width: 100%; padding: 16px 14px 12px; }
+  #chat-overlay .checkout-title { font-size: 20px; }
+}
+@media (min-width: 601px) {
+  #chat-overlay { justify-content: flex-end; padding: 0 24px 24px; }
+}
+
+/* Barre d'achat fixe en bas de la fiche produit, mobile uniquement (Tom) :
+   favori, discussion, ajout au panier toujours sous le pouce. Remplace sur
+   mobile les icônes à côté du prix et les deux boutons du bas. */
+.buy-bar { display: none; }
+@media (max-width: 900px) {
+.buy-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 250;
+  display: none; align-items: center; gap: 10px;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(0deg, rgba(28,34,48,0.96) 0%, rgba(28,34,48,0.82) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: 0 -10px 30px -12px rgba(0,0,0,0.7); }
+.buy-bar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%); }
+.buy-bar-icon { flex: 0 0 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(244,241,236,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center; }
+.buy-bar-icon svg { width: 21px; height: 21px; stroke: #f4f1ec; fill: none; stroke-width: 1.4; }
+.buy-bar-icon.is-fav svg { fill: #f4f1ec; }
+.buy-bar-cta { flex: 1; height: 46px; border-radius: 6px; border: none; cursor: pointer;
+  background: #f4f1ec; color: #1C2230; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--tracking-wide);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7); }
+
+  body.buy-bar-on #detail.open ~ .buy-bar { display: flex; }
+  body.buy-bar-on .detail-price-actions,
+  body.buy-bar-on #detail .detail-actions { display: none !important; }
+  body.buy-bar-on #detail { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 }
 
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
@@ -3300,6 +3338,19 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
 }
 .cart-checkout.btn:hover { opacity: 1; background: #ffffff; }
+
+/* Ouverture plus lente et plus douce des panneaux gauche (menu) et droite
+   (panier) : 0,65 s, départ franc puis longue décélération (Tom). */
+:root { --panel-ease: cubic-bezier(0.22, 1, 0.36, 1); --panel-dur: 0.65s; }
+.cart-panel { transition: transform var(--panel-dur) var(--panel-ease); }
+.cart-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
+.cart-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
+@media (max-width: 900px) {
+  .mobile-nav { transition: transform var(--panel-dur) var(--panel-ease), visibility 0s linear var(--panel-dur); }
+  .mobile-nav.open { transition: transform var(--panel-dur) var(--panel-ease), visibility 0s; }
+  .mobile-nav-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
+  .mobile-nav-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
+}
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
@@ -4075,6 +4126,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </div>
     </form>
   </div>
+</div>
+
+<div class="buy-bar" id="buy-bar">
+  <button class="buy-bar-icon fav-btn" id="buy-bar-fav" type="button" data-id="" aria-label="Favoris"
+    onclick="if(currentProduct) toggleFavorite(currentProduct.id, event)"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg></button>
+  <button class="buy-bar-icon" type="button" aria-label="Discussion" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg></button>
+  <button class="buy-bar-cta" id="buy-bar-cta" type="button" onclick="if(currentProduct) addToCart(currentProduct.id)"></button>
 </div>
 
 <footer class="footer">
@@ -6394,6 +6452,12 @@ function openDetail(id) {
   const dFav = document.getElementById('d-price-fav');
   if (dFav) {
     dFav.dataset.id = p.id;
+    // Barre d'achat mobile : même pièce, cachée si vendue
+    const bf = document.getElementById('buy-bar-fav');
+    if (bf) { bf.dataset.id = p.id; bf.classList.toggle('is-fav', isFavorite(p.id)); }
+    const bc = document.getElementById('buy-bar-cta');
+    if (bc) bc.textContent = (window.__lang === 'en' ? 'Add to cart' : 'Ajouter au panier') + ' · ' + p.price + ' €';
+    document.body.classList.toggle('buy-bar-on', !sold);
     dFav.classList.toggle('is-fav', isFavorite(p.id));
   }
   // Gallery, main photo + thumb row (style Centre Commercial sur mobile, grille 2-col sur desktop)
@@ -8398,6 +8462,7 @@ window.updateSEO = function(p) {
     } else {
       const detail = document.getElementById('detail');
       if (detail && detail.classList.contains('open') && _cd) _cd.call(window);
+      document.body.classList.remove('detail-open');
       // Page courante = pathname (URL propre) avec fallback hash legacy
       const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
       const legacyHash = location.hash.replace(/^#/, '').split('/')[0];

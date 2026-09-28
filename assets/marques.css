@@ -57,9 +57,9 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
     background: rgba(10,12,18,0.35);
     z-index: 260;
     opacity: 0; visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s;
   }
-  .mobile-nav-backdrop.open { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
+  .mobile-nav-backdrop.open { opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0s; }
   .mobile-nav {
     display: flex !important;
     position: fixed; top: 0; left: 0; bottom: 0; right: auto;
@@ -73,7 +73,7 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
     z-index: 261;
     transform: translateX(-100%); opacity: 1;
     visibility: hidden; pointer-events: none;
-    transition: transform 0.35s ease, visibility 0s linear 0.35s;
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.65s;
     padding: 64px 28px calc(24px + env(safe-area-inset-bottom));
     flex-direction: column; gap: 0;
     overflow-y: auto;
@@ -81,7 +81,7 @@ html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
   .mobile-nav.open {
     transform: translateX(0);
     visibility: visible; pointer-events: auto;
-    transition: transform 0.35s ease, visibility 0s;
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
   }
   .mobile-nav > a {
     color: var(--ink); text-decoration: none;
