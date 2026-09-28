@@ -3206,6 +3206,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7); }
 
   body.buy-bar-on #detail.open ~ .buy-bar { display: flex; }
+  /* Le cœur de la barre porte la classe fav-btn (synchro des favoris) : on
+     annule le placement absolu des cœurs des cartes. */
+  .buy-bar .buy-bar-icon.fav-btn {
+    position: static; top: auto; right: auto; width: 46px; height: 46px;
+    background: rgba(244,241,236,0.08); backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
   body.buy-bar-on .detail-price-actions,
   body.buy-bar-on #detail .detail-actions { display: none !important; }
   body.buy-bar-on #detail { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
