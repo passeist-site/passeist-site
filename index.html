@@ -4133,7 +4133,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <button class="checkout-close" type="button" onclick="closeChat()" aria-label="Fermer">✕</button>
     <div class="checkout-eyebrow">Discussion</div>
     <h2 class="checkout-title">passéist<span class="chat-dot">.</span></h2>
-    <p class="chat-sub"><span class="lang-fr">Écrivez-nous, nous répondons en direct.</span><span class="lang-en">Write to us, we reply live.</span></p>
+    <p class="chat-sub"><span class="lang-fr">Discussion en direct</span><span class="lang-en">Live chat</span></p>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
       <input type="text" id="chat-name" class="chat-email" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required>
@@ -7412,8 +7412,8 @@ function openChat() {
   const box = document.getElementById('chat-msgs');
   if (!box.children.length) {
     chatAdd({ from: 'passeist', at: 0, text: en
-      ? 'Hello! A question about a piece, a size, extra photos? Write to us here, we will get back to you as soon as possible.'
-      : 'Bonjour ! Une question sur une pièce, une taille, des photos supplémentaires ? Écrivez-nous ici, nous vous répondons au plus vite.' });
+      ? 'Hello! How can we help you?'
+      : 'Bonjour ! Comment pouvons-nous vous aider ?' });
   }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-email').placeholder = en ? 'E-mail (optional)' : 'E-mail (facultatif)';
