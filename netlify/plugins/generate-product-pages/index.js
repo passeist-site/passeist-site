@@ -801,7 +801,9 @@ module.exports = {
     //    pages HTML dans un fichier JS versionné, téléchargé une seule fois
     //    et mis en cache pour tout le site (pages 7x plus légères).
     //    index.html du dépôt reste la source (imports, sync, webhook). ──
-    const catalogueJs = 'window.__PRODUCTS__=' + JSON.stringify(products) + ';';
+    // Le champ « path » (adresse de la fiche chez Vestiaire) ne sert pas au
+    // site : Google le lisait comme un lien et tombait sur 723 pages 404.
+    const catalogueJs = 'window.__PRODUCTS__=' + JSON.stringify(products.map(({ path: _vc, ...rest }) => rest)) + ';';
     const catHash = require('crypto').createHash('md5').update(catalogueJs).digest('hex').slice(0, 10);
     const catRel = 'data/catalogue.' + catHash + '.js';
     fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });
@@ -819,6 +821,52 @@ module.exports = {
       '\n<link rel="alternate" hreflang="en" href="https://passeist.com/?lang=en">' +
       '\n<link rel="alternate" hreflang="x-default" href="https://passeist.com/">');
     fs.writeFileSync(indexPath, homeHtml, 'utf8');
+
+    // ── Pages Boutique, Vendu, À propos… : leur propre HTML (titre, description,
+    //    canonique), au lieu de celui de l'accueil que Google prenait pour un
+    //    doublon (« explorée, non indexée »). Le site reste la même appli. ──
+    const ROUTES = {
+      shop:    ['Boutique · mode japonaise vintage (Yohji Yamamoto, Comme des Garçons, Issey Miyake) · passéist',
+                'Toutes les pièces disponibles : vêtements vintage et archive de créateurs japonais, authentifiés à Paris.'],
+      archive: ['Pièces vendues · archive de mode japonaise · passéist',
+                'Les pièces déjà vendues par passéist : Yohji Yamamoto, Comme des Garçons, Issey Miyake et autres créateurs japonais.'],
+      about:   ['À propos · passéist, mode d\'auteur japonaise à Paris',
+                'passéist : curation de vêtements vintage de créateurs japonais, sélectionnés et authentifiés à Paris.'],
+      contact: ['Contact · passéist', 'Une question sur une pièce, une taille, une commande ? Contactez passéist.'],
+      cgv:     ['Conditions générales de vente · passéist', 'Conditions générales de vente de passeist.com.'],
+      privacy: ['Confidentialité · passéist', 'Politique de confidentialité et cookies de passeist.com.'],
+    };
+    const escA = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    for (const [route, [title, desc]] of Object.entries(ROUTES)) {
+      const url = 'https://passeist.com/' + route;
+      const html = slimHtml
+        .replace(/<title>[\s\S]*?<\/title>/, '<title>' + escA(title) + '</title>')
+        .replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="' + escA(desc) + '">')
+        .replace(/<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="' + url + '">')
+        .replace(/<meta property="og:url" content="[^"]*">/, '<meta property="og:url" content="' + url + '">')
+        .replace(/<meta property="og:title" content="[^"]*">/, '<meta property="og:title" content="' + escA(title) + '">')
+        .replace(/<meta property="og:description" content="[^"]*">/, '<meta property="og:description" content="' + escA(desc) + '">');
+      fs.writeFileSync(path.join(publishDir, route + '.html'), html, 'utf8');
+    }
+
+    // ── _redirects : pages ci-dessus + anciennes adresses Vestiaire (301 vers
+    //    la fiche passéist), avant la règle 404 finale. ──
+    const redirPath = path.join(publishDir, '_redirects');
+    if (fs.existsSync(redirPath)) {
+      let redir = fs.readFileSync(redirPath, 'utf8');
+      for (const route of Object.keys(ROUTES)) {
+        redir = redir.replace(new RegExp('^/' + route + '(\\s+)/index\\.html(\\s+)200$', 'm'), '/' + route + '$1/' + route + '.html$2200');
+      }
+      const seen = new Set();
+      const vc = products
+        .filter(p => p.id && typeof p.path === 'string' && /^\/[^\s]+\.shtml$/.test(p.path))
+        .map(p => p.path + '  /product/' + productSlug(p) + '  301')
+        .filter(l => { const k = l.split(' ')[0]; if (seen.has(k)) return false; seen.add(k); return true; });
+      const block = '# Anciennes adresses Vestiaire lues par Google dans le catalogue → fiche passéist\n' + vc.join('\n') + '\n';
+      redir = redir.replace(/^\/\*\s+\/404\.html\s+404\s*$/m, (m) => block + m);
+      fs.writeFileSync(redirPath, redir, 'utf8');
+      console.log('[generate-product-pages] _redirects : ' + Object.keys(ROUTES).length + ' pages, ' + vc.length + ' adresses Vestiaire redirigées');
+    }
     console.log('[generate-product-pages] Catalogue externalisé : /' + catRel + ' (' + Math.round(catalogueJs.length / 1024) + ' Ko), index.html ' + Math.round(baseHtml.length / 1024) + ' -> ' + Math.round(slimHtml.length / 1024) + ' Ko');
 
     // ── Generate one page per product ─────────────────────────────────
