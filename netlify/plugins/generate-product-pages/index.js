@@ -128,6 +128,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
         <div><div class="attr-label">Genre</div><div class="attr-value" id="d-gender">${esc(getGender(p))}</div></div>
         <div><div class="attr-label">État</div><div class="attr-value">Très bon état</div></div>
       </div>
+      <p class="detail-intro" id="d-intro">${esc(p.intro || '')}</p>
       <div class="detail-desc" id="d-desc">${esc(p.desc || '')}</div>
       <div class="detail-actions" id="d-actions"${hideIfSold}>
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
@@ -506,6 +507,80 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
   return updated;
 }
 
+// ── SEO : marque lisible, phrase unique par pièce, page Auteur ─────────────
+
+// "COMME DES GARÇONS" -> "Comme des Garçons", "PORTER BY YOSHIDA KABAN" ->
+// "Porter by Yoshida Kaban" ; les sigles avec chiffres restent en majuscules.
+const SMALL_WORDS = new Set(['des', 'de', 'du', 'by', 'la', 'le', 'les', 'et', 'of', 'the', 'pour']);
+function titleCaseBrand(b) {
+  return String(b || '').toLowerCase().split(/(\s+)/).map((w, i) => {
+    if (/^\s+$/.test(w) || !w) return w;
+    if (/\d/.test(w)) return w.toUpperCase();
+    if (i > 0 && SMALL_WORDS.has(w)) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join('');
+}
+
+const COLOR_EN = { noir: 'black', marine: 'navy', gris: 'grey', blanc: 'white', marron: 'brown',
+  kaki: 'khaki', bleu: 'blue', vert: 'green', jaune: 'yellow', violet: 'purple', bordeaux: 'burgundy',
+  rouge: 'red', rose: 'pink', argent: 'silver', or: 'gold', 'écru': 'ecru', multicolore: 'multicolour',
+  beige: 'beige', camel: 'camel', orange: 'orange', anthracite: 'charcoal', ivoire: 'ivory', 'métal': 'metal' };
+
+// Phrase d'introduction unique par pièce (FR/EN), générée à partir des données
+// (marque, type, saison, matière, couleur, taille, genre). Affichée sur la
+// fiche et reprise dans la description Google : du contenu propre à passéist,
+// distinct du texte de l'annonce Vestiaire.
+function buildIntro(p) {
+  const brand = titleCaseBrand(p.brand);
+  // "Pull / gilet / sweat" -> "Pull" (types Vestiaire à choix multiples)
+  const type = String(p.type || '').split(/\s*\/\s*/)[0].trim();
+  const typeLc = type.charAt(0).toLowerCase() + type.slice(1);
+  const sy = seasonYear(p.desc || '');
+  const matInType = /\ben\s+[a-zéèêëàâùûüïîôœæç]+/i.test(type);
+  const mat = matInType ? null : extractMaterialFromDesc(p.desc || '');
+  const colFR = p.color ? colorFR(p.color) : '';
+  const colOk = colFR && !/^(autre|other)$/i.test(colFR);
+  const size = sizeFR(p.size);
+  const kind = productKind(p.type);
+  const sizeWord = (kind === 'clothing' || kind === 'shoes');
+  const gFR = p.gender === 'h' ? 'homme' : p.gender === 'f' ? 'femme' : '';
+  const gEN = p.gender === 'h' ? "men's" : p.gender === 'f' ? "women's" : '';
+
+  let fr = `${brand} : ${typeLc} vintage`;
+  if (sy) fr += ` de la collection ${sy.fr}`;
+  if (mat) fr += `, en ${mat.toLowerCase()}`;
+  if (colOk) fr += `, coloris ${colFR.toLowerCase()}`;
+  fr += '.';
+  if (sizeWord) fr += ` Taille ${size === 'Taille unique' ? 'unique' : size}${gFR ? ', ' + gFR : ''}.`;
+  else if (gFR) fr += ` Pour ${gFR}.`;
+  fr += ` Pièce d'archive de mode japonaise, sélectionnée et authentifiée par passéist à Paris.`;
+
+  const typeEN = (p.type_en || translateType(type.replace(/\s+en\s+.*$/i, '').trim()) || type);
+  const colEN = colOk ? (COLOR_EN[colFR.toLowerCase()] || colFR.toLowerCase()) : '';
+  let en = `${brand}: vintage ${gEN ? gEN + ' ' : ''}${String(typeEN).toLowerCase()}`;
+  if (sy) en += ` from the ${sy.en} collection`;
+  if (mat) en += `, in ${String(translateMaterial(mat) || mat).toLowerCase()}`;
+  if (colEN) en += `, ${colEN}`;
+  en += '.';
+  if (sizeWord) en += size === 'Taille unique' ? ' One size.' : ` Size ${size}.`;
+  en += ' Japanese designer archive piece, selected and authenticated by passéist in Paris.';
+  return { fr, en };
+}
+
+// Page Auteur existante pour la marque ? (marques/<slug>.html)
+function brandPageUrl(p, publishDir) {
+  const slug = slugify(p.brand);
+  return fs.existsSync(path.join(publishDir, 'marques', slug + '.html'))
+    ? 'https://passeist.com/marques/' + slug : null;
+}
+
+// Coupe proprement un texte à ~max caractères (sur un espace)
+function clip(text, max) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(' '), max - 20)).replace(/[,;:\s]+$/, '') + '…';
+}
+
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
@@ -526,7 +601,9 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   if (matFR)    partsFR.push(matFR);
   if (genderFR) partsFR.push(genderFR);
   if (sy)       partsFR.push(sy.fr);
-  const title = p.brand + ' — ' + partsFR.join(' ') + ' — passéist';
+  // Titre : les mots que les gens tapent (marque lisible + type + vintage)
+  const brandTC = titleCaseBrand(p.brand);
+  const title = brandTC + ' ' + p.type + ' vintage' + (sy ? ' ' + sy.fr : '') + ' · passéist';
 
   // English og:title: BRAND — Material Type Gender Fall-Winter 2003 — passéist
   // Use p.type_en if available (already translated), else fall back to dictionary
@@ -536,12 +613,14 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const partsEN    = matEN ? [matEN, baseTypeEN] : [baseTypeEN];
   if (genderEN) partsEN.push(genderEN);
   if (sy)       partsEN.push(sy.en);
-  const titleEN = p.brand + ' — ' + partsEN.join(' ') + ' — passéist';
+  const titleEN = brandTC + ' vintage ' + baseTypeEN + (matEN ? ' in ' + matEN.toLowerCase() : '') + (sy ? ' ' + sy.en : '') + ' · passéist';
 
   // Meta description: brand at top, then raw description text
   const descRaw  = (p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
-  const descFull = p.brand + ' — ' + partsFR.join(' ') + (descRaw ? '. ' + descRaw : '');
-  const desc     = descFull.slice(0, 160) || ('Pièce vintage japonais ' + p.brand + ' — ' + p.type + '. Archive mode authentifiée par Passéist.');
+  // Description : la phrase unique passéist d'abord (contenu propre au site)
+  const intro    = p.intro || buildIntro(p).fr;
+  const desc     = clip(intro, 158);
+  const descLong = (intro + (descRaw ? ' ' + descRaw : '')).slice(0, 4900);
   const robots = sold ? 'noindex,nofollow' : 'index,follow';
 
   // Ensure image URL is absolute for og:image, twitter:image and JSON-LD
@@ -553,7 +632,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
     name:       p.brand + ' — ' + p.type,
     brand:      { '@type': 'Brand', name: p.brand },
     image:      imgAbs ? [imgAbs] : undefined,
-    description: desc,
+    description: descLong,
     sku:        p.id,
     color:      p.color ? colorFR(p.color) : undefined,
     size:       sizeFR(p.size),
@@ -614,11 +693,31 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   if (imgAbs) html = html.replace(/<meta\s+name="twitter:image"[^>]*>/,
     `<meta name="twitter:image" content="${imgAbs}">`);
 
-  // Replace Store JSON-LD with Product JSON-LD
+  // Fil d'Ariane : Accueil > Auteurs > Marque (page Auteur si elle existe,
+  // sinon Boutique filtrée) > Pièce
+  const brandUrl = brandPageUrl(p, publishDir) || ('https://passeist.com/shop?brand=' + encodeURIComponent(p.brand));
+  const crumbs = [{ name: 'passéist', item: 'https://passeist.com/' }];
+  if (brandUrl.includes('/marques/')) crumbs.push({ name: 'Auteurs', item: 'https://passeist.com/marques' });
+  else crumbs.push({ name: 'Boutique', item: 'https://passeist.com/shop' });
+  crumbs.push({ name: brandTC, item: brandUrl });
+  crumbs.push({ name: brandTC + ' ' + p.type, item: url });
+  const breadcrumb = JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: c.item }))
+  });
+
+  // Replace Store JSON-LD with Product JSON-LD (+ fil d'Ariane). data-pid :
+  // le SPA ne réécrit pas ces balises à l'arrivée sur la fiche (cf updateSEO).
   html = html.replace(
     /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-    `<script type="application/ld+json" data-seo="product">${jsonld}</script>`
+    () => `<script type="application/ld+json" data-seo="product" data-pid="${esc(p.id)}">${jsonld}</script>\n<script type="application/ld+json" data-seo="product" data-pid="${esc(p.id)}">${breadcrumb}</script>`
   );
+
+  // Version anglaise déclarée à Google (même page, ?lang=en)
+  html = html.replace(/<link\s+rel="canonical"[^>]*>/, (m) => m +
+    `\n<link rel="alternate" hreflang="fr" href="${url}">` +
+    `\n<link rel="alternate" hreflang="en" href="${url}?lang=en">` +
+    `\n<link rel="alternate" hreflang="x-default" href="${url}">`);
 
   // ── Pre-populate and open the detail div ───────────────────────────
   const detailStart = html.indexOf('<div class="detail" id="detail">');
@@ -695,6 +794,33 @@ module.exports = {
       if (p) p.n = imgReorder[id].length;
     });
 
+    // ── Phrase unique par pièce (FR/EN), ajoutée au catalogue ─────────
+    products.forEach(p => { const it = buildIntro(p); p.intro = it.fr; p.intro_en = it.en; });
+
+    // ── Catalogue externalisé : les 1 300 produits (1,6 Mo) sortent des
+    //    pages HTML dans un fichier JS versionné, téléchargé une seule fois
+    //    et mis en cache pour tout le site (pages 7x plus légères).
+    //    index.html du dépôt reste la source (imports, sync, webhook). ──
+    const catalogueJs = 'window.__PRODUCTS__=' + JSON.stringify(products) + ';';
+    const catHash = require('crypto').createHash('md5').update(catalogueJs).digest('hex').slice(0, 10);
+    const catRel = 'data/catalogue.' + catHash + '.js';
+    fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });
+    fs.writeFileSync(path.join(publishDir, catRel), catalogueJs, 'utf8');
+    const scriptOpen = baseHtml.lastIndexOf('<script>', prodMatch.index);
+    let slimHtml = baseHtml;
+    if (scriptOpen !== -1) {
+      slimHtml = baseHtml.slice(0, scriptOpen) + '<script src="/' + catRel + '"></script>\n' + baseHtml.slice(scriptOpen);
+      slimHtml = slimHtml.replace(prodMatch[0], () => 'const PRODUCTS = window.__PRODUCTS__ || [];\n');
+    }
+    // Accueil : versions FR/EN déclarées (uniquement sur l'accueil ; les
+    // fiches produits ont les leurs, cf applyProductSEO)
+    const homeHtml = slimHtml.replace(/<link\s+rel="canonical"[^>]*>/, (m) => m +
+      '\n<link rel="alternate" hreflang="fr" href="https://passeist.com/">' +
+      '\n<link rel="alternate" hreflang="en" href="https://passeist.com/?lang=en">' +
+      '\n<link rel="alternate" hreflang="x-default" href="https://passeist.com/">');
+    fs.writeFileSync(indexPath, homeHtml, 'utf8');
+    console.log('[generate-product-pages] Catalogue externalisé : /' + catRel + ' (' + Math.round(catalogueJs.length / 1024) + ' Ko), index.html ' + Math.round(baseHtml.length / 1024) + ' -> ' + Math.round(slimHtml.length / 1024) + ' Ko');
+
     // ── Generate one page per product ─────────────────────────────────
     const productDir = path.join(publishDir, 'product');
     fs.mkdirSync(productDir, { recursive: true });
@@ -704,7 +830,7 @@ module.exports = {
       if (!p.id) continue;
       const slug = productSlug(p);
       const sold = soldIds.has(p.id) || p.sold === true;
-      const page = applyProductSEO(baseHtml, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir);
+      const page = applyProductSEO(slimHtml, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir);
 
       const dir = path.join(productDir, slug);
       fs.mkdirSync(dir, { recursive: true });

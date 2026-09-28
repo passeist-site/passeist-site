@@ -2971,6 +2971,13 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .grid { gap: 32px 10px; }
 }
 
+/* Phrase unique passéist en tête de la description produit */
+.detail-intro {
+  font-family: var(--font-sans); font-size: 14px; font-style: italic; font-weight: 300;
+  color: var(--text-dim); line-height: 1.55;
+  margin: 0 0 14px;
+}
+
 /* ============ CARROUSEL D'ACCUEIL SUR ORDINATEUR (Tom, 2026-09-28) ============
    Cartes de la même taille que les photos de la Boutique (--hero-card-h,
    calculé en JS d'après la grille : colonnes de 260px min, écart 36px,
@@ -3516,6 +3523,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
         <div><div class="attr-label">Genre</div><div class="attr-value" id="d-gender"></div></div>
         <div><div class="attr-label">État</div><div class="attr-value">Très bon état</div></div>
       </div>
+      <p class="detail-intro" id="d-intro"></p>
       <div class="detail-desc" id="d-desc"></div>
       <div class="detail-actions" id="d-actions">
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
@@ -6077,6 +6085,13 @@ function openDetail(id) {
   const refEl = document.getElementById('d-ref');
   if (refEl) { refEl.textContent = 'Réf. ' + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
+  // Phrase unique passéist (générée au build, cf plugin generate-product-pages)
+  const introEl = document.getElementById('d-intro');
+  if (introEl) {
+    const intro = (window.__lang === 'en' && p.intro_en) ? p.intro_en : (p.intro || '');
+    introEl.textContent = intro;
+    introEl.style.display = intro ? '' : 'none';
+  }
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
   document.getElementById('d-availability').style.display = sold ? 'none' : '';
@@ -7762,9 +7777,12 @@ window.updateSEO = function(p) {
     if (!el) { el = document.createElement('link'); el.setAttribute('rel', rel); head.appendChild(el); }
     el.setAttribute('href', href);
   }
-  // Nettoie l'éventuel JSON-LD Product précédent
-  const oldLd = head.querySelector('script[data-seo="product"]');
-  if (oldLd) oldLd.remove();
+  // Arrivée directe sur une fiche générée au build : ses balises (titre,
+  // description, JSON-LD produit + fil d'Ariane, hreflang) sont les bonnes,
+  // on ne les réécrit pas (c'est ce que Google lit).
+  if (p && head.querySelector('script[data-seo="product"][data-pid="' + p.id + '"]')) return;
+  // Nettoie les éventuels JSON-LD Product / fil d'Ariane précédents
+  head.querySelectorAll('script[data-seo="product"]').forEach(el => el.remove());
 
   if (p) {
     const gender = (typeof getGender === 'function') ? (getGender(p) || 'Mode') : 'Mode';
@@ -7827,13 +7845,15 @@ window.updateSEO = function(p) {
     // BreadcrumbList Schema pour la fiche produit (passeist › Boutique › {brand} › {produit})
     const cat = (typeof getCategory === 'function') ? getCategory(p.type) : '';
     const brandSlug = slugify(p.brand);
+    const BRAND_PAGES = ['45rpm','blue-blue-japan','comme-des-garcons','final-home','fumito-ganryu','issey-miyake','jun-men','junko-koshino','junya-watanabe','kansai-yamamoto','kijima-takayuki','limi-feu','maison-mihara-yasuhiro','noir-kei-ninomiya','tigre-brocante','tsumori-chisato','yohji-yamamoto','yoshiki-hishinuma','zucca'];
+    const brandItem = BRAND_PAGES.includes(brandSlug) ? BASE + '/marques/' + brandSlug : BASE + '/shop?brand=' + encodeURIComponent(p.brand);
     const breadcrumb = {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'passéist', item: BASE },
         { '@type': 'ListItem', position: 2, name: 'Boutique', item: BASE + '/shop' },
-        { '@type': 'ListItem', position: 3, name: p.brand, item: BASE + '/marques/' + brandSlug },
+        { '@type': 'ListItem', position: 3, name: p.brand, item: brandItem },
         { '@type': 'ListItem', position: 4, name: p.brand + ' ' + p.type, item: url }
       ]
     };

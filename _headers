@@ -4,3 +4,8 @@
   Referrer-Policy: no-referrer
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+# Catalogue produits externalisé au build (nom versionné par empreinte) :
+# téléchargé une seule fois puis gardé en cache.
+/data/catalogue.*
+  Cache-Control: public, max-age=31536000, immutable
