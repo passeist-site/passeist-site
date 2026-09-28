@@ -2971,7 +2971,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .about-info-label { font-size: 8px; margin-bottom: 1px; }
   .about-info-value { font-size: 10.5px; line-height: 1.3; }
 
-  .cart-panel { width: 100%; }
+  .cart-panel { width: min(84vw, 340px); }
 
   .checkout-box { padding: 14px 14px 14px; max-width: 100%; }
   .checkout-eyebrow { font-size: 8px; margin-bottom: 2px; }
@@ -3241,6 +3241,64 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 .mobile-nav.open::before, .mobile-nav.open::after,
 .filter-sheet.open::before, .filter-sheet.open::after { opacity: 1; }
+
+/* ---- Panier : même panneau vitré que le menu (miroir, sort par la droite),
+   encarts intérieurs à coins arrondis (Tom, 2026-09-28) ---- */
+.cart-panel {
+  width: 340px; height: 100dvh;
+  background: linear-gradient(270deg, rgba(28,34,48,0.95) 0%, rgba(28,34,48,0.80) 55%, rgba(28,34,48,0.58) 100%);
+  border-left: none;
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.35), -24px 0 50px rgba(0,0,0,0.55);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 301;
+}
+.cart-panel::before, .cart-panel::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.cart-panel::before { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+.cart-panel::after {
+  -webkit-backdrop-filter: blur(28px) saturate(130%); backdrop-filter: blur(28px) saturate(130%);
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 30%, transparent 100%);
+  mask-image: linear-gradient(270deg, #000 0%, #000 30%, transparent 100%);
+}
+.cart-panel.open::before, .cart-panel.open::after { opacity: 1; }
+.cart-backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(10,12,18,0.35);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.cart-backdrop.open { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
+.cart-header { border-bottom: none; }
+.cart-close {
+  width: 32px; height: 32px; padding: 0; border-radius: 50%; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(244,241,236,0.08); color: var(--ink);
+}
+.cart-close:hover { background: rgba(244,241,236,0.16); }
+.cart-items { flex: 1 1 auto; max-height: none; padding: 4px 0 8px; }
+.cart-item {
+  margin: 0 16px 10px; padding: 12px; gap: 14px;
+  border-bottom: none; border-radius: 12px;
+  background: rgba(244,241,236,0.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 0 1px rgba(244,241,236,0.06);
+}
+.cart-item img { width: 72px; height: 96px; border: none; border-radius: 6px; background: #fff; }
+.cart-empty { padding: 60px 28px; }
+.cart-footer {
+  margin: 0 16px 16px; padding: 16px;
+  border-top: none; border-radius: 12px;
+  background: rgba(244,241,236,0.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 0 1px rgba(244,241,236,0.06);
+}
+.cart-shipping-row select { border-radius: 6px; background-color: rgba(244,241,236,0.06); border-color: rgba(244,241,236,0.16); }
+.cart-checkout.btn {
+  border-radius: 6px; min-height: 50px;
+  background: #f4f1ec; color: #1C2230; border-color: #f4f1ec;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
+}
+.cart-checkout.btn:hover { opacity: 1; background: #ffffff; }
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
@@ -6646,7 +6704,17 @@ document.addEventListener('keydown', e => {
 });
 
 // ============ CART ============
-function toggleCart() { document.getElementById('cart-panel').classList.toggle('open'); }
+function toggleCart() {
+  const open = document.getElementById('cart-panel').classList.toggle('open');
+  let bd = document.getElementById('cart-backdrop');
+  if (!bd) {
+    bd = document.createElement('div');
+    bd.id = 'cart-backdrop'; bd.className = 'cart-backdrop';
+    bd.addEventListener('click', () => { if (document.getElementById('cart-panel').classList.contains('open')) toggleCart(); });
+    document.body.appendChild(bd);
+  }
+  bd.classList.toggle('open', open);
+}
 // Click anywhere outside the cart panel (while open) closes it
 document.addEventListener('mousedown', (e) => {
   const panel = document.getElementById('cart-panel');
@@ -6659,6 +6727,7 @@ document.addEventListener('mousedown', (e) => {
   if (document.getElementById('checkout-overlay').classList.contains('open')) return;
   if (document.getElementById('contact-overlay') && document.getElementById('contact-overlay').classList.contains('open')) return;
   panel.classList.remove('open');
+  const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open');
 });
 function flyToCart() {
   // Image source (vignette qui vole) : détail > marquee > carte produit
@@ -7074,6 +7143,7 @@ function renderCheckoutSummary() {
 function openCheckout() {
   if (cart.length === 0) { alert('Votre panier est vide.'); return; }
   document.getElementById('cart-panel').classList.remove('open');
+  { const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open'); }
   document.getElementById('checkout-form').style.display = 'flex';
   document.getElementById('checkout-success').classList.remove('open');
   document.getElementById('checkout-title').textContent = 'Votre commande';
