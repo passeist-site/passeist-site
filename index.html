@@ -1354,6 +1354,29 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .similar-card-name { font-size: 11px; }
   .similar-card-price { font-size: 10.5px; }
 }
+/* Articles similaires : mêmes cartes que la Boutique (Tom). Photo 1 en 3:4
+   contain, coins 6px, ombre (.product-img, REGLE FIGEE, voir PHOTOS.md),
+   largeur d'une carte de la grille (desktop : --hero-card-h, comme le
+   carrousel d'accueil ; mobile : une demi-grille). */
+.similar-marquee { overflow-x: clip; overflow-y: visible; padding-bottom: 28px; }
+.similar-track { gap: 36px; }
+.similar-card { flex: 0 0 calc(var(--hero-card-h, 347px) * 0.75); gap: 0; }
+.similar-card:hover img { transform: none; }
+.similar-card .product-brand { font-size: 12px; }
+.similar-card .product-brand .brand-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.similar-card .product-name { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.similar-card .product-name-row { margin-bottom: 8px; }
+@media (max-width: 900px) {
+  .similar-track { gap: 14px; }
+  .similar-card { flex-basis: 44vw; }
+  .similar-card .product-brand { font-size: 9px; gap: 6px; margin-bottom: 4px; }
+  .similar-card .product-name { font-size: 13px; }
+  .similar-card .product-name-row { margin-bottom: 4px; }
+  .similar-card .product-price-wrap { padding: 3px 9px; }
+  .similar-card .product-price { font-size: 9.5px; }
+  .similar-card .product-body { padding-top: 8px; }
+  .similar-card .product-meta { padding-top: 4px; }
+}
 .detail-brand {
   font-family: var(--font-sans);
   font-size: 40px;
@@ -1485,6 +1508,27 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .btn-primary:hover { opacity: 0.88; }
 .btn-secondary { background: transparent; color: var(--ink); border-color: var(--line-strong); }
 .btn-secondary:hover { border-color: var(--ink); background: rgba(30,29,27,0.03); }
+/* Fiche produit : boutons harmonisés (Tom). Coins 6px comme EXPLORER et les
+   photos, même hauteur, même relief ; icônes panier / cœur sans cadre. */
+.detail-actions .btn {
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 50px; padding: 0 28px;
+  font-size: 11px; font-weight: 500;
+}
+.detail-actions .btn-primary {
+  background: #f4f1ec; color: #1C2230; border-color: #f4f1ec;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
+}
+.detail-actions .btn-primary:hover { opacity: 1; background: #ffffff; border-color: #ffffff; }
+.detail-actions .btn-secondary {
+  background: transparent; color: var(--ink);
+  border-color: rgba(244,241,236,0.45);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.detail-actions .btn-secondary:hover { border-color: var(--ink); background: rgba(244,241,236,0.06); }
+.detail-price-icon { border: none !important; }
+.detail-price-icon:hover { background: transparent !important; transform: scale(1.08) !important; }
 .detail-note {
   margin-top: 28px; font-size: 12px; color: var(--text-dim);
   line-height: 1.8; padding: 18px 20px;
@@ -1962,6 +2006,17 @@ body[data-page="home"] .home-brands-strip { display: block; }
   transition: opacity .2s;
 }
 .hbs-cta:hover { opacity: 0.85; }
+/* « Tout voir » : même bouton que EXPLORER (.hero-cta), Tom */
+.hbs-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 18px 32px; border-radius: 6px;
+  font-family: var(--font-sans); font-size: 11px;
+  letter-spacing: var(--tracking-wide);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 12px 24px -8px rgba(0,0,0,0.7);
+  transition: transform 0.35s var(--ease-out), background 0.25s var(--ease-out);
+}
+.hbs-cta .arrow-symbol { font-size: 14px; line-height: 1; font-weight: 300; }
+.hbs-cta:hover { opacity: 1; background: #738ba8; transform: scale(1.02); }
 @media (max-width: 880px) {
   /* Mobile : le hero prend sa hauteur naturelle (plus de bloc plein écran),
      la liste des marques suit directement le carrousel. */
@@ -1992,7 +2047,7 @@ body[data-page="home"] .home-brands-strip { display: block; }
   }
   .hbs-headliners a:hover { opacity: 0.55; }
   .hbs-others { font-size: 11.5px; line-height: 1.85; color: #2a2a2a; margin-bottom: 26px; padding: 0 4px; }
-  .hbs-cta { padding: 12px 22px; font-size: 11px; letter-spacing: 1.2px; }
+  .hbs-cta { padding: 13px 22px; font-size: 12px; letter-spacing: var(--tracking-wide); }
 }
 
 /* ============ ABOUT ============ */
@@ -2877,7 +2932,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     overflow: hidden;
     clip-path: inset(0);  /* force le clipping du ruban VENDU sur iOS Safari */
     width: 88%;
-    margin: 0 auto;
+    /* 16px sous le header : la photo ne touche plus le liseré lumineux (Tom) */
+    margin: 16px auto 0;
   }
   /* Mobile : ruban diagonal masqué (problèmes de clipping Safari iOS),
      badge carré ancré en haut à droite de la photo à la place. */
@@ -3209,7 +3265,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     <div class="hbs-others">
       <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/final-home">Final Home</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/jun-men">Jun Men</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a> …
     </div>
-    <a href="/marques" class="hbs-cta">Tout voir →</a>
+    <a href="/marques" class="hbs-cta"><span>Tout voir</span><span class="arrow-symbol">→</span></a>
   </div>
 </section>
 
@@ -6152,12 +6208,16 @@ function openDetail(id) {
       const top = candidates.slice(0, 12).map(o => o.x);
       if (top.length > 0) {
         const cardsHtml = top.map(x => {
-          const src = imgUrl(x, 0, {square: true});
+          // Même carte que la Boutique (photo 1, cadre 3:4 contain, cf PHOTOS.md)
+          const g = getGender(x) ? (window.tGender ? window.tGender(x) : getGender(x)) : '';
+          const sz = (window.formatSize ? window.formatSize(x.size) : x.size) + (g ? ' · ' + g : '');
           return `<div class="similar-card" data-id="${x.id}">
-            <img src="${src}" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.parentElement.style.display='none'">
-            <div class="similar-card-brand">${x.brand}</div>
-            <div class="similar-card-name">${(window.tType ? window.tType(x) : x.type)}</div>
-            <div class="similar-card-price">${x.price} €</div>
+            <div class="product-img"><img class="product-img-primary loaded" src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="(max-width: 900px) 45vw, 300px" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.similar-card').style.display='none'"></div>
+            <div class="product-body">
+              <div class="product-brand"><span class="brand-name">${x.brand}</span><div class="product-price-wrap"><span class="product-price">${x.price} €</span></div></div>
+              <div class="product-name-row"><div class="product-name">${(window.tType ? window.tType(x) : x.type)}</div></div>
+              <div class="product-meta"><div class="product-size">${sz}</div></div>
+            </div>
           </div>`;
         }).join('');
         // Duplique les cards pour boucle infinie sans saut visible
