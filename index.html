@@ -4136,7 +4136,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
       <input type="text" id="chat-name" class="chat-email" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required>
-      <input type="email" id="chat-email" class="chat-email" placeholder="E-mail (facultatif)" autocomplete="email">
       <button type="submit" class="chat-start-btn" id="chat-start-btn">Commencer</button>
     </form>
     <form class="chat-form" id="chat-form">
@@ -7415,12 +7414,10 @@ function openChat() {
       : 'Bonjour, une question ?' });
   }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
-  document.getElementById('chat-email').placeholder = en ? 'E-mail (optional)' : 'E-mail (facultatif)';
   document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
   document.getElementById('chat-start-btn').textContent = en ? 'Start' : 'Commencer';
   try {
     const n = localStorage.getItem('passeist_chat_name'); if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
-    const m = localStorage.getItem('passeist_chat_email'); if (m && !document.getElementById('chat-email').value) document.getElementById('chat-email').value = m;
   } catch (e) {}
   const ov = document.getElementById('chat-overlay');
   ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim());
@@ -7442,7 +7439,6 @@ document.getElementById('chat-start').addEventListener('submit', e => {
   if (!name) return;
   try {
     localStorage.setItem('passeist_chat_name', name);
-    localStorage.setItem('passeist_chat_email', document.getElementById('chat-email').value.trim());
   } catch (err) {}
   chatAdd({ from: 'passeist', at: 1, text: (window.__lang === 'en' ? 'Hello ' : 'Bonjour ') + name + ' !' });
   document.getElementById('chat-overlay').classList.add('chat-ready');
@@ -7467,13 +7463,12 @@ document.getElementById('chat-form').addEventListener('submit', e => {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ conv, text, product,
       name: document.getElementById('chat-name').value.trim(),
-      email: document.getElementById('chat-email').value.trim() }),
+    }),
   }).then(r => r.json()).then(d => {
     if (!d.ok) throw new Error(d.error || 'send');
     try {
       localStorage.setItem('passeist_chat_conv', conv);
       localStorage.setItem('passeist_chat_name', document.getElementById('chat-name').value.trim());
-      localStorage.setItem('passeist_chat_email', document.getElementById('chat-email').value.trim());
     } catch (err) {}
     chatAdd({ from: 'client', text, at: d.at });
   }).catch(() => {
