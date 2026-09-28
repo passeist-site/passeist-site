@@ -79,11 +79,13 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
     photos.push(productImgUrl(p, i, 1600, imgReorder, imgSuffix, validatedLocal, publishDir));
   }
 
-  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${esc(p.type)} photo 1" onerror="this.style.display='none'">`;
+  // Texte alternatif riche (Google Images) : marque, type, couleur, n° de photo
+  const altBase = esc([p.brand, p.type, p.color && colorFR(p.color)].filter(Boolean).join(' ') + ' vintage');
+  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
 
   const thumbsHtml = photos.slice(1).map((src, idx) => {
     const i = idx + 1;
-    return `<div class="thumb" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${esc(p.type)} photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
+    return `<div class="thumb" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
   }).join('');
 
   return `<div class="main-photo-wrap">${mainHtml}<span class="vendu-badge">VENDU</span></div><div class="thumbs-row">${thumbsHtml}</div>`;
@@ -261,12 +263,11 @@ const STATIC_ROUTES = [
   ].map(slug => ({ loc: 'https://passeist.com/marques/' + slug, changefreq: 'weekly', priority: '0.7' })),
 ];
 
-function buildSitemap(products, soldIds) {
-  const today = new Date().toISOString().slice(0, 10);
-
+function buildSitemap(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  // Pas de <lastmod> : la date du build n'est pas une vraie date de
+  // modification (Google finit par ignorer des dates toujours "aujourd'hui").
   const staticUrls = STATIC_ROUTES.map(r => `  <url>
     <loc>${r.loc}</loc>
-    <lastmod>${today}</lastmod>
     <changefreq>${r.changefreq}</changefreq>
     <priority>${r.priority}</priority>
   </url>`);
@@ -276,15 +277,24 @@ function buildSitemap(products, soldIds) {
   // de les pousser dans le sitemap non plus.
   const productUrls = products
     .filter(p => p.id && !soldIds.has(p.id) && p.sold !== true)
-    .map(p => `  <url>
+    .map(p => {
+      // Plan de site images : jusqu'à 6 photos par pièce, pour que Google
+      // Images découvre vite les nouvelles pièces.
+      const imgs = [];
+      for (let i = 0; i < Math.min(p.n || 0, 6); i++) {
+        const u = productImgUrl(p, i, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
+        if (u) imgs.push(u.startsWith('/') ? 'https://passeist.com' + u : u);
+      }
+      const imgXml = imgs.map(u => `\n    <image:image><image:loc>${xmlesc(u)}</image:loc></image:image>`).join('');
+      return `  <url>
     <loc>https://passeist.com/product/${productSlug(p)}</loc>
-    <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>`);
+    <priority>0.7</priority>${imgXml}
+  </url>`;
+    });
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${staticUrls.join('\n')}
 ${productUrls.join('\n')}
 </urlset>
@@ -710,7 +720,7 @@ module.exports = {
     console.log('[generate-product-pages] Generated feed.xml (' + products.length + ' products)');
 
     // ── Generate sitemap.xml (replaces the old static, never-updated file) ─
-    const sitemap = buildSitemap(products, soldIds);
+    const sitemap = buildSitemap(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);
     fs.writeFileSync(path.join(publishDir, 'sitemap.xml'), sitemap, 'utf8');
     const sitemapCount = (sitemap.match(/<loc>/g) || []).length;
     console.log('[generate-product-pages] Generated sitemap.xml (' + sitemapCount + ' urls)');
