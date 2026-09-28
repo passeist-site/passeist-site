@@ -47,6 +47,30 @@ def photo_url(slug, photo_num, suffix):
             f'/produit/{slug}-{photo_num}{suffix}.jpg')
 
 
+class RateLimited(Exception):
+    pass
+
+
+def fetch(scraper, url):
+    """GET avec pauses quand le CDN limite le débit (429/403/5xx).
+    Renvoie (status, content). Lève RateLimited si le CDN bloque toujours."""
+    waits = [30, 60, 120, 240]
+    for k in range(len(waits) + 1):
+        try:
+            r = scraper.get(url, timeout=30)
+        except Exception as e:  # réseau
+            print(f'  ERR réseau {e}')
+            status, content = 0, b''
+        else:
+            status, content = r.status_code, r.content
+        if status not in (0, 403, 429) and status < 500:
+            return status, content
+        if k == len(waits):
+            raise RateLimited(status)
+        print(f'  CDN {status} : pause {waits[k]} s', flush=True)
+        time.sleep(waits[k])
+
+
 def import_one(scraper, p, reorder, suffix):
     n = int(p.get('n') or 0)
     order = reorder.get(p['id']) or list(range(1, n + 1))
@@ -54,22 +78,21 @@ def import_one(scraper, p, reorder, suffix):
     done = 0
     for i, photo_num in enumerate(order):
         im = None
+        statuses = []
         for s in (sfx, ''):  # le site utilise _2 ; import_vestiaire.py sans suffixe
-            try:
-                r = scraper.get(photo_url(p['slug'], photo_num, s), timeout=30)
-                if r.status_code == 200 and len(r.content) > 10000:
-                    im = Image.open(io.BytesIO(r.content)).convert('RGB')
-                    break
-            except Exception as e:  # réseau : on tente l'autre variante
-                print(f'  photo {photo_num}{s} ERR {e}')
+            status, content = fetch(scraper, photo_url(p['slug'], photo_num, s))
+            statuses.append(status)
+            if status == 200 and len(content) > 10000:
+                im = Image.open(io.BytesIO(content)).convert('RGB')
+                break
         if im is None:
-            print(f'  photo {photo_num} introuvable')
+            print(f'  photo {photo_num} introuvable (HTTP {statuses})')
             return False
         for sn, target, q in SIZES:
             pad_square(im, target).save(os.path.join(OUT_IMG, f"{p['id']}-{i}-{sn}.webp"),
                                         'WEBP', quality=q, method=6)
         done += 1
-        time.sleep(0.3)
+        time.sleep(1.0)  # le CDN limite le débit au-delà d'environ 30 requêtes rapides
     return done == len(order) and done > 0
 
 
@@ -97,7 +120,12 @@ def main():
     ok, fail = [], []
     for k, p in enumerate(todo, 1):
         print(f"[{k}/{len(todo)}] {p['id']} {p['brand']} {p['type']}", flush=True)
-        (ok if import_one(scraper, p, reorder, suffix) else fail).append(p['id'])
+        try:
+            (ok if import_one(scraper, p, reorder, suffix) else fail).append(p['id'])
+        except RateLimited as e:
+            print(f'CDN toujours bloqué (HTTP {e}) : arrêt, les pièces restantes passeront au prochain lancement')
+            break
+        time.sleep(3)
 
     if ok:
         m = re.search(r'(const VALIDATED_LOCAL = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
