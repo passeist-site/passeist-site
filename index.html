@@ -2929,10 +2929,11 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     /* 16px sous le header : la photo ne touche plus le liseré lumineux (Tom) */
     margin: 16px auto 0;
   }
-  /* Mobile : ruban diagonal masqué (problèmes de clipping Safari iOS),
-     badge carré ancré en haut à droite de la photo à la place. */
-  .detail-gallery .sold-stamp { display: none; }
-  .detail-gallery .sold-badge  { display: block; top: 10px; right: 10px; }
+  /* Mobile : même ruban VENDU diagonal que la galerie des vendus (Tom),
+     coupé par le coin de la photo (clip-path du wrap, fiable sur iOS Safari).
+     Taille du ruban desktop : la photo de la fiche est grande. */
+  .detail-gallery .sold-stamp { display: block; top: 22px; right: -54px; padding: 5px 64px; font-size: 10px; }
+  .detail-gallery .sold-badge  { display: none; }
   .vendu-badge {
     bottom: 12px !important;
     right: 12px !important;
