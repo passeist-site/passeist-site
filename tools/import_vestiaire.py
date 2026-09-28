@@ -308,6 +308,32 @@ _EN_HINT_WORDS = {
 }
 
 
+# Secours quand Google Translate échoue : types Vestiaire anglais courants.
+_TYPE_EN_FR = [
+    ('mid-length skirt', 'Jupe mi-longue'), ('mid-length dress', 'Robe mi-longue'),
+    ('maxi dress', 'Robe longue'), ('mini dress', 'Mini robe'), ('mini skirt', 'Mini jupe'),
+    ('belt bag', 'Sac banane'), ('small bag', 'Petite maroquinerie'), ('short vest', 'Blouson'),
+    ('cardi coat', 'Veste longue'), ('t-shirt', 'Tee shirt'), ('trousers', 'Pantalon'),
+    ('pants', 'Pantalon'), ('jeans', 'Jean'), ('jacket', 'Veste'), ('vest', 'Veste'),
+    ('coat', 'Manteau'), ('sweater', 'Pull'), ('pull', 'Pull'), ('knitwear', 'Pull'),
+    ('sweatshirt', 'Sweat'), ('hoodie', 'Sweat à capuche'), ('shirt', 'Chemise'),
+    ('blouse', 'Blouse'), ('top', 'Haut'), ('skirt', 'Jupe'), ('dress', 'Robe'),
+    ('shorts', 'Short'), ('harem', 'Sarouel'), ('satchel', 'Sac besace'), ('bag', 'Sac'),
+    ('scarf', 'Écharpe'), ('hat', 'Chapeau'), ('belt', 'Ceinture'), ('cardigan', 'Cardigan'),
+]
+_MAT_EN_FR = {'wool': 'laine', 'silk': 'soie', 'leather': 'cuir', 'cotton': 'coton',
+              'linen': 'lin', 'denim': 'denim', 'cashmere': 'cachemire'}
+
+
+def _type_en_to_fr(t):
+    low = t.strip().lower()
+    mat = next((fr for en, fr in _MAT_EN_FR.items() if re.search(rf'\b{en}\b', low)), '')
+    for en, fr in _TYPE_EN_FR:
+        if re.search(rf'\b{re.escape(en)}\b', low):
+            return fr + (f' en {mat}' if mat else '')
+    return t
+
+
 def _looks_already_english(text):
     t = (text or '').strip().lower()
     if not t:
@@ -448,6 +474,9 @@ def main():
                 try:
                     ptype = GoogleTranslator(source='en', target='fr').translate(ptype) or ptype
                 except: pass
+                if _looks_already_english(ptype):  # traduction en échec (vu le 28/09/2026)
+                    ptype = _type_en_to_fr(ptype)
+                    print(f'  traduction en échec → dictionnaire : "{ptype}"')
             else:
                 try: type_en = tr.translate(ptype) or ''
                 except: pass
