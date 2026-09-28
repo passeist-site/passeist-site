@@ -3230,19 +3230,19 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   body.buy-bar-on #detail { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 }
 
-/* Tirer pour rafraîchir sur la fiche produit (elle défile dans son propre
-   cadre, le geste natif du navigateur n'y agit pas) (Tom) */
+/* Tirer pour rafraîchir sur la fiche produit, comme le geste natif de
+   l'accueil : la fiche descend et une roue grise apparaît au-dessus (Tom).
+   (La fiche défile dans son propre cadre, le geste natif n'y agit pas.) */
+#detail > * { transform: translateY(var(--ptr-y, 0px)); }
+#detail.ptr-back > * { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
 .ptr {
-  position: fixed; left: 50%; top: calc(var(--actual-topbar-h, var(--topbar-h-mobile, 56px)) + 6px);
-  width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; z-index: 30;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(40,48,66,0.92); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 20px -6px rgba(0,0,0,0.7);
-  opacity: 0; transform: translateY(-20px) scale(0.8); pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  position: fixed; left: 50%; top: calc(var(--actual-topbar-h, var(--topbar-h-mobile, 56px)) + 14px);
+  width: 28px; height: 28px; margin-left: -14px; z-index: 16; pointer-events: none; opacity: 0;
 }
-.ptr svg { width: 18px; height: 18px; stroke: #f4f1ec; fill: none; stroke-width: 1.6; transition: transform 0.15s linear; }
-.ptr.ready svg { stroke: #ffffff; }
-.ptr.spin svg { animation: ptrSpin 0.8s linear infinite; }
+.ptr svg { width: 28px; height: 28px; display: block; }
+.ptr line { stroke: #9a9da6; stroke-width: 2.4; stroke-linecap: round; opacity: 0; }
+.ptr.spin svg { animation: ptrSpin 0.9s steps(12) infinite; }
+.ptr.spin line { opacity: 1; }
 @keyframes ptrSpin { to { transform: rotate(360deg); } }
 
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
@@ -4189,7 +4189,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <button class="buy-bar-cta" id="buy-bar-cta" type="button" onclick="if(currentProduct) addToCart(currentProduct.id)"></button>
 </div>
 
-<div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></div>
+<div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 28 28"><line x1="14" y1="3" x2="14" y2="8" transform="rotate(0 14 14)" style="stroke-opacity:1.0"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(30 14 14)" style="stroke-opacity:0.93"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(60 14 14)" style="stroke-opacity:0.86"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(90 14 14)" style="stroke-opacity:0.79"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(120 14 14)" style="stroke-opacity:0.72"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(150 14 14)" style="stroke-opacity:0.65"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(180 14 14)" style="stroke-opacity:0.58"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(210 14 14)" style="stroke-opacity:0.51"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(240 14 14)" style="stroke-opacity:0.44"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(270 14 14)" style="stroke-opacity:0.37"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(300 14 14)" style="stroke-opacity:0.3"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(330 14 14)" style="stroke-opacity:0.23"/></svg></div>
 
 <footer class="footer">
   <div>© passeist. Curation mode d'auteur japonaise · Paris 2026</div>
@@ -7441,31 +7441,39 @@ function submitContact(e) {
 (function () {
   const det = document.getElementById('detail'), ind = document.getElementById('ptr');
   if (!det || !ind) return;
-  const THRESHOLD = 80;
-  let y0 = null, x0 = 0, dy = 0;
+  const lines = ind.querySelectorAll('line');
+  const THRESHOLD = 70;   // distance (après résistance) qui déclenche le rechargement
+  let y0 = null, x0 = 0, pull = 0;
+  const setPull = (px) => {
+    pull = px;
+    det.style.setProperty('--ptr-y', px + 'px');
+    const p = Math.min(px / THRESHOLD, 1);
+    ind.style.opacity = px > 4 ? '1' : '0';
+    // Les rayons apparaissent un à un, comme sur iPhone
+    lines.forEach((l, k) => { l.style.opacity = (k / 12 < p) ? '1' : '0'; });
+  };
   det.addEventListener('touchstart', e => {
-    if (det.scrollTop > 0 || e.touches.length !== 1) { y0 = null; return; }
-    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0;
+    if (det.scrollTop > 0 || e.touches.length !== 1 || ind.classList.contains('spin')) { y0 = null; return; }
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    det.classList.remove('ptr-back');
   }, { passive: true });
   det.addEventListener('touchmove', e => {
     if (y0 === null) return;
-    dy = e.touches[0].clientY - y0;
-    const dx = Math.abs(e.touches[0].clientX - x0);
-    if (dy <= 0 || dx > dy || det.scrollTop > 0) { ind.style.opacity = ''; ind.style.transform = ''; return; }
-    const p = Math.min(dy / THRESHOLD, 1);
-    ind.style.opacity = String(p);
-    ind.style.transform = 'translateY(' + (Math.min(dy, 110) * 0.45 - 20) + 'px) scale(' + (0.8 + 0.2 * p) + ')';
-    ind.querySelector('svg').style.transform = 'rotate(' + (p * 270) + 'deg)';
-    ind.classList.toggle('ready', dy >= THRESHOLD);
+    const dy = e.touches[0].clientY - y0, dx = Math.abs(e.touches[0].clientX - x0);
+    if (dy <= 0 || dx > dy || det.scrollTop > 0) { if (pull) setPull(0); return; }
+    setPull(Math.min(dy * 0.5, 120));   // résistance élastique
   }, { passive: true });
   det.addEventListener('touchend', () => {
-    if (y0 !== null && dy >= THRESHOLD && det.scrollTop <= 0) {
+    if (y0 === null) return;
+    y0 = null;
+    det.classList.add('ptr-back');
+    if (pull >= THRESHOLD) {
+      setPull(56);
       ind.classList.add('spin');
-      setTimeout(() => location.reload(), 250);
+      setTimeout(() => location.reload(), 350);
     } else {
-      ind.style.opacity = ''; ind.style.transform = ''; ind.classList.remove('ready');
+      setPull(0);
     }
-    y0 = null; dy = 0;
   }, { passive: true });
 })();
 
