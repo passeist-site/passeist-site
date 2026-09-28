@@ -8933,7 +8933,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   };
 
-  // Détecte la langue : 1) URL ?lang=, 2) localStorage, 3) navigator.language
+  // Détecte la langue : 1) URL ?lang=, 2) localStorage, 3) langue de l'appareil (fr sinon en)
   function detectLang() {
     try {
       const params = new URLSearchParams(location.search);
@@ -8941,8 +8941,10 @@ document.addEventListener('DOMContentLoaded', function(){
       if (fromUrl && I18N[fromUrl]) return fromUrl;
       const stored = localStorage.getItem('passeist_lang');
       if (stored && I18N[stored]) return stored;
+      // Appareil en français → français ; toute autre langue (anglais, japonais,
+      // allemand, italien, coréen…) → anglais (Tom, 2026-09-28)
       const nav = (navigator.language || 'fr').toLowerCase();
-      if (nav.startsWith('en')) return 'en';
+      return nav.startsWith('fr') ? 'fr' : 'en';
     } catch(e){}
     return 'fr';
   }
