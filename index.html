@@ -3245,6 +3245,20 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .ptr.spin line { opacity: 1; }
 @keyframes ptrSpin { to { transform: rotate(360deg); } }
 
+/* Fiche produit sur ordinateur (Tom) : prix sur la ligne de la marque, calé
+   à droite ; « Ajouter au panier » et « Demander un renseignement » remontés
+   sous le nom, visibles sans défiler ; le cœur reste à côté du prix. */
+@media (min-width: 901px) {
+  .detail-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 20px; align-items: start; }
+  .detail-info > * { grid-column: 1 / -1; }
+  .detail-info > .detail-brand { grid-column: 1; grid-row: 1; font-size: 34px; }
+  .detail-info > .detail-price-row { grid-column: 2; grid-row: 1; justify-self: end; margin: 6px 0 0 !important; }
+  .detail-info > .detail-name { grid-row: 2; }
+  .detail-info > .detail-actions { grid-row: 3; flex-direction: row; gap: 10px; margin: 6px 0 28px; }
+  .detail-info > .detail-actions .btn { flex: 1; }
+  #d-price-add { display: none !important; }
+}
+
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
