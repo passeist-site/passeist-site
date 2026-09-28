@@ -82,7 +82,19 @@ body.in-conv .composer { display: flex; }
 const API = '/.netlify/functions/chat';
 const VAPID = 'BDbV1xOSA-S-sX0UmsZMNlK81xaNZBRaQD80JpaS6JOa7_wOalqt2jPMEZ9m4cQJk3B8NzgVdt-sWziUV-WBc84';
 const $ = (id) => document.getElementById(id);
-let key = ''; try { key = localStorage.getItem('passeist_chat_key') || ''; } catch (e) {}
+// Mot de passe gardé à la fois en localStorage et en cookie (1 an) : certains
+// navigateurs intégrés (liens ouverts depuis une appli) vident l'un des deux.
+function saveKey(k) {
+  try { localStorage.setItem('passeist_chat_key', k); } catch (e) {}
+  document.cookie = 'passeist_chat_key=' + encodeURIComponent(k) + '; path=/messagerie/; max-age=31536000; SameSite=Strict; Secure';
+}
+function readKey() {
+  let k = ''; try { k = localStorage.getItem('passeist_chat_key') || ''; } catch (e) {}
+  if (!k) { const m = document.cookie.match(/(?:^|; )passeist_chat_key=([^;]*)/); if (m) k = decodeURIComponent(m[1]); }
+  if (k) saveKey(k);
+  return k;
+}
+let key = readKey();
 let current = null, timer = null;
 
 const esc = (s) => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -110,11 +122,16 @@ function showLogin() {
   $('login').onsubmit = async (e) => {
     e.preventDefault();
     key = $('pw').value.trim();
-    try { await api('list'); localStorage.setItem('passeist_chat_key', key); route(); }
+    try { await api('list'); saveKey(key); route(); }
     catch (err) { $('pw').value = ''; $('pw').placeholder = 'Mot de passe incorrect'; }
   };
 }
-function logout() { key = ''; try { localStorage.removeItem('passeist_chat_key'); } catch (e) {} showLogin(); }
+function logout() {
+  key = '';
+  try { localStorage.removeItem('passeist_chat_key'); } catch (e) {}
+  document.cookie = 'passeist_chat_key=; path=/messagerie/; max-age=0';
+  showLogin();
+}
 
 async function showList() {
   current = null;
