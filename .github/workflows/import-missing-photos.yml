@@ -1,0 +1,57 @@
+name: Import photos manquantes (CDN Vestiaire -> passeist.com)
+
+# Rapatrie sur passeist.com les photos des pièces en vente encore affichées
+# depuis le CDN Vestiaire (cf tools/import_missing_photos.py). Déclenchement
+# manuel uniquement : Actions > « Import photos manquantes » > Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Nombre max de pièces à traiter par lancement (0 = toutes ; 40 conseillé pour des envois de taille raisonnable)'
+        default: '40'
+
+concurrency:
+  group: sync-vestiaire   # même groupe que la synchro : jamais en parallèle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout (sans le dossier img/, trop lourd)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            tools/
+            index.html
+            requirements.txt
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Dépendances
+        run: pip install pillow requests
+
+      - name: Import des photos
+        id: imp
+        run: python -u tools/import_missing_photos.py --limit "${{ github.event.inputs.limit || '40' }}"
+
+      - name: Commit + push
+        if: steps.imp.outputs.imported != '0'
+        run: |
+          git config user.name "passeist-bot"
+          git config user.email "bot@passeist.com"
+          git add --sparse index.html img/
+          git commit -m "photos: ${{ steps.imp.outputs.imported }} pieces rapatriees du CDN Vestiaire sur passeist.com (${{ steps.imp.outputs.failed }} echecs)"
+          for i in 1 2 3; do
+            if git push; then break; fi
+            git pull --rebase origin main
+          done
