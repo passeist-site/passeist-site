@@ -2942,7 +2942,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   .detail-brand { font-size: 28px; letter-spacing: -0.01em; }
   .detail-name { font-size: 15px; }
   .detail-price { font-size: 14px; }
-  .detail-attrs { grid-template-columns: 1fr 1fr; }
+  /* Taille, genre et état sur une seule ligne (Tom) */
+  .detail-attrs { grid-template-columns: 1fr 1fr 1.3fr; gap: 12px; }
 
   /* Page À propos en 1 seul écran sans défilement (mobile), compact */
   .about {
@@ -3058,6 +3059,48 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 /* Étiquettes de prix : coin biseauté gardé + 3 coins arrondis 4px,
    comme un coin arrondi qu'on aurait coupé (Tom). */
 .product-price-wrap, .detail-price-wrap { border-radius: 4px; }
+
+/* Fenêtre Contact / Demander un renseignement : même langage que le menu
+   latéral (verre dépoli, liseré de lumière) et encarts à coins arrondis (Tom). */
+#contact-overlay { background: rgba(10,12,18,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+#contact-overlay .checkout-box {
+  background: linear-gradient(160deg, rgba(40,48,66,0.9) 0%, rgba(28,34,48,0.84) 100%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
+  backdrop-filter: blur(28px) saturate(130%);
+  border: none; border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 0 0 1px rgba(244,241,236,0.08), 0 30px 70px rgba(0,0,0,0.6);
+  padding: 26px 26px 24px;
+}
+#contact-overlay .checkout-close {
+  top: 12px; right: 12px; width: 32px; height: 32px; padding: 0;
+  border-radius: 50%; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(244,241,236,0.08); color: var(--ink);
+}
+#contact-overlay .checkout-close:hover { background: rgba(244,241,236,0.16); }
+#contact-overlay .contact-lead { margin: 8px 0 16px; font-size: 13px; line-height: 1.6; color: var(--text-dim); font-weight: 300; }
+#contact-overlay .checkout-form { gap: 12px; }
+#contact-overlay .checkout-form input,
+#contact-overlay .checkout-form textarea {
+  border-radius: 6px;
+  border: 1px solid rgba(244,241,236,0.16);
+  background: rgba(244,241,236,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 12px 14px; font-size: 14px;
+}
+#contact-overlay .checkout-form input:focus,
+#contact-overlay .checkout-form textarea:focus { border-color: rgba(244,241,236,0.55); background: rgba(244,241,236,0.09); }
+#contact-overlay .checkout-form textarea { min-height: 110px; resize: vertical; }
+#contact-overlay .btn-primary {
+  margin-top: 6px; border-radius: 6px; min-height: 50px;
+  background: #f4f1ec; color: #1C2230; border-color: #f4f1ec;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
+}
+#contact-overlay .btn-primary:hover { opacity: 1; background: #ffffff; }
+@media (max-width: 600px) {
+  #contact-overlay { padding: 16px 12px 24px; }
+  #contact-overlay .checkout-box { padding: 22px 18px 20px; margin-top: 8px; }
+}
 
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
@@ -7051,9 +7094,12 @@ function submitOrder(e) {
     alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com (référence ' + ref + ').');
   });
 }
-function openContact() {
-  document.getElementById('contact-lead').textContent = currentProduct
-    ? 'Une question sur ' + currentProduct.brand + ', ' + currentProduct.type + ' ? Taille, matière, photos supplémentaires : écrivez-nous, nous répondons sous 24 h.'
+// Produit concerné par la demande (null = contact général, depuis le menu)
+let contactProduct = null;
+function openContact(opts) {
+  contactProduct = (opts && opts.general) ? null : currentProduct;
+  document.getElementById('contact-lead').textContent = contactProduct
+    ? 'Une question sur ' + contactProduct.brand + ', ' + contactProduct.type + ' ? Taille, matière, photos supplémentaires : écrivez-nous, nous répondons sous 24 h.'
     : 'Une question ? Écrivez-nous, nous répondons sous 24 h.';
   document.getElementById('contact-overlay').classList.add('open');
 }
@@ -7064,8 +7110,8 @@ function submitContact(e) {
   // Renseigne le produit si la question est posée depuis une fiche
   const prodEl = document.getElementById('contact-produit');
   if (prodEl) {
-    prodEl.value = currentProduct
-      ? currentProduct.brand + ', ' + currentProduct.type + ' (' + currentProduct.size + ', ref ' + currentProduct.id + ')'
+    prodEl.value = contactProduct
+      ? contactProduct.brand + ', ' + contactProduct.type + ' (' + contactProduct.size + ', ref ' + contactProduct.id + ')'
       : '';
   }
   const btn = form.querySelector('button[type="submit"]');
@@ -7129,7 +7175,7 @@ window.submitContactPage = function(e, lang) {
 };
 
 document.getElementById('d-cart').addEventListener('click', () => { if (currentProduct) addToCart(currentProduct.id); });
-document.getElementById('d-contact').addEventListener('click', openContact);
+document.getElementById('d-contact').addEventListener('click', () => openContact());
 // close modals by clicking overlay
 document.getElementById('checkout-overlay').addEventListener('click', e => { if (e.target.id === 'checkout-overlay') closeCheckout(); });
 document.getElementById('contact-overlay').addEventListener('click', e => { if (e.target.id === 'contact-overlay') closeContact(); });
@@ -7516,9 +7562,13 @@ window.startSimilarMarqueeLoop = function() {
       setOpen(false);
     });
   });
-  // Contact = e-mail (info@passeist.com) ; la discussion Tawk reste sur la bulle du header
+  // Contact = même formulaire que « Demander un renseignement » (Tom), sans produit
   const contactBtn = document.getElementById('mobile-nav-contact');
-  if (contactBtn) contactBtn.addEventListener('click', () => setOpen(false));
+  if (contactBtn) contactBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    setOpen(false);
+    openContact({ general: true });
+  });
   // FR / EN = même action que le sélecteur de langue de la topbar
   const langBtn = document.getElementById('mobile-nav-lang');
   if (langBtn) langBtn.addEventListener('click', () => {
