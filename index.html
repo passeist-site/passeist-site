@@ -3138,7 +3138,20 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   padding: 10px 12px; outline: none;
 }
 .chat-email { font-size: 13px; min-width: 0; }
-.chat-ids { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+.chat-start { display: flex; flex-direction: column; gap: 8px; }
+.chat-start-btn {
+  height: 46px; border-radius: 6px; border: none; cursor: pointer;
+  background: #f4f1ec; color: #1C2230; font-family: var(--font-sans);
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: var(--tracking-wide);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7);
+}
+#chat-overlay .chat-form { display: none; }
+#chat-overlay.chat-ready .chat-form { display: flex; }
+#chat-overlay.chat-ready .chat-start { display: none; }
+/* iPhone zoome sur tout champ en dessous de 16 px : on reste à 16 px partout */
+@media (max-width: 900px) {
+  input, textarea, select, .chat-email { font-size: 16px !important; }
+}
 .chat-email:focus, .chat-row textarea:focus { border-color: rgba(244,241,236,0.55); }
 .chat-row { display: flex; gap: 8px; align-items: flex-end; }
 .chat-row textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; border-radius: 12px; }
@@ -4115,11 +4128,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <h2 class="checkout-title">passéist<span class="chat-dot">.</span></h2>
     <p class="chat-sub"><span class="lang-fr">Écrivez-nous, nous répondons en direct.</span><span class="lang-en">Write to us, we reply live.</span></p>
     <div class="chat-msgs" id="chat-msgs"></div>
+    <form class="chat-start" id="chat-start">
+      <input type="text" id="chat-name" class="chat-email" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required>
+      <input type="email" id="chat-email" class="chat-email" placeholder="E-mail (facultatif)" autocomplete="email">
+      <button type="submit" class="chat-start-btn" id="chat-start-btn">Commencer</button>
+    </form>
     <form class="chat-form" id="chat-form">
-      <div class="chat-ids">
-        <input type="text" id="chat-name" class="chat-email" placeholder="Prénom" autocomplete="given-name" maxlength="60" required>
-        <input type="email" id="chat-email" class="chat-email" placeholder="E-mail (facultatif)" autocomplete="email">
-      </div>
       <div class="chat-row">
         <textarea id="chat-text" rows="1" placeholder="Votre message…" required></textarea>
         <button type="submit" class="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
@@ -7396,22 +7410,38 @@ function openChat() {
   }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-email').placeholder = en ? 'E-mail (optional)' : 'E-mail (facultatif)';
-  document.getElementById('chat-name').placeholder = en ? 'First name' : 'Prénom';
+  document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
+  document.getElementById('chat-start-btn').textContent = en ? 'Start' : 'Commencer';
   try {
     const n = localStorage.getItem('passeist_chat_name'); if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
     const m = localStorage.getItem('passeist_chat_email'); if (m && !document.getElementById('chat-email').value) document.getElementById('chat-email').value = m;
   } catch (e) {}
-  document.getElementById('chat-overlay').classList.add('open');
+  const ov = document.getElementById('chat-overlay');
+  ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim());
+  ov.classList.add('open');
   chatPoll();
   clearInterval(chatTimer);
   chatTimer = setInterval(chatPoll, 4000);
-  if (window.innerWidth > 600) setTimeout(() => document.getElementById('chat-text').focus(), 50);
+  if (window.innerWidth > 600) setTimeout(() => document.getElementById(ov.classList.contains('chat-ready') ? 'chat-text' : 'chat-name').focus(), 50);
 }
 function closeChat() {
   document.getElementById('chat-overlay').classList.remove('open');
   clearInterval(chatTimer);
 }
 document.getElementById('chat-overlay').addEventListener('click', e => { if (e.target.id === 'chat-overlay') closeChat(); });
+// Étape 1 : prénom (et e-mail facultatif), puis la zone de message s'ouvre
+document.getElementById('chat-start').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('chat-name').value.trim();
+  if (!name) return;
+  try {
+    localStorage.setItem('passeist_chat_name', name);
+    localStorage.setItem('passeist_chat_email', document.getElementById('chat-email').value.trim());
+  } catch (err) {}
+  chatAdd({ from: 'passeist', at: 1, text: (window.__lang === 'en' ? 'Hello ' : 'Bonjour ') + name + ' !' });
+  document.getElementById('chat-overlay').classList.add('chat-ready');
+  document.getElementById('chat-text').focus();
+});
 document.getElementById('chat-text').addEventListener('input', function () {
   this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
@@ -7489,7 +7519,8 @@ window.submitContactPage = function(e, lang) {
 };
 
 document.getElementById('d-cart').addEventListener('click', () => { if (currentProduct) addToCart(currentProduct.id); });
-document.getElementById('d-contact').addEventListener('click', () => openContact());
+// « Demander un renseignement » ouvre le chat (la pièce est jointe au message) (Tom)
+document.getElementById('d-contact').addEventListener('click', () => openChat());
 // close modals by clicking overlay
 document.getElementById('checkout-overlay').addEventListener('click', e => { if (e.target.id === 'checkout-overlay') closeCheckout(); });
 document.getElementById('contact-overlay').addEventListener('click', e => { if (e.target.id === 'contact-overlay') closeContact(); });
@@ -7876,12 +7907,12 @@ window.startSimilarMarqueeLoop = function() {
       setOpen(false);
     });
   });
-  // Contact = même formulaire que « Demander un renseignement » (Tom), sans produit
+  // Contact = discussion en direct (Tom) ; la page Contact garde son formulaire e-mail
   const contactBtn = document.getElementById('mobile-nav-contact');
   if (contactBtn) contactBtn.addEventListener('click', (e) => {
     e.preventDefault();
     setOpen(false);
-    openContact({ general: true });
+    openChat();
   });
   // FR / EN = même action que le sélecteur de langue de la topbar
   const langBtn = document.getElementById('mobile-nav-lang');
