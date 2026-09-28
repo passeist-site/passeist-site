@@ -227,5 +227,5 @@ body.no-scroll { overflow: hidden; }
 }
 .mobile-nav.open::before, .mobile-nav.open::after { opacity: 1; }
 
-/* ---- Étiquettes (prix, VENDU) : biseau + coins arrondis 4px, partout ---- */
-.product-price-wrap, .detail-price-wrap, .vendu-badge, .bc-price { border-radius: 4px; }
+/* ---- Étiquettes de prix : biseau + coins arrondis 4px, partout ---- */
+.product-price-wrap, .detail-price-wrap, .bc-price { border-radius: 4px; }
