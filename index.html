@@ -3131,7 +3131,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .chat-msg.passeist { align-self: flex-start; background: rgba(244,241,236,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
 .chat-msg.note { align-self: center; background: none; color: var(--text-mute); font-size: 12px; text-align: center; padding: 4px 8px; }
 .chat-form { display: flex; flex-direction: column; gap: 8px; }
-.chat-email, .chat-row textarea {
+.chat-email, .chat-name, .chat-row textarea {
   font-family: var(--font-sans); font-size: 16px; color: var(--ink); font-weight: 300;
   border-radius: 6px; border: 1px solid rgba(244,241,236,0.16);
   background: rgba(244,241,236,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -3154,6 +3154,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 .chat-email:focus, .chat-row textarea:focus { border-color: rgba(244,241,236,0.55); }
 .chat-row { display: flex; gap: 8px; align-items: flex-end; }
+.chat-name { flex: 1; min-width: 0; height: 44px; border-radius: 12px; }
 .chat-row textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; border-radius: 12px; }
 .chat-send {
   flex: 0 0 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
@@ -4147,8 +4148,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <h2 class="checkout-title">passéist<span class="chat-dot">.</span></h2>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
-      <input type="text" id="chat-name" class="chat-email" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required>
-      <button type="submit" class="chat-start-btn" id="chat-start-btn">Commencer</button>
+      <div class="chat-row">
+        <input type="text" id="chat-name" class="chat-name" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required enterkeyhint="go">
+        <button type="submit" class="chat-send" id="chat-start-btn" aria-label="Valider"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
+      </div>
     </form>
     <form class="chat-form" id="chat-form">
       <div class="chat-row">
@@ -7427,7 +7430,6 @@ function openChat() {
   }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
-  document.getElementById('chat-start-btn').textContent = en ? 'Start' : 'Commencer';
   try {
     const n = localStorage.getItem('passeist_chat_name'); if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
   } catch (e) {}
