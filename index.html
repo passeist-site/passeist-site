@@ -6835,6 +6835,18 @@ function saveFavorites() {
   renderFavCount();
 }
 function isFavorite(id) { return favorites.includes(String(id)); }
+// Retire des favoris les pièces vendues ou retirées du catalogue (Tom).
+// Garde-fou : ne fait rien si le catalogue n'a pas chargé (sinon tout serait effacé).
+function pruneFavorites() {
+  if (!PRODUCTS.length) return;
+  const byId = new Map(PRODUCTS.map(p => [String(p.id), p]));
+  const kept = favorites.filter(id => byId.has(id) && !isSold(byId.get(id)));
+  if (kept.length === favorites.length) return;
+  favorites = kept;
+  saveFavorites();
+  if (typeof activeView !== 'undefined' && activeView === 'favorites' && typeof renderGrid === 'function') renderGrid();
+}
+pruneFavorites();
 function toggleFavorite(id, e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   const sid = String(id);
@@ -8524,6 +8536,7 @@ fetch('/.netlify/functions/sold-ids', { cache: 'no-store' })
     // Retire du panier une pièce vendue entre-temps
     const inCart = cart.filter(c => fresh.includes(String(c.id)));
     inCart.forEach(c => removeFromCart(c.id));
+    pruneFavorites();
     if (typeof renderFilters === 'function') renderFilters();
     if (typeof renderGrid === 'function') renderGrid();
     // Fiche produit ouverte sur une pièce qui vient d'être vendue : on la rouvre
