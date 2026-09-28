@@ -3102,6 +3102,56 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   #contact-overlay .checkout-box { padding: 22px 18px 20px; margin-top: 8px; }
 }
 
+/* Discussion en direct : même fenêtre en verre dépoli que le contact. */
+#chat-overlay { background: rgba(10,12,18,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+#chat-overlay .chat-box {
+  display: flex; flex-direction: column;
+  height: min(620px, calc(100dvh - 48px)); max-width: 440px;
+  background: linear-gradient(160deg, rgba(40,48,66,0.9) 0%, rgba(28,34,48,0.84) 100%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%); backdrop-filter: blur(28px) saturate(130%);
+  border: none; border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 0 0 1px rgba(244,241,236,0.08), 0 30px 70px rgba(0,0,0,0.6);
+  padding: 22px 18px 16px;
+}
+#chat-overlay .checkout-close {
+  top: 12px; right: 12px; width: 32px; height: 32px; padding: 0; border-radius: 50%; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(244,241,236,0.08); color: var(--ink);
+}
+#chat-overlay .checkout-title { font-size: 24px; letter-spacing: -0.03em; }
+.chat-dot { color: #5a7593; }
+.chat-sub { font-size: 13px; color: var(--text-dim); font-weight: 300; margin: 4px 0 12px; }
+html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display: none; }
+.chat-msgs {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  display: flex; flex-direction: column; gap: 8px; padding: 4px 2px 10px;
+}
+.chat-msg { max-width: 84%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-wrap: break-word; }
+.chat-msg.client { align-self: flex-end; background: #f4f1ec; color: #1C2230; border-bottom-right-radius: 4px; }
+.chat-msg.passeist { align-self: flex-start; background: rgba(244,241,236,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
+.chat-msg.note { align-self: center; background: none; color: var(--text-mute); font-size: 12px; text-align: center; padding: 4px 8px; }
+.chat-form { display: flex; flex-direction: column; gap: 8px; }
+.chat-email, .chat-row textarea {
+  font-family: var(--font-sans); font-size: 16px; color: var(--ink); font-weight: 300;
+  border-radius: 6px; border: 1px solid rgba(244,241,236,0.16);
+  background: rgba(244,241,236,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 10px 12px; outline: none;
+}
+.chat-email { font-size: 13px; }
+.chat-email:focus, .chat-row textarea:focus { border-color: rgba(244,241,236,0.55); }
+.chat-row { display: flex; gap: 8px; align-items: flex-end; }
+.chat-row textarea { flex: 1; resize: none; min-height: 44px; max-height: 120px; border-radius: 12px; }
+.chat-send {
+  flex: 0 0 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: #f4f1ec; display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7);
+}
+.chat-send svg { width: 18px; height: 18px; fill: #1C2230; }
+@media (max-width: 600px) {
+  #chat-overlay { padding: 12px 10px; align-items: flex-end; }
+  #chat-overlay .chat-box { height: calc(100dvh - 90px); max-width: 100%; }
+}
+
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
@@ -3198,8 +3248,8 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-modal="true" aria-label="Consentement cookies">
   <div class="cookie-banner-card">
     <div class="cookie-banner-text">
-      <span class="lang-fr">Nous utilisons des cookies pour le chat en ligne (tawk.to) et la mesure d'audience (Google Analytics). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
-      <span class="lang-en">We use cookies for live chat (tawk.to) and audience measurement (Google Analytics). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
+      <span class="lang-fr">Nous utilisons des cookies pour la mesure d'audience (Google Analytics). Aucun cookie n'est déposé sans votre accord. <a href="/privacy">En savoir plus</a>.</span>
+      <span class="lang-en">We use cookies for audience measurement (Google Analytics). No cookie is set without your consent. <a href="/privacy">Learn more</a>.</span>
     </div>
     <div class="cookie-banner-actions">
       <button type="button" class="cb-reject" id="cookie-reject"><span class="lang-fr">Refuser</span><span class="lang-en">Reject</span></button>
@@ -3252,7 +3302,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   </nav>
   <div class="topbar-right">
     <div class="topbar-icons" aria-label="Accès rapides">
-      <button class="topbar-icon topbar-icon-chat" id="chat-launcher-top" type="button" onclick="if(window.Tawk_API&&Tawk_API.maximize){Tawk_API.maximize();if(typeof __showChatBackdrop==='function')__showChatBackdrop();}else if(window.__promptCookieConsent){__promptCookieConsent();}" aria-label="Ouvrir le chat" title="Chat">
+      <button class="topbar-icon topbar-icon-chat" id="chat-launcher-top" type="button" onclick="openChat()" aria-label="Ouvrir le chat" title="Chat">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
       </button>
       <button class="topbar-icon topbar-icon-search" onclick="openSearchFromRail()" aria-label="Recherche" title="Recherche">
@@ -3499,7 +3549,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   <p class="about-body"><strong>Finalités.</strong> Traitement des commandes, préparation de la livraison, communication relative au suivi. Aucune donnée n'est revendue ou transmise à des tiers à des fins commerciales.</p>
   <p class="about-body"><strong>Destinataires.</strong> Prestataire de paiement (Stripe), transporteur (La Poste / Chronopost / Colissimo), et passeist seule.</p>
   <p class="about-body"><strong>Durée de conservation.</strong> Les données liées à une commande sont conservées 3 ans à des fins de gestion commerciale et 10 ans pour les documents comptables (obligation légale).</p>
-  <p class="about-body"><strong>Cookies.</strong> Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier), ainsi que des outils de mesure d'audience (Cloudflare Web Analytics, sans cookie ni donnée personnelle) et de fonctionnalité (chat en ligne tawk.to, Google Analytics) soumis à votre consentement via le bandeau affiché lors de votre première visite. Vous pouvez à tout moment refuser ces derniers ; cela n'affecte pas votre navigation ni vos commandes.</p>
+  <p class="about-body"><strong>Cookies.</strong> Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier), ainsi que des outils de mesure d'audience (Cloudflare Web Analytics, sans cookie ni donnée personnelle) et de mesure d'audience (Google Analytics) soumis à votre consentement via le bandeau affiché lors de votre première visite. Vous pouvez à tout moment refuser ces derniers ; cela n'affecte pas votre navigation ni vos commandes.</p>
   <p class="about-body"><strong>Vos droits.</strong> Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</p>
   <p class="about-body"><strong>Sécurité.</strong> Paiements chiffrés SSL. Les données bancaires sont gérées exclusivement par le prestataire de paiement et ne sont jamais stockées par passeist.</p>
 </section>
@@ -3513,7 +3563,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   <p class="about-body"><strong>Purposes.</strong> Order processing, shipping preparation, tracking communication. No data is resold or transferred to third parties for commercial purposes.</p>
   <p class="about-body"><strong>Recipients.</strong> Payment provider (Stripe), carrier (La Poste / Chronopost / Colissimo), and passéist alone.</p>
   <p class="about-body"><strong>Retention period.</strong> Order-related data is retained 3 years for commercial management and 10 years for accounting documents (legal obligation).</p>
-  <p class="about-body"><strong>Cookies.</strong> The site uses strictly necessary cookies (session, cart), as well as audience measurement (Cloudflare Web Analytics, cookie-free and anonymous) and functionality tools (tawk.to live chat, Google Analytics) subject to your consent via the banner shown on your first visit. You may decline these at any time; this does not affect browsing or ordering.</p>
+  <p class="about-body"><strong>Cookies.</strong> The site uses strictly necessary cookies (session, cart), as well as audience measurement (Cloudflare Web Analytics, cookie-free and anonymous) and audience measurement (Google Analytics) subject to your consent via the banner shown on your first visit. You may decline these at any time; this does not affect browsing or ordering.</p>
   <p class="about-body"><strong>Your rights.</strong> Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</p>
   <p class="about-body"><strong>Security.</strong> SSL-encrypted payments. Banking data is handled exclusively by the payment provider and never stored by passéist.</p>
 </section>
@@ -3943,6 +3993,24 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
       <div class="checkout-row"><label>Email<input type="email" name="email" required></label></div>
       <div class="checkout-row"><label>Message<textarea name="message" rows="4" required></textarea></label></div>
       <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+    </form>
+  </div>
+</div>
+
+<!-- DISCUSSION EN DIRECT (remplace Tawk ; réponses depuis /messagerie/) -->
+<div class="checkout-overlay" id="chat-overlay" aria-hidden="true">
+  <div class="checkout-box chat-box" role="dialog" aria-label="Discussion avec passéist">
+    <button class="checkout-close" type="button" onclick="closeChat()" aria-label="Fermer">✕</button>
+    <div class="checkout-eyebrow">Discussion</div>
+    <h2 class="checkout-title">passéist<span class="chat-dot">.</span></h2>
+    <p class="chat-sub"><span class="lang-fr">Écrivez-nous, nous répondons en direct.</span><span class="lang-en">Write to us, we reply live.</span></p>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <form class="chat-form" id="chat-form">
+      <input type="email" id="chat-email" class="chat-email" placeholder="Votre e-mail (facultatif, si vous quittez le site)" autocomplete="email">
+      <div class="chat-row">
+        <textarea id="chat-text" rows="1" placeholder="Votre message…" required></textarea>
+        <button type="submit" class="chat-send" aria-label="Envoyer"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
+      </div>
     </form>
   </div>
 </div>
@@ -7135,6 +7203,91 @@ function submitContact(e) {
   });
 }
 
+// ============ DISCUSSION EN DIRECT ============
+// Messages stockés par netlify/functions/chat.js ; passéist répond depuis
+// /messagerie/ (notification sur son téléphone). La conversation est
+// identifiée par un jeton aléatoire gardé dans ce navigateur.
+const CHAT_API = '/.netlify/functions/chat';
+let chatConv = '', chatSince = 0, chatTimer = null, chatShown = new Set();
+function chatId() {
+  if (chatConv) return chatConv;
+  try { chatConv = localStorage.getItem('passeist_chat_conv') || ''; } catch (e) {}
+  if (!chatConv) {
+    const a = new Uint8Array(12); crypto.getRandomValues(a);
+    chatConv = Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+  }
+  return chatConv;
+}
+function chatAdd(m) {
+  const key = m.from + m.at;
+  if (chatShown.has(key)) return;
+  chatShown.add(key);
+  const el = document.createElement('div');
+  el.className = 'chat-msg ' + m.from;
+  el.textContent = m.text;
+  const box = document.getElementById('chat-msgs');
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+  if (m.at > chatSince) chatSince = m.at;
+}
+function chatPoll() {
+  let saved = ''; try { saved = localStorage.getItem('passeist_chat_conv') || ''; } catch (e) {}
+  if (!saved) return Promise.resolve();  // pas encore de conversation
+  return fetch(CHAT_API + '?action=poll&conv=' + saved + '&since=' + chatSince)
+    .then(r => r.json()).then(d => (d.messages || []).forEach(chatAdd)).catch(() => {});
+}
+function openChat() {
+  const en = window.__lang === 'en';
+  const box = document.getElementById('chat-msgs');
+  if (!box.children.length) {
+    chatAdd({ from: 'passeist', at: 0, text: en
+      ? 'Hello! A question about a piece, a size, extra photos? We reply here within minutes during the day.'
+      : 'Bonjour ! Une question sur une pièce, une taille, des photos supplémentaires ? Nous répondons ici en quelques minutes en journée.' });
+  }
+  document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
+  document.getElementById('chat-email').placeholder = en ? 'Your e-mail (optional, if you leave the site)' : 'Votre e-mail (facultatif, si vous quittez le site)';
+  document.getElementById('chat-overlay').classList.add('open');
+  chatPoll();
+  clearInterval(chatTimer);
+  chatTimer = setInterval(chatPoll, 4000);
+  if (window.innerWidth > 600) setTimeout(() => document.getElementById('chat-text').focus(), 50);
+}
+function closeChat() {
+  document.getElementById('chat-overlay').classList.remove('open');
+  clearInterval(chatTimer);
+}
+document.getElementById('chat-overlay').addEventListener('click', e => { if (e.target.id === 'chat-overlay') closeChat(); });
+document.getElementById('chat-text').addEventListener('input', function () {
+  this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+document.getElementById('chat-text').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 600) { e.preventDefault(); document.getElementById('chat-form').requestSubmit(); }
+});
+document.getElementById('chat-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const ta = document.getElementById('chat-text');
+  const text = ta.value.trim();
+  if (!text) return;
+  const conv = chatId();
+  const detailOpen = document.body.classList.contains('detail-open') && currentProduct;
+  const product = detailOpen ? currentProduct.brand + ', ' + currentProduct.type + ' (réf. ' + currentProduct.id + ')' : '';
+  ta.value = ''; ta.style.height = '';
+  fetch(CHAT_API + '?action=send', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conv, text, product, email: document.getElementById('chat-email').value.trim() }),
+  }).then(r => r.json()).then(d => {
+    if (!d.ok) throw new Error(d.error || 'send');
+    try { localStorage.setItem('passeist_chat_conv', conv); } catch (err) {}
+    chatAdd({ from: 'client', text, at: d.at });
+  }).catch(() => {
+    ta.value = text;
+    chatAdd({ from: 'note', at: Date.now(), text: window.__lang === 'en'
+      ? 'Message not sent. Please try again or write to info@passeist.com.'
+      : 'Message non envoyé. Réessayez ou écrivez à info@passeist.com.' });
+  });
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChat(); });
+
 // === Contact page form handler (page /contact, séparé du modal) ===
 window.submitContactPage = function(e, lang) {
   e.preventDefault();
@@ -8295,99 +8448,15 @@ fetch('/.netlify/functions/sold-ids', { cache: 'no-store' })
   .catch(() => {});
 
 </script>
-<!-- Tawk.to (la bulle par défaut est cachée, on utilise l'icône dans la topbar) -->
 <script>
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-
-// Backdrop cliquable + croix pour fermer le chat
-var __chatBackdrop = null;
-var __chatCloseX = null;
-function __closeChatWidget() {
-  try { Tawk_API.minimize(); } catch(e){}
-  __hideChatBackdrop();
-}
-function __ensureChatBackdrop() {
-  if (!__chatBackdrop) {
-    __chatBackdrop = document.createElement('div');
-    __chatBackdrop.className = 'chat-backdrop';
-    __chatBackdrop.setAttribute('aria-hidden', 'true');
-    __chatBackdrop.addEventListener('click', __closeChatWidget);
-    document.body.appendChild(__chatBackdrop);
-  }
-  if (!__chatCloseX) {
-    __chatCloseX = document.createElement('button');
-    __chatCloseX.className = 'chat-close-x';
-    __chatCloseX.setAttribute('aria-label', 'Fermer le chat');
-    __chatCloseX.setAttribute('type', 'button');
-    __chatCloseX.textContent = '✕';
-    __chatCloseX.addEventListener('click', __closeChatWidget);
-    document.body.appendChild(__chatCloseX);
-  }
-  return __chatBackdrop;
-}
-function __showChatBackdrop() {
-  __ensureChatBackdrop();
-  requestAnimationFrame(() => {
-    __chatBackdrop.classList.add('open');
-    __chatCloseX.classList.add('open');
-  });
-}
-function __hideChatBackdrop() {
-  if (__chatBackdrop) __chatBackdrop.classList.remove('open');
-  if (__chatCloseX) __chatCloseX.classList.remove('open');
-}
-// ESC ferme aussi le chat
-document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape' && __chatBackdrop && __chatBackdrop.classList.contains('open')) {
-    __closeChatWidget();
-  }
-});
-
-// (Repositionnement de la fenêtre Tawk abandonné, l'iframe est en sandbox
-// cross-origin et Tawk écrase systématiquement toute tentative de déplacement.
-// On laisse la fenêtre à son emplacement natif et on garde les UX de fermeture.)
-
-Tawk_API.onLoad = function(){
-  try { Tawk_API.hideWidget(); } catch(e){}
-  [500, 1500, 3000, 6000].forEach(t => setTimeout(() => { try { Tawk_API.hideWidget(); } catch(e){} }, t));
-};
-Tawk_API.onStatusChange = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
-Tawk_API.onChatMaximized = function(){ __showChatBackdrop(); };
-Tawk_API.onChatMinimized = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
-Tawk_API.onChatEnded = function(){ __hideChatBackdrop(); try { Tawk_API.hideWidget(); } catch(e){} };
-Tawk_API.onBeforeLoad = function(){ try { Tawk_API.hideWidget(); } catch(e){} };
-// Chargement différé : le script tiers tawk.to (et les cookies qu'il pose)
-// n'est injecté qu'après consentement cookies (cf bandeau RGPD plus bas).
-window.__loadTawk = function(){
-  if (window.__tawkLoaded) return;
-  window.__tawkLoaded = true;
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69e8c77c735c041c32537ec6/1jmqkmg1b';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-};
-</script>
-<script>
-// Lien /?chat=1 (bulle des pages Auteurs, où Tawk n'est pas chargé) : ouvre la
-// discussion dès que Tawk est prêt, ou demande d'abord le consentement cookies.
+// Lien /?chat=1 (bulle des pages Auteurs) : ouvre la discussion du site.
 document.addEventListener('DOMContentLoaded', function(){
   var u;
   try { u = new URL(location.href); } catch(e){ return; }
   if (u.searchParams.get('chat') !== '1') return;
   u.searchParams.delete('chat');
   try { history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch(e){}
-  var consent = null;
-  try { consent = localStorage.getItem('passeist_cookie_consent'); } catch(e){}
-  if (consent !== 'accepted') { if (window.__promptCookieConsent) window.__promptCookieConsent(); return; }
-  var tries = 0;
-  (function openChat(){
-    if (window.Tawk_API && typeof Tawk_API.maximize === 'function') {
-      Tawk_API.maximize();
-      if (typeof __showChatBackdrop === 'function') __showChatBackdrop();
-    } else if (++tries < 40) setTimeout(openChat, 250);
-  })();
+  if (typeof openChat === 'function') openChat();
 });
 </script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
@@ -8408,7 +8477,6 @@ document.addEventListener('DOMContentLoaded', function(){
   document.addEventListener('DOMContentLoaded', function(){
     var consent = getConsent();
     if (consent === 'accepted') {
-      if (window.__loadTawk) window.__loadTawk();
     } else if (consent !== 'rejected') {
       showBanner();
     }
@@ -8417,7 +8485,6 @@ document.addEventListener('DOMContentLoaded', function(){
     if (acceptBtn) acceptBtn.addEventListener('click', function(){
       setConsent('accepted');
       hideBanner();
-      if (window.__loadTawk) window.__loadTawk();
       // Consent Mode v2 : GA4 (déjà chargé dans le <head>) peut poser ses cookies
       if (typeof window.gtag === 'function') window.gtag('consent', 'update', { analytics_storage: 'granted' });
     });

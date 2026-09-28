@@ -2,9 +2,10 @@
   "name": "passeist-site",
   "version": "1.0.0",
   "private": true,
-  "description": "Passeist \u2014 site Netlify Functions (Stripe checkout)",
+  "description": "Passeist — site Netlify Functions (Stripe checkout)",
   "dependencies": {
+    "@netlify/blobs": "^8.1.0",
     "stripe": "^17.5.0",
-    "@netlify/blobs": "^8.1.0"
+    "web-push": "^3.6.7"
   }
 }
