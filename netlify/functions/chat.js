@@ -40,7 +40,7 @@ function clean(s, max) {
 
 async function notifyPhone(store, conv, text) {
   const pub = process.env.VAPID_PUBLIC_KEY, priv = process.env.VAPID_PRIVATE_KEY;
-  if (!pub || !priv) return;
+  if (!pub || !priv) return [{ error: 'clés VAPID absentes' }];
   webpush.setVapidDetails('mailto:info@passeist.com', pub, priv);
   const payload = JSON.stringify({
     title: 'passéist · nouveau message',
@@ -49,15 +49,18 @@ async function notifyPhone(store, conv, text) {
     tag: conv.id,
   });
   const { blobs } = await store.list({ prefix: 'push/' });
-  await Promise.all(blobs.map(async (b) => {
+  return Promise.all(blobs.map(async (b) => {
     const sub = await store.get(b.key, { type: 'json' });
-    if (!sub) return;
+    if (!sub) return { error: 'abonnement vide' };
+    const host = (() => { try { return new URL(sub.endpoint).host; } catch (e) { return '?'; } })();
     try {
-      await webpush.sendNotification(sub, payload, { TTL: 3600, urgency: 'high' });
+      const r = await webpush.sendNotification(sub, payload, { TTL: 3600, urgency: 'high' });
+      return { host, status: (r && r.statusCode) || 201 };
     } catch (err) {
       // Abonnement expiré (téléphone réinitialisé, notifications coupées)
       if (err.statusCode === 404 || err.statusCode === 410) await store.delete(b.key);
-      else console.error('push :', err.statusCode || err.message);
+      console.error('push :', err.statusCode || err.message, err.body || '');
+      return { host, status: err.statusCode || 0, error: String(err.body || err.message).slice(0, 200) };
     }
   }));
 }
@@ -147,6 +150,11 @@ exports.handler = async (event) => {
       conv.unread = 0;
       await store.setJSON('conv/' + id, conv);
       return json(200, { ok: true, at: now });
+    }
+
+    if (action === 'testpush' && event.httpMethod === 'POST') {
+      const results = await notifyPhone(store, { id: 'test' }, 'Test : les notifications fonctionnent.');
+      return json(200, { devices: results.length, results });
     }
 
     if (action === 'subscribe' && event.httpMethod === 'POST') {

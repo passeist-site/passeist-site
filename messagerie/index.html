@@ -71,6 +71,7 @@ body.in-conv .composer { display: flex; }
     <button class="back" id="back" aria-label="Retour">‹</button>
     <div class="logo">passéist<span>.</span></div>
     <button class="pill" id="notif" hidden>Activer les notifications</button>
+    <button class="pill" id="testpush" hidden>Tester</button>
   </header>
   <main id="main"></main>
   <form class="composer" id="composer">
@@ -189,8 +190,24 @@ function b64ToBytes(s) {
   const raw = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
   return Uint8Array.from(raw, c => c.charCodeAt(0));
 }
+// Test : envoie une notification à tous les téléphones abonnés et affiche le résultat
+$('testpush').onclick = async () => {
+  const btn = $('testpush'); btn.textContent = '…';
+  try {
+    const r = await api('testpush', { body: {} });
+    const ok = (r.results || []).filter(x => x.status === 201 || x.status === 200).length;
+    alert(r.devices ? ok + ' / ' + r.devices + ' appareil(s) notifié(s)\n\n' + JSON.stringify(r.results, null, 1)
+                    : 'Aucun appareil abonné : touchez « Activer les notifications » depuis l\'icône de l\'écran d\'accueil.');
+  } catch (e) { alert('Erreur : ' + e.message); }
+  btn.textContent = 'Tester';
+};
 async function setupPush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  if (key) $('testpush').hidden = false;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    const btn = $('notif'); btn.hidden = false; btn.disabled = true;
+    btn.textContent = /iPhone|iPad/.test(navigator.userAgent) ? 'Ouvrez depuis l\'écran d\'accueil' : 'Notifications non supportées';
+    return;
+  }
   const reg = await navigator.serviceWorker.register('/messagerie/sw.js', { scope: '/messagerie/' });
   navigator.serviceWorker.addEventListener('message', () => route());
   const sub = await reg.pushManager.getSubscription();
