@@ -30,6 +30,11 @@ grilles) :
 **Ne plus jamais modifier la grande photo 1 ni la vignette 1 de la fiche
 produit.** Leur rendu actuel est validé tel quel.
 
+Coins arrondis **6 px** sur toutes les photos de la fiche produit (grande photo
+et vignettes, photo 1 comprise), comme les cartes : demandé par Tom le
+2026-09-28. Seul le cadre est arrondi, le cadrage et le contain ne changent
+pas.
+
 ## 3. Cartes des grilles = photo 1 de la fiche
 
 Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
@@ -61,6 +66,10 @@ Même règle que les cartes des grilles :
   de la première carte dupliquée (boucle sans saut).
 
 Le bouton EXPLORE (`.hero-cta`) a lui aussi des coins arrondis de 6 px.
+
+Le carrousel « Articles similaires » de la fiche produit utilise la même
+carte que la Boutique (`.product-img` + `.product-img-primary`, photo 1,
+3:4 contain) : aucune règle propre ne doit y remettre de `cover`.
 
 ## 3 ter. Carrousel des pages Auteurs (`/marques/<marque>`)
 

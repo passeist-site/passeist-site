@@ -1325,12 +1325,6 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
   display: flex; flex-direction: column;
   gap: 6px;
 }
-.similar-card img {
-  width: 100%; aspect-ratio: 1; object-fit: cover;
-  background: #fff; display: block;
-  transition: transform 0.4s var(--ease-out);
-}
-.similar-card:hover img { transform: translateY(-2px); }
 .similar-card-brand {
   font-family: var(--font-mono);
   font-size: 9px; color: var(--text-mute);
@@ -3048,6 +3042,16 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
     height: calc(var(--hero-card-h, 393px) + 12px);
     bottom: 72px;  /* de l'air sous le carrousel (Tom) */
   }
+}
+
+/* REGLE FIGEE par Tom, voir PHOTOS.md : coins 6px sur toutes les photos de la
+   fiche produit (grande photo et vignettes), comme les cartes des grilles.
+   Arrondi du cadre seulement : cadrage, format et contain inchangés. */
+.detail-gallery .main-photo-wrap,
+.detail-gallery .thumb,
+.detail-gallery img { border-radius: 6px; }
+@media (max-width: 900px) {
+  .detail-gallery .main-photo-wrap { clip-path: inset(0 round 6px); }
 }
 
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
