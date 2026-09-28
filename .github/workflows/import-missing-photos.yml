@@ -42,16 +42,24 @@ jobs:
 
       - name: Import des photos
         id: imp
-        run: python -u tools/import_missing_photos.py --limit "${{ github.event.inputs.limit || '40' }}"
+        run: python -u tools/import_missing_photos.py --limit "${{ github.event.inputs.limit || '40' }}" --ids-out /tmp/imported_ids.txt
 
       - name: Commit + push
         if: steps.imp.outputs.imported != '0'
+        # Le Sync peut avoir modifié index.html pendant l'import : on repart
+        # toujours du main distant, on y réapplique seulement l'ajout des ids
+        # (pas de rebase, donc pas de conflit), les photos restent sur le disque.
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          git add --sparse index.html img/
-          git commit -m "photos: ${{ steps.imp.outputs.imported }} pieces rapatriees du CDN Vestiaire sur passeist.com (${{ steps.imp.outputs.failed }} echecs)"
-          for i in 1 2 3; do
-            if git push; then break; fi
-            git pull --rebase origin main
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main
+            git reset -q origin/main
+            git checkout origin/main -- index.html
+            python tools/import_missing_photos.py --mark-only /tmp/imported_ids.txt
+            git add --sparse index.html img/
+            git commit -q -m "photos: ${{ steps.imp.outputs.imported }} pieces rapatriees du CDN Vestiaire sur passeist.com (${{ steps.imp.outputs.failed }} echecs)"
+            if git push -q origin HEAD:main; then echo "push OK"; exit 0; fi
+            sleep $((i * 10))
           done
+          exit 1

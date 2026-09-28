@@ -16,6 +16,7 @@ Usage : python tools/import_missing_photos.py [--limit N] [--dry-run]
 Lancé par .github/workflows/import-missing-photos.yml (déclenchement manuel).
 """
 import sys, os, re, json, io, time, argparse
+from urllib.parse import quote
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from import_vestiaire import make_scraper, pad_square, INDEX, OUT_IMG  # noqa: E402
@@ -51,23 +52,43 @@ class RateLimited(Exception):
     pass
 
 
+# Relais d'images du site (netlify/functions/img-proxy.js) : sort par les IP de
+# Netlify, utilisé quand le CDN Vestiaire limite le débit de l'IP du runner (429).
+PROXY = 'https://passeist.com/.netlify/functions/img-proxy?url='
+_use_proxy = False
+
+
+def _get(scraper, url):
+    try:
+        r = scraper.get(url, timeout=30)
+        return r.status_code, r.content
+    except Exception as e:  # réseau
+        print(f'  ERR réseau {e}')
+        return 0, b''
+
+
 def fetch(scraper, url):
-    """GET avec pauses quand le CDN limite le débit (429/403/5xx).
-    Renvoie (status, content). Lève RateLimited si le CDN bloque toujours."""
-    waits = [30, 60, 120, 240]
+    """GET direct, ou via le relais du site dès que le CDN renvoie 429/403.
+    Pauses si le relais est limité lui aussi. Renvoie (status, content) ;
+    lève RateLimited si tout reste bloqué."""
+    global _use_proxy
+    if not _use_proxy:
+        status, content = _get(scraper, url)
+        if status not in (0, 403, 429) and status < 500:
+            return status, content
+        print(f'  CDN {status} : passage par le relais passeist.com', flush=True)
+        _use_proxy = True
+    purl = PROXY + quote(url, safe='')
+    waits = [60, 120, 240]
     for k in range(len(waits) + 1):
-        try:
-            r = scraper.get(url, timeout=30)
-        except Exception as e:  # réseau
-            print(f'  ERR réseau {e}')
-            status, content = 0, b''
-        else:
-            status, content = r.status_code, r.content
+        status, content = _get(scraper, purl)
+        if status == 502 and b'404' in content:
+            return 404, b''  # photo absente chez Vestiaire
         if status not in (0, 403, 429) and status < 500:
             return status, content
         if k == len(waits):
             raise RateLimited(status)
-        print(f'  CDN {status} : pause {waits[k]} s', flush=True)
+        print(f'  relais {status} : pause {waits[k]} s', flush=True)
         time.sleep(waits[k])
 
 
@@ -92,15 +113,34 @@ def import_one(scraper, p, reorder, suffix):
             pad_square(im, target).save(os.path.join(OUT_IMG, f"{p['id']}-{i}-{sn}.webp"),
                                         'WEBP', quality=q, method=6)
         done += 1
-        time.sleep(1.0)  # le CDN limite le débit au-delà d'environ 30 requêtes rapides
+        time.sleep(1.3)  # le CDN (et le relais : 50 req/min) limitent le débit
     return done == len(order) and done > 0
+
+
+def mark_validated(ok):
+    """Ajoute les ids en tête de VALIDATED_LOCAL dans index.html (sans doublon)."""
+    html = open(INDEX, encoding='utf-8').read()
+    m = re.search(r'(const VALIDATED_LOCAL = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
+    existing = re.findall(r'"(\d+)"', m.group(2))
+    ids = [i for i in ok if i not in set(existing)] + existing
+    inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in ids) + '\n'
+    html = html.replace(m.group(0), m.group(1) + inside + m.group(3))
+    open(INDEX, 'w', encoding='utf-8').write(html)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--limit', type=int, default=0, help='nombre max de pièces (0 = toutes)')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--ids-out', help='écrit les ids rapatriés dans ce fichier')
+    ap.add_argument('--mark-only', help='ajoute seulement les ids de ce fichier à VALIDATED_LOCAL')
     args = ap.parse_args()
+
+    if args.mark_only:
+        ids = open(args.mark_only).read().split()
+        mark_validated(ids)
+        print(f'{len(ids)} ids ajoutés à VALIDATED_LOCAL')
+        return
 
     html = open(INDEX, encoding='utf-8').read()
     products, sold, local, reorder, suffix = load_state(html)
@@ -128,12 +168,9 @@ def main():
         time.sleep(3)
 
     if ok:
-        m = re.search(r'(const VALIDATED_LOCAL = new Set\(\[)(.*?)(\]\);)', html, re.DOTALL)
-        existing = re.findall(r'"(\d+)"', m.group(2))
-        ids = ok + [i for i in existing if i not in set(ok)]
-        inside = '\n  ' + ',\n  '.join(f'"{i}"' for i in ids) + '\n'
-        html = html.replace(m.group(0), m.group(1) + inside + m.group(3))
-        open(INDEX, 'w', encoding='utf-8').write(html)
+        mark_validated(ok)
+    if args.ids_out:
+        open(args.ids_out, 'w').write('\n'.join(ok) + '\n')
     print(f'\nOK : {len(ok)} pièces rapatriées, {len(fail)} en échec')
     if fail:
         print('Échecs :', ' '.join(fail))
