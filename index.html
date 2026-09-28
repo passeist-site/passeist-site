@@ -7524,17 +7524,43 @@ function closeChat() {
 }
 document.getElementById('chat-overlay').addEventListener('click', e => { if (e.target.id === 'chat-overlay') closeChat(); });
 // Étape 1 : prénom (et e-mail facultatif), puis la zone de message s'ouvre
+// Si le visiteur écrit directement un message (« Bonjour, … ») dans le champ
+// prénom : on le garde, on lui demande son prénom, puis on envoie le tout (Tom).
+let chatPending = '';
+function chatLooksLikeMessage(v) {
+  return /\b(bonjour|bonsoir|salut|coucou|hello|hi|hey|merci|svp|stp)\b/i.test(v)
+    || /[?!.,:]/.test(v) || v.split(/\s+/).length > 2 || v.length > 25;
+}
 document.getElementById('chat-start').addEventListener('submit', e => {
   e.preventDefault();
-  const name = document.getElementById('chat-name').value.trim();
+  const field = document.getElementById('chat-name');
+  const name = field.value.trim();
   if (!name) return;
+  const EN = window.__lang === 'en';
+  if (chatLooksLikeMessage(name)) {
+    chatPending = (chatPending ? chatPending + '\n' : '') + name;
+    chatAdd({ from: 'client', at: Date.now(), text: name });
+    chatAdd({ from: 'passeist', at: Date.now() + 1, text: EN ? 'Thank you! What is your first name?' : 'Merci ! Quel est votre prénom ?' });
+    field.value = '';
+    field.focus();
+    return;
+  }
   try {
     localStorage.setItem('passeist_chat_name', name);
   } catch (err) {}
   chatAdd({ from: 'passeist', at: 1, text: (window.__lang === 'en' ? 'Hello ' : 'Bonjour ') + name + ' !' });
   document.getElementById('chat-overlay').classList.add('chat-ready');
-  document.getElementById('chat-text').focus();
+  if (chatPending) {
+    // Message écrit avant le prénom : envoyé maintenant, avec le prénom
+    const ta = document.getElementById('chat-text');
+    ta.value = chatPending; chatPending = '';
+    chatSkipEcho = true;
+    document.getElementById('chat-form').requestSubmit();
+  } else {
+    document.getElementById('chat-text').focus();
+  }
 });
+let chatSkipEcho = false;  // message déjà affiché : ne pas le redessiner à l'envoi
 document.getElementById('chat-text').addEventListener('input', function () {
   this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
@@ -7561,8 +7587,10 @@ document.getElementById('chat-form').addEventListener('submit', e => {
       localStorage.setItem('passeist_chat_conv', conv);
       localStorage.setItem('passeist_chat_name', document.getElementById('chat-name').value.trim());
     } catch (err) {}
-    chatAdd({ from: 'client', text, at: d.at });
+    if (chatSkipEcho) { chatSkipEcho = false; chatShown.add('client' + d.at); }
+    else chatAdd({ from: 'client', text, at: d.at });
   }).catch(() => {
+    chatSkipEcho = false;
     ta.value = text;
     chatAdd({ from: 'note', at: Date.now(), text: window.__lang === 'en'
       ? 'Message not sent. Please try again or write to info@passeist.com.'
