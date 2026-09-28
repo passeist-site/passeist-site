@@ -78,18 +78,15 @@ def fetch(scraper, url):
             return status, content
         print(f'  CDN {status} : passage par le relais passeist.com', flush=True)
         _use_proxy = True
-    purl = PROXY + quote(url, safe='')
-    waits = [60, 120, 240]
-    for k in range(len(waits) + 1):
-        status, content = _get(scraper, purl)
-        if status == 502 and b'404' in content:
-            return 404, b''  # photo absente chez Vestiaire
-        if status not in (0, 403, 429) and status < 500:
-            return status, content
-        if k == len(waits):
-            raise RateLimited(status)
-        print(f'  relais {status} : pause {waits[k]} s', flush=True)
-        time.sleep(waits[k])
+    # Un seul essai par le relais : s'il est refusé aussi, on arrête le lot
+    # (les lots suivants, lancés automatiquement, reprendront plus tard).
+    status, content = _get(scraper, PROXY + quote(url, safe=''))
+    if status == 502 and b'404' in content:
+        return 404, b''  # photo absente chez Vestiaire
+    if status not in (0, 403, 429) and status < 500:
+        return status, content
+    print(f'  relais {status} : {content[:120]!r}', flush=True)
+    raise RateLimited(status)
 
 
 def import_one(scraper, p, reorder, suffix):
@@ -113,7 +110,7 @@ def import_one(scraper, p, reorder, suffix):
             pad_square(im, target).save(os.path.join(OUT_IMG, f"{p['id']}-{i}-{sn}.webp"),
                                         'WEBP', quality=q, method=6)
         done += 1
-        time.sleep(1.3)  # le CDN (et le relais : 50 req/min) limitent le débit
+        time.sleep(3)  # le CDN bloque au-delà d'une quinzaine de photos rapides
     return done == len(order) and done > 0
 
 
