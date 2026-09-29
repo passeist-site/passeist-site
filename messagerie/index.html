@@ -206,6 +206,9 @@ async function showNewsletter() {
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
       <b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
+    <div class="nl-box"><h3>Envoi du ${esc(d.nextDate || '')}</h3>
+      <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>
+      <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div></div>
     <div class="nl-box"><h3>À la une dimanche</h3>
       <div class="nl-stat">Collez les liens ou les références des pièces à mettre en avant (jusqu'à 12). Elles ouvrent l'e-mail, en grand. La sélection repart à zéro après chaque envoi.</div>
       <textarea id="nlfeat" rows="4" class="nl-area" placeholder="https://passeist.com/product/…&#10;71642530">${esc((d.featured || []).map(f => f.id).join('\n'))}</textarea>
@@ -229,6 +232,10 @@ async function showNewsletter() {
     if (!res.ok) { $('nlfeatmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlfeat').value = j.featured.map(f => f.id).join('\n');
     $('nlfeatmsg').innerHTML = j.featured.length ? j.featured.map(f => '• ' + esc(f.label)).join('<br>') : 'Aucune pièce reconnue (vérifiez les liens, et que les pièces sont encore en vente).';
+  };
+  $('nlapprove').onclick = async () => {
+    await fetch('/.netlify/functions/newsletter?action=approve', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ approve: !d.approved }) });
+    showNewsletter();
   };
   $('promobtn').onclick = async () => {
     $('promomsg').textContent = 'Création…';

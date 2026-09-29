@@ -75,12 +75,21 @@ async function admin(event, action) {
     else await store.delete('state/featured');
     return json(200, { featured: await featuredList() });
   }
+  if (action === 'approve' && event.httpMethod === 'POST') {
+    let body = {};
+    try { body = JSON.parse(event.body || '{}'); } catch (e) {}
+    if (body.approve) await store.setJSON('state/approved', { date: send._nextSendDate(), at: new Date().toISOString() });
+    else await store.delete('state/approved');
+    return json(200, { ok: true });
+  }
   if (action === 'stats') {
     const { blobs } = await store.list({ prefix: 'sub/' });
     const subs = (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })))).filter(Boolean);
     subs.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return json(200, {
       brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, featured: await featuredList(),
+      nextDate: send._nextSendDate(),
+      approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),
       count: subs.length, pending: subs.filter(x => !x.synced).length,
       subs: subs.slice(0, 200).map(x => ({ email: x.email, lang: x.lang, at: x.at })),
     });

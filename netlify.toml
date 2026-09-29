@@ -22,5 +22,8 @@
   schedule = "0 15 * * 0"
 
 # Notification « nouveautés de la semaine » : dimanche 17 h, avec la newsletter
+[functions."newsletter-preview"]
+  schedule = "0 16 * * 6"   # aperçu à valider : samedi 18 h (Paris, été)
+
 [functions."push-weekly"]
   schedule = "0 15 * * 0"

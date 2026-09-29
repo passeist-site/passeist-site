@@ -1,4 +1,6 @@
-// Netlify Function planifiée (chaque dimanche, cf. netlify.toml) — newsletter
+// Netlify Function planifiée (chaque dimanche, cf. netlify.toml), seulement
+// si Tom l'a validée dans la messagerie (aperçu envoyé le samedi par
+// newsletter-preview.js) — newsletter
 // « Les nouveautés du dimanche » : les pièces arrivées depuis le dernier envoi,
 // classées par maison. S'il y en a moins de 8, on attend le dimanche suivant.
 //
@@ -15,6 +17,17 @@ const SITE = 'https://passeist.com';
 // Profils passéist sur les plateformes (bas de la newsletter)
 const VESTIAIRE_URL = 'https://fr.vestiairecollective.com/profile/30773496/';
 const VINTED_URL = process.env.VINTED_URL || '';
+// Date (AAAA-MM-JJ, heure de Paris) du prochain envoi : aujourd'hui si on est
+// dimanche avant 17 h, sinon le dimanche suivant. Sert à la validation par Tom.
+function nextSendDate(now = new Date()) {
+  const paris = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+  const d = new Date(paris);
+  const day = d.getDay();
+  let add = (7 - day) % 7;
+  if (day === 0 && paris.getHours() >= 18) add = 7;
+  d.setDate(d.getDate() + add);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 const BATCH = Number(process.env.NEWSLETTER_MIN || 8);   // minimum de pièces pour envoyer
 
 function slugify(s) {
@@ -175,6 +188,13 @@ exports.handler = async (event) => {
     return { statusCode: 200, body: 'no brevo' };
   }
 
+  // Validation de Tom obligatoire (aperçu reçu le samedi, bouton dans la messagerie)
+  const approved = await store.get('state/approved', { type: 'json' });
+  if (!approved || approved.date !== nextSendDate()) {
+    console.log('newsletter : non validée pour ' + nextSendDate() + ', rien n\'est envoyé (les pièces attendent)');
+    return { statusCode: 200, body: 'not approved' };
+  }
+
   // 3. Sélection de Tom en tête, puis le reste par maison (la plus fournie en premier)
   const featured = await featuredItems(store);
   const featIds = new Set(featured.map(f => f.id));
@@ -206,3 +226,4 @@ exports._buildHtml = buildHtml;
 exports._groupsFor = groupsFor;
 exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;
+exports._nextSendDate = nextSendDate;
