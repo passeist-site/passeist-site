@@ -2178,6 +2178,52 @@ body[data-page="home"] .nl, body.detail-open .nl { display: none; }
 html[lang="en"] .nl .lang-fr { display: none !important; }
 html[lang="fr"] .nl .lang-en { display: none !important; }
 
+/* === Vus récemment (fiche + boutique) === */
+.recent-section { padding: 8px 40px 44px; }
+.recent-shop { margin: 0 0 22px; }
+.recent-shop-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 10px; font-family: var(--font-sans); }
+.recent-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.recent-row::-webkit-scrollbar { display: none; }
+.recent-card { flex: 0 0 auto; width: 96px; text-decoration: none; color: var(--ink); cursor: pointer; }
+.recent-shop .recent-card { width: 68px; }
+.recent-card .product-img { border-radius: 6px; }
+.recent-card .product-img-primary { opacity: 1; }
+.recent-card .recent-brand { margin-top: 6px; font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-sans); }
+.recent-shop .recent-brand { display: none; }
+html[lang="en"] .recent-section .lang-fr, html[lang="en"] .recent-shop .lang-fr { display: none; }
+html[lang="fr"] .recent-section .lang-en, html[lang="fr"] .recent-shop .lang-en { display: none; }
+@media (max-width: 900px) { .recent-section { padding: 4px 18px 36px; } }
+
+/* === Apparition douce des pièces au défilement (navigateurs récents) === */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .grid .product-card {
+      animation: cardReveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    @keyframes cardReveal { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  }
+}
+
+/* Partager : sur mobile, petit bouton rond posé dans l'angle haut droit de la
+   grande photo (les icônes à côté du prix y sont remplacées par la barre d'achat). */
+.photo-share { display: none; }
+@media (max-width: 900px) {
+  .detail-main { position: relative; }
+  .photo-share {
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; z-index: 3; top: 26px; right: calc(6% + 10px);
+    width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(28,34,48,0.55); color: #f4f1ec;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .photo-share svg { width: 18px; height: 18px; }
+  #detail.detail-sold .photo-share { display: none; }
+}
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -3662,6 +3708,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <button class="filter-sheet-apply" id="filter-sheet-apply" type="button">Voir les résultats</button>
       <button class="filter-sheet-close" id="filter-sheet-reset" type="button" style="display:block;margin:8px auto 0;padding:4px 10px;font-weight:700;">Réinitialiser</button>
     </aside>
+    <section class="recent-shop" id="shop-recent" hidden>
+      <div class="recent-shop-title"><span class="lang-fr">Vus récemment</span><span class="lang-en">Recently viewed</span></div>
+      <div class="recent-row" id="shop-recent-row"></div>
+    </section>
     <div class="grid" id="grid"></div>
   </main>
 </section>
@@ -3822,6 +3872,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <button class="detail-back" id="detail-back-btn" onclick="closeDetail()">← Retour à la boutique</button>
   </div>
   <div class="detail-main">
+    <button class="photo-share" type="button" onclick="sharePiece()" aria-label="Partager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg></button>
     <div class="detail-gallery" id="detail-gallery"></div>
     <div class="detail-info">
       <div class="detail-brand" id="d-brand"></div>
@@ -3834,6 +3885,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
         <div class="detail-price-actions">
           <button class="detail-price-icon" id="d-price-add" type="button" onclick="if(currentProduct) addToCart(currentProduct.id)" aria-label="Ajouter au panier" title="Ajouter au panier">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 12H6.5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          </button>
+          <button class="detail-price-icon" id="d-share" type="button" onclick="sharePiece()" aria-label="Partager" title="Partager">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>
           </button>
           <button class="detail-price-icon fav-btn" id="d-price-fav" data-id="" type="button" onclick="toggleFavoriteWithFly(document.getElementById('d-price-fav').dataset.id, event)" aria-label="Ajouter aux favoris" title="Ajouter aux favoris">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
@@ -3864,6 +3918,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="similar-marquee" id="d-similar-marquee">
       <div class="similar-track" id="d-similar-track"></div>
     </div>
+  </section>
+  <section class="recent-section" id="d-recent" hidden>
+    <div class="similar-title"><span class="lang-fr">Vus récemment</span><span class="lang-en">Recently viewed</span></div>
+    <div class="recent-row" id="d-recent-row"></div>
   </section>
 </div>
 
@@ -7595,13 +7653,24 @@ function submitOrder(e) {
     // Les rayons apparaissent un à un, comme sur iPhone
     lines.forEach((l, k) => { l.style.opacity = (k / 12 < p) ? '1' : '0'; });
   };
+  // Photo zoomée (pincement), zoom du navigateur ou visionneuse ouverte : le
+  // doigt déplace la photo, il ne doit jamais recharger la page (Tom).
+  const zoomed = () => {
+    const m = det.querySelector('.main-photo');
+    const sc = m && /scale\(([\d.]+)\)/.exec(m.style.transform || '');
+    const lb = document.getElementById('lightbox');
+    return (sc && parseFloat(sc[1]) > 1.01)
+      || (window.visualViewport && visualViewport.scale > 1.01)
+      || (lb && lb.classList.contains('open'));
+  };
   det.addEventListener('touchstart', e => {
-    if (det.scrollTop > 0 || e.touches.length !== 1 || ind.classList.contains('spin')) { y0 = null; return; }
+    if (det.scrollTop > 0 || e.touches.length !== 1 || ind.classList.contains('spin') || zoomed()) { y0 = null; return; }
     y0 = e.touches[0].clientY; x0 = e.touches[0].clientX;
     det.classList.remove('ptr-back');
   }, { passive: true });
   det.addEventListener('touchmove', e => {
     if (y0 === null) return;
+    if (e.touches.length !== 1 || zoomed()) { y0 = null; if (pull) setPull(0); return; }
     const dy = e.touches[0].clientY - y0, dx = Math.abs(e.touches[0].clientX - x0);
     if (dy <= 0 || dx > dy || det.scrollTop > 0) { if (pull) setPull(0); return; }
     setPull(Math.min(dy * 0.5, 120));   // résistance élastique
@@ -8955,6 +9024,74 @@ document.addEventListener('DOMContentLoaded', function(){
   if (typeof openChat === 'function') openChat();
 });
 </script>
+<!-- ============ PARTAGER + VUS RÉCEMMENT ============ -->
+<script>
+// Partager la pièce : menu natif du téléphone (Messages, WhatsApp, Instagram…) ;
+// sur ordinateur, le lien est copié. La vignette vient des balises og:image de
+// la page produit générée au build.
+window.sharePiece = function () {
+  const p = currentProduct; if (!p) return;
+  const en = window.__lang === 'en';
+  const url = 'https://passeist.com/product/' + productSlug(p);
+  const title = p.brand + ' · ' + (window.tType ? window.tType(p) : p.type);
+  if (navigator.share) {
+    navigator.share({ title: title + ' · passéist', text: title + ' · ' + p.price + ' €', url }).catch(() => {});
+    return;
+  }
+  const done = () => {
+    let t = document.getElementById('share-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'share-toast'; t.className = 'cart-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.innerHTML = '<div class="cart-toast-txt"><strong>' + (en ? 'Link copied' : 'Lien copié') + '</strong></div>';
+    requestAnimationFrame(() => t.classList.add('show'));
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt('', url));
+  else prompt('', url);
+};
+
+// Vus récemment : 12 dernières pièces ouvertes (ce navigateur uniquement)
+(function () {
+  const KEY = 'passeist_recent', MAX = 12;
+  const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } };
+  const write = (ids) => { try { localStorage.setItem(KEY, JSON.stringify(ids.slice(0, MAX))); } catch (e) {} };
+  const byId = (id) => PRODUCTS.find(x => String(x.id) === String(id));
+  const esc = (t) => String(t || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function cards(ids) {
+    return ids.map(byId).filter(p => p && !isSold(p) && p.n).map(p =>
+      `<a class="recent-card" href="/product/${productSlug(p)}" data-id="${p.id}"><div class="product-img"><img class="product-img-primary" src="${imgUrl(p, 0, { size: 'sm', exactSize: true })}" alt="${esc(p.brand + ' ' + p.type)}" loading="lazy" decoding="async"></div><div class="recent-brand">${esc(p.brand)}</div></a>`).join('');
+  }
+  function fill(sectionId, rowId, ids, min) {
+    const sec = document.getElementById(sectionId), row = document.getElementById(rowId);
+    if (!sec || !row) return;
+    const html = cards(ids);
+    const n = (html.match(/recent-card/g) || []).length;
+    sec.hidden = n < min;
+    row.innerHTML = n >= min ? html : '';
+  }
+  window.renderRecent = function () {
+    const ids = read();
+    const cur = (typeof currentProduct !== 'undefined' && currentProduct) ? String(currentProduct.id) : null;
+    fill('d-recent', 'd-recent-row', ids.filter(id => id !== cur), 1);
+    fill('shop-recent', 'shop-recent-row', ids, 2);
+  };
+  document.addEventListener('click', (e) => {
+    const c = e.target.closest('.recent-card');
+    if (!c || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    openDetail(c.dataset.id);
+  });
+  const _open = window.openDetail;
+  window.openDetail = function (id) {
+    const r = _open.apply(this, arguments);
+    const ids = read().filter(x => String(x) !== String(id));
+    ids.unshift(String(id)); write(ids);
+    const sc = document.getElementById('d-recent-row'); if (sc) sc.scrollLeft = 0;
+    renderRecent();
+    return r;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderRecent); else renderRecent();
+})();
+</script>
 <!-- ============ PHOTO QUI S'ENVOLE JUSQU'À LA FICHE ============ -->
 <script>
 // Toucher une pièce dans une grille : sa photo grandit et glisse jusqu'à sa
@@ -8966,7 +9103,7 @@ document.addEventListener('DOMContentLoaded', function(){
   let from = null;
   document.addEventListener('click', function (e) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-    const card = e.target.closest('.product-card, .similar-card');
+    const card = e.target.closest('.product-card, .similar-card, .recent-card');
     const box = card && card.querySelector('.product-img');
     const img = box && box.querySelector('img');
     if (!img || !img.complete || !img.naturalWidth) { from = null; return; }
