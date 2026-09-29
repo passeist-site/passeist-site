@@ -29,6 +29,12 @@ permissions:
 
 jobs:
   import:
+    # 6 machines en parallèle : le CDN Vestiaire limite par adresse, chaque
+    # machine a la sienne et traite sa part des pièces (6 fois plus rapide).
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -63,11 +69,11 @@ jobs:
           for round in $(seq 1 "$ROUNDS"); do
             echo "=== Lot $round / $ROUNDS ==="
             rm -f /tmp/imported_ids.txt
-            python -u tools/import_missing_photos.py --limit "$LIMIT" --ids-out /tmp/imported_ids.txt | tee /tmp/lot.log || true
+            python -u tools/import_missing_photos.py --limit "$LIMIT" --shard "${{ matrix.shard }}/6" --ids-out /tmp/imported_ids.txt | tee /tmp/lot.log || true
             if grep -q "^0 pièces en vente sans photos locales" /tmp/lot.log; then echo "Plus rien à importer"; break; fi
             n=$(grep -c . /tmp/imported_ids.txt 2>/dev/null || echo 0)
             if [ "$n" -gt 0 ]; then
-              for i in 1 2 3 4 5; do
+              for i in 1 2 3 4 5 6 7 8 9 10; do
                 git fetch -q origin main
                 git reset -q origin/main
                 git checkout origin/main -- index.html
@@ -75,7 +81,7 @@ jobs:
                 git add --sparse index.html img/
                 git commit -q -m "photos: $n pieces rapatriees du CDN Vestiaire sur passeist.com [skip netlify]"
                 if git push -q origin HEAD:main; then echo "push OK"; break; fi
-                sleep $((i * 10))
+                sleep $(( (RANDOM % 20) + i * 5 ))
               done
             fi
             if [ "$round" -lt "$ROUNDS" ]; then sleep 1200; fi

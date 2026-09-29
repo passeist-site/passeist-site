@@ -134,6 +134,7 @@ def mark_validated(ok):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--limit', type=int, default=0, help='nombre max de pièces (0 = toutes)')
+    ap.add_argument('--shard', default='0/1', help='part traitée par cette machine, ex. 2/6')
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--ids-out', help='écrit les ids rapatriés dans ce fichier')
     ap.add_argument('--mark-only', help='ajoute seulement les ids de ce fichier à VALIDATED_LOCAL')
@@ -150,6 +151,10 @@ def main():
     todo = [p for p in products
             if p.get('id') and p['id'] not in local and p['id'] not in sold
             and p.get('sold') is not True and int(p.get('n') or 0) > 0 and p.get('slug')]
+    # Plusieurs machines en parallèle (le CDN limite par adresse) : chacune
+    # prend les pièces dont l'id modulo N vaut son numéro.
+    k, n = (int(x) for x in args.shard.split('/'))
+    todo = [p for p in todo if int(p['id']) % n == k]
     if args.limit:
         todo = todo[:args.limit]
     print(f'{len(todo)} pièces en vente sans photos locales')
