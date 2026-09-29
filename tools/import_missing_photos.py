@@ -105,6 +105,12 @@ def import_one(scraper, p, reorder, suffix):
                 break
         if im is None:
             print(f'  photo {photo_num} introuvable (HTTP {statuses})')
+            # Annonce qui compte plus de photos qu'il n'en existe (dernières en
+            # 404) : on garde les photos rapatriées, sinon la pièce serait
+            # retentée à chaque lot et gaspillerait le quota du CDN.
+            if done > 0 and all(st == 404 for st in statuses):
+                print(f'  {done} photo(s) sur {len(order)} : pièce gardée')
+                return True
             return False
         for sn, target, q in SIZES:
             pad_square(im, target).save(os.path.join(OUT_IMG, f"{p['id']}-{i}-{sn}.webp"),
