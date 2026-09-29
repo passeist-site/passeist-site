@@ -75,6 +75,14 @@ async function admin(event, action) {
     else await store.delete('state/featured');
     return json(200, { featured: await featuredList() });
   }
+  if (action === 'note' && event.httpMethod === 'POST') {
+    let body = {};
+    try { body = JSON.parse(event.body || '{}'); } catch (e) {}
+    const text = String(body.text || '').trim().slice(0, 600);
+    if (text) await store.setJSON('state/note', { text, at: new Date().toISOString() });
+    else await store.delete('state/note');
+    return json(200, { ok: true });
+  }
   if (action === 'approve' && event.httpMethod === 'POST') {
     let body = {};
     try { body = JSON.parse(event.body || '{}'); } catch (e) {}
@@ -89,6 +97,7 @@ async function admin(event, action) {
     return json(200, {
       brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, featured: await featuredList(),
       nextDate: send._nextSendDate(),
+      note: ((await store.get('state/note', { type: 'json' })) || {}).text || '',
       approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),
       count: subs.length, pending: subs.filter(x => !x.synced).length,
       subs: subs.slice(0, 200).map(x => ({ email: x.email, lang: x.lang, at: x.at })),
@@ -105,7 +114,7 @@ async function admin(event, action) {
     const featured = await send._featuredItems(store);
     const featIds = new Set(featured.map(f => f.id));
     const groups = await send._groupsFor(ids.filter(id => !featIds.has(id)));
-    const html = send._buildHtml('fr', groups, ids.length, featured).replace('{{ unsubscribe }}', 'https://passeist.com/');
+    const html = send._buildHtml('fr', groups, ids.length, featured, ((await store.get('state/note', { type: 'json' })) || {}).text || '').replace('{{ unsubscribe }}', 'https://passeist.com/');
     try {
       await brevo.sendOne({ to, subject: `[Test] Cette semaine chez passéist`, html });
     } catch (err) {

@@ -46,12 +46,18 @@ async function photoFor(id) {
   } catch (e) { return ''; }
 }
 
-async function itemFor(id) {
+async function detailFor(id) {
+  const url = `${SITE}/img/${id}-1-md.webp`;
+  try { const r = await fetch(url, { method: 'HEAD' }); return r.ok ? url : ''; } catch (e) { return ''; }
+}
+
+async function itemFor(id, withDetail) {
   const p = PRODUCTS[id];
   return {
     id, brand: p.brand || 'Autres', type: p.label || p.type, season: p.season || '', year: p.year || 0, size: p.size, price: p.price,
     url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
     img: await photoFor(id),
+    detail: withDetail ? await detailFor(id) : '',
   };
 }
 
@@ -59,19 +65,19 @@ async function itemFor(id) {
 async function featuredItems(store) {
   const f = await store.get('state/featured', { type: 'json' });
   const ids = (f && Array.isArray(f.ids) ? f.ids : []).filter(id => PRODUCTS[id]);
-  return Promise.all(ids.map(itemFor));
+  return Promise.all(ids.map(id => itemFor(id, true)));
 }
 
 // Pièces regroupées par maison, la plus fournie en premier
 async function groupsFor(ids) {
-  const items = await Promise.all(ids.map(itemFor));
+  const items = await Promise.all(ids.map(id => itemFor(id, false)));
   const byBrand = new Map();
   items.forEach(it => { if (!byBrand.has(it.brand)) byBrand.set(it.brand, []); byBrand.get(it.brand).push(it); });
   return [...byBrand].map(([brand, list]) => ({ brand, items: list }))
     .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
 }
 
-function buildHtml(lang, groups, total, featured) {
+function buildHtml(lang, groups, total, featured, note) {
   // Version « hyper luxe » (Tom) : fond blanc où les photos se fondent, texte
   // bleu nuit, petites capitales espacées, beaucoup de vide, 8 pièces au plus.
   const en = lang === 'en';
@@ -88,10 +94,21 @@ function buildHtml(lang, groups, total, featured) {
     ? `<img src="${p.img}" width="${w}" alt="${esc(p.brand + ' ' + p.type)}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`
     : '';
 
+  // Coups de cœur : grande photo + détail en gros plan (2e photo) à côté
   const picks = (featured || []).slice(0, 3).map(p => `
     <tr><td align="center" style="padding:0 0 72px;">
-      <a href="${track(p.url)}" style="text-decoration:none;display:block;">${photo(p, 420)}${caption(p, true)}</a>
+      <a href="${track(p.url)}" style="text-decoration:none;display:block;">
+        ${p.detail ? `<table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
+          <td width="64%" valign="top" style="padding-right:8px;">${photo(p, 300)}</td>
+          <td width="36%" valign="bottom"><img src="${p.detail}" width="170" alt="" style="display:block;width:100%;max-width:170px;height:auto;border:0;"></td>
+        </tr></table>` : photo(p, 420)}
+        ${caption(p, true)}</a>
     </td></tr>`).join('');
+  const noteBlock = note ? `
+  <tr><td align="center" style="padding:0 22px 64px;font-family:${FONT};font-size:14px;line-height:1.8;font-style:italic;font-weight:300;color:${DIM};">
+    ${esc(note).replace(/\n/g, '<br>')}
+    <div style="font-style:normal;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:${MUTE};margin-top:14px;">Tom</div>
+  </td></tr>` : '';
 
   const rest = [];
   groups.forEach(g => g.items.forEach(it => rest.push(it)));
@@ -114,6 +131,7 @@ function buildHtml(lang, groups, total, featured) {
   <tr><td align="center" style="padding:18px 0 0;">${caps(esc(dateTxt), 9, MUTE)}</td></tr>
   <tr><td align="center" style="padding:64px 0 14px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:0.5px;color:${INK};">${en ? 'This week' : 'Cette semaine'}</td></tr>
   <tr><td align="center" style="padding:0 0 72px;"><div style="width:32px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+  ${noteBlock}
   ${picks}
   <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>
   <tr><td align="center" style="padding:12px 0 80px;">
@@ -176,6 +194,7 @@ exports.handler = async (event) => {
   const featured = await featuredItems(store);
   const featIds = new Set(featured.map(f => f.id));
   const groups = await groupsFor(fresh.filter(id => !featIds.has(id)));
+  const note = ((await store.get('state/note', { type: 'json' })) || {}).text || '';
 
   // 4. Envoi (français, puis autres langues si la liste existe)
   const date = new Date().toISOString().slice(0, 10);
@@ -183,17 +202,18 @@ exports.handler = async (event) => {
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
     subject: `Cette semaine chez passéist · ${top}…`,
-    html: buildHtml('fr', groups, fresh.length, featured),
+    html: buildHtml('fr', groups, fresh.length, featured, note),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
       subject: `This week at passéist · ${top}…`,
-      html: buildHtml('en', groups, fresh.length, featured),
+      html: buildHtml('en', groups, fresh.length, featured, note),
     });
   }
   await store.setJSON('state/seen', ids.concat(seenList.filter(id => !PRODUCTS[id])));
   await store.delete('state/featured');   // la sélection est à refaire chaque semaine
+  await store.delete('state/note');
   console.log(`newsletter : envoyée (${fresh.length} pièces, ${groups.length} maisons)`);
   return { statusCode: 200, body: 'sent' };
 };

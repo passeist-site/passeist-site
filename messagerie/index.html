@@ -209,6 +209,11 @@ async function showNewsletter() {
     <div class="nl-box"><h3>Envoi du ${esc(d.nextDate || '')}</h3>
       <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>
       <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div></div>
+    <div class="nl-box"><h3>Votre mot de la semaine</h3>
+      <div class="nl-stat">Deux ou trois lignes, en tête de la newsletter, signées Tom. Facultatif ; repart à zéro après chaque envoi.</div>
+      <textarea id="nlnote" rows="3" class="nl-area" placeholder="Cette semaine…">${esc(d.note || '')}</textarea>
+      <div class="nl-test"><button type="button" id="nlnotesave">Enregistrer</button></div>
+      <div class="nl-msg" id="nlnotemsg"></div></div>
     <div class="nl-box"><h3>À la une dimanche</h3>
       <div class="nl-stat">Collez les liens ou les références des pièces à mettre en avant (jusqu'à 12). Elles ouvrent l'e-mail, en grand. La sélection repart à zéro après chaque envoi.</div>
       <textarea id="nlfeat" rows="4" class="nl-area" placeholder="https://passeist.com/product/…&#10;71642530">${esc((d.featured || []).map(f => f.id).join('\n'))}</textarea>
@@ -232,6 +237,11 @@ async function showNewsletter() {
     if (!res.ok) { $('nlfeatmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlfeat').value = j.featured.map(f => f.id).join('\n');
     $('nlfeatmsg').innerHTML = j.featured.length ? j.featured.map(f => '• ' + esc(f.label)).join('<br>') : 'Aucune pièce reconnue (vérifiez les liens, et que les pièces sont encore en vente).';
+  };
+  $('nlnotesave').onclick = async () => {
+    $('nlnotemsg').textContent = 'Enregistrement…';
+    const res = await fetch('/.netlify/functions/newsletter?action=note', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ text: $('nlnote').value }) });
+    $('nlnotemsg').textContent = res.ok ? '✓ Enregistré' : 'Échec';
   };
   $('nlapprove').onclick = async () => {
     await fetch('/.netlify/functions/newsletter?action=approve', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ approve: !d.approved }) });

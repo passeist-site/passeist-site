@@ -22,7 +22,7 @@ exports.handler = async (event) => {
   const featured = await send._featuredItems(store);
   const featIds = new Set(featured.map(f => f.id));
   const groups = await send._groupsFor(fresh.filter(id => !featIds.has(id)));
-  const html = send._buildHtml('fr', groups, fresh.length, featured).replace('{{ unsubscribe }}', 'https://passeist.com/');
+  const html = send._buildHtml('fr', groups, fresh.length, featured, ((await store.get('state/note', { type: 'json' })) || {}).text || '').replace('{{ unsubscribe }}', 'https://passeist.com/');
   const to = process.env.NEWSLETTER_PREVIEW_TO || process.env.NEWSLETTER_FROM || 'info@passeist.com';
   try { await brevo.sendOne({ to, subject: `[À valider] Newsletter du ${date}`, html }); }
   catch (err) { console.error('aperçu newsletter :', err.message); }
