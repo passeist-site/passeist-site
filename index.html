@@ -3561,12 +3561,18 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .cart-panel { transition: transform var(--panel-dur) var(--panel-ease); }
 /* Panier fermé : masqué, sinon son ombre dépassait sur le bord droit de
    l'écran (bande sombre sur toute la hauteur, mobile). */
-.cart-panel:not(.open) { visibility: hidden; transition: transform var(--panel-dur) var(--panel-ease), visibility 0s linear var(--panel-dur); }
+.cart-panel:not(.open) { visibility: hidden; box-shadow: inset 1px 0 0 rgba(255,255,255,0), -24px 0 50px rgba(0,0,0,0);
+  transition: transform var(--panel-dur) var(--panel-ease), box-shadow 0.3s ease, visibility 0s linear var(--panel-dur); }
+.cart-panel.open { transition: transform var(--panel-dur) var(--panel-ease), box-shadow 0.3s ease; }
 .cart-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
 .cart-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
 @media (max-width: 900px) {
-  .mobile-nav { transition: transform var(--panel-dur) var(--panel-ease), visibility 0s linear var(--panel-dur); }
-  .mobile-nav.open { transition: transform var(--panel-dur) var(--panel-ease), visibility 0s; }
+  /* À la fermeture, l'ombre s'efface tout de suite au lieu de traîner sur le
+     bord de l'écran pendant la fin du glissement (Tom). */
+  .mobile-nav { box-shadow: inset -1px 0 0 rgba(255,255,255,0), 24px 0 50px rgba(0,0,0,0);
+    transition: transform var(--panel-dur) var(--panel-ease), box-shadow 0.3s ease, visibility 0s linear var(--panel-dur); }
+  .mobile-nav.open { box-shadow: inset -1px 0 0 rgba(255,255,255,0.35), 24px 0 50px rgba(0,0,0,0.55);
+    transition: transform var(--panel-dur) var(--panel-ease), box-shadow 0.3s ease, visibility 0s; }
   .mobile-nav-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
   .mobile-nav-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
 }
