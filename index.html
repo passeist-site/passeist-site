@@ -3294,21 +3294,21 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .buy-bar { display: none; }
 @media (max-width: 900px) {
 .buy-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 250;
-  display: none; align-items: center; gap: 10px;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  display: none; align-items: center; gap: 8px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   background: linear-gradient(0deg, rgba(28,34,48,0.96) 0%, rgba(28,34,48,0.82) 100%);
   -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%);
   box-shadow: 0 -10px 30px -12px rgba(0,0,0,0.7); }
 .buy-bar::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
   background: linear-gradient(90deg, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%); }
-.buy-bar-icon { flex: 0 0 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer;
+.buy-bar-icon { flex: 0 0 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
   background: rgba(244,241,236,0.08); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
   display: flex; align-items: center; justify-content: center; }
-.buy-bar-icon svg { width: 21px; height: 21px; stroke: #f4f1ec; fill: none; stroke-width: 1.4; }
+.buy-bar-icon svg { width: 19px; height: 19px; stroke: #f4f1ec; fill: none; stroke-width: 1.4; }
 .buy-bar-icon.is-fav svg { fill: #f4f1ec; }
-.buy-bar-cta { flex: 1; height: 46px; border-radius: 6px; border: none; cursor: pointer;
-  background: #f4f1ec; color: #1C2230; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: var(--tracking-wide);
+.buy-bar-cta { flex: 1; min-width: 0; height: 40px; border-radius: 6px; border: none; cursor: pointer; padding: 0 8px;
+  background: #f4f1ec; color: #1C2230; font-family: var(--font-sans); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7); }
 
   body.buy-bar-on #detail.open ~ .buy-bar { display: flex; }
@@ -3321,12 +3321,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   /* Le cœur de la barre porte la classe fav-btn (synchro des favoris) : on
      annule le placement absolu des cœurs des cartes. */
   .buy-bar .buy-bar-icon.fav-btn {
-    position: static; top: auto; right: auto; width: 46px; height: 46px;
+    position: static; top: auto; right: auto; width: 40px; height: 40px;
     background: rgba(244,241,236,0.08); backdrop-filter: none; -webkit-backdrop-filter: none;
   }
   body.buy-bar-on .detail-price-actions,
   body.buy-bar-on #detail .detail-actions { display: none !important; }
-  body.buy-bar-on #detail { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  body.buy-bar-on #detail { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
 }
 
 /* Tirer pour rafraîchir sur la fiche produit, comme le geste natif de
@@ -3947,7 +3947,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <button class="detail-back" id="detail-back-btn" onclick="closeDetail()">← Retour à la boutique</button>
   </div>
   <div class="detail-main">
-    <button class="photo-share" type="button" onclick="sharePiece()" aria-label="Partager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg></button>
     <div class="detail-gallery" id="detail-gallery"></div>
     <div class="detail-info">
       <div class="detail-brand" id="d-brand"></div>
@@ -4300,6 +4299,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <button class="buy-bar-icon fav-btn" id="buy-bar-fav" type="button" data-id="" aria-label="Favoris"
     onclick="if(currentProduct) toggleFavorite(currentProduct.id, event)"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg></button>
   <button class="buy-bar-icon" type="button" aria-label="Discussion" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.04 2 11c0 2.4 1.08 4.58 2.84 6.19L4 22l5.06-1.76C10.02 20.42 11 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg></button>
+  <button class="buy-bar-icon buy-bar-share" type="button" aria-label="Partager" onclick="sharePiece()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg></button>
   <button class="buy-bar-cta" id="buy-bar-cta" type="button" onclick="if(currentProduct) addToCart(currentProduct.id)"></button>
 </div>
 
@@ -9408,6 +9408,11 @@ window.sharePiece = function () {
   }
   document.addEventListener('DOMContentLoaded', function () {
     updateMenu();
+    // Lien « Voir comment faire » de la newsletter : ouvre le mode d'emploi
+    if (/[?&]app=1\b/.test(location.search)) {
+      try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {}
+      if (!standalone && (mobile || ios)) setTimeout(window.showAppGuide, 800);
+    }
     var b = document.getElementById('mobile-nav-app');
     if (b) b.addEventListener('click', function () {
       var close = document.getElementById('mobile-nav-close'); if (close) close.click();

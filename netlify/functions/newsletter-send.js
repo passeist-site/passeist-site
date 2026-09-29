@@ -30,34 +30,55 @@ async function photoFor(id) {
   } catch (e) { return ''; }
 }
 
+async function itemFor(id) {
+  const p = PRODUCTS[id];
+  return {
+    id, brand: p.brand || 'Autres', type: p.type, size: p.size, price: p.price,
+    url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
+    img: await photoFor(id),
+  };
+}
+
+// Sélection de Tom (« À la une », choisie dans la messagerie) : pièces encore en vente
+async function featuredItems(store) {
+  const f = await store.get('state/featured', { type: 'json' });
+  const ids = (f && Array.isArray(f.ids) ? f.ids : []).filter(id => PRODUCTS[id]);
+  return Promise.all(ids.map(itemFor));
+}
+
 // Pièces regroupées par maison, la plus fournie en premier
 async function groupsFor(ids) {
-  const items = await Promise.all(ids.map(async id => {
-    const p = PRODUCTS[id];
-    return {
-      id, brand: p.brand || 'Autres', type: p.type, size: p.size, price: p.price,
-      url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
-      img: await photoFor(id),
-    };
-  }));
+  const items = await Promise.all(ids.map(itemFor));
   const byBrand = new Map();
   items.forEach(it => { if (!byBrand.has(it.brand)) byBrand.set(it.brand, []); byBrand.get(it.brand).push(it); });
   return [...byBrand].map(([brand, list]) => ({ brand, items: list }))
     .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
 }
 
-function buildHtml(lang, groups, total) {
+function buildHtml(lang, groups, total, featured) {
   const en = lang === 'en';
   const head = en ? `${total} new pieces this week` : `${total} nouvelles pièces cette semaine`;
   const intro = en
     ? 'Arrived at passéist this week, presented by designer. Each piece is unique.'
     : 'Arrivées cette semaine chez passéist, présentées par maison. Chaque pièce est unique.';
   const cta = en ? 'See all new pieces' : 'Voir toutes les nouveautés';
-  const unsub = en ? 'Unsubscribe' : 'Se désinscrire';
   const why = en
     ? 'You receive this email because you subscribed to new pieces on passeist.com.'
     : 'Vous recevez cet e-mail car vous vous êtes inscrit aux nouvelles pièces sur passeist.com.';
   const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
+
+  const pick = (featured || []).map(p => `
+      <tr><td style="padding:10px 8px 18px;">
+        <a href="${track(p.url)}" style="text-decoration:none;color:#f4f1ec;">
+          ${p.img ? `<img src="${p.img}" width="560" alt="${esc(p.type)}" style="display:block;width:100%;max-width:560px;height:auto;border-radius:6px;background:#ffffff;">` : ''}
+          <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-top:12px;">${esc(title(p.brand))}</div>
+          <div style="font-size:16px;font-style:italic;margin-top:4px;">${esc(p.type)}</div>
+          <div style="font-size:13px;color:#a8a6a1;margin-top:3px;">${esc(p.size)}${p.size ? ' · ' : ''}${esc(p.price)}&nbsp;€</div>
+        </a>
+      </td></tr>`).join('');
+  const pickBlock = pick ? `
+      <tr><td style="padding:30px 8px 6px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f4f1ec;font-weight:600;">${en ? 'Our pick' : 'La sélection'}</td></tr>
+      ${pick}` : '';
 
   const sections = groups.map(({ brand, items }) => {
     const cells = items.map(p => `
@@ -87,12 +108,25 @@ function buildHtml(lang, groups, total) {
   </td></tr>
   <tr><td align="center" style="padding:18px 8px 4px;font-size:22px;color:#f4f1ec;">${esc(head)}</td></tr>
   <tr><td align="center" style="padding:4px 16px 8px;font-size:14px;line-height:1.6;color:#d6d2cc;">${esc(intro)}</td></tr>
+  ${pickBlock}
   ${sections}
   <tr><td align="center" style="padding:32px 8px 8px;">
     <a href="${track(SITE + '/shop')}" style="display:inline-block;background:#f4f1ec;color:#1C2230;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:15px 26px;border-radius:6px;">${cta}</a>
   </td></tr>
+  <tr><td style="padding:36px 8px 0;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#262D3C;border-radius:12px;"><tr><td style="padding:20px 20px 18px;">
+      <div style="font-size:15px;color:#f4f1ec;margin-bottom:6px;">${en ? 'passéist, like an app on your phone' : 'passéist, comme une app sur votre téléphone'}</div>
+      <table role="presentation" cellspacing="0" cellpadding="0" style="margin-top:4px;">${en
+        ? '<tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">1</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">On iPhone, open <b>passeist.com</b> in Safari.</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">2</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Tap <b>Share</b> (the square with an arrow, sometimes in the <b>•••</b> menu).</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">3</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Choose <b>Add to Home Screen</b>, then <b>Add</b>.</td></tr>'
+        : '<tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">1</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Sur iPhone, ouvrez <b>passeist.com</b> dans Safari.</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">2</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Touchez <b>Partager</b> (le carré avec une flèche, parfois dans le menu <b>•••</b>).</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">3</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Choisissez <b>Sur l\'écran d\'accueil</b>, puis <b>Ajouter</b>.</td></tr>'}</table>
+      <div style="font-size:12px;line-height:1.5;color:#a8a6a1;margin-top:8px;">${en ? 'On Android: menu <b>⋮</b>, then <b>Install app</b>.' : 'Sur Android : menu <b>⋮</b>, puis <b>Installer l\'application</b>.'}</div>
+      <div style="margin-top:12px;"><a href="${track(SITE + '/?app=1')}" style="color:#f4f1ec;font-size:13px;">${en ? 'Show me how →' : 'Voir comment faire →'}</a></div>
+    </td></tr></table>
+  </td></tr>
   <tr><td align="center" style="padding:32px 16px 8px;font-size:11px;line-height:1.6;color:#a8a6a1;">
-    ${why}<br><a href="{{ unsubscribe }}" style="color:#d6d2cc;">${unsub}</a> · passéist, Paris
+    ${why}<br>${en
+      ? 'We never want to clutter your inbox or bother you: to unsubscribe, <a href="{{ unsubscribe }}" style="color:#d6d2cc;">click here</a>.'
+      : 'Nous ne voulons surtout pas encombrer votre boîte mail ni vous déranger : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:#d6d2cc;">cliquez ici</a>.'}<br>passéist, Paris
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -131,8 +165,10 @@ exports.handler = async (event) => {
     return { statusCode: 200, body: 'no brevo' };
   }
 
-  // 3. Regroupement par maison (la plus fournie en premier)
-  const groups = await groupsFor(fresh);
+  // 3. Sélection de Tom en tête, puis le reste par maison (la plus fournie en premier)
+  const featured = await featuredItems(store);
+  const featIds = new Set(featured.map(f => f.id));
+  const groups = await groupsFor(fresh.filter(id => !featIds.has(id)));
 
   // 4. Envoi (français, puis autres langues si la liste existe)
   const date = new Date().toISOString().slice(0, 10);
@@ -140,16 +176,17 @@ exports.handler = async (event) => {
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
     subject: `Les nouveautés du dimanche · ${top}…`,
-    html: buildHtml('fr', groups, fresh.length),
+    html: buildHtml('fr', groups, fresh.length, featured),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
       subject: `Sunday new arrivals · ${top}…`,
-      html: buildHtml('en', groups, fresh.length),
+      html: buildHtml('en', groups, fresh.length, featured),
     });
   }
   await store.setJSON('state/seen', ids.concat(seenList.filter(id => !PRODUCTS[id])));
+  await store.delete('state/featured');   // la sélection est à refaire chaque semaine
   console.log(`newsletter : envoyée (${fresh.length} pièces, ${groups.length} maisons)`);
   return { statusCode: 200, body: 'sent' };
 };
@@ -157,4 +194,5 @@ exports.handler = async (event) => {
 // Utilisés par newsletter.js (test depuis la messagerie) et l'aperçu local
 exports._buildHtml = buildHtml;
 exports._groupsFor = groupsFor;
+exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;

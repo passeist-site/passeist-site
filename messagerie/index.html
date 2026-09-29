@@ -86,6 +86,8 @@ header .pill { flex: 0 1 auto; white-space: nowrap; padding: 9px 10px; }
   background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
 .nl-test button { padding: 0 14px; border-radius: 6px; border: none; background: #f4f1ec; color: #1C2230; font-weight: 600;
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
+.nl-area { width: 100%; margin-top: 10px; padding: 10px 12px; font: inherit; font-size: 16px; border-radius: 6px; resize: vertical;
+  border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
 .nl-msg { font-size: 13px; color: var(--dim); margin-top: 8px; min-height: 18px; }
 .nl-sub { font-size: 13px; color: var(--dim); padding: 6px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; }
 .nl-sub span:last-child { color: var(--mute); flex: 0 0 auto; }
@@ -204,12 +206,26 @@ async function showNewsletter() {
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
       <b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
+    <div class="nl-box"><h3>À la une dimanche</h3>
+      <div class="nl-stat">Collez les liens ou les références des pièces à mettre en avant (jusqu'à 12). Elles ouvrent l'e-mail, en grand. La sélection repart à zéro après chaque envoi.</div>
+      <textarea id="nlfeat" rows="4" class="nl-area" placeholder="https://passeist.com/product/…&#10;71642530">${esc((d.featured || []).map(f => f.id).join('\n'))}</textarea>
+      <div class="nl-test"><button type="button" id="nlfeatsave">Enregistrer</button></div>
+      <div class="nl-msg" id="nlfeatmsg">${(d.featured || []).map(f => '• ' + esc(f.label)).join('<br>')}</div></div>
     <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
       <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>
       <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit">Envoyer</button></form>
       <div class="nl-msg" id="nlmsg"></div></div>
     <div class="nl-box"><h3>Derniers inscrits</h3>
       ${d.subs.length ? d.subs.map(x => `<div class="nl-sub"><span>${esc(x.email)}</span><span>${x.lang.toUpperCase()} · ${when(Date.parse(x.at))}</span></div>`).join('') : '<div class="nl-stat">Personne pour l\'instant.</div>'}</div>`;
+  $('nlfeatsave').onclick = async () => {
+    $('nlfeatmsg').textContent = 'Enregistrement…';
+    const res = await fetch('/.netlify/functions/newsletter?action=feature', {
+      method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ text: $('nlfeat').value }) });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) { $('nlfeatmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
+    $('nlfeat').value = j.featured.map(f => f.id).join('\n');
+    $('nlfeatmsg').innerHTML = j.featured.length ? j.featured.map(f => '• ' + esc(f.label)).join('<br>') : 'Aucune pièce reconnue (vérifiez les liens, et que les pièces sont encore en vente).';
+  };
   $('nltest').onsubmit = async (e) => {
     e.preventDefault();
     const to = $('nlto').value.trim();

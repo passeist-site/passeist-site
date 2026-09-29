@@ -4,6 +4,7 @@
 // Messagerie de passéist (en-tête x-admin-key = CHAT_ADMIN_KEY) :
 //   GET  ?action=stats          → abonnés, pièces en attente d'annonce
 //   POST ?action=test {to}      → envoie l'e-mail de nouveautés à cette adresse
+//   POST ?action=feature {text} → pièces « À la une » du prochain envoi (liens ou références)
 //
 // Les adresses sont gardées dans Netlify Blobs (store « passeist-newsletter »,
 // clés sub/<empreinte>) et, dès que BREVO_API_KEY est défini, ajoutées à la
@@ -60,12 +61,26 @@ async function admin(event, action) {
   const seenList = await store.get('state/seen', { type: 'json' });
   const seen = new Set(Array.isArray(seenList) ? seenList : Object.keys(PRODUCTS));
   const fresh = Object.keys(PRODUCTS).filter(id => !seen.has(id));
+  const featuredList = async () => {
+    const f = await store.get('state/featured', { type: 'json' });
+    return (f && Array.isArray(f.ids) ? f.ids : []).filter(id => PRODUCTS[id])
+      .map(id => ({ id, label: PRODUCTS[id].brand + ' · ' + PRODUCTS[id].type + ' · ' + PRODUCTS[id].price + ' €' }));
+  };
+  if (action === 'feature' && event.httpMethod === 'POST') {
+    let body = {};
+    try { body = JSON.parse(event.body || '{}'); } catch (e) {}
+    // Références ou liens produit (…-71642530) : on garde les pièces en vente
+    const ids = [...new Set((String(body.text || '').match(/\d{7,}/g) || []))].filter(id => PRODUCTS[id]).slice(0, 12);
+    if (ids.length) await store.setJSON('state/featured', { ids, at: new Date().toISOString() });
+    else await store.delete('state/featured');
+    return json(200, { featured: await featuredList() });
+  }
   if (action === 'stats') {
     const { blobs } = await store.list({ prefix: 'sub/' });
     const subs = (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })))).filter(Boolean);
     subs.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return json(200, {
-      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length,
+      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, featured: await featuredList(),
       count: subs.length, pending: subs.filter(x => !x.synced).length,
       subs: subs.slice(0, 200).map(x => ({ email: x.email, lang: x.lang, at: x.at })),
     });
@@ -78,8 +93,10 @@ async function admin(event, action) {
     if (!brevo.enabled()) return json(400, { error: 'clé Brevo absente' });
     // Les nouveautés en attente, ou à défaut les dernières pièces du catalogue
     const ids = (fresh.length ? fresh : Object.keys(PRODUCTS)).slice(0, 40);
-    const groups = await send._groupsFor(ids);
-    const html = send._buildHtml('fr', groups, ids.length).replace('{{ unsubscribe }}', 'https://passeist.com/');
+    const featured = await send._featuredItems(store);
+    const featIds = new Set(featured.map(f => f.id));
+    const groups = await send._groupsFor(ids.filter(id => !featIds.has(id)));
+    const html = send._buildHtml('fr', groups, ids.length, featured).replace('{{ unsubscribe }}', 'https://passeist.com/');
     try {
       await brevo.sendOne({ to, subject: `[Test] Les nouveautés du dimanche`, html });
     } catch (err) {
