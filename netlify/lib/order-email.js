@@ -1,5 +1,6 @@
 // E-mail de confirmation passéist, envoyé par Brevo après chaque paiement
-// Stripe (cf. stripe-webhook.js). Le reçu Stripe reste envoyé en plus.
+// Stripe (cf. stripe-webhook.js). Il vaut confirmation de commande et reçu
+// (le reçu automatique de Stripe est coupé, un seul e-mail pour le client).
 const brevo = require('./brevo');
 
 const SITE = 'https://passeist.com';
@@ -13,7 +14,7 @@ async function photoFor(id) {
 }
 
 // items : [{ id, name, amount (centimes) }]
-function buildHtml({ en, firstName, items, shipping, total, address }) {
+function buildHtml({ en, firstName, items, shipping, total, address, ref, date }) {
   const hello = firstName ? (en ? `Thank you, ${esc(firstName)}` : `Merci ${esc(firstName)}`) : (en ? 'Thank you' : 'Merci');
   const rows = items.map(it => `
     <tr>
@@ -33,13 +34,15 @@ function buildHtml({ en, firstName, items, shipping, total, address }) {
   <tr><td style="background:#262D3C;border-radius:12px;padding:24px 22px;">
     <div style="font-size:21px;margin-bottom:8px;">${hello}</div>
     <div style="font-size:14px;line-height:1.6;color:#d6d2cc;">${en
-      ? 'Your order is confirmed. We are preparing your piece with care: it ships within 2 to 5 business days, tracked, and you will receive the tracking number by email.'
-      : 'Votre commande est confirmée. Nous préparons votre pièce avec soin : elle part sous 2 à 5 jours ouvrés, en envoi suivi, et vous recevrez le numéro de suivi par e-mail.'}</div>
+      ? 'Your order is confirmed. We are preparing your piece with care: it will ship within 2 to 5 business days, tracked, and you will receive the tracking number by email.'
+      : 'Votre commande est confirmée. Nous préparons votre pièce avec soin : elle partira sous 2 à 5 jours ouvrés, en envoi suivi, et vous recevrez le numéro de suivi par e-mail.'}</div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;border-top:1px solid rgba(244,241,236,0.12);">${rows}</table>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid rgba(244,241,236,0.12);font-size:13px;color:#d6d2cc;">
       <tr><td style="padding:10px 0 2px;">${en ? 'Shipping' : 'Livraison'}</td><td align="right" style="padding:10px 0 2px;">${money(shipping, en)}</td></tr>
       <tr><td style="padding:4px 0;font-size:15px;color:#f4f1ec;">Total</td><td align="right" style="padding:4px 0;font-size:15px;color:#f4f1ec;">${money(total, en)}</td></tr>
+      <tr><td colspan="2" style="padding:2px 0 0;font-size:11px;color:#a8a6a1;">${en ? 'Prices include VAT (20%). Paid by card.' : 'Prix TTC, TVA 20 % incluse. Payé par carte.'}</td></tr>
     </table>
+    <div style="margin-top:16px;font-size:12px;line-height:1.6;color:#a8a6a1;">${en ? 'Order' : 'Commande'} <span style="color:#d6d2cc;">${esc(ref)}</span> · ${esc(date)}</div>
     ${address ? `<div style="margin-top:16px;font-size:13px;line-height:1.6;color:#a8a6a1;">${en ? 'Delivery to' : 'Livraison à'}<br><span style="color:#d6d2cc;">${address}</span></div>` : ''}
   </td></tr>
   <tr><td align="center" style="padding:22px 12px 8px;font-size:13px;line-height:1.6;color:#d6d2cc;">
@@ -47,7 +50,11 @@ function buildHtml({ en, firstName, items, shipping, total, address }) {
     <a href="mailto:info@passeist.com" style="color:#f4f1ec;">info@passeist.com</a>.
   </td></tr>
   <tr><td align="center" style="padding:14px 12px 0;font-size:11px;line-height:1.6;color:#a8a6a1;">
-    ${en ? 'Your payment receipt is sent separately by Stripe.' : 'Votre reçu de paiement vous est envoyé séparément par Stripe.'}<br>passéist · Paris
+    ${en
+      ? 'You have 14 days from receipt to return your piece (right of withdrawal), see our <a href="' + SITE + '/cgv" style="color:#d6d2cc;">terms of sale</a>.'
+      : 'Vous disposez de 14 jours à réception pour nous retourner votre pièce (droit de rétractation), voir nos <a href="' + SITE + '/cgv" style="color:#d6d2cc;">conditions générales de vente</a>.'}<br>
+    ${en ? 'This email is your order confirmation and receipt.' : 'Cet e-mail vaut confirmation de commande et reçu.'}<br>
+    PASSEIST EURL · Paris · SIRET 933 244 261 00014 · TVA FR67933244261
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -69,7 +76,9 @@ async function sendOrderEmail(session, lineItems) {
   const a = ship.address || {};
   const address = [ship.name, a.line1, a.line2, [a.postal_code, a.city].filter(Boolean).join(' '), a.country].filter(Boolean).map(esc).join('<br>');
   const shipping = (session.shipping_cost && session.shipping_cost.amount_total) || 0;
-  const html = buildHtml({ en, firstName, items, shipping, total: session.amount_total || 0, address });
+  const ref = 'P-' + String(session.id || '').slice(-8).toUpperCase();
+  const date = new Date((session.created || Date.now() / 1000) * 1000).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const html = buildHtml({ en, firstName, items, shipping, total: session.amount_total || 0, address, ref, date });
   await brevo.sendOne({ to, subject: en ? 'Your passéist order is confirmed' : 'Votre commande passéist est confirmée', html });
   return true;
 }
