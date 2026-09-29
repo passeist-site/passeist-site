@@ -128,7 +128,10 @@ function buildHtml(lang, groups, total, featured) {
   </td></tr>
   <tr><td align="center" style="padding:26px 16px 0;font-size:13px;line-height:1.6;color:#d6d2cc;">
     ${en ? 'Also find us on your favourite platform:' : 'Retrouvez-nous aussi sur votre plateforme préférée :'}<br>
-    <a href="${VESTIAIRE_URL}" style="color:#f4f1ec;">Vestiaire Collective</a> · ${VINTED_URL ? `<a href="${VINTED_URL}" style="color:#f4f1ec;">Vinted</a>` : 'Vinted'}
+    <div style="padding-top:12px;">
+      <a href="${VESTIAIRE_URL}" style="display:inline-block;margin:0 4px 8px;"><img src="${SITE}/img/badge-vestiaire.png" width="200" height="47" alt="Vestiaire Collective" style="display:block;border:0;"></a>
+      <a href="${VINTED_URL || 'https://www.vinted.fr/'}" style="display:inline-block;margin:0 4px 8px;"><img src="${SITE}/img/badge-vinted.png" width="200" height="47" alt="Vinted" style="display:block;border:0;"></a>
+    </div>
   </td></tr>
   <tr><td align="center" style="padding:32px 16px 8px;font-size:11px;line-height:1.6;color:#a8a6a1;">
     ${why}<br>${en
