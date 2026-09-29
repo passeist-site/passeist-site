@@ -197,6 +197,8 @@ exports.handler = async (event) => {
       },
       shipping_options: shippingOptions,
       billing_address_collection: 'required',
+      // Champ « Code promo » (ex. les 10 % offerts si une pièce n'était plus disponible)
+      allow_promotion_codes: true,
       phone_number_collection: { enabled: true },
       // Pas de relance de panier abandonné : un client qui avait ouvert le
       // paiement deux fois recevait un « lien de paiement » après avoir payé.
