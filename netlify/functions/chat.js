@@ -8,6 +8,7 @@
 //   GET  ?action=get&conv=ID                          → une conversation
 //   POST ?action=reply     {conv, text}               → réponse de passéist
 //   POST ?action=subscribe {subscription}             → notifications du téléphone
+//   POST ?action=delete    {conv}                     → supprime une conversation
 //
 // Stockage : Netlify Blobs, store « passeist-chat » (conv/<id>, push/<hash>).
 // Notifications : Web Push (clés VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY).
@@ -32,6 +33,28 @@ function isAdmin(event) {
   const given = (event.headers && event.headers['x-admin-key']) || '';
   if (!key || given.length !== key.length) return false;
   return crypto.timingSafeEqual(Buffer.from(given), Buffer.from(key));
+}
+
+// Essais de mot de passe ratés (par adresse, mémoire de l'instance) :
+// au-delà de 5 en 15 minutes, l'accès est bloqué un moment.
+const FAILS = new Map();
+const FAIL_WINDOW_MS = 15 * 60 * 1000;
+const FAIL_MAX = 5;
+function clientIp(event) {
+  const h = event.headers || {};
+  return h['x-nf-client-connection-ip'] || (h['x-forwarded-for'] || '').split(',')[0].trim() || '?';
+}
+function tooManyFails(ip) {
+  const now = Date.now();
+  const list = (FAILS.get(ip) || []).filter(t => t > now - FAIL_WINDOW_MS);
+  FAILS.set(ip, list);
+  return list.length >= FAIL_MAX;
+}
+function recordFail(ip) {
+  const list = FAILS.get(ip) || [];
+  list.push(Date.now());
+  FAILS.set(ip, list);
+  if (FAILS.size > 1000) FAILS.clear();
 }
 
 function clean(s, max) {
@@ -116,7 +139,9 @@ exports.handler = async (event) => {
     }
 
     // ---------- passéist ----------
-    if (!isAdmin(event)) return json(401, { error: 'unauthorized' });
+    const ip = clientIp(event);
+    if (tooManyFails(ip)) return json(429, { error: 'too many attempts' });
+    if (!isAdmin(event)) { recordFail(ip); return json(401, { error: 'unauthorized' }); }
 
     if (action === 'list') {
       const { blobs } = await store.list({ prefix: 'conv/' });
@@ -152,6 +177,13 @@ exports.handler = async (event) => {
       conv.unread = 0;
       await store.setJSON('conv/' + id, conv);
       return json(200, { ok: true, at: now });
+    }
+
+    if (action === 'delete' && event.httpMethod === 'POST') {
+      const id = String(body.conv || '');
+      if (!CONV_RE.test(id)) return json(400, { error: 'invalid' });
+      await store.delete('conv/' + id);
+      return json(200, { ok: true });
     }
 
     if (action === 'testpush' && event.httpMethod === 'POST') {

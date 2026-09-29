@@ -63,6 +63,11 @@ main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   text-transform: uppercase; letter-spacing: 0.1em; font-size: 12px; cursor: pointer; }
 body.in-conv .back { display: block; }
 body.in-conv .composer { display: flex; }
+.del { display: none; background: none; border: 1px solid var(--line); border-radius: 6px; color: var(--mute);
+       width: 36px; height: 36px; cursor: pointer; align-items: center; justify-content: center; }
+.del svg { width: 17px; height: 17px; }
+body.in-conv .del { display: flex; }
+body.in-conv .pill { display: none; }
 </style>
 </head>
 <body>
@@ -72,6 +77,7 @@ body.in-conv .composer { display: flex; }
     <div class="logo">passéist<span>.</span></div>
     <button class="pill" id="notif" hidden>Activer les notifications</button>
     <button class="pill" id="testpush" hidden>Tester</button>
+    <button class="del" id="del" aria-label="Supprimer la conversation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
   </header>
   <main id="main"></main>
   <form class="composer" id="composer">
@@ -112,6 +118,7 @@ async function api(action, opts = {}) {
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   if (r.status === 401) { logout(); throw new Error('unauthorized'); }
+  if (r.status === 429) throw new Error('locked');
   return r.json();
 }
 
@@ -124,7 +131,7 @@ function showLogin() {
     e.preventDefault();
     key = $('pw').value.trim();
     try { await api('list'); saveKey(key); route(); }
-    catch (err) { $('pw').value = ''; $('pw').placeholder = 'Mot de passe incorrect'; }
+    catch (err) { $('pw').value = ''; $('pw').placeholder = err.message === 'locked' ? 'Trop d\'essais, réessayez dans 15 min' : 'Mot de passe incorrect'; }
   };
 }
 function logout() {
@@ -168,6 +175,13 @@ function route() {
 }
 window.addEventListener('hashchange', () => { $('main').dataset.conv = ''; route(); });
 $('back').onclick = () => { location.hash = ''; };
+$('del').onclick = async () => {
+  if (!current || !confirm('Supprimer cette conversation ? Elle disparaîtra définitivement.')) return;
+  const id = current;
+  current = null;
+  await api('delete', { body: { conv: id } });
+  location.hash = '';
+};
 
 $('composer').onsubmit = async (e) => {
   e.preventDefault();
