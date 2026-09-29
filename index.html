@@ -2272,6 +2272,15 @@ body.fav-few #shop-page .filter-bar, body.fav-few .filter-bar-spacer { display: 
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12); transition: background 0.25s; }
 .grid-more-btn:hover { background: rgba(244,241,236,0.12); }
 
+/* Bas de page : typo du site (Inter), minuscules, plus petit et plus discret (Tom) */
+.footer { font-family: var(--font-sans) !important; text-transform: none !important; letter-spacing: 0.01em !important;
+  font-size: 12px !important; font-weight: 400; color: var(--text-mute); border-top-color: rgba(244,241,236,0.08) !important; }
+.footer a { opacity: 0.75; }
+@media (max-width: 900px) {
+  .footer, body[data-page="home"] .footer { font-size: 11.5px !important; gap: 8px !important; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)) !important; }
+  .footer-nav { gap: 18px !important; }
+}
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -4298,8 +4307,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 <!-- Newsletter « nouvelles pièces » (toutes les pages sauf l'accueil) -->
 <section class="nl" id="newsletter" aria-label="Newsletter">
   <div class="nl-card">
-    <div class="nl-title"><span class="lang-fr">Nouvelles pièces</span><span class="lang-en">New pieces</span></div>
-    <p class="nl-txt"><span class="lang-fr">Un e-mail à chaque arrivage de 20 nouvelles pièces, classées par maison. Rien d'autre.</span><span class="lang-en">One email for every 20 new pieces, sorted by designer. Nothing else.</span></p>
+    <div class="nl-title"><span class="lang-fr">Les nouveautés</span><span class="lang-en">New arrivals</span></div>
+    <p class="nl-txt"><span class="lang-fr">Nos dernières arrivées, présentées par maison, directement dans votre boîte mail.</span><span class="lang-en">Our latest arrivals, presented by designer, straight to your inbox.</span></p>
     <form class="nl-form" onsubmit="subscribeNewsletter(event)">
       <input type="email" name="email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
       <button type="submit"><span class="lang-fr">S'inscrire</span><span class="lang-en">Subscribe</span></button>
@@ -4311,7 +4320,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 </section>
 
 <footer class="footer">
-  <div>© passeist. Curation mode d'auteur japonaise · Paris 2026</div>
+  <div>© 2026 passéist · Mode d'auteur japonaise · Paris</div>
   <nav class="footer-nav">
     <a data-page="cgv">CGV</a>
     <a data-page="privacy">Confidentialité</a>
