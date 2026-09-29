@@ -30,6 +30,22 @@ async function photoFor(id) {
   } catch (e) { return ''; }
 }
 
+// Pièces regroupées par maison, la plus fournie en premier
+async function groupsFor(ids) {
+  const items = await Promise.all(ids.map(async id => {
+    const p = PRODUCTS[id];
+    return {
+      id, brand: p.brand || 'Autres', type: p.type, size: p.size, price: p.price,
+      url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
+      img: await photoFor(id),
+    };
+  }));
+  const byBrand = new Map();
+  items.forEach(it => { if (!byBrand.has(it.brand)) byBrand.set(it.brand, []); byBrand.get(it.brand).push(it); });
+  return [...byBrand].map(([brand, list]) => ({ brand, items: list }))
+    .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
+}
+
 function buildHtml(lang, groups, total) {
   const en = lang === 'en';
   const head = en ? `${total} new pieces` : `${total} nouvelles pièces`;
@@ -84,6 +100,7 @@ function buildHtml(lang, groups, total) {
 exports.handler = async (event) => {
   try { connectLambda(event); } catch (e) { /* contexte Blobs fourni autrement */ }
   const store = getStore('passeist-newsletter');
+  try { await brevo.ping(); } catch (err) { console.error('brevo ping :', err.message); }
 
   // 1. Abonnés inscrits avant Brevo : on les ajoute maintenant
   if (brevo.enabled()) {
@@ -115,18 +132,7 @@ exports.handler = async (event) => {
   }
 
   // 3. Regroupement par maison (la plus fournie en premier)
-  const items = await Promise.all(fresh.map(async id => {
-    const p = PRODUCTS[id];
-    return {
-      id, brand: p.brand || 'Autres', type: p.type, size: p.size, price: p.price,
-      url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
-      img: await photoFor(id),
-    };
-  }));
-  const byBrand = new Map();
-  items.forEach(it => { if (!byBrand.has(it.brand)) byBrand.set(it.brand, []); byBrand.get(it.brand).push(it); });
-  const groups = [...byBrand].map(([brand, list]) => ({ brand, items: list }))
-    .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
+  const groups = await groupsFor(fresh);
 
   // 4. Envoi (français, puis autres langues si la liste existe)
   const date = new Date().toISOString().slice(0, 10);
@@ -148,5 +154,7 @@ exports.handler = async (event) => {
   return { statusCode: 200, body: 'sent' };
 };
 
-// Aperçu local : node netlify/functions/newsletter-send.js > apercu.html
+// Utilisés par newsletter.js (test depuis la messagerie) et l'aperçu local
 exports._buildHtml = buildHtml;
+exports._groupsFor = groupsFor;
+exports._BATCH = BATCH;

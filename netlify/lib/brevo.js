@@ -51,4 +51,19 @@ async function sendCampaign({ lang, subject, html, name }) {
   return true;
 }
 
-module.exports = { enabled, listFor, addToBrevo, sendCampaign };
+// E-mail unique (test de la newsletter depuis la messagerie)
+async function sendOne({ to, subject, html }) {
+  if (!enabled()) return false;
+  const from = process.env.NEWSLETTER_FROM || 'info@passeist.com';
+  await call('/smtp/email', 'POST', { sender: { name: 'passéist', email: from }, to: [{ email: to }], subject, htmlContent: html });
+  return true;
+}
+
+// Appel léger quotidien : Brevo désactive les clés inutilisées 90 jours.
+async function ping() {
+  if (!enabled()) return false;
+  await call('/account', 'GET');
+  return true;
+}
+
+module.exports = { enabled, listFor, addToBrevo, sendCampaign, sendOne, ping };

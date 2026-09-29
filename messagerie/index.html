@@ -25,7 +25,7 @@ body {
 }
 .app { display: flex; flex-direction: column; height: 100dvh; max-width: 720px; margin: 0 auto;
        padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; position: relative; }
+header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; padding: 14px 16px; position: relative; }
 header::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
   background: linear-gradient(90deg, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%); }
 .logo { font-size: 24px; letter-spacing: -0.03em; flex: 1; }
@@ -68,6 +68,27 @@ body.in-conv .composer { display: flex; }
 .del svg { width: 17px; height: 17px; }
 body.in-conv .del { display: flex; }
 body.in-conv .pill { display: none; }
+body.in-nl .back { display: block; }
+body.in-nl .pill, body.in-nl .icon-btn, body.in-conv .icon-btn { display: none; }
+.icon-btn { flex: 0 0 auto; background: rgba(244,241,236,0.06); border: 1px solid var(--line); border-radius: 6px; color: var(--ink);
+  width: 38px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.icon-btn[hidden] { display: none; }
+.icon-btn svg { width: 18px; height: 18px; }
+header .pill { flex: 0 1 auto; white-space: nowrap; padding: 9px 10px; }
+.nl-box { margin: 12px 16px; padding: 16px; border-radius: 12px;
+  background: linear-gradient(160deg, rgba(40,48,66,0.9), rgba(28,34,48,0.8));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 0 0 1px rgba(244,241,236,0.06); }
+.nl-box h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.nl-stat { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.nl-stat b { color: var(--ink); }
+.nl-test { display: flex; gap: 8px; margin-top: 10px; }
+.nl-test input { flex: 1; min-width: 0; padding: 11px 12px; font-size: 16px; border-radius: 6px; border: 1px solid rgba(244,241,236,0.16);
+  background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
+.nl-test button { padding: 0 14px; border-radius: 6px; border: none; background: #f4f1ec; color: #1C2230; font-weight: 600;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
+.nl-msg { font-size: 13px; color: var(--dim); margin-top: 8px; min-height: 18px; }
+.nl-sub { font-size: 13px; color: var(--dim); padding: 6px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; }
+.nl-sub span:last-child { color: var(--mute); flex: 0 0 auto; }
 </style>
 </head>
 <body>
@@ -77,6 +98,7 @@ body.in-conv .pill { display: none; }
     <div class="logo">passéist<span>.</span></div>
     <button class="pill" id="notif" hidden>Activer les notifications</button>
     <button class="pill" id="testpush" hidden>Tester</button>
+    <button class="icon-btn" id="nlbtn" hidden aria-label="Newsletter" title="Newsletter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
     <button class="del" id="del" aria-label="Supprimer la conversation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>
   </header>
   <main id="main"></main>
@@ -168,13 +190,49 @@ async function showConv(id) {
   $('main').dataset.conv = id;
 }
 
+async function showNewsletter() {
+  current = null;
+  document.body.classList.remove('in-conv');
+  document.body.classList.add('in-nl');
+  const r = await fetch('/.netlify/functions/newsletter?action=stats', { headers: { 'x-admin-key': key } });
+  if (r.status === 401) return logout();
+  const d = await r.json();
+  if (location.hash !== '#newsletter') return;
+  let last = ''; try { last = localStorage.getItem('passeist_nl_test') || ''; } catch (e) {}
+  $('main').innerHTML = `
+    <div class="nl-box"><h3>Newsletter « nouvelles pièces »</h3>
+      <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
+      <b>${d.fresh}</b> / ${d.batch} nouvelles pièces avant le prochain envoi (vérifié chaque jour à 9 h)<br>
+      Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
+    <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
+      <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>
+      <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit">Envoyer</button></form>
+      <div class="nl-msg" id="nlmsg"></div></div>
+    <div class="nl-box"><h3>Derniers inscrits</h3>
+      ${d.subs.length ? d.subs.map(x => `<div class="nl-sub"><span>${esc(x.email)}</span><span>${x.lang.toUpperCase()} · ${when(Date.parse(x.at))}</span></div>`).join('') : '<div class="nl-stat">Personne pour l\'instant.</div>'}</div>`;
+  $('nltest').onsubmit = async (e) => {
+    e.preventDefault();
+    const to = $('nlto').value.trim();
+    try { localStorage.setItem('passeist_nl_test', to); } catch (err) {}
+    $('nlmsg').textContent = 'Envoi…';
+    const res = await fetch('/.netlify/functions/newsletter?action=test', {
+      method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) });
+    const j = await res.json().catch(() => ({}));
+    $('nlmsg').textContent = res.ok ? '✓ Envoyé (' + j.pieces + ' pièces). Regardez votre boîte, et les spams.' : 'Échec : ' + (j.error || res.status);
+  };
+}
+
 function route() {
   if (!key) return showLogin();
+  document.body.classList.remove('in-nl');
+  if (location.hash === '#newsletter') return showNewsletter().catch(() => {});
+  $('nlbtn').hidden = false;
   const id = location.hash.slice(1);
   (id ? showConv(id) : showList()).catch(() => {});
 }
 window.addEventListener('hashchange', () => { $('main').dataset.conv = ''; route(); });
 $('back').onclick = () => { location.hash = ''; };
+$('nlbtn').onclick = () => { location.hash = 'newsletter'; };
 $('del').onclick = async () => {
   if (!current || !confirm('Supprimer cette conversation ? Elle disparaîtra définitivement.')) return;
   const id = current;
@@ -195,7 +253,7 @@ $('composer').onsubmit = async (e) => {
 $('reply').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 140) + 'px'; });
 
 // Rafraîchissement : toutes les 4 s page visible, et dès qu'une notification arrive
-setInterval(() => { if (key && document.visibilityState === 'visible') route(); }, 4000);
+setInterval(() => { if (key && document.visibilityState === 'visible' && location.hash !== '#newsletter') route(); }, 4000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') route(); });
 
 // ---- Notifications (Web Push) ----
