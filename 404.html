@@ -8,13 +8,17 @@
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://passeist.com/">
 <link rel="icon" href="/favicon.ico">
+<meta name="theme-color" content="#1C2230">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f1ec;
+    --bg: #1C2230;
     --ink: #f4f1ec;
-    --text-dim: #4a4a48;
-    --text-mute: #8a8a86;
-    --line: rgba(10,10,8,0.12);
+    --text-dim: #d6d2cc;
+    --text-mute: #a8a6a1;
+    --line: rgba(244,241,236,0.18);
     --font-sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
     --tracking-narrow: 1.5px;
@@ -40,9 +44,11 @@
     height: var(--topbar-h);
     padding: 0 32px;
     display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--line);
     background: var(--bg);
+    position: relative;
   }
+  .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 10%, rgba(244,241,236,0.12) 28%, rgba(244,241,236,0.55) 50%, rgba(244,241,236,0.12) 72%, transparent 90%); }
   .topbar a.logo {
     font-family: var(--font-sans);
     font-weight: 200;
@@ -52,7 +58,7 @@
     text-decoration: none;
     white-space: nowrap;
   }
-  .topbar a.logo .dot { display: inline-block; }
+  .topbar a.logo .dot { display: inline-block; color: #5a7593; font-weight: 400; font-size: 1.4em; line-height: 0.6; vertical-align: baseline; }
 
   /* Main */
   main {
@@ -89,28 +95,35 @@
   }
   .err-actions {
     display: flex;
-    gap: 28px;
+    gap: 10px;
     margin-top: 14px;
     flex-wrap: wrap;
     justify-content: center;
   }
   .err-actions a {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: var(--tracking-narrow);
+    font-family: var(--font-sans);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink);
     text-decoration: none;
-    border-bottom: 1px solid var(--ink);
-    padding: 4px 0;
-    transition: opacity 0.2s;
+    min-height: 46px; padding: 0 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    color: var(--ink);
+    background: rgba(244,241,236,0.06);
+    border: 1px solid rgba(244,241,236,0.16);
+    transition: background 0.25s;
   }
-  .err-actions a:hover { opacity: 0.55; }
+  .err-actions a:hover { background: rgba(244,241,236,0.12); }
+  .err-actions a.primary {
+    background: #f4f1ec; color: #1C2230; border-color: #f4f1ec;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
+  }
+  .err-actions a.primary:hover { background: #ffffff; }
 
   /* Footer (identique au site) */
   footer.footer {
     margin-top: 0; padding: 36px 40px;
-    border-top: 1px solid var(--line);
     background: var(--bg);
     font-family: var(--font-mono);
     font-size: 10px;
@@ -131,7 +144,7 @@
     main { padding: 40px 24px; gap: 16px; }
     .err-title { font-size: clamp(28px, 9vw, 44px); }
     .err-body { font-size: 13.5px; }
-    .err-actions { gap: 18px; }
+    .err-actions { gap: 10px; flex-direction: column; width: 100%; max-width: 320px; }
     footer.footer {
       flex-direction: column; gap: 6px; text-align: center;
       padding: 10px 16px; font-size: 9px;
@@ -162,8 +175,8 @@
     <span data-en>The URL may be misspelled, or the piece you were looking for has been sold. Continue exploring author Japanese fashion.</span>
   </p>
   <div class="err-actions">
-    <a href="/"><span data-fr>← Accueil</span><span data-en>← Home</span></a>
-    <a href="/shop"><span data-fr>Boutique</span><span data-en>Shop</span></a>
+    <a class="primary" href="/shop"><span data-fr>Voir la boutique</span><span data-en>Browse the shop</span></a>
+    <a href="/"><span data-fr>Accueil</span><span data-en>Home</span></a>
     <a href="/marques"><span data-fr>Les Auteurs</span><span data-en>Authors</span></a>
   </div>
 </main>
@@ -193,7 +206,7 @@
         return;
       }
       var n = (navigator.language || 'fr').toLowerCase();
-      if (n.startsWith('en')) document.documentElement.setAttribute('lang', 'en');
+      if (!n.startsWith('fr')) document.documentElement.setAttribute('lang', 'en');
     } catch(e) {}
   })();
 </script>
