@@ -878,9 +878,10 @@ module.exports = {
       const sold = soldIds.has(p.id) || p.sold === true;
       const page = applyProductSEO(slimHtml, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-      const dir = path.join(productDir, slug);
-      fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(path.join(dir, 'index.html'), page, 'utf8');
+      // product/<slug>.html (et non product/<slug>/index.html) : Netlify sert
+      // /product/<slug> tel quel, sans rediriger vers la version avec « / »
+      // final, qui contredisait la canonique (Google tournait en rond).
+      fs.writeFileSync(path.join(productDir, slug + '.html'), page, 'utf8');
       count++;
     }
 
