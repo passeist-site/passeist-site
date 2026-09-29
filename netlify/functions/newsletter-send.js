@@ -72,84 +72,61 @@ async function groupsFor(ids) {
 }
 
 function buildHtml(lang, groups, total, featured) {
+  // Version « hyper luxe » (Tom) : fond blanc où les photos se fondent, texte
+  // bleu nuit, petites capitales espacées, beaucoup de vide, 8 pièces au plus.
   const en = lang === 'en';
-  const head = en ? 'This week at passéist' : 'Cette semaine chez passéist';
-  const intro = en
-    ? 'A selection of our new arrivals this week. Each piece is unique.'
-    : 'Une sélection de nos nouveautés de la semaine. Chaque pièce est unique.';
-  const cta = en ? 'See all new pieces' : 'Voir toutes les nouveautés';
-  const why = en
-    ? 'You receive this email because you subscribed to new pieces on passeist.com.'
-    : 'Vous recevez cet e-mail car vous vous êtes inscrit aux nouvelles pièces sur passeist.com.';
+  const INK = '#1C2230', DIM = '#5b6070', MUTE = '#9a9ca3', BG = '#ffffff', LINE = '#e6e4df';
+  const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
   const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
+  const dateTxt = new Date().toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const caps = (t, size, color, extra) => `<div style="font-family:${FONT};font-size:${size}px;letter-spacing:3px;text-transform:uppercase;color:${color};${extra || ''}">${t}</div>`;
+  const caption = (p, big) =>
+    caps(esc(title(p.brand)), big ? 10 : 9, INK, `margin-top:${big ? 22 : 16}px;`) +
+    `<div style="font-family:${FONT};font-size:${big ? 15 : 13}px;font-weight:300;color:${DIM};margin-top:7px;">${esc(p.type)}</div>` +
+    `<div style="font-family:${FONT};font-size:${big ? 12 : 11}px;letter-spacing:1px;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div>`;
+  const photo = (p, w) => p.img
+    ? `<img src="${p.img}" width="${w}" alt="${esc(p.brand + ' ' + p.type)}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`
+    : '';
 
-  const pick = (featured || []).map(p => `
-      <tr><td style="padding:10px 8px 18px;">
-        <a href="${track(p.url)}" style="text-decoration:none;color:#f4f1ec;">
-          ${p.img ? `<img src="${p.img}" width="560" alt="${esc(p.type)}" style="display:block;width:100%;max-width:560px;height:auto;border-radius:6px;background:#ffffff;">` : ''}
-          <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-top:12px;">${esc(title(p.brand))}</div>
-          <div style="font-size:16px;font-style:italic;margin-top:4px;">${esc(p.type)}</div>
-          <div style="font-size:13px;color:#a8a6a1;margin-top:3px;">${esc(p.size)}${p.size ? ' · ' : ''}${esc(p.price)}&nbsp;€</div>
-        </a>
-      </td></tr>`).join('');
-  const pickBlock = pick ? `
-      <tr><td style="padding:30px 8px 6px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f4f1ec;font-weight:600;">${en ? 'Our favourites' : 'Nos coups de cœur'}</td></tr>
-      ${pick}` : '';
+  const picks = (featured || []).slice(0, 3).map(p => `
+    <tr><td align="center" style="padding:0 0 72px;">
+      <a href="${track(p.url)}" style="text-decoration:none;display:block;">${photo(p, 420)}${caption(p, true)}</a>
+    </td></tr>`).join('');
 
-  const sections = groups.map(({ brand, items }) => {
-    const cells = items.map(p => `
-      <td width="50%" valign="top" style="padding:8px;">
-        <a href="${track(p.url)}" style="text-decoration:none;color:#f4f1ec;">
-          ${p.img ? `<img src="${p.img}" width="260" alt="${esc(p.type)}" style="display:block;width:100%;max-width:260px;height:auto;border-radius:6px;background:#ffffff;">` : ''}
-          <div style="font-size:14px;font-style:italic;margin-top:8px;">${esc(p.type)}</div>
-          <div style="font-size:12px;color:#a8a6a1;margin-top:2px;">${esc(p.size)}${p.size ? ' · ' : ''}${esc(p.price)}&nbsp;€</div>
-        </a>
-      </td>`);
-    const rows = [];
-    for (let i = 0; i < cells.length; i += 2) rows.push(`<tr>${cells[i]}${cells[i + 1] || '<td width="50%"></td>'}</tr>`);
-    return `
-      <tr><td style="padding:28px 8px 4px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f4f1ec;font-weight:600;">
-        ${esc(title(brand))} <span style="color:#a8a6a1;font-weight:400;">· ${items.length}</span>
-      </td></tr>
-      <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>`;
-  }).join('');
+  const rest = [];
+  groups.forEach(g => g.items.forEach(it => rest.push(it)));
+  const shown = rest.slice(0, Math.max(0, 8 - Math.min(3, (featured || []).length)));
+  const rows = [];
+  for (let i = 0; i < shown.length; i += 2) {
+    const cell = (p) => p ? `<td width="50%" valign="top" align="center" style="padding:0 14px 60px;">
+        <a href="${track(p.url)}" style="text-decoration:none;display:block;">${photo(p, 230)}${caption(p, false)}</a></td>` : '<td width="50%"></td>';
+    rows.push(`<tr>${cell(shown[i])}${cell(shown[i + 1])}</tr>`);
+  }
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark"><title>${esc(head)}</title></head>
-<body style="margin:0;padding:0;background:#1C2230;font-family:Helvetica,Arial,sans-serif;color:#f4f1ec;">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#1C2230;"><tr><td align="center">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;padding:24px 12px;">
-  <tr><td align="center" style="padding:12px 8px 4px;font-size:34px;letter-spacing:-1px;color:#f4f1ec;">
-    <a href="${track(SITE + '/')}" style="color:#f4f1ec;text-decoration:none;">passéist<span style="color:#5a7593;">.</span></a>
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
+<title>${en ? 'This week at passéist' : 'Cette semaine chez passéist'}</title></head>
+<body style="margin:0;padding:0;background:${BG};">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${BG};"><tr><td align="center">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
+  <tr><td align="center" style="font-family:${FONT};font-size:30px;letter-spacing:-0.5px;font-weight:300;">
+    <a href="${track(SITE + '/')}" style="color:${INK};text-decoration:none;">passéist<span style="color:#5a7593;">.</span></a></td></tr>
+  <tr><td align="center" style="padding:18px 0 0;">${caps(esc(dateTxt), 9, MUTE)}</td></tr>
+  <tr><td align="center" style="padding:64px 0 14px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:0.5px;color:${INK};">${en ? 'This week' : 'Cette semaine'}</td></tr>
+  <tr><td align="center" style="padding:0 0 72px;"><div style="width:32px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+  ${picks}
+  <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>
+  <tr><td align="center" style="padding:12px 0 80px;">
+    <a href="${track(SITE + '/shop')}" style="display:inline-block;font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:0 0 6px;">${en ? 'Discover the ' + total + ' new pieces' : 'Découvrir les ' + total + ' nouveautés'}</a>
   </td></tr>
-  <tr><td align="center" style="padding:18px 8px 4px;font-size:22px;color:#f4f1ec;">${esc(head)}</td></tr>
-  <tr><td align="center" style="padding:4px 16px 8px;font-size:14px;line-height:1.6;color:#d6d2cc;">${esc(intro)}</td></tr>
-  ${pickBlock}
-  ${sections}
-  <tr><td align="center" style="padding:32px 8px 8px;">
-    <a href="${track(SITE + '/shop')}" style="display:inline-block;background:#f4f1ec;color:#1C2230;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:15px 26px;border-radius:6px;">${cta}</a>
+  <tr><td align="center" style="border-top:1px solid ${LINE};padding:36px 0 0;font-family:${FONT};font-size:11px;line-height:2;color:${DIM};">
+    ${en ? 'Also on' : 'Aussi sur'} <a href="${VESTIAIRE_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vestiaire Collective</a> ${en ? 'and' : 'et'} <a href="${VINTED_URL || 'https://www.vinted.fr/'}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vinted</a><br>
+    <a href="${track(SITE + '/?app=1')}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">${en ? 'passéist on your phone' : 'passéist sur votre téléphone'}</a>
   </td></tr>
-  <tr><td style="padding:36px 8px 0;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#262D3C;border-radius:12px;"><tr><td style="padding:20px 20px 18px;">
-      <div style="font-size:15px;color:#f4f1ec;margin-bottom:6px;">${en ? 'passéist, like an app on your phone' : 'passéist, comme une app sur votre téléphone'}</div>
-      <table role="presentation" cellspacing="0" cellpadding="0" style="margin-top:4px;">${en
-        ? '<tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">1</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">On iPhone, open <b>passeist.com</b> in Safari.</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">2</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Tap <b>Share</b> (the square with an arrow, sometimes in the <b>•••</b> menu).</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">3</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Choose <b>Add to Home Screen</b>, then <b>Add</b>.</td></tr>'
-        : '<tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">1</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Sur iPhone, ouvrez <b>passeist.com</b> dans Safari.</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">2</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Touchez <b>Partager</b> (le carré avec une flèche, parfois dans le menu <b>•••</b>).</td></tr><tr><td valign="top" style="padding:4px 10px 4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#f4f1ec;color:#1C2230;font-size:12px;font-weight:700;line-height:22px;text-align:center;">3</div></td><td style="padding:4px 0;font-size:13px;line-height:1.5;color:#d6d2cc;">Choisissez <b>Sur l\'écran d\'accueil</b>, puis <b>Ajouter</b>.</td></tr>'}</table>
-      <div style="font-size:12px;line-height:1.5;color:#a8a6a1;margin-top:8px;">${en ? 'On Android: menu <b>⋮</b>, then <b>Install app</b>.' : 'Sur Android : menu <b>⋮</b>, puis <b>Installer l\'application</b>.'}</div>
-      <div style="margin-top:12px;"><a href="${track(SITE + '/?app=1')}" style="color:#f4f1ec;font-size:13px;">${en ? 'Show me how →' : 'Voir comment faire →'}</a></div>
-    </td></tr></table>
-  </td></tr>
-  <tr><td align="center" style="padding:26px 16px 0;font-size:13px;line-height:1.6;color:#d6d2cc;">
-    ${en ? 'Also find us on your favourite platform:' : 'Retrouvez-nous aussi sur votre plateforme préférée :'}<br>
-    <div style="padding-top:12px;">
-      <a href="${VESTIAIRE_URL}" style="display:inline-block;margin:0 4px 8px;"><img src="${SITE}/img/badge-vestiaire.png" width="200" height="47" alt="Vestiaire Collective" style="display:block;border:0;"></a>
-      <a href="${VINTED_URL || 'https://www.vinted.fr/'}" style="display:inline-block;margin:0 4px 8px;"><img src="${SITE}/img/badge-vinted.png" width="200" height="47" alt="Vinted" style="display:block;border:0;"></a>
-    </div>
-  </td></tr>
-  <tr><td align="center" style="padding:32px 16px 8px;font-size:11px;line-height:1.6;color:#a8a6a1;">
-    ${why}<br>${en
-      ? 'We never want to clutter your inbox or bother you: to unsubscribe, <a href="{{ unsubscribe }}" style="color:#d6d2cc;">click here</a>.'
-      : 'Nous ne voulons surtout pas encombrer votre boîte mail ni vous déranger : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:#d6d2cc;">cliquez ici</a>.'}<br>passéist, Paris
+  <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:10px;line-height:1.8;color:${MUTE};">
+    ${en
+      ? 'We never want to clutter your inbox: to unsubscribe, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">click here</a>.'
+      : 'Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>passéist · Paris
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
