@@ -16,6 +16,7 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { getStore, connectLambda } = require('@netlify/blobs');
+const { sendOrderEmail } = require('../lib/order-email');
 
 // Stockage des pièces vendues (Netlify Blobs, store "passeist-sold") :
 // une clé par id produit. Lu par /.netlify/functions/sold-ids (affichage
@@ -144,6 +145,25 @@ exports.handler = async (event) => {
           basculeError = err.message;
         }
       }
+    }
+  }
+
+  // E-mail de confirmation passéist (Brevo), une seule fois par commande même
+  // si Stripe renvoie l'événement
+  if (stripeEvent.type === 'checkout.session.completed') {
+    const session = stripeEvent.data.object;
+    try {
+      connectLambda(event);
+      const store = getStore('passeist-orders');
+      if (!(await store.get('mail/' + session.id))) {
+        const li = await stripe.checkout.sessions.listLineItems(session.id, { limit: 20, expand: ['data.price.product'] });
+        if (await sendOrderEmail(session, li.data)) {
+          await store.setJSON('mail/' + session.id, { at: new Date().toISOString(), to: (session.customer_details || {}).email || '' });
+          console.log('✓ E-mail de confirmation envoyé :', session.id);
+        }
+      }
+    } catch (err) {
+      console.error('E-mail de confirmation :', err.message);
     }
   }
 
