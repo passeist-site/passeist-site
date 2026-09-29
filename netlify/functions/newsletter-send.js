@@ -49,7 +49,7 @@ async function photoFor(id) {
 async function itemFor(id) {
   const p = PRODUCTS[id];
   return {
-    id, brand: p.brand || 'Autres', type: p.type, size: p.size, price: p.price,
+    id, brand: p.brand || 'Autres', type: p.label || p.type, season: p.season || '', year: p.year || 0, size: p.size, price: p.price,
     url: `${SITE}/product/${[slugify(p.brand), slugify(p.type), id].filter(Boolean).join('-')}`,
     img: await photoFor(id),
   };
@@ -83,6 +83,7 @@ function buildHtml(lang, groups, total, featured) {
   const caption = (p, big) =>
     caps(esc(title(p.brand)), big ? 10 : 9, INK, `margin-top:${big ? 22 : 16}px;`) +
     `<div style="font-family:${FONT};font-size:${big ? 15 : 13}px;font-weight:300;color:${DIM};margin-top:7px;">${esc(p.type)}</div>` +
+    (p.season ? `<div style="font-family:${FONT};font-size:${big ? 11 : 10}px;font-style:italic;color:${MUTE};margin-top:4px;">${esc(p.season)}</div>` : '') +
     `<div style="font-family:${FONT};font-size:${big ? 12 : 11}px;letter-spacing:1px;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div>`;
   const photo = (p, w) => p.img
     ? `<img src="${p.img}" width="${w}" alt="${esc(p.brand + ' ' + p.type)}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`
@@ -96,12 +97,25 @@ function buildHtml(lang, groups, total, featured) {
   const rest = [];
   groups.forEach(g => g.items.forEach(it => rest.push(it)));
   const shown = rest.slice(0, Math.max(0, 15 - Math.min(3, (featured || []).length)));   // 15 pièces au plus (Tom)
-  const rows = [];
-  for (let i = 0; i < shown.length; i += 2) {
-    const cell = (p) => p ? `<td width="50%" valign="top" align="center" style="padding:0 14px 60px;">
+  // Effet chronologique (Tom) : de la plus ancienne à la plus récente, avec
+  // l'époque en intertitre (Années 90, Années 2000…) ; sans date à la fin.
+  const era = (y) => !y ? '' : y < 2000 ? (en ? 'The ' : 'Années ') + String(Math.floor(y / 10) * 10).slice(2) + (en ? 's' : '') : (en ? 'The ' : 'Années ') + Math.floor(y / 10) * 10 + (en ? 's' : '');
+  const ordered = shown.slice().sort((a, b) => (a.year || 9999) - (b.year || 9999));
+  const blocks = [];
+  ordered.forEach(p => {
+    const e = era(p.year) || (en ? 'Timeless' : 'Intemporel');
+    if (!blocks.length || blocks[blocks.length - 1].era !== e) blocks.push({ era: e, items: [] });
+    blocks[blocks.length - 1].items.push(p);
+  });
+  const cell = (p) => p ? `<td width="50%" valign="top" align="center" style="padding:0 14px 60px;">
         <a href="${track(p.url)}" style="text-decoration:none;display:block;">${photo(p, 230)}${caption(p, false)}</a></td>` : '<td width="50%"></td>';
-    rows.push(`<tr>${cell(shown[i])}${cell(shown[i + 1])}</tr>`);
-  }
+  const rows = [];
+  blocks.forEach(b => {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:8px 0 40px;">
+      <div style="font-family:${FONT};font-size:18px;font-weight:300;letter-spacing:1px;color:${INK};">${esc(b.era)}</div>
+      <div style="width:24px;height:1px;background:${INK};opacity:0.3;margin:14px auto 0;font-size:0;line-height:0;">&nbsp;</div></td></tr>`);
+    for (let i = 0; i < b.items.length; i += 2) rows.push(`<tr>${cell(b.items[i])}${cell(b.items[i + 1])}</tr>`);
+  });
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">

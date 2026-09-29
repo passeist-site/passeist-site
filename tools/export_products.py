@@ -6,6 +6,8 @@ pour valider les prix côté serveur (anti price-tampering).
 À lancer après chaque modification de PRODUCTS dans index.html
 (import HD batch, sync auto, modif manuelle prix, etc.)."""
 import re, json, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from designation import designation
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, 'index.html')
@@ -55,6 +57,11 @@ for p in products:
         'size':  p.get('size', ''),
         'slug':  p.get('slug', ''),
     }
+    # Désignation précise + saison / année (newsletter, e-mails)
+    label, season, year = designation(p)
+    if label != p.get('type', ''): lookup[str(pid)]['label'] = label
+    if season: lookup[str(pid)]['season'] = season
+    if year: lookup[str(pid)]['year'] = year
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
