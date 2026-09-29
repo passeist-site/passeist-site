@@ -313,7 +313,7 @@ const SHIP_ZONES = [
   { price: '25.00 EUR', min: 5, max: 7,  countries: [
     'AT','BE','BG','HR','CY','CZ','DK','EE','FI','DE','GR','HU','IE','IT','LV','LT',
     'LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','GB','CH','NO'] },
-  { price: '55.00 EUR', min: 7, max: 10, countries: ['US','CA','JP','KR','AU','NZ','SG','HK'] },
+  { price: '55.00 EUR', min: 7, max: 10, countries: ['US','CA','JP','AU','NZ','SG','HK'] },
 ];
 // Retours acceptés (CGV §7) : France métropolitaine + Union européenne, 14 jours,
 // frais de renvoi à la charge de l'acheteur.
