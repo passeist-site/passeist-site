@@ -1,19 +1,24 @@
 name: Import photos manquantes (CDN Vestiaire -> passeist.com)
 
 # Rapatrie sur passeist.com les photos des pièces en vente encore affichées
-# depuis le CDN Vestiaire (cf tools/import_missing_photos.py). Déclenchement
-# manuel uniquement : Actions > « Import photos manquantes » > Run workflow.
+# depuis le CDN Vestiaire (cf tools/import_missing_photos.py).
+#
+# Le CDN Vestiaire bloque au-delà d'une quinzaine de photos d'affilée (429) :
+# chaque session enchaîne de petits lots espacés de 20 min pendant environ 4 h.
+# (Les déclenchements GitHub toutes les 20 min ne partaient presque jamais.)
+# Sessions à 0h17, 6h17, 12h17 et 20h17 UTC : jamais pendant le Sync de 19h.
 
 on:
-  # Petits lots automatiques toutes les 20 min : le CDN Vestiaire bloque au-delà
-  # d'une quinzaine de photos d'affilée. Sans pièce à traiter, le lot ne fait rien.
   schedule:
-    - cron: '7,27,47 * * * *'
+    - cron: '17 0,6,12,20 * * *'
   workflow_dispatch:
     inputs:
       limit:
-        description: 'Nombre max de pièces à traiter par lancement (0 = toutes ; 40 conseillé pour des envois de taille raisonnable)'
-        default: '40'
+        description: 'Pièces max par lot'
+        default: '3'
+      rounds:
+        description: 'Nombre de lots (espacés de 20 min)'
+        default: '12'
 
 concurrency:
   group: sync-vestiaire   # même groupe que la synchro : jamais en parallèle
@@ -25,7 +30,7 @@ permissions:
 jobs:
   import:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 300
     steps:
       - name: Checkout (sans le dossier img/, trop lourd)
         uses: actions/checkout@v4
@@ -44,28 +49,34 @@ jobs:
       - name: Dépendances
         run: pip install pillow requests
 
-      - name: Import des photos
-        id: imp
-        run: python -u tools/import_missing_photos.py --limit "${{ github.event.inputs.limit || '3' }}" --ids-out /tmp/imported_ids.txt
-
-      - name: Commit + push
-        if: steps.imp.outputs.imported != '0'
-        # [skip netlify] : pas de reconstruction du site à chaque petit lot (quota
-        # de build) ; les photos sont publiées avec la mise en ligne suivante.
-        # Le Sync peut avoir modifié index.html pendant l'import : on repart
-        # toujours du main distant, on y réapplique seulement l'ajout des ids
-        # (pas de rebase, donc pas de conflit), les photos restent sur le disque.
+      - name: Lots d'import (20 min d'écart)
+        # Après chaque lot : on repart du main distant (le Sync a pu modifier
+        # index.html), on y réapplique seulement l'ajout des ids (pas de
+        # conflit), et on pousse avec [skip netlify] (pas de reconstruction du
+        # site ; les photos sont publiées avec la mise en ligne suivante).
+        env:
+          LIMIT: ${{ github.event.inputs.limit || '3' }}
+          ROUNDS: ${{ github.event.inputs.rounds || '12' }}
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
-          for i in 1 2 3 4 5; do
-            git fetch -q origin main
-            git reset -q origin/main
-            git checkout origin/main -- index.html
-            python tools/import_missing_photos.py --mark-only /tmp/imported_ids.txt
-            git add --sparse index.html img/
-            git commit -q -m "photos: ${{ steps.imp.outputs.imported }} pieces rapatriees du CDN Vestiaire sur passeist.com (${{ steps.imp.outputs.failed }} echecs) [skip netlify]"
-            if git push -q origin HEAD:main; then echo "push OK"; exit 0; fi
-            sleep $((i * 10))
+          for round in $(seq 1 "$ROUNDS"); do
+            echo "=== Lot $round / $ROUNDS ==="
+            rm -f /tmp/imported_ids.txt
+            python -u tools/import_missing_photos.py --limit "$LIMIT" --ids-out /tmp/imported_ids.txt | tee /tmp/lot.log || true
+            if grep -q "^0 pièces en vente sans photos locales" /tmp/lot.log; then echo "Plus rien à importer"; break; fi
+            n=$(grep -c . /tmp/imported_ids.txt 2>/dev/null || echo 0)
+            if [ "$n" -gt 0 ]; then
+              for i in 1 2 3 4 5; do
+                git fetch -q origin main
+                git reset -q origin/main
+                git checkout origin/main -- index.html
+                python tools/import_missing_photos.py --mark-only /tmp/imported_ids.txt
+                git add --sparse index.html img/
+                git commit -q -m "photos: $n pieces rapatriees du CDN Vestiaire sur passeist.com [skip netlify]"
+                if git push -q origin HEAD:main; then echo "push OK"; break; fi
+                sleep $((i * 10))
+              done
+            fi
+            if [ "$round" -lt "$ROUNDS" ]; then sleep 1200; fi
           done
-          exit 1
