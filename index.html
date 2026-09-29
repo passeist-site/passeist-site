@@ -3312,6 +3312,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7); }
 
   body.buy-bar-on #detail.open ~ .buy-bar { display: flex; }
+  /* Petits iPhone (SE…) : tout tient sur une ligne, prix compris */
+  @media (max-width: 380px) {
+    .buy-bar { gap: 6px; padding-left: 10px; padding-right: 10px; }
+    .buy-bar-icon, .buy-bar .buy-bar-icon.fav-btn { flex-basis: 36px; width: 36px; height: 36px; }
+    .buy-bar-icon svg { width: 17px; height: 17px; }
+    .buy-bar-cta { letter-spacing: 0.03em; font-size: 10px; }
+  }
   /* Étiquette de prix sur la ligne de la marque, calée tout à droite (Tom) */
   .detail-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; align-items: start; }
   .detail-info > * { grid-column: 1 / -1; }
