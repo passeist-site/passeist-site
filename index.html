@@ -8585,8 +8585,10 @@ window.startSimilarMarqueeLoop = function() {
     if (mSearch) mSearch.value = activeSearch || '';
   }
   function setOpen(open) {
-    if (open) mirrorOptions();
     sheet.classList.toggle('open', open);
+    // Remplir les listes une fois le panneau visible : sur iPhone, Safari
+    // laisse vides les listes remplies pendant que le panneau est masqué.
+    if (open) { mirrorOptions(); requestAnimationFrame(mirrorOptions); }
     backdrop.classList.toggle('open', open);
     sheet.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('no-scroll', open);
