@@ -211,6 +211,10 @@ async function showNewsletter() {
       <textarea id="nlfeat" rows="4" class="nl-area" placeholder="https://passeist.com/product/…&#10;71642530">${esc((d.featured || []).map(f => f.id).join('\n'))}</textarea>
       <div class="nl-test"><button type="button" id="nlfeatsave">Enregistrer</button></div>
       <div class="nl-msg" id="nlfeatmsg">${(d.featured || []).map(f => '• ' + esc(f.label)).join('<br>')}</div></div>
+    <div class="nl-box"><h3>Code 10 % (pièce indisponible)</h3>
+      <div class="nl-stat">Un code unique, utilisable une seule fois, valable 6 mois. À envoyer au client concerné.</div>
+      <div class="nl-test"><button type="button" id="promobtn">Créer un code</button></div>
+      <div class="nl-msg" id="promomsg"></div></div>
     <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
       <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>
       <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit">Envoyer</button></form>
@@ -225,6 +229,14 @@ async function showNewsletter() {
     if (!res.ok) { $('nlfeatmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlfeat').value = j.featured.map(f => f.id).join('\n');
     $('nlfeatmsg').innerHTML = j.featured.length ? j.featured.map(f => '• ' + esc(f.label)).join('<br>') : 'Aucune pièce reconnue (vérifiez les liens, et que les pièces sont encore en vente).';
+  };
+  $('promobtn').onclick = async () => {
+    $('promomsg').textContent = 'Création…';
+    const res = await fetch('/.netlify/functions/promo', { method: 'POST', headers: { 'x-admin-key': key } });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) { $('promomsg').textContent = 'Échec : ' + (j.error || res.status); return; }
+    $('promomsg').innerHTML = '<b style="font-size:18px;letter-spacing:0.05em;user-select:all">' + esc(j.code) + '</b><br>Touchez le code pour le sélectionner, puis copiez-le.';
+    try { await navigator.clipboard.writeText(j.code); $('promomsg').innerHTML += '<br>(déjà copié)'; } catch (err) {}
   };
   $('nltest').onsubmit = async (e) => {
     e.preventDefault();
