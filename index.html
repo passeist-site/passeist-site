@@ -2273,6 +2273,7 @@ body.fav-few #shop-page .filter-bar, body.fav-few .filter-bar-spacer { display: 
 .grid-more-btn:hover { background: rgba(244,241,236,0.12); }
 
 /* Bas de page : typo du site (Inter), minuscules, plus petit et plus discret (Tom) */
+html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: none !important; }
 .footer { font-family: var(--font-sans) !important; text-transform: none !important; letter-spacing: 0.01em !important;
   font-size: 12px !important; font-weight: 400; color: var(--text-mute); border-top-color: rgba(244,241,236,0.08) !important; }
 .footer a { opacity: 0.75; }
@@ -4320,7 +4321,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 </section>
 
 <footer class="footer">
-  <div>© 2026 passéist · Mode d'auteur japonaise · Paris</div>
+  <div><span class="lang-fr">© 2026 passéist · Mode d'auteur japonaise · Paris</span><span class="lang-en">© 2026 passéist · Japanese designer fashion · Paris</span></div>
   <nav class="footer-nav">
     <a data-page="cgv">CGV</a>
     <a data-page="privacy">Confidentialité</a>
