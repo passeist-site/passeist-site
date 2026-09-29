@@ -792,6 +792,19 @@ module.exports = {
       if (p) p.n = imgReorder[id].length;
     });
 
+    // ── Photos hébergées sur passeist.com : n = photos réellement présentes ─
+    // Une annonce Vestiaire peut annoncer 15 photos alors que les dernières
+    // n'existent pas (l'import garde la pièce). Sans ce comptage, la galerie
+    // demandait des images introuvables (requêtes inutiles, vignettes vides).
+    let trimmed = 0;
+    products.forEach(p => {
+      if (!p.id || !p.n || !validatedLocal.has(String(p.id)) || imgReorder[p.id]) return;
+      let k = 0;
+      while (k < p.n && fs.existsSync(path.join(publishDir, 'img', p.id + '-' + k + '-xl.webp'))) k++;
+      if (k > 0 && k < p.n) { p.n = k; trimmed++; }
+    });
+    if (trimmed) console.log('[generate-product-pages] Photos : n ajusté pour ' + trimmed + ' pièces (photos absentes en fin de galerie)');
+
     // ── Phrase unique par pièce (FR/EN), ajoutée au catalogue ─────────
     products.forEach(p => { const it = buildIntro(p); p.intro = it.fr; p.intro_en = it.en; });
 
