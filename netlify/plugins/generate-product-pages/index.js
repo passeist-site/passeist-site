@@ -407,9 +407,8 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       ? '\n      <g:size>' + xmlesc(sizeFR(p.size)) + '</g:size>' : '';
     const productType = xmlesc(KIND_FR[kind] + ' > ' + (gender || 'Unisexe') + ' > ' + p.brand);
 
-    const shippingBlocks = SHIP_ZONES.flatMap(z => z.countries.map(c =>
-      `      <g:shipping>\n        <g:country>${c}</g:country>\n        <g:service>Standard</g:service>\n        <g:price>${z.price}</g:price>\n        <g:min_handling_time>${SHIP_HANDLING.min}</g:min_handling_time>\n        <g:max_handling_time>${SHIP_HANDLING.max}</g:max_handling_time>\n        <g:min_transit_time>${z.min}</g:min_transit_time>\n        <g:max_transit_time>${z.max}</g:max_transit_time>\n      </g:shipping>`
-    )).join('\n');
+    // Pas de <g:shipping> dans le flux : la livraison (pays, tarifs, délais) est
+    // réglée dans Merchant Center, qui sinon serait écrasé par le flux.
 
     return `    <item>
       <g:id>${xmlesc(p.id)}</g:id>
@@ -425,7 +424,6 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:product_type>${productType}</g:product_type>
       <g:gender>${genderFeed}</g:gender>
       <g:age_group>adult</g:age_group>${color ? '\n      <g:color>' + color + '</g:color>' : ''}${sizeTag}
-${shippingBlocks}
     </item>`;
   }).join('\n');
 
