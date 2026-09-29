@@ -84,8 +84,12 @@ header .pill { flex: 0 1 auto; white-space: nowrap; padding: 9px 10px; }
 .nl-test { display: flex; gap: 8px; margin-top: 10px; }
 .nl-test input { flex: 1; min-width: 0; padding: 11px 12px; font-size: 16px; border-radius: 6px; border: 1px solid rgba(244,241,236,0.16);
   background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
-.nl-test button { padding: 0 14px; border-radius: 6px; border: none; background: #f4f1ec; color: #1C2230; font-weight: 600;
+.nl-test button { min-height: 42px; padding: 0 14px; border-radius: 6px; border: none; background: #f4f1ec; color: #1C2230; font-weight: 600;
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
+.nl-ov { position: fixed; inset: 0; z-index: 50; background: #fff; }
+.nl-ov-f { width: 100%; height: 100%; border: 0; }
+.nl-ov-x { position: fixed; top: calc(12px + env(safe-area-inset-top)); right: 12px; z-index: 51; width: 38px; height: 38px; border-radius: 50%;
+  border: none; background: #1C2230; color: #f4f1ec; font-size: 14px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
 .nl-area { width: 100%; margin-top: 10px; padding: 10px 12px; font: inherit; font-size: 16px; border-radius: 6px; resize: vertical;
   border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
 .nl-msg { font-size: 13px; color: var(--dim); margin-top: 8px; min-height: 18px; }
@@ -206,7 +210,7 @@ async function showNewsletter() {
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
       <b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
-    <div class="nl-box"><h3>Envoi du ${esc(d.nextDate || '')}</h3>
+    <div class="nl-box"><h3>Envoi du ${esc(d.nextDate ? new Date(d.nextDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '')}</h3>
       <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>
       <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div></div>
     <div class="nl-box"><h3>Votre mot de la semaine</h3>
@@ -223,6 +227,9 @@ async function showNewsletter() {
       <div class="nl-stat">Un code unique, utilisable une seule fois, valable 6 mois. À envoyer au client concerné.</div>
       <div class="nl-test"><button type="button" id="promobtn">Créer un code</button></div>
       <div class="nl-msg" id="promomsg"></div></div>
+    <div class="nl-box"><h3>Aperçu</h3>
+      <div class="nl-stat">La newsletter telle qu'elle partira dimanche, avec votre mot et vos coups de cœur.</div>
+      <div class="nl-test"><button type="button" id="nlpreview">Voir l'aperçu</button></div></div>
     <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
       <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>
       <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit">Envoyer</button></form>
@@ -237,6 +244,19 @@ async function showNewsletter() {
     if (!res.ok) { $('nlfeatmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlfeat').value = j.featured.map(f => f.id).join('\n');
     $('nlfeatmsg').innerHTML = j.featured.length ? j.featured.map(f => '• ' + esc(f.label)).join('<br>') : 'Aucune pièce reconnue (vérifiez les liens, et que les pièces sont encore en vente).';
+  };
+  $('nlpreview').onclick = async () => {
+    $('nlpreview').textContent = 'Chargement…';
+    const res = await fetch('/.netlify/functions/newsletter?action=preview', { headers: { 'x-admin-key': key } });
+    const j = await res.json().catch(() => ({}));
+    $('nlpreview').textContent = "Voir l'aperçu";
+    if (!res.ok || !j.html) return;
+    const ov = document.createElement('div');
+    ov.className = 'nl-ov';
+    ov.innerHTML = '<button type="button" class="nl-ov-x" aria-label="Fermer">✕</button><iframe class="nl-ov-f" title="Aperçu"></iframe>';
+    document.body.appendChild(ov);
+    ov.querySelector('iframe').srcdoc = j.html;
+    ov.querySelector('.nl-ov-x').onclick = () => ov.remove();
   };
   $('nlnotesave').onclick = async () => {
     $('nlnotemsg').textContent = 'Enregistrement…';

@@ -103,6 +103,15 @@ async function admin(event, action) {
       subs: subs.slice(0, 200).map(x => ({ email: x.email, lang: x.lang, at: x.at })),
     });
   }
+  if (action === 'preview') {
+    // Aperçu à l'écran (messagerie) : exactement l'e-mail de dimanche
+    const ids = (fresh.length ? fresh : Object.keys(PRODUCTS)).slice(0, 40);
+    const featured = await send._featuredItems(store);
+    const featIds = new Set(featured.map(f => f.id));
+    const groups = await send._groupsFor(ids.filter(id => !featIds.has(id)));
+    const note = ((await store.get('state/note', { type: 'json' })) || {}).text || '';
+    return json(200, { html: send._buildHtml('fr', groups, ids.length, featured, note).replace('{{ unsubscribe }}', '#') });
+  }
   if (action === 'test' && event.httpMethod === 'POST') {
     let body = {};
     try { body = JSON.parse(event.body || '{}'); } catch (e) {}
