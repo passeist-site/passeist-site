@@ -8955,6 +8955,55 @@ document.addEventListener('DOMContentLoaded', function(){
   if (typeof openChat === 'function') openChat();
 });
 </script>
+<!-- ============ PHOTO QUI S'ENVOLE JUSQU'À LA FICHE ============ -->
+<script>
+// Toucher une pièce dans une grille : sa photo grandit et glisse jusqu'à sa
+// place dans la fiche (cadres 3:4 identiques des deux côtés, cf. PHOTOS.md :
+// rien n'est recadré, seule la position/taille du cadre s'anime).
+(function () {
+  if (typeof window.openDetail !== 'function') return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let from = null;
+  document.addEventListener('click', function (e) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    const card = e.target.closest('.product-card, .similar-card');
+    const box = card && card.querySelector('.product-img');
+    const img = box && box.querySelector('img');
+    if (!img || !img.complete || !img.naturalWidth) { from = null; return; }
+    from = { box, rect: box.getBoundingClientRect(), at: Date.now() };
+  }, true);
+  const _open = window.openDetail;
+  window.openDetail = function () {
+    const src = from; from = null;
+    const r = _open.apply(this, arguments);
+    if (!src || Date.now() - src.at > 800) return r;
+    const wrap = document.querySelector('#detail .main-photo-wrap');
+    const main = wrap && wrap.querySelector('.main-photo');
+    if (!wrap || !main) return r;
+    const to = main.getBoundingClientRect();
+    const a = src.rect;
+    if (!to.width || !a.width || to.top > innerHeight) return r;
+    const clone = src.box.cloneNode(true);
+    clone.classList.remove('loading');
+    Object.assign(clone.style, {
+      position: 'fixed', left: a.left + 'px', top: a.top + 'px', width: a.width + 'px', height: a.height + 'px',
+      margin: '0', zIndex: '16', pointerEvents: 'none', transformOrigin: '0 0', willChange: 'transform',
+      boxShadow: '0 24px 60px -20px rgba(0,0,0,0.6)'
+    });
+    document.body.appendChild(clone);
+    wrap.style.visibility = 'hidden';
+    const sx = to.width / a.width, sy = to.height / a.height;
+    const anim = clone.animate([
+      { transform: 'translate(0,0) scale(1,1)' },
+      { transform: 'translate(' + (to.left - a.left) + 'px,' + (to.top - a.top) + 'px) scale(' + sx + ',' + sy + ')' }
+    ], { duration: window.__flyMs || 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+    const done = function () { wrap.style.visibility = ''; clone.remove(); };
+    anim.onfinish = done;
+    setTimeout(done, (window.__flyMs || 520) + 400);
+    return r;
+  };
+})();
+</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
