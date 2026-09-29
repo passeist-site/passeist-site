@@ -7288,6 +7288,35 @@ function flyToCart() {
     t = document.createElement('div');
     t.id = 'cart-toast'; t.className = 'cart-toast'; t.setAttribute('role', 'status');
     document.body.appendChild(t);
+    // Glisser vers le haut ou sur le côté pour la faire partir (Tom)
+    let x0 = null, y0 = 0, dx = 0, dy = 0;
+    t.addEventListener('touchstart', e => {
+      if (e.touches.length !== 1) return;
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = dy = 0;
+      clearTimeout(t._hideT);
+      t.style.transition = 'none';
+    }, { passive: true });
+    t.addEventListener('touchmove', e => {
+      if (x0 === null) return;
+      dx = e.touches[0].clientX - x0; dy = Math.min(0, e.touches[0].clientY - y0);
+      t.style.transform = 'translate(calc(-50% + ' + dx + 'px), ' + dy + 'px)';
+      t.style.opacity = String(Math.max(0.2, 1 - (Math.abs(dx) + Math.abs(dy)) / 220));
+    }, { passive: true });
+    t.addEventListener('touchend', () => {
+      if (x0 === null) return;
+      x0 = null;
+      t.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+      if (dy < -30 || Math.abs(dx) > 60) {
+        t.style.transform = Math.abs(dx) > 60
+          ? 'translate(calc(-50% + ' + (dx > 0 ? 1 : -1) * innerWidth + 'px), ' + dy + 'px)'
+          : 'translate(-50%, -140%)';
+        t.style.opacity = '0';
+        setTimeout(() => { t.classList.remove('show'); t.style.transform = ''; t.style.opacity = ''; t.style.transition = ''; }, 350);
+      } else {
+        t.style.transform = ''; t.style.opacity = '';
+        t._hideT = setTimeout(() => t.classList.remove('show'), 2000);
+      }
+    });
   }
   const img = p ? imgUrl(p, 0, { size: 'sm', exactSize: true }) : '';
   t.innerHTML = (img ? '<img src="' + img + '" alt="">' : '') +
@@ -7295,6 +7324,7 @@ function flyToCart() {
     (p ? '<span>' + p.brand + ' · ' + (window.tType ? window.tType(p) : p.type) + '</span>' : '') + '</div>' +
     '<button type="button" class="cart-toast-btn">' + (EN ? 'View' : 'Voir') + '</button>';
   t.querySelector('.cart-toast-btn').onclick = () => { t.classList.remove('show'); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart(); };
+  t.style.transform = ''; t.style.opacity = ''; t.style.transition = '';
   t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
   clearTimeout(t._hideT);
   t._hideT = setTimeout(() => t.classList.remove('show'), 3200);
