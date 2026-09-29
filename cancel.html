@@ -4,49 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>Commande annulée — Passéist</title>
+<meta name="theme-color" content="#1C2230">
+<title>Paiement annulé · passéist</title>
+<link rel="icon" type="image/png" href="/img/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+  /* Même langage que le site : bleu nuit, crème, cartes vitrées, coins arrondis */
+  :root { --bg: #1C2230; --ink: #f4f1ec; --dim: #d6d2cc; --mute: #a8a6a1; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, "Inter", sans-serif;
-    background: #f5f3ee;
-    color: #1a1a1a;
-    margin: 0; min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+    min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
   }
+  .logo { font-size: 30px; font-weight: 300; letter-spacing: -0.03em; color: var(--ink); text-decoration: none; margin-bottom: 26px; }
+  .logo span { color: #5a7593; }
   .card {
-    max-width: 480px; width: 100%;
-    text-align: center;
-    padding: 50px 40px;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.06);
+    width: 100%; max-width: 460px; text-align: center; padding: 30px 24px 24px; border-radius: 12px;
+    background: linear-gradient(160deg, rgba(40,48,66,0.9), rgba(28,34,48,0.8));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 0 0 1px rgba(244,241,236,0.07), 0 18px 40px -16px rgba(0,0,0,0.7);
   }
-  h1 {
-    font-size: 20px; font-weight: 600;
-    letter-spacing: -0.5px;
-    margin: 0 0 12px;
-  }
-  p {
-    font-size: 14px; color: #555;
-    line-height: 1.6;
-  }
-  .btn {
-    display: inline-block;
-    margin-top: 24px;
-    padding: 12px 28px;
-    background: #1a1a1a; color: #fff;
-    text-decoration: none;
-    font-size: 13px; letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .btn:hover { opacity: 0.85; }
+  .check { width: 52px; height: 52px; border-radius: 50%; background: #f4f1ec; color: #1C2230; font-size: 24px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  h1 { font-size: 21px; font-weight: 400; letter-spacing: -0.01em; margin-bottom: 12px; }
+  p { font-size: 14px; line-height: 1.6; color: var(--dim); font-weight: 300; margin: 8px 0; }
+  a { color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; margin-top: 20px; min-height: 48px; padding: 0 26px;
+    border-radius: 6px; background: #f4f1ec; color: #1C2230; text-decoration: none; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7); }
+  .ref { font-size: 11px; color: var(--mute); margin-top: 20px; word-break: break-all; }
+  .nl { margin-top: 14px; }
+  .nl h2 { font-size: 17px; font-weight: 400; margin-bottom: 6px; }
+  .nl form { display: flex; gap: 8px; margin-top: 12px; }
+  .nl input { flex: 1; min-width: 0; min-height: 46px; padding: 0 14px; font: inherit; font-size: 16px; border-radius: 6px;
+    border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
+  .nl button { min-height: 46px; padding: 0 16px; border: none; border-radius: 6px; background: #f4f1ec; color: #1C2230;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+  .nl .legal { font-size: 11px; color: var(--mute); margin-top: 10px; }
+  .nl.sent form, .nl.sent .legal { display: none; }
+  html[lang="en"] [data-fr], html[lang="fr"] [data-en] { display: none !important; }
 </style>
 </head>
 <body>
+<a class="logo" href="/">passéist<span>.</span></a>
 <div class="card">
-  <h1>Commande annulée</h1>
-  <p>Aucun paiement n'a été effectué. Votre panier est toujours disponible si vous changez d'avis.</p>
-  <a class="btn" href="/">Retour à la boutique</a>
+  <h1><span data-fr>Paiement annulé</span><span data-en>Payment cancelled</span></h1>
+  <p><span data-fr>Aucun paiement n'a été effectué. Votre panier vous attend si vous changez d'avis.</span><span data-en>No payment was made. Your cart is waiting if you change your mind.</span></p>
+  <a class="btn" href="/shop"><span data-fr>Retour à la boutique</span><span data-en>Back to the shop</span></a>
+  <p style="margin-top:16px;"><span data-fr>Un souci ? <a href="mailto:info@passeist.com">info@passeist.com</a></span><span data-en>A problem? <a href="mailto:info@passeist.com">info@passeist.com</a></span></p>
 </div>
+<script>
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem('passeist_lang'); } catch (e) {}
+    if (l !== 'fr' && l !== 'en') l = (navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en';
+    document.documentElement.lang = l;
+  })();
+</script>
 </body>
 </html>

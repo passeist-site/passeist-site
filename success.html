@@ -4,89 +4,100 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>Commande confirmée — Passéist</title>
+<meta name="theme-color" content="#1C2230">
+<title>Commande confirmée · passéist</title>
+<link rel="icon" type="image/png" href="/img/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+  /* Même langage que le site : bleu nuit, crème, cartes vitrées, coins arrondis */
+  :root { --bg: #1C2230; --ink: #f4f1ec; --dim: #d6d2cc; --mute: #a8a6a1; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, "Inter", BlinkMacSystemFont, sans-serif;
-    background: #f5f3ee;
-    color: #1a1a1a;
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+    min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
   }
+  .logo { font-size: 30px; font-weight: 300; letter-spacing: -0.03em; color: var(--ink); text-decoration: none; margin-bottom: 26px; }
+  .logo span { color: #5a7593; }
   .card {
-    max-width: 520px;
-    width: 100%;
-    text-align: center;
-    padding: 50px 40px;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.06);
+    width: 100%; max-width: 460px; text-align: center; padding: 30px 24px 24px; border-radius: 12px;
+    background: linear-gradient(160deg, rgba(40,48,66,0.9), rgba(28,34,48,0.8));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 0 0 1px rgba(244,241,236,0.07), 0 18px 40px -16px rgba(0,0,0,0.7);
   }
-  .check {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    margin: 0 auto 24px;
-  }
-  h1 {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin: 0 0 12px;
-  }
-  p {
-    font-size: 14px;
-    color: #555;
-    line-height: 1.6;
-    margin: 12px 0;
-  }
-  .ref {
-    font-family: "SF Mono", monospace;
-    font-size: 11px;
-    color: #888;
-    margin-top: 24px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(0,0,0,0.06);
-  }
-  .btn {
-    display: inline-block;
-    margin-top: 28px;
-    padding: 12px 28px;
-    background: #1a1a1a;
-    color: #fff;
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: opacity 0.2s;
-  }
-  .btn:hover { opacity: 0.85; }
+  .check { width: 52px; height: 52px; border-radius: 50%; background: #f4f1ec; color: #1C2230; font-size: 24px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  h1 { font-size: 21px; font-weight: 400; letter-spacing: -0.01em; margin-bottom: 12px; }
+  p { font-size: 14px; line-height: 1.6; color: var(--dim); font-weight: 300; margin: 8px 0; }
+  a { color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; margin-top: 20px; min-height: 48px; padding: 0 26px;
+    border-radius: 6px; background: #f4f1ec; color: #1C2230; text-decoration: none; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7); }
+  .ref { font-size: 11px; color: var(--mute); margin-top: 20px; word-break: break-all; }
+  .nl { margin-top: 14px; }
+  .nl h2 { font-size: 17px; font-weight: 400; margin-bottom: 6px; }
+  .nl form { display: flex; gap: 8px; margin-top: 12px; }
+  .nl input { flex: 1; min-width: 0; min-height: 46px; padding: 0 14px; font: inherit; font-size: 16px; border-radius: 6px;
+    border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); outline: none; }
+  .nl button { min-height: 46px; padding: 0 16px; border: none; border-radius: 6px; background: #f4f1ec; color: #1C2230;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+  .nl .legal { font-size: 11px; color: var(--mute); margin-top: 10px; }
+  .nl.sent form, .nl.sent .legal { display: none; }
+  html[lang="en"] [data-fr], html[lang="fr"] [data-en] { display: none !important; }
 </style>
 </head>
 <body>
+<a class="logo" href="/">passéist<span>.</span></a>
 <div class="card">
   <div class="check">✓</div>
-  <h1>Merci pour votre commande</h1>
-  <p>Votre paiement a bien été reçu. Un reçu de paiement vous est envoyé par e-mail.</p>
-  <p>Votre pièce vous sera expédiée sous 2 à 5 jours ouvrés. Vous recevrez un email avec le numéro de suivi dès l'envoi.</p>
-  <p>Pour toute question : <strong>info@passeist.com</strong></p>
-  <a class="btn" href="/">Retour à la boutique</a>
-  <div class="ref" id="ref">Référence de session : —</div>
+  <h1><span data-fr>Merci pour votre commande</span><span data-en>Thank you for your order</span></h1>
+  <p><span data-fr>Votre paiement a bien été reçu. Un reçu vous est envoyé par e-mail.</span><span data-en>Your payment has been received. A receipt is on its way to your inbox.</span></p>
+  <p><span data-fr>Votre pièce est expédiée sous 2 à 5 jours ouvrés, en envoi suivi : vous recevrez le numéro de suivi par e-mail.</span><span data-en>Your piece ships within 2 to 5 business days, tracked: you will receive the tracking number by email.</span></p>
+  <p><span data-fr>Une question : <a href="mailto:info@passeist.com">info@passeist.com</a></span><span data-en>Any question: <a href="mailto:info@passeist.com">info@passeist.com</a></span></p>
+  <a class="btn" href="/shop"><span data-fr>Retour à la boutique</span><span data-en>Back to the shop</span></a>
+  <div class="ref" id="ref"></div>
 </div>
+
+<div class="card nl" id="nl">
+  <h2><span data-fr>Nouvelles pièces</span><span data-en>New pieces</span></h2>
+  <p><span data-fr>Chaque dimanche, une sélection de nos nouveautés de la semaine.</span><span data-en>Every Sunday, a selection of our new arrivals of the week.</span></p>
+  <form id="nl-form">
+    <input type="email" id="nl-email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
+    <button type="submit"><span data-fr>S'inscrire</span><span data-en>Subscribe</span></button>
+  </form>
+  <p class="legal"><span data-fr>Désinscription en un clic dans chaque e-mail. <a href="/privacy">Confidentialité</a></span><span data-en>One-click unsubscribe in every email. <a href="/privacy">Privacy</a></span></p>
+  <p id="nl-done" hidden><span data-fr>Merci, c'est noté.</span><span data-en>Thank you, you're on the list.</span></p>
+</div>
+
 <script>
-  // Affiche l'ID de session Stripe pour référence
-  const params = new URLSearchParams(window.location.search);
-  const sid = params.get('session_id');
-  if (sid) document.getElementById('ref').textContent = 'Référence Stripe : ' + sid;
+  // Langue : français sur un appareil français, anglais sinon (règle du site)
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem('passeist_lang'); } catch (e) {}
+    if (l !== 'fr' && l !== 'en') l = (navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en';
+    document.documentElement.lang = l;
+  })();
+  // Référence Stripe (utile si le client écrit)
+  var sid = new URLSearchParams(location.search).get('session_id');
+  if (sid) document.getElementById('ref').textContent = 'Réf. ' + sid.slice(-12);
+  try { localStorage.removeItem('passeist_cart'); } catch (e) {}
+  // Déjà inscrit : on ne propose pas
+  try { if (localStorage.getItem('passeist_newsletter') === '1') document.getElementById('nl').hidden = true; } catch (e) {}
+  document.getElementById('nl-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = this.querySelector('button'); btn.disabled = true;
+    fetch('/.netlify/functions/newsletter', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('nl-email').value, lang: document.documentElement.lang })
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      document.getElementById('nl').classList.add('sent');
+      document.getElementById('nl-done').hidden = false;
+      try { localStorage.setItem('passeist_newsletter', '1'); } catch (err) {}
+    }).catch(function () { btn.disabled = false; });
+  });
 </script>
-<script>try { localStorage.removeItem('passeist_cart'); } catch (e) {}</script>
 </body>
 </html>
