@@ -50,6 +50,17 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
 - ombre douce sous les photos (`box-shadow`, choix de Tom, 2026-09-28) :
   elle ne change ni le cadrage ni le rendu de l'image.
 
+## 3 quater. 2e photo sur les cartes des grilles (validé par Tom le 2026-09-29)
+
+- **Au repos**, la carte montre toujours la photo 1 (règle § 3, inchangée).
+- La **photo 2** (index 1, pièces en vente avec au moins 2 photos) est rendue
+  comme dans la fiche (§ 4) : cadre 3:4, `object-fit: cover`, `scale: 1.01`,
+  dans le cadre `.product-img` en `overflow: hidden`.
+- **Ordinateur** (souris) : elle apparaît en fondu au survol.
+- **Téléphone** : on la fait venir en glissant du doigt sur la photo (elle
+  suit le doigt puis se cale), deux petits points indiquent la position ; un
+  toucher ouvre toujours la fiche. Jamais plus de 2 photos sur une carte.
+
 ## 3 bis. Carrousel de l'accueil (`.hero-marquee`)
 
 Même règle que les cartes des grilles :

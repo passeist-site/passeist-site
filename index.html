@@ -2296,6 +2296,33 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
 .nl-modal-x { position: absolute; top: 12px; right: 12px; z-index: 2; }
 @media (min-width: 901px) { .nl-modal { align-items: center; } }
 
+/* REGLE FIGEE par Tom, voir PHOTOS.md (§ 3 quater) : 2e photo sur les cartes.
+   Au repos la carte montre toujours la photo 1 (contain). La photo 2 est
+   rendue comme dans la fiche (cover 3:4 + scale 1.01) : au survol sur
+   ordinateur (fondu), en glissant du doigt sur téléphone (la photo suit le
+   doigt puis se cale). Un toucher ouvre toujours la fiche. */
+.product-img .product-img-secondary {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
+  object-fit: cover; object-position: center; transform-origin: center; scale: 1.01;
+  background: #fff; opacity: 0; pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-dots { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover .product-img-secondary { opacity: 1; }
+}
+@media (hover: none) {
+  .product-img .product-img-secondary { opacity: 1; transform: translateX(100%); transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+  .product-img .product-img-primary { transition: opacity 0.4s var(--ease-out), transform 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+  .product-img.show-2 .product-img-secondary { transform: translateX(0); }
+  .product-img.show-2 .product-img-primary { transform: translateX(-100%); }
+  .product-img { touch-action: pan-y; }
+  .card-dots { display: flex; gap: 5px; position: absolute; left: 50%; bottom: 8px; z-index: 2; transform: translateX(-50%); pointer-events: none; }
+  .card-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(28,34,48,0.22); transition: background 0.3s; }
+  .card-dots i:first-child, .product-img.show-2 .card-dots i:last-child { background: rgba(28,34,48,0.7); }
+  .product-img.show-2 .card-dots i:first-child { background: rgba(28,34,48,0.22); }
+}
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -6833,6 +6860,7 @@ function renderGrid() {
       <div class="product-img loading">
         ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="(max-width: 900px) 50vw, 25vw" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
+        ${(!sold && p.n > 1) ? `<img class="product-img-secondary" src="${imgUrl(p, 1, {size: 'md', exactSize: true})}" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" onerror="this.remove()"><span class="card-dots" aria-hidden="true"><i></i><i></i></span>` : ''}
       </div>
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
@@ -6875,6 +6903,7 @@ function gridMore(n) {
     c.addEventListener('click', (e) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
       e.preventDefault();
+      if (c._swiped) { c._swiped = false; return; }   // c'était un glissé de photo
       openDetail(c.dataset.id);
     });
   }
@@ -9507,6 +9536,52 @@ window.sharePiece = function () {
     el.querySelector('.install-hint-x').onclick = hide;
     el.querySelector('.install-hint-go').onclick = function () { hide(); window.showAppGuide(); };
   }, 25000);
+})();
+</script>
+<!-- ============ CARTES : GLISSER POUR LA 2e PHOTO (TÉLÉPHONE) ============ -->
+<script>
+(function () {
+  var grid = document.getElementById('grid');
+  if (!grid || !window.matchMedia || !matchMedia('(hover: none)').matches) return;
+  var box = null, card = null, x0 = 0, y0 = 0, dx = 0, dir = null, W = 0, base = 0, a = null, b = null;
+  grid.addEventListener('touchstart', function (e) {
+    box = e.target.closest('.product-img');
+    if (!box || e.touches.length !== 1) { box = null; return; }
+    b = box.querySelector('.product-img-secondary');
+    if (!b) { box = null; return; }
+    a = box.querySelector('.product-img-primary');
+    card = box.closest('.product-card');
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = 0; dir = null;
+    W = box.clientWidth; base = box.classList.contains('show-2') ? -W : 0;
+  }, { passive: true });
+  grid.addEventListener('touchmove', function (e) {
+    if (!box) return;
+    var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+    if (!dir) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      dir = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
+      if (dir === 'v') { box = null; return; }
+      a.style.transition = b.style.transition = 'none';
+    }
+    dx = mx;
+    var off = Math.max(-W, Math.min(0, base + dx));
+    // Au-delà des bords : résistance élastique
+    if (base + dx > 0) off = (base + dx) * 0.25;
+    if (base + dx < -W) off = -W + (base + dx + W) * 0.25;
+    a.style.transform = 'translateX(' + off + 'px)';
+    b.style.transform = 'translateX(' + (W + off) + 'px)';
+  }, { passive: true });
+  grid.addEventListener('touchend', function () {
+    if (!box || dir !== 'h') { box = null; return; }
+    var show2 = box.classList.contains('show-2');
+    if (dx < -W * 0.18) show2 = true;
+    else if (dx > W * 0.18) show2 = false;
+    a.style.transition = b.style.transition = '';
+    a.style.transform = b.style.transform = '';
+    box.classList.toggle('show-2', show2);
+    if (card) { card._swiped = true; setTimeout(function (c) { return function () { c._swiped = false; }; }(card), 400); }
+    box = null;
+  });
 })();
 </script>
 <!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->
