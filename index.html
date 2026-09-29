@@ -2224,6 +2224,42 @@ html[lang="fr"] .recent-section .lang-en, html[lang="fr"] .recent-shop .lang-en 
   #detail.detail-sold .photo-share { display: none; }
 }
 
+/* Mode d'emploi « L'app passéist » (iPhone) */
+.app-guide { position: fixed; inset: 0; z-index: 890; display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom)); background: rgba(10,12,18,0.35);
+  opacity: 0; transition: opacity 0.35s ease; }
+.app-guide.show { opacity: 1; }
+.app-guide-card { position: relative; width: 100%; max-width: 420px; padding: 22px 20px 18px; border-radius: 14px; text-align: left;
+  background: linear-gradient(160deg, rgba(40,48,66,0.97), rgba(28,34,48,0.95));
+  -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 0 0 1px rgba(244,241,236,0.08), 0 18px 40px -10px rgba(0,0,0,0.7);
+  font-family: var(--font-sans); color: var(--ink);
+  transform: translateY(30px); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.app-guide.show .app-guide-card { transform: none; }
+.app-guide-x { position: absolute; top: 12px; right: 12px; }
+.app-guide-icon { width: 52px; height: 52px; border-radius: 12px; display: block; margin-bottom: 12px; }
+.app-guide-title { font-size: 19px; letter-spacing: -0.01em; margin-bottom: 6px; }
+.app-guide-lead { font-size: 14px; line-height: 1.55; color: var(--text-dim); font-weight: 300; margin-bottom: 14px; }
+.app-guide-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.app-guide-steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: var(--text-dim);
+  padding: 10px 12px; border-radius: 10px; background: rgba(244,241,236,0.05); }
+.app-guide-steps b { color: var(--ink); font-weight: 600; }
+.app-guide-steps svg { width: 17px; height: 17px; vertical-align: -3px; color: var(--ink); }
+.app-guide-n { flex: 0 0 24px; height: 24px; border-radius: 50%; background: #f4f1ec; color: #1C2230; font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; }
+.mobile-nav-app { background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; }
+.mobile-nav-app[hidden] { display: none; }
+
+.nl-push { margin: 12px auto 0; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px;
+  border-radius: 6px; border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink);
+  font-family: var(--font-sans); font-size: 12.5px; cursor: pointer; }
+.nl-push[hidden] { display: none; }
+.nl-push svg { width: 16px; height: 16px; }
+.chat-push { align-self: flex-start; margin: 2px 0 6px; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 12px;
+  border-radius: 18px; border: 1px solid rgba(244,241,236,0.18); background: rgba(244,241,236,0.06); color: var(--ink);
+  font-family: var(--font-sans); font-size: 12.5px; cursor: pointer; }
+.chat-push svg { width: 15px; height: 15px; }
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -3378,6 +3414,16 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 /* « Filtres + tri » compact : 3/4 de la hauteur au maximum, le haut de
    l'écran reste libre (Tom). Défile à l'intérieur si l'écran est petit. */
 .filter-sheet { max-height: 75vh; max-height: 75dvh; padding: 10px 20px 18px; }
+/* Boutique mobile : le titre (« Tous les articles ») au-dessus du bouton
+   « Filtres + tri », qui reste ensuite accroché sous l'en-tête en défilant (Tom). */
+@media (max-width: 900px) {
+  .shop .main, .archive .main { padding-top: 18px !important; }
+  .shop-header { margin-bottom: 12px !important; }
+  .filter-bar { position: relative !important; top: auto !important; margin: 0 -20px 16px !important; padding: 8px 20px !important; }
+  .filter-bar.pinned { position: fixed !important; top: var(--topbar-h-mobile) !important; left: 0; right: 0; margin: 0 !important; }
+  .filter-bar-spacer { display: none; }
+  .filter-bar.pinned + .filter-bar-spacer { display: block; }
+}
 /* Fermé, le panneau reste caché sous l'écran : on le masque, sinon Safari
    (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). */
 @media (max-width: 900px) {
@@ -3591,6 +3637,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <a data-page="about"><svg class="nav-ink nav-ink--mobile" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true"><rect x="8" y="8" width="384" height="74" filter="url(#ink-rough-j)"/></svg><span>À propos</span></a>
   <div class="mobile-nav-foot">
     <a class="mobile-nav-contact" id="mobile-nav-contact" href="mailto:info@passeist.com">Contact</a>
+    <button class="mobile-nav-contact mobile-nav-app" id="mobile-nav-app" type="button" hidden><span class="lang-fr">L'app</span><span class="lang-en">App</span></button>
     <button class="lang-toggle mobile-nav-lang" id="mobile-nav-lang" type="button" aria-label="Changer la langue / Change language">
       <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
     </button>
@@ -3808,7 +3855,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <details class="legal-item"><summary>Destinataires</summary><div class="legal-body">Prestataire de paiement (Stripe), transporteurs chargés de la livraison, et passeist seule.</div></details>
   <details class="legal-item"><summary>Durée de conservation</summary><div class="legal-body">Les données liées à une commande sont conservées 3 ans à des fins de gestion commerciale et 10 ans pour les documents comptables (obligation légale).</div></details>
   <details class="legal-item"><summary>Cookies</summary><div class="legal-body">Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier), ainsi que des outils de mesure d'audience (Cloudflare Web Analytics, sans cookie ni donnée personnelle) et de mesure d'audience (Google Analytics) soumis à votre consentement via le bandeau affiché lors de votre première visite. Vous pouvez à tout moment refuser ces derniers ; cela n'affecte pas votre navigation ni vos commandes.</div></details>
-  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">Si vous vous inscrivez aux « nouvelles pièces », votre adresse e-mail est utilisée uniquement pour vous envoyer ces e-mails, sur la base de votre consentement. L'envoi est assuré par notre prestataire Brevo (Sendinblue SAS, France), qui ne l'utilise pour rien d'autre. Vous pouvez vous désinscrire à tout moment grâce au lien présent dans chaque e-mail, ou en écrivant à <a href="mailto:info@passeist.com">info@passeist.com</a>. L'adresse est supprimée à la désinscription, ou 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Messagerie du site</summary><div class="legal-body">Lorsque vous nous écrivez via la messagerie du site, nous conservons votre prénom, vos messages et, si vous la donnez, votre adresse e-mail, uniquement pour vous répondre. Ces échanges sont hébergés par Netlify et supprimés sur simple demande, ou au plus tard 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Vos droits</summary><div class="legal-body">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
+  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">Si vous vous inscrivez aux « nouvelles pièces », votre adresse e-mail est utilisée uniquement pour vous envoyer ces e-mails, sur la base de votre consentement. L'envoi est assuré par notre prestataire Brevo (Sendinblue SAS, France), qui ne l'utilise pour rien d'autre. Vous pouvez vous désinscrire à tout moment grâce au lien présent dans chaque e-mail, ou en écrivant à <a href="mailto:info@passeist.com">info@passeist.com</a>. L'adresse est supprimée à la désinscription, ou 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Notifications</summary><div class="legal-body">Si vous les activez, votre navigateur nous transmet une adresse technique d'abonnement (sans nom ni e-mail), utilisée uniquement pour vous prévenir de notre réponse dans la messagerie ou des nouveautés, au plus une fois par semaine. Vous pouvez les couper à tout moment dans les réglages de votre téléphone ou navigateur.</div></details><details class="legal-item"><summary>Messagerie du site</summary><div class="legal-body">Lorsque vous nous écrivez via la messagerie du site, nous conservons votre prénom, vos messages et, si vous la donnez, votre adresse e-mail, uniquement pour vous répondre. Ces échanges sont hébergés par Netlify et supprimés sur simple demande, ou au plus tard 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Vos droits</summary><div class="legal-body">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
   <details class="legal-item"><summary>Sécurité</summary><div class="legal-body">Paiements chiffrés SSL. Les données bancaires sont gérées exclusivement par le prestataire de paiement et ne sont jamais stockées par passeist.</div></details>
 </section>
 
@@ -3822,7 +3869,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <details class="legal-item"><summary>Recipients</summary><div class="legal-body">Payment provider (Stripe), shipping carriers, and passéist alone.</div></details>
   <details class="legal-item"><summary>Retention period</summary><div class="legal-body">Order-related data is retained 3 years for commercial management and 10 years for accounting documents (legal obligation).</div></details>
   <details class="legal-item"><summary>Cookies</summary><div class="legal-body">The site uses strictly necessary cookies (session, cart), as well as audience measurement (Cloudflare Web Analytics, cookie-free and anonymous) and audience measurement (Google Analytics) subject to your consent via the banner shown on your first visit. You may decline these at any time; this does not affect browsing or ordering.</div></details>
-  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">If you subscribe to "new pieces", your email address is used only to send you these emails, based on your consent. Emails are sent by our provider Brevo (Sendinblue SAS, France), which does not use it for anything else. You can unsubscribe at any time with the link in every email, or by writing to <a href="mailto:info@passeist.com">info@passeist.com</a>. Your address is deleted when you unsubscribe, or 3 years after our last exchange.</div></details><details class="legal-item"><summary>Site messaging</summary><div class="legal-body">When you write to us through the site's chat, we keep your first name, your messages and, if you provide it, your email address, only to reply to you. These exchanges are hosted by Netlify and deleted on request, or at the latest 3 years after our last exchange.</div></details><details class="legal-item"><summary>Your rights</summary><div class="legal-body">Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
+  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">If you subscribe to "new pieces", your email address is used only to send you these emails, based on your consent. Emails are sent by our provider Brevo (Sendinblue SAS, France), which does not use it for anything else. You can unsubscribe at any time with the link in every email, or by writing to <a href="mailto:info@passeist.com">info@passeist.com</a>. Your address is deleted when you unsubscribe, or 3 years after our last exchange.</div></details><details class="legal-item"><summary>Notifications</summary><div class="legal-body">If you turn them on, your browser gives us a technical subscription address (no name or email), used only to tell you about our reply in the chat or about new pieces, at most once a week. You can turn them off at any time in your phone or browser settings.</div></details><details class="legal-item"><summary>Site messaging</summary><div class="legal-body">When you write to us through the site's chat, we keep your first name, your messages and, if you provide it, your email address, only to reply to you. These exchanges are hosted by Netlify and deleted on request, or at the latest 3 years after our last exchange.</div></details><details class="legal-item"><summary>Your rights</summary><div class="legal-body">Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
   <details class="legal-item"><summary>Security</summary><div class="legal-body">SSL-encrypted payments. Banking data is handled exclusively by the payment provider and never stored by passéist.</div></details>
 </section>
 
@@ -4246,6 +4293,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <button type="submit"><span class="lang-fr">S'inscrire</span><span class="lang-en">Subscribe</span></button>
     </form>
     <p class="nl-legal"><span class="lang-fr">En vous inscrivant, vous acceptez de recevoir ces e-mails. Désinscription en un clic dans chaque e-mail. <a data-page="privacy">Confidentialité</a></span><span class="lang-en">By subscribing, you agree to receive these emails. One-click unsubscribe in every email. <a data-page="privacy">Privacy</a></span></p>
+    <button type="button" class="nl-push" id="nl-push" hidden onclick="subscribeNewsPush(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="lang-fr">Ou une notification par semaine</span><span class="lang-en">Or one notification a week</span></button>
     <p class="nl-done" hidden><span class="lang-fr">Merci, c'est noté. À très vite.</span><span class="lang-en">Thank you, you're on the list.</span></p>
   </div>
 </section>
@@ -7872,6 +7920,7 @@ document.getElementById('chat-form').addEventListener('submit', e => {
     } catch (err) {}
     if (chatSkipEcho) { chatSkipEcho = false; chatShown.add('client' + d.at); }
     else chatAdd({ from: 'client', text, at: d.at });
+    if (window.offerChatPush) offerChatPush(conv);
   }).catch(() => {
     chatSkipEcho = false;
     ta.value = text;
@@ -9198,10 +9247,64 @@ window.sharePiece = function () {
 </script>
 <!-- ============ AJOUT À L'ÉCRAN D'ACCUEIL ============ -->
 <script>
+// « L'app passéist » : carte d'invitation (mobile, à partir de la 2e visite),
+// entrée dans le menu, et mode d'emploi pas à pas sur iPhone (Tom : il faut
+// que ce soit très clair, ce geste n'est pas encore intuitif).
 (function(){
   var KEY = 'passeist_install_hint', VISITS = 'passeist_visits';
   var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   var mobile = window.matchMedia && matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; updateMenu(); });
+  var en = function () { return document.documentElement.lang === 'en'; };
+  var shareIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>';
+  var plusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+
+  function canInstall() { return !standalone && (ios || !!deferred); }
+  function remember() { try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {} }
+
+  // Mode d'emploi iPhone : 3 étapes illustrées
+  window.showAppGuide = function () {
+    if (!ios && deferred) { deferred.prompt(); remember(); return; }
+    var old = document.getElementById('app-guide'); if (old) old.remove();
+    var E = en();
+    var g = document.createElement('div');
+    g.id = 'app-guide'; g.className = 'app-guide'; g.setAttribute('role', 'dialog');
+    g.innerHTML = '<div class="app-guide-card">' +
+      '<button type="button" class="install-hint-x app-guide-x" aria-label="' + (E ? 'Close' : 'Fermer') + '">✕</button>' +
+      '<img src="/img/favicon-192.png" alt="" class="app-guide-icon">' +
+      '<div class="app-guide-title">' + (E ? 'The passéist app' : 'L\'app passéist') + '</div>' +
+      '<p class="app-guide-lead">' + (E ? 'Add us like an app, right on your phone: one tap on the icon and passéist opens full screen.' : 'Ajoutez-nous comme une app, accessible directement depuis votre téléphone : une touche sur l\'icône et passéist s\'ouvre en plein écran.') + '</p>' +
+      '<ol class="app-guide-steps">' +
+        '<li><span class="app-guide-n">1</span><span>' + (E ? 'Tap <b>Share</b> ' + shareIcon + ' in Safari (on recent iPhones: first the <b>•••</b> or <b>☰</b> button at the bottom of the screen, then Share).' : 'Touchez <b>Partager</b> ' + shareIcon + ' dans Safari (sur les iPhone récents : d\'abord le bouton <b>•••</b> ou <b>☰</b> en bas de l\'écran, puis Partager).') + '</span></li>' +
+        '<li><span class="app-guide-n">2</span><span>' + (E ? 'Scroll and tap <b>Add to Home Screen</b> ' + plusIcon : 'Faites défiler et touchez <b>Sur l\'écran d\'accueil</b> ' + plusIcon) + '</span></li>' +
+        '<li><span class="app-guide-n">3</span><span>' + (E ? 'Tap <b>Add</b>. The passéist icon appears with your apps.' : 'Touchez <b>Ajouter</b>. L\'icône passéist apparaît avec vos applis.') + '</span></li>' +
+      '</ol></div>';
+    document.body.appendChild(g);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { g.classList.add('show'); }); });
+    var close = function () { g.classList.remove('show'); setTimeout(function () { g.remove(); }, 500); };
+    g.querySelector('.app-guide-x').onclick = close;
+    g.addEventListener('click', function (e) { if (e.target === g) close(); });
+    remember();
+    var hint = document.querySelector('.install-hint'); if (hint) hint.remove();
+  };
+
+  // Entrée « L'app passéist » dans le menu (mobile, hors appli installée)
+  function updateMenu() {
+    var b = document.getElementById('mobile-nav-app');
+    if (b) b.hidden = !(mobile && canInstall());
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    updateMenu();
+    var b = document.getElementById('mobile-nav-app');
+    if (b) b.addEventListener('click', function () {
+      var close = document.getElementById('mobile-nav-close'); if (close) close.click();
+      setTimeout(window.showAppGuide, 350);
+    });
+  });
+
+  // Carte d'invitation, à partir de la 2e visite
   if (standalone || !mobile) return;
   var seen = null, visits = 0;
   try {
@@ -9212,38 +9315,130 @@ window.sharePiece = function () {
     } else visits = parseInt(localStorage.getItem(VISITS), 10) || 0;
   } catch (e) { return; }
   if (seen || visits < 2) return;
-  var ua = navigator.userAgent, ios = /iphone|ipad|ipod/i.test(ua);
-  var deferred = null;
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; });
-  function hide(el) {
-    el.classList.remove('show');
-    try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
-    setTimeout(function () { el.remove(); }, 700);
-  }
   setTimeout(function () {
-    if (!ios && !deferred) return;               // Android sans installation possible : rien
+    if (!canInstall()) return;
     var cb = document.getElementById('cookie-banner');
     if (cb && cb.classList.contains('open')) return;
-    if (document.body.classList.contains('detail-open')) return;
-    var en = document.documentElement.lang === 'en';
-    var share = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>';
+    if (document.body.classList.contains('detail-open') || document.getElementById('app-guide')) return;
+    var E = en();
     var el = document.createElement('div');
     el.className = 'install-hint';
     el.setAttribute('role', 'dialog');
     el.innerHTML = '<img src="/img/favicon-192.png" alt="">' +
-      '<div class="install-hint-txt"><strong>' + (en ? 'passéist on your home screen' : 'passéist sur votre écran d\'accueil') + '</strong>' +
-      (ios
-        ? (en ? 'Tap ' + share + ' Share, then “Add to Home Screen”.' : 'Touchez ' + share + ' Partager, puis « Sur l\'écran d\'accueil ».')
-        : (en ? 'Opens full screen, like an app.' : 'S\'ouvre en plein écran, comme une application.')) +
-      '</div>' +
-      (ios ? '' : '<button type="button" class="install-hint-go">' + (en ? 'Add' : 'Ajouter') + '</button>') +
-      '<button type="button" class="install-hint-x" aria-label="' + (en ? 'Close' : 'Fermer') + '">✕</button>';
+      '<div class="install-hint-txt"><strong>' + (E ? 'The passéist app' : 'L\'app passéist') + '</strong>' +
+      (E ? 'Add us like an app, right on your phone.' : 'Ajoutez-nous comme une app, accessible directement depuis votre téléphone.') + '</div>' +
+      '<button type="button" class="install-hint-go">' + (ios ? (E ? 'How?' : 'Comment ?') : (E ? 'Add' : 'Ajouter')) + '</button>' +
+      '<button type="button" class="install-hint-x" aria-label="' + (E ? 'Close' : 'Fermer') + '">✕</button>';
     document.body.appendChild(el);
     requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('show'); }); });
-    el.querySelector('.install-hint-x').onclick = function () { hide(el); };
-    var go = el.querySelector('.install-hint-go');
-    if (go) go.onclick = function () { deferred.prompt(); hide(el); };
+    var hide = function () { el.classList.remove('show'); remember(); setTimeout(function () { el.remove(); }, 700); };
+    el.querySelector('.install-hint-x').onclick = hide;
+    el.querySelector('.install-hint-go').onclick = function () { hide(); window.showAppGuide(); };
   }, 25000);
+})();
+</script>
+<!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->
+<script>
+(function () {
+  var bar = document.querySelector('#shop-page .filter-bar');
+  if (!bar || !window.matchMedia) return;
+  var mq = matchMedia('(max-width: 900px)');
+  var spacer = document.createElement('div');
+  spacer.className = 'filter-bar-spacer';
+  bar.parentNode.insertBefore(spacer, bar.nextSibling);
+  var anchor = document.createElement('div');       // repère : position d'origine de la barre
+  bar.parentNode.insertBefore(anchor, bar);
+  var ticking = false;
+  function update() {
+    ticking = false;
+    if (!mq.matches) { bar.classList.remove('pinned'); return; }
+    var topbar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h-mobile')) || 54;
+    var pin = anchor.getBoundingClientRect().top <= topbar && document.getElementById('shop-page').classList.contains('open');
+    if (pin && !bar.classList.contains('pinned')) {
+      spacer.style.height = bar.offsetHeight + 16 + 'px';
+      bar.classList.add('pinned');
+    } else if (!pin && bar.classList.contains('pinned')) {
+      bar.classList.remove('pinned');
+    }
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+<!-- ============ NOTIFICATIONS CLIENTS ============ -->
+<script>
+// Notifications du site (sw.js) : réponse de passéist dans le chat, et une
+// notification par semaine avec les nouveautés. Toujours à la demande du
+// client ; sur iPhone, seulement depuis l'app installée (règle d'Apple).
+(function () {
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && (!ios || standalone);
+  var en = function () { return document.documentElement.lang === 'en'; };
+  var get = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  var set = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+  function b64(s) {
+    var pad = '='.repeat((4 - s.length % 4) % 4);
+    var raw = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from(raw, function (c) { return c.charCodeAt(0); });
+  }
+  async function subscribe(extra) {
+    if (!supported) throw new Error('unsupported');
+    if (await Notification.requestPermission() !== 'granted') throw new Error('denied');
+    var reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      var key = (await (await fetch('/.netlify/functions/push?action=key')).json()).key;
+      sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
+    }
+    var r = await fetch('/.netlify/functions/push?action=subscribe', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ subscription: sub.toJSON(), lang: en() ? 'en' : 'fr' }, extra))
+    });
+    if (!r.ok) throw new Error('server');
+  }
+  var bell = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
+
+  // Nouveautés de la semaine (bouton de la carte newsletter)
+  window.subscribeNewsPush = function (btn) {
+    btn.disabled = true;
+    subscribe({ news: true }).then(function () {
+      set('passeist_push_news', '1');
+      btn.innerHTML = bell + (en() ? 'Notifications on ✓' : 'Notifications activées ✓');
+    }).catch(function () {
+      btn.disabled = false;
+      btn.innerHTML = bell + (en() ? 'Notifications blocked in your settings' : 'Notifications bloquées dans vos réglages');
+    });
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.getElementById('nl-push');
+    if (b) b.hidden = !supported || get('passeist_push_news') === '1';
+    // Ouvert depuis la notification « passéist vous a répondu »
+    if (/[?&]chat=1\b/.test(location.search)) {
+      setTimeout(function () { if (typeof openChat === 'function') openChat(); }, 400);
+      try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {}
+    }
+  });
+
+  // Chat : après le premier message, proposer d'être prévenu de la réponse
+  window.offerChatPush = function (conv) {
+    if (!supported || get('passeist_push_conv') === conv || document.getElementById('chat-push')) return;
+    var box = document.getElementById('chat-msgs'); if (!box) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.id = 'chat-push'; b.className = 'chat-push';
+    b.innerHTML = bell + (en() ? 'Notify me when passéist replies' : 'Me prévenir de la réponse');
+    b.onclick = function () {
+      b.disabled = true;
+      subscribe({ conv: conv }).then(function () {
+        set('passeist_push_conv', conv);
+        b.innerHTML = bell + (en() ? 'You will be notified ✓' : 'Vous serez prévenu ✓');
+      }).catch(function () { b.remove(); });
+    };
+    box.appendChild(b);
+    box.scrollTop = box.scrollHeight;
+  };
 })();
 </script>
 <!-- ============ NEWSLETTER ============ -->

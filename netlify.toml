@@ -20,3 +20,7 @@
 # Newsletter « nouvelles pièces » : vérification chaque jour à 9 h (heure de Paris, été)
 [functions."newsletter-send"]
   schedule = "0 7 * * *"
+
+# Notification « nouveautés de la semaine » : le vendredi à 18 h (heure de Paris, été)
+[functions."push-weekly"]
+  schedule = "0 16 * * 5"

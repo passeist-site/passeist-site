@@ -17,6 +17,7 @@
 const crypto = require('crypto');
 const webpush = require('web-push');
 const { getStore, connectLambda } = require('@netlify/blobs');
+const clientPush = require('../lib/push');
 
 const MAX_TEXT = 1500;
 const MAX_MESSAGES = 300;
@@ -190,6 +191,17 @@ exports.handler = async (event) => {
       conv.updatedAt = now;
       conv.unread = 0;
       await store.setJSON('conv/' + id, conv);
+      // Le client a demandé à être prévenu de la réponse : notification
+      try {
+        if (clientPush.ready()) {
+          const ps = getStore(clientPush.STORE);
+          const hashes = (await ps.get('byconv/' + id, { type: 'json' })) || [];
+          await Promise.all(hashes.map(h => clientPush.send(ps, h, (rec) => ({
+            title: rec.lang === 'en' ? 'passéist replied' : 'passéist vous a répondu',
+            body: text.slice(0, 140), url: '/?chat=1', tag: 'chat-' + id,
+          }))));
+        }
+      } catch (err) { console.error('push client :', err.message); }
       return json(200, { ok: true, at: now });
     }
 
