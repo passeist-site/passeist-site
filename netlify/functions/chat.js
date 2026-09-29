@@ -57,6 +57,19 @@ function recordFail(ip) {
   if (FAILS.size > 1000) FAILS.clear();
 }
 
+// Messages des visiteurs : au plus 10 par minute et par adresse (anti-spam des
+// notifications du téléphone).
+const SENDS = new Map();
+function sendOk(ip) {
+  const now = Date.now();
+  const list = (SENDS.get(ip) || []).filter(t => t > now - 60 * 1000);
+  if (list.length >= 10) return false;
+  list.push(now);
+  SENDS.set(ip, list);
+  if (SENDS.size > 1000) SENDS.clear();
+  return true;
+}
+
 function clean(s, max) {
   return String(s || '').replace(/\r/g, '').trim().slice(0, max);
 }
@@ -110,6 +123,7 @@ exports.handler = async (event) => {
       const id = String(body.conv || '');
       const text = clean(body.text, MAX_TEXT);
       if (!CONV_RE.test(id) || !text) return json(400, { error: 'invalid' });
+      if (!sendOk(clientIp(event))) return json(429, { error: 'too many messages' });
       const now = Date.now();
       const conv = (await store.get('conv/' + id, { type: 'json' })) || {
         id, createdAt: now, messages: [], name: '', email: '', product: '',

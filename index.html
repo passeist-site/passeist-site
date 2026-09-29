@@ -2547,10 +2547,6 @@ html[lang="fr"] .nl .lang-en { display: none !important; }
   text-transform: uppercase;
   letter-spacing: var(--tracking-narrow);
 }
-.contact-lead {
-  font-size: 13px; color: var(--text-dim);
-  margin-bottom: 24px; line-height: 1.85; font-weight: 300;
-}
 
 /* === Contact : carte vitrée avec le chat (remplace l'ancien formulaire, Tom 2026-09-29) === */
 .contact-card {
@@ -3098,49 +3094,7 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
    comme un coin arrondi qu'on aurait coupé (Tom). */
 .product-price-wrap, .detail-price-wrap { border-radius: 4px; }
 
-/* Fenêtre Contact / Demander un renseignement : même langage que le menu
-   latéral (verre dépoli, liseré de lumière) et encarts à coins arrondis (Tom). */
-#contact-overlay { background: rgba(10,12,18,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-#contact-overlay .checkout-box {
-  background: linear-gradient(160deg, rgba(40,48,66,0.9) 0%, rgba(28,34,48,0.84) 100%);
-  -webkit-backdrop-filter: blur(28px) saturate(130%);
-  backdrop-filter: blur(28px) saturate(130%);
-  border: none; border-radius: 12px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 0 0 1px rgba(244,241,236,0.08), 0 30px 70px rgba(0,0,0,0.6);
-  padding: 26px 26px 24px;
-}
-#contact-overlay .checkout-close {
-  top: 12px; right: 12px; width: 32px; height: 32px; padding: 0;
-  border-radius: 50%; font-size: 12px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(244,241,236,0.08); color: var(--ink);
-}
-#contact-overlay .checkout-close:hover { background: rgba(244,241,236,0.16); }
-#contact-overlay .contact-lead { margin: 8px 0 16px; font-size: 13px; line-height: 1.6; color: var(--text-dim); font-weight: 300; }
-#contact-overlay .checkout-form { gap: 12px; }
-#contact-overlay .checkout-form input,
-#contact-overlay .checkout-form textarea {
-  border-radius: 6px;
-  border: 1px solid rgba(244,241,236,0.16);
-  background: rgba(244,241,236,0.06);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-  padding: 12px 14px; font-size: 14px;
-}
-#contact-overlay .checkout-form input:focus,
-#contact-overlay .checkout-form textarea:focus { border-color: rgba(244,241,236,0.55); background: rgba(244,241,236,0.09); }
-#contact-overlay .checkout-form textarea { min-height: 110px; resize: vertical; }
-#contact-overlay .btn-primary {
-  margin-top: 6px; border-radius: 6px; min-height: 50px;
-  background: #f4f1ec; color: #1C2230; border-color: #f4f1ec;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 24px -8px rgba(0,0,0,0.7);
-}
-#contact-overlay .btn-primary:hover { opacity: 1; background: #ffffff; }
-@media (max-width: 600px) {
-  #contact-overlay { padding: 16px 12px 24px; }
-  #contact-overlay .checkout-box { padding: 22px 18px 20px; margin-top: 8px; }
-}
-
-/* Discussion en direct : même fenêtre en verre dépoli que le contact. */
+/* Discussion en direct : fenêtre en verre dépoli. */
 #chat-overlay { background: rgba(10,12,18,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 #chat-overlay .chat-box {
   display: flex; flex-direction: column;
@@ -3819,7 +3773,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 <!-- Contact -->
 <section class="about lang-fr" id="contact-page">
   <div class="about-eyebrow">Contact</div>
-  <h2 class="about-title">Nous écrire</h2>
+  <h2 class="about-title">Nous contacter</h2>
   <p class="about-body">Une question sur une pièce, une commande ou un essayage&nbsp;? Nous répondons sous <strong>24 à 48&nbsp;heures</strong> en jours ouvrés.</p>
   <div class="contact-card">
     <p class="contact-card-lead">Le plus simple&nbsp;: discutez directement avec nous. Nous vous répondons ici, et par e-mail si vous nous laissez le vôtre.</p>
@@ -4185,25 +4139,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <p class="checkout-ref" id="checkout-ref"></p>
       <button class="btn btn-secondary" onclick="closeCheckout(); goPage('shop');">Continuer la visite</button>
     </div>
-  </div>
-</div>
-
-<!-- CONTACT MODAL -->
-<div class="checkout-overlay" id="contact-overlay">
-  <div class="checkout-box">
-    <button class="checkout-close" onclick="closeContact()">✕</button>
-    <div class="checkout-eyebrow">Renseignement</div>
-    <h2 class="checkout-title">Poser une question</h2>
-    <p class="contact-lead" id="contact-lead"></p>
-    <form class="checkout-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitContact(event)">
-      <input type="hidden" name="form-name" value="contact">
-      <input type="hidden" name="produit" id="contact-produit">
-      <p style="display:none"><label>Ne pas remplir : <input name="bot-field"></label></p>
-      <div class="checkout-row"><label>Nom<input type="text" name="nom" required></label></div>
-      <div class="checkout-row"><label>Email<input type="email" name="email" required></label></div>
-      <div class="checkout-row"><label>Message<textarea name="message" rows="4" required></textarea></label></div>
-      <button type="submit" class="btn btn-primary">Envoyer la demande</button>
-    </form>
   </div>
 </div>
 
@@ -7122,7 +7057,6 @@ document.addEventListener('mousedown', (e) => {
   if (e.target.closest('.cart-btn')) return;
   // Ignore clicks while any overlay on top (checkout/contact) is open
   if (document.getElementById('checkout-overlay').classList.contains('open')) return;
-  if (document.getElementById('contact-overlay') && document.getElementById('contact-overlay').classList.contains('open')) return;
   panel.classList.remove('open');
   const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open');
   cartHistoryPop();
@@ -7646,47 +7580,6 @@ function submitOrder(e) {
     alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com (référence ' + ref + ').');
   });
 }
-// Produit concerné par la demande (null = contact général, depuis le menu)
-let contactProduct = null;
-function openContact(opts) {
-  contactProduct = (opts && opts.general) ? null : currentProduct;
-  document.getElementById('contact-lead').textContent = contactProduct
-    ? 'Une question sur ' + contactProduct.brand + ', ' + contactProduct.type + ' ? Taille, matière, photos supplémentaires : écrivez-nous, nous répondons sous 24 h.'
-    : 'Une question ? Écrivez-nous, nous répondons sous 24 h.';
-  document.getElementById('contact-overlay').classList.add('open');
-}
-function closeContact() { document.getElementById('contact-overlay').classList.remove('open'); }
-function submitContact(e) {
-  e.preventDefault();
-  const form = document.getElementById('contact-form');
-  // Renseigne le produit si la question est posée depuis une fiche
-  const prodEl = document.getElementById('contact-produit');
-  if (prodEl) {
-    prodEl.value = contactProduct
-      ? contactProduct.brand + ', ' + contactProduct.type + ' (' + contactProduct.size + ', ref ' + contactProduct.id + ')'
-      : '';
-  }
-  const btn = form.querySelector('button[type="submit"]');
-  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
-  const fd = new FormData(form);
-  const body = new URLSearchParams();
-  for (const [k, v] of fd.entries()) body.append(k, v);
-  fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString()
-  }).then(r => {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer la demande'; }
-    form.reset();
-    closeContact();
-    alert('Merci, votre demande a bien été envoyée. Nous vous répondons sous 24 h.');
-  }).catch(err => {
-    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer la demande'; }
-    alert('Erreur d\'envoi : ' + err.message + '\n\nÉcrivez-nous directement à info@passeist.com.');
-  });
-}
-
 // ============ TIRER POUR RAFRAÎCHIR (fiche produit, mobile) ============
 (function () {
   const det = document.getElementById('detail'), ind = document.getElementById('ptr');
@@ -7906,7 +7799,6 @@ document.getElementById('d-cart').addEventListener('click', () => { if (currentP
 document.getElementById('d-contact').addEventListener('click', () => openChat());
 // close modals by clicking overlay
 document.getElementById('checkout-overlay').addEventListener('click', e => { if (e.target.id === 'checkout-overlay') closeCheckout(); });
-document.getElementById('contact-overlay').addEventListener('click', e => { if (e.target.id === 'contact-overlay') closeContact(); });
 
 // ============ SWIPE BACK (trackpad / touchpad, left→right) ============
 // Intercept horizontal two-finger swipes and treat a clear L→R swipe as "back":
@@ -7916,7 +7808,6 @@ function handleBack() {
   if (document.getElementById('lightbox').classList.contains('open')) { closeLB(); return true; }
   if (document.getElementById('detail').classList.contains('open')) { closeDetail(); return true; }
   if (document.getElementById('checkout-overlay').classList.contains('open')) { closeCheckout(); return true; }
-  if (document.getElementById('contact-overlay').classList.contains('open')) { closeContact(); return true; }
   if (document.getElementById('cart-panel').classList.contains('open')) { toggleCart(); return true; }
   if (currentPage !== 'home') { goPage('home'); return true; }
   return false;
