@@ -16,3 +16,7 @@
     Referrer-Policy = "no-referrer"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+# Newsletter « nouvelles pièces » : vérification chaque jour à 9 h (heure de Paris, été)
+[functions."newsletter-send"]
+  schedule = "0 7 * * *"

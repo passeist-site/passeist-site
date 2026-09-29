@@ -2147,6 +2147,37 @@ body.detail-open .install-hint { display: none; }
 .page-enter { animation: pageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
 @media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
 
+/* === Newsletter « nouvelles pièces » === */
+.nl { padding: 8px 16px 40px; display: flex; justify-content: center; }
+body[data-page="home"] .nl, body.detail-open .nl { display: none; }
+.nl-card {
+  width: 100%; max-width: 520px; padding: 22px 20px 18px; text-align: center;
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(40,48,66,0.9), rgba(28,34,48,0.8));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 0 0 1px rgba(244,241,236,0.07), 0 18px 40px -16px rgba(0,0,0,0.7);
+  font-family: var(--font-sans);
+}
+.nl-title { font-size: 18px; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 6px; }
+.nl-txt { font-size: 13.5px; line-height: 1.55; color: var(--text-dim); margin-bottom: 14px; font-weight: 300; }
+.nl-form { display: flex; gap: 8px; }
+.nl-form input {
+  flex: 1; min-width: 0; min-height: 46px; padding: 0 14px; font: inherit; font-size: 16px;
+  border-radius: 6px; border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); outline: none;
+}
+.nl-form input:focus { border-color: rgba(244,241,236,0.4); }
+.nl-form button {
+  flex: 0 0 auto; min-height: 46px; padding: 0 18px; border: none; border-radius: 6px; cursor: pointer;
+  background: #f4f1ec; color: #1C2230; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7);
+}
+.nl-form button:disabled { opacity: 0.6; }
+.nl-legal { margin-top: 10px; font-size: 11px; line-height: 1.5; color: var(--text-mute); }
+.nl-legal a { color: var(--text-dim); text-decoration: underline; cursor: pointer; }
+.nl-done { font-size: 14px; color: var(--ink); padding: 10px 0 4px; }
+.nl.sent .nl-form, .nl.sent .nl-legal { display: none; }
+html[lang="en"] .nl .lang-fr { display: none !important; }
+html[lang="fr"] .nl .lang-en { display: none !important; }
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -3194,6 +3225,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 @media (min-width: 601px) {
   #chat-overlay { justify-content: flex-end; padding: 0 24px 24px; }
+  /* Ordinateur : croix dans l'angle haut droit de la fenêtre (Tom) */
+  #chat-overlay .checkout-close { top: 14px; bottom: auto; right: 14px; width: 32px; height: 32px; font-size: 12px; }
+  #chat-overlay .chat-form, #chat-overlay .chat-start { margin-right: 0; }
 }
 
 /* Barre d'achat fixe en bas de la fiche produit, mobile uniquement (Tom) :
@@ -3764,7 +3798,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <details class="legal-item"><summary>Destinataires</summary><div class="legal-body">Prestataire de paiement (Stripe), transporteurs chargés de la livraison, et passeist seule.</div></details>
   <details class="legal-item"><summary>Durée de conservation</summary><div class="legal-body">Les données liées à une commande sont conservées 3 ans à des fins de gestion commerciale et 10 ans pour les documents comptables (obligation légale).</div></details>
   <details class="legal-item"><summary>Cookies</summary><div class="legal-body">Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier), ainsi que des outils de mesure d'audience (Cloudflare Web Analytics, sans cookie ni donnée personnelle) et de mesure d'audience (Google Analytics) soumis à votre consentement via le bandeau affiché lors de votre première visite. Vous pouvez à tout moment refuser ces derniers ; cela n'affecte pas votre navigation ni vos commandes.</div></details>
-  <details class="legal-item"><summary>Vos droits</summary><div class="legal-body">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
+  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">Si vous vous inscrivez aux « nouvelles pièces », votre adresse e-mail est utilisée uniquement pour vous envoyer ces e-mails, sur la base de votre consentement. L'envoi est assuré par notre prestataire Brevo (Sendinblue SAS, France), qui ne l'utilise pour rien d'autre. Vous pouvez vous désinscrire à tout moment grâce au lien présent dans chaque e-mail, ou en écrivant à <a href="mailto:info@passeist.com">info@passeist.com</a>. L'adresse est supprimée à la désinscription, ou 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Messagerie du site</summary><div class="legal-body">Lorsque vous nous écrivez via la messagerie du site, nous conservons votre prénom, vos messages et, si vous la donnez, votre adresse e-mail, uniquement pour vous répondre. Ces échanges sont hébergés par Netlify et supprimés sur simple demande, ou au plus tard 3 ans après notre dernier échange.</div></details><details class="legal-item"><summary>Vos droits</summary><div class="legal-body">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Pour exercer ces droits, écrivez à&nbsp;: <a href="mailto:info@passeist.com">info@passeist.com</a>. Vous pouvez également saisir la CNIL&nbsp;: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
   <details class="legal-item"><summary>Sécurité</summary><div class="legal-body">Paiements chiffrés SSL. Les données bancaires sont gérées exclusivement par le prestataire de paiement et ne sont jamais stockées par passeist.</div></details>
 </section>
 
@@ -3778,7 +3812,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <details class="legal-item"><summary>Recipients</summary><div class="legal-body">Payment provider (Stripe), shipping carriers, and passéist alone.</div></details>
   <details class="legal-item"><summary>Retention period</summary><div class="legal-body">Order-related data is retained 3 years for commercial management and 10 years for accounting documents (legal obligation).</div></details>
   <details class="legal-item"><summary>Cookies</summary><div class="legal-body">The site uses strictly necessary cookies (session, cart), as well as audience measurement (Cloudflare Web Analytics, cookie-free and anonymous) and audience measurement (Google Analytics) subject to your consent via the banner shown on your first visit. You may decline these at any time; this does not affect browsing or ordering.</div></details>
-  <details class="legal-item"><summary>Your rights</summary><div class="legal-body">Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
+  <details class="legal-item"><summary>Newsletter</summary><div class="legal-body">If you subscribe to "new pieces", your email address is used only to send you these emails, based on your consent. Emails are sent by our provider Brevo (Sendinblue SAS, France), which does not use it for anything else. You can unsubscribe at any time with the link in every email, or by writing to <a href="mailto:info@passeist.com">info@passeist.com</a>. Your address is deleted when you unsubscribe, or 3 years after our last exchange.</div></details><details class="legal-item"><summary>Site messaging</summary><div class="legal-body">When you write to us through the site's chat, we keep your first name, your messages and, if you provide it, your email address, only to reply to you. These exchanges are hosted by Netlify and deleted on request, or at the latest 3 years after our last exchange.</div></details><details class="legal-item"><summary>Your rights</summary><div class="legal-body">Under GDPR, you have rights of access, rectification, erasure, restriction and portability. To exercise these rights: <a href="mailto:info@passeist.com">info@passeist.com</a>. You may also contact the CNIL: <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>.</div></details>
   <details class="legal-item"><summary>Security</summary><div class="legal-body">SSL-encrypted payments. Banking data is handled exclusively by the payment provider and never stored by passéist.</div></details>
 </section>
 
@@ -4202,6 +4236,20 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 </div>
 
 <div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 28 28"><line x1="14" y1="3" x2="14" y2="8" transform="rotate(0 14 14)" style="stroke-opacity:1.0"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(30 14 14)" style="stroke-opacity:0.93"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(60 14 14)" style="stroke-opacity:0.86"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(90 14 14)" style="stroke-opacity:0.79"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(120 14 14)" style="stroke-opacity:0.72"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(150 14 14)" style="stroke-opacity:0.65"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(180 14 14)" style="stroke-opacity:0.58"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(210 14 14)" style="stroke-opacity:0.51"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(240 14 14)" style="stroke-opacity:0.44"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(270 14 14)" style="stroke-opacity:0.37"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(300 14 14)" style="stroke-opacity:0.3"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(330 14 14)" style="stroke-opacity:0.23"/></svg></div>
+
+<!-- Newsletter « nouvelles pièces » (toutes les pages sauf l'accueil) -->
+<section class="nl" id="newsletter" aria-label="Newsletter">
+  <div class="nl-card">
+    <div class="nl-title"><span class="lang-fr">Nouvelles pièces</span><span class="lang-en">New pieces</span></div>
+    <p class="nl-txt"><span class="lang-fr">Un e-mail à chaque arrivage de 20 nouvelles pièces, classées par maison. Rien d'autre.</span><span class="lang-en">One email for every 20 new pieces, sorted by designer. Nothing else.</span></p>
+    <form class="nl-form" onsubmit="subscribeNewsletter(event)">
+      <input type="email" name="email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
+      <button type="submit"><span class="lang-fr">S'inscrire</span><span class="lang-en">Subscribe</span></button>
+    </form>
+    <p class="nl-legal"><span class="lang-fr">En vous inscrivant, vous acceptez de recevoir ces e-mails. Désinscription en un clic dans chaque e-mail. <a data-page="privacy">Confidentialité</a></span><span class="lang-en">By subscribing, you agree to receive these emails. One-click unsubscribe in every email. <a data-page="privacy">Privacy</a></span></p>
+    <p class="nl-done" hidden><span class="lang-fr">Merci, c'est noté. À très vite.</span><span class="lang-en">Thank you, you're on the list.</span></p>
+  </div>
+</section>
 
 <footer class="footer">
   <div>© passeist. Curation mode d'auteur japonaise · Paris 2026</div>
@@ -8341,7 +8389,7 @@ window.startSimilarMarqueeLoop = function() {
 
 // ============ FOOTER NAV (pages légales) ============
 (function(){
-  document.querySelectorAll('.footer-nav a[data-page]').forEach(a => {
+  document.querySelectorAll('.footer-nav a[data-page], .nl-legal a[data-page]').forEach(a => {
     a.addEventListener('click', (e) => { e.preventDefault(); goPage(a.dataset.page); });
   });
 })();
@@ -9063,6 +9111,29 @@ document.addEventListener('DOMContentLoaded', function(){
     if (go) go.onclick = function () { deferred.prompt(); hide(el); };
   }, 25000);
 })();
+</script>
+<!-- ============ NEWSLETTER ============ -->
+<script>
+window.subscribeNewsletter = function (e) {
+  e.preventDefault();
+  var form = e.target, box = document.getElementById('newsletter');
+  var btn = form.querySelector('button'), input = form.querySelector('input');
+  btn.disabled = true;
+  fetch('/.netlify/functions/newsletter', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: input.value, lang: document.documentElement.lang === 'en' ? 'en' : 'fr' })
+  }).then(function (r) {
+    if (!r.ok) throw new Error(r.status);
+    box.classList.add('sent');
+    box.querySelector('.nl-done').hidden = false;
+    try { localStorage.setItem('passeist_newsletter', '1'); } catch (err) {}
+  }).catch(function () {
+    btn.disabled = false;
+    input.setCustomValidity(document.documentElement.lang === 'en' ? 'Please check this address.' : 'Vérifiez cette adresse.');
+    input.reportValidity();
+    setTimeout(function () { input.setCustomValidity(''); }, 2500);
+  });
+};
 </script>
 <!-- ============ I18N FR/EN ============ -->
 <script>
