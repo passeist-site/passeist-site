@@ -6836,7 +6836,8 @@ function renderGrid() {
   const keep = (prev && prev.key === gridKey && activeSort !== 'random') ? prev.shown : 0;
   window.__grid = { list: filtered, shown: 0, html: cardHtml, key: gridKey };
   grid.innerHTML = '';
-  gridMore(Math.max(GRID_BATCH, keep));
+  // Favoris : tout d'un coup, on défile toute sa sélection sans « Voir plus » (Tom)
+  gridMore(activeView === 'favorites' ? Math.max(filtered.length, 1) : Math.max(GRID_BATCH, keep));
   gridWatch();
 }
 
