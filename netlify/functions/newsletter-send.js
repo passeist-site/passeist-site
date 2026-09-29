@@ -57,7 +57,7 @@ async function groupsFor(ids) {
 
 function buildHtml(lang, groups, total, featured) {
   const en = lang === 'en';
-  const head = en ? 'The Sunday selection' : 'La sélection du dimanche';
+  const head = en ? 'This week at passéist' : 'Cette semaine chez passéist';
   const intro = en
     ? 'A selection of our new arrivals this week. Each piece is unique.'
     : 'Une sélection de nos nouveautés de la semaine. Chaque pièce est unique.';
@@ -175,13 +175,13 @@ exports.handler = async (event) => {
   const top = groups.slice(0, 3).map(g => title(g.brand)).join(', ');
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
-    subject: `La sélection du dimanche · ${top}…`,
+    subject: `Cette semaine chez passéist · ${top}…`,
     html: buildHtml('fr', groups, fresh.length, featured),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
-      subject: `The Sunday selection · ${top}…`,
+      subject: `This week at passéist · ${top}…`,
       html: buildHtml('en', groups, fresh.length, featured),
     });
   }
