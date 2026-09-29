@@ -37,8 +37,8 @@ function buildHtml({ en, firstName, items, shipping, total, address, ref, date }
       ? 'Your order is confirmed. We are preparing your piece with care: it will ship within 2 to 5 business days, tracked, and you will receive the tracking number by email.'
       : 'Votre commande est confirmée. Nous préparons votre pièce avec soin : elle partira sous 2 à 5 jours ouvrés, en envoi suivi, et vous recevrez le numéro de suivi par e-mail.'}</div>
     <div style="font-size:13px;line-height:1.6;color:#a8a6a1;margin-top:10px;">${en
-      ? 'Our pieces are one of a kind and also offered elsewhere: should yours no longer be available, we would refund you the same day and offer you 10% off your next order.'
-      : 'Nos pièces étant uniques et proposées sur plusieurs plateformes, si la vôtre venait à ne plus être disponible, nous vous rembourserions dans la journée et vous offririons 10 % sur votre prochaine commande.'}</div>
+      ? 'Each piece is one of a kind. Should yours no longer be available, we would refund you the same day, with 10% off your next order.'
+      : 'Chaque pièce est unique. Si la vôtre n\'était finalement plus disponible, nous vous rembourserions le jour même, avec 10 % offerts sur votre prochaine commande.'}</div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;border-top:1px solid rgba(244,241,236,0.12);">${rows}</table>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid rgba(244,241,236,0.12);font-size:13px;color:#d6d2cc;">
       <tr><td style="padding:10px 0 2px;">${en ? 'Shipping' : 'Livraison'}</td><td align="right" style="padding:10px 0 2px;">${money(shipping, en)}</td></tr>
