@@ -57,10 +57,10 @@ async function groupsFor(ids) {
 
 function buildHtml(lang, groups, total, featured) {
   const en = lang === 'en';
-  const head = en ? `${total} new pieces this week` : `${total} nouvelles pièces cette semaine`;
+  const head = en ? 'The Sunday selection' : 'La sélection du dimanche';
   const intro = en
-    ? 'Arrived at passéist this week, presented by designer. Each piece is unique.'
-    : 'Arrivées cette semaine chez passéist, présentées par maison. Chaque pièce est unique.';
+    ? 'A selection of our new arrivals this week, presented by designer. Each piece is unique.'
+    : 'Une sélection de nos nouveautés de la semaine, présentées par maison. Chaque pièce est unique.';
   const cta = en ? 'See all new pieces' : 'Voir toutes les nouveautés';
   const why = en
     ? 'You receive this email because you subscribed to new pieces on passeist.com.'
@@ -77,7 +77,7 @@ function buildHtml(lang, groups, total, featured) {
         </a>
       </td></tr>`).join('');
   const pickBlock = pick ? `
-      <tr><td style="padding:30px 8px 6px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f4f1ec;font-weight:600;">${en ? 'Our pick' : 'La sélection'}</td></tr>
+      <tr><td style="padding:30px 8px 6px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f4f1ec;font-weight:600;">${en ? 'Our favourites' : 'Nos coups de cœur'}</td></tr>
       ${pick}` : '';
 
   const sections = groups.map(({ brand, items }) => {
@@ -175,13 +175,13 @@ exports.handler = async (event) => {
   const top = groups.slice(0, 3).map(g => title(g.brand)).join(', ');
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
-    subject: `Les nouveautés du dimanche · ${top}…`,
+    subject: `La sélection du dimanche · ${top}…`,
     html: buildHtml('fr', groups, fresh.length, featured),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
-      subject: `Sunday new arrivals · ${top}…`,
+      subject: `The Sunday selection · ${top}…`,
       html: buildHtml('en', groups, fresh.length, featured),
     });
   }
