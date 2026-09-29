@@ -130,6 +130,9 @@ desktop :
     (8 px mobile), marque → nom 6 px (4 px), nom → trait 8 px (4 px), trait →
     ligne taille 6 px (4 px), sans `min-height` : la ligne taille · genre est
     collée sous le trait.
+  - ligne « édition » (ligne de la maison + saison, ex. « Homme Plus · AH 2003 »,
+    lue dans la description au build) sous le nom, en petit italique, quand
+    elle existe (validé par Tom le 2026-09-29).
 
 ## 7. Pour les imports
 

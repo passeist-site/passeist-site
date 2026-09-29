@@ -2323,6 +2323,13 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
   .product-img.show-2 .card-dots i:first-child { background: rgba(28,34,48,0.22); }
 }
 
+/* Ligne + saison (« Homme Plus · AH 2003 ») : cartes et fiche (Tom) */
+.product-edition { font-family: var(--font-sans); font-size: 11.5px; font-style: italic; color: var(--text-mute); margin: -2px 0 6px; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.detail-edition { font-family: var(--font-sans); font-size: 13px; font-style: italic; color: var(--text-mute); margin: 6px 0 18px; }
+.detail-edition:empty { display: none; }
+@media (max-width: 900px) { .detail-info > .detail-edition { grid-column: 1; grid-row: 3; margin-top: -22px; } }
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -4021,6 +4028,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="detail-info">
       <div class="detail-brand" id="d-brand"></div>
       <h1 class="detail-name" id="d-name"></h1>
+      <div class="detail-edition" id="d-edition"></div>
       <div class="detail-price-row" id="d-price-row">
         <div class="detail-price-wrap" id="d-price-wrap">
           <svg class="nav-ink nav-ink--price-detail" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="68" filter="url(#ink-rough-h)"/></svg>
@@ -6869,6 +6877,7 @@ function renderGrid() {
           <div class="product-name">${(window.tType ? window.tType(p) : p.type)}</div>
           ${sold ? '' : `<button class="fav-btn fav-btn--card ${fav ? 'is-fav' : ''}" data-id="${p.id}" onclick="toggleFavorite('${p.id}', event)" aria-label="${fav ? 'Retirer des favoris' : 'Ajouter aux favoris'}"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg></button>`}
         </div>
+        ${(window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition) ? `<div class="product-edition">${window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition}</div>` : ''}
         <div class="product-meta">
           <div class="product-size">${sizeLine}</div>
         </div>
@@ -6979,6 +6988,9 @@ function openDetail(id) {
   detailEl.classList.toggle('detail-sold', sold);
   document.getElementById('d-brand').textContent = p.brand;
   document.getElementById('d-name').textContent = (window.tType ? window.tType(p) : p.type);
+  // Ligne + saison lues dans la description (« Homme Plus · AH 2003 »), cf. plugin
+  const edEl = document.getElementById('d-edition');
+  if (edEl) edEl.textContent = (window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition) || '';
   const priceEl = document.getElementById('d-price');
   priceEl.textContent = sold ? '' : (p.price + ' €');
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';

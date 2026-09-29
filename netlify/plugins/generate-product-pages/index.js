@@ -154,19 +154,35 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
 
 function seasonYear(desc) {
   if (!desc) return null;
-  const text = desc.replace(/\s+/g, ' ');
+  const text = desc.normalize('NFC').replace(/\s+/g, ' ');
 
   const seasons = [
     { re: /\b(?:automne[\s\-]*hiver|fall[\s\-]*winter)\b/i,           fr: 'Automne-Hiver', en: 'Fall-Winter' },
-    { re: /\b(?:printemps[\s\-]*[eé]t[eé]|spring[\s\-]*summer)\b/i,  fr: 'Printemps-Été', en: 'Spring-Summer' },
+    { re: /(?:printemps[\s\-]*[eé]t[eé]|spring[\s\-]*summer)(?![a-zà-ÿ])/i,  fr: 'Printemps-Été', en: 'Spring-Summer' },
     { re: /\bautomne\b/i,    fr: 'Automne',  en: 'Fall'   },
     { re: /\bhiver\b/i,      fr: 'Hiver',    en: 'Winter' },
     { re: /\bprintemps\b/i,  fr: 'Printemps',en: 'Spring' },
-    { re: /\b[eé]t[eé]\b/i, fr: 'Été',      en: 'Summer' },
+    { re: /(?<![a-zà-ÿ])[eé]t[eé](?![a-zà-ÿ])/i, fr: 'Été', en: 'Summer' },
   ];
 
-  const yearMatch = text.match(/\b(19[6-9]\d|20[0-2]\d)\b/);
-  if (!yearMatch) return null;
+  // Première année qui date la pièce : on ignore l'historique de la marque
+  // (« créée en 1981 », « appelée en 1983 », « depuis 1972 »…). « Années 2000 »
+  // ou « années 90 » donnent une décennie.
+  const HIST = /(cr[ée]{2}e?|fond[ée]e?|appel[ée]e?|lanc[ée]e?|\bn[ée]e?\b|depuis|devenu|rebaptis|marque|sponsor|tour d)/i;
+  let yearMatch = null;
+  for (const m of text.matchAll(/\b(19[6-9]\d|20[0-2]\d)\b/g)) {
+    const before = text.slice(Math.max(0, m.index - 45), m.index);
+    if (/ann[ée]es\s+$/i.test(before)) {
+      const dec = m[1].startsWith('19') ? m[1].slice(2) : m[1];
+      return { fr: 'Années ' + dec, en: (m[1].startsWith('19') ? m[1].slice(2) : m[1]) + 's' };
+    }
+    if (HIST.test(before)) continue;
+    yearMatch = m; break;
+  }
+  if (!yearMatch) {
+    const d = text.match(/ann[ée]es\s+(\d0)\b/i);
+    return d ? { fr: 'Années ' + d[1], en: d[1] + 's' } : null;
+  }
   const year = yearMatch[1];
 
   const pos = yearMatch.index;
@@ -175,6 +191,45 @@ function seasonYear(desc) {
     if (s.re.test(win)) return { fr: s.fr + ' ' + year, en: s.en + ' ' + year };
   }
   return { fr: year, en: year };
+}
+
+
+// ── Ligne de la maison (Homme Plus, Y's, Pleats Please…) lue dans la
+//    description, et « édition » courte ligne + saison pour les cartes, la
+//    fiche et les titres Google (comme les boutiques d'archive, Tom) ───────
+const LINES = {
+  'COMME DES GARÇONS': [
+    [/homme plus/, 'Homme Plus'], [/homme deux/, 'Homme Deux'], [/robe de chambre/, 'Robe de Chambre'],
+    [/\btricot\b/, 'Tricot'], [/comme comme/, 'Comme Comme'], [/(?:cdg|comme des gar[çc]ons|collection) shirt\b/, 'Shirt'],
+    [/(?:comme des gar[çc]ons|collection) noir\b/, 'Noir'], [/black comme/, 'Black'],
+    [/(?:comme des gar[çc]ons|collection) homme\b(?! plus| deux)/, 'Homme'],
+  ],
+  'YOHJI YAMAMOTO': [
+    [/y['’]s for men/, "Y's for men"], [/ground y\b/, 'Ground Y'], [/pour homme/, 'Pour Homme'],
+    [/\by['’]s\b/, "Y's"], [/\bregulation\b/, 'Regulation'], [/\by-3\b/, 'Y-3'],
+  ],
+  'ISSEY MIYAKE': [
+    [/pleats please/, 'Pleats Please'], [/homme pliss[ée]/, 'Homme Plissé'], [/\bhaat\b/, 'HaaT'],
+    [/a-?poc/, 'A-POC'], [/bao ?bao/, 'Bao Bao'], [/\bf[êe]te\b/, 'Fête'],
+    [/(?:issey miyake|collection) men\b/, 'Men'], [/(?:\bme issey miyake|collection me\b)/, 'me'],
+  ],
+  'JUNYA WATANABE': [[/junya watanabe man|collection man\b/, 'Man'], [/\beye\b/, 'eYe']],
+};
+function lineOf(p) {
+  const rules = LINES[String(p.brand || '').toUpperCase()];
+  if (!rules) return '';
+  const d = String(p.desc || '').toLowerCase();
+  for (const [re, label] of rules) if (re.test(d)) return label;
+  return '';
+}
+function shortSeason(sy, en) {
+  if (!sy) return '';
+  const t = en ? sy.en : sy.fr;
+  return t.replace(/^Automne-Hiver /, 'AH ').replace(/^Printemps-Été /, 'PE ')
+          .replace(/^Fall-Winter /, 'FW ').replace(/^Spring-Summer /, 'SS ');
+}
+function editionOf(p, en) {
+  return [lineOf(p), shortSeason(seasonYear(p.desc || ''), en)].filter(Boolean).join(' · ');
 }
 
 // ── French → English translation tables ───────────────────────────────────
@@ -395,7 +450,8 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     if (mat)    parts.push(mat);
     if (gender) parts.push(gender);
     if (sy)     parts.push(sy.fr);
-    const title = xmlesc(p.brand + ' — ' + parts.join(' '));
+    const lineF = lineOf(p);
+    const title = xmlesc(p.brand + (lineF ? ' ' + lineF : '') + ' — ' + parts.join(' '));
 
     const desc        = xmlesc((p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) || title);
     const price       = (parseFloat(p.price) || 0).toFixed(2) + ' EUR';
@@ -601,7 +657,8 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   if (sy)       partsFR.push(sy.fr);
   // Titre : les mots que les gens tapent (marque lisible + type + vintage)
   const brandTC = titleCaseBrand(p.brand);
-  const title = brandTC + ' ' + p.type + ' vintage' + (sy ? ' ' + sy.fr : '') + ' · passéist';
+  const line  = lineOf(p);
+  const title = brandTC + (line ? ' ' + line : '') + ' ' + p.type + ' vintage' + (sy ? ' ' + sy.fr : '') + ' · passéist';
 
   // English og:title: BRAND — Material Type Gender Fall-Winter 2003 — passéist
   // Use p.type_en if available (already translated), else fall back to dictionary
@@ -611,7 +668,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const partsEN    = matEN ? [matEN, baseTypeEN] : [baseTypeEN];
   if (genderEN) partsEN.push(genderEN);
   if (sy)       partsEN.push(sy.en);
-  const titleEN = brandTC + ' vintage ' + baseTypeEN + (matEN ? ' in ' + matEN.toLowerCase() : '') + (sy ? ' ' + sy.en : '') + ' · passéist';
+  const titleEN = brandTC + (line ? ' ' + line : '') + ' vintage ' + baseTypeEN + (matEN ? ' in ' + matEN.toLowerCase() : '') + (sy ? ' ' + sy.en : '') + ' · passéist';
 
   // Meta description: brand at top, then raw description text
   const descRaw  = (p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -627,7 +684,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const jsonld = JSON.stringify({
     '@context': 'https://schema.org',
     '@type':    'Product',
-    name:       p.brand + ' — ' + p.type,
+    name:       p.brand + (line ? ' ' + line : '') + ' — ' + p.type,
     brand:      { '@type': 'Brand', name: p.brand },
     image:      imgAbs ? [imgAbs] : undefined,
     description: descLong,
@@ -807,6 +864,7 @@ module.exports = {
 
     // ── Phrase unique par pièce (FR/EN), ajoutée au catalogue ─────────
     products.forEach(p => { const it = buildIntro(p); p.intro = it.fr; p.intro_en = it.en; });
+    products.forEach(p => { const e = editionOf(p, false); if (e) { p.edition = e; p.edition_en = editionOf(p, true); } });
 
     // ── Catalogue externalisé : les 1 300 produits (1,6 Mo) sortent des
     //    pages HTML dans un fichier JS versionné, téléchargé une seule fois
