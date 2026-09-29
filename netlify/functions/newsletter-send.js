@@ -95,7 +95,7 @@ function buildHtml(lang, groups, total, featured) {
 
   const rest = [];
   groups.forEach(g => g.items.forEach(it => rest.push(it)));
-  const shown = rest.slice(0, Math.max(0, 8 - Math.min(3, (featured || []).length)));
+  const shown = rest.slice(0, Math.max(0, 15 - Math.min(3, (featured || []).length)));   // 15 pièces au plus (Tom)
   const rows = [];
   for (let i = 0; i < shown.length; i += 2) {
     const cell = (p) => p ? `<td width="50%" valign="top" align="center" style="padding:0 14px 60px;">
