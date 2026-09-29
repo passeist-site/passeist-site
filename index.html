@@ -51,6 +51,12 @@ gtag('config', 'G-J3DSYD6B68'); // ancienne propriété, gardée pour l'historiq
 <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/img/favicon-512.png">
 <link rel="apple-touch-icon" sizes="192x192" href="/img/favicon-192.png">
+<!-- Installation sur l'écran d'accueil (plein écran, comme une application) -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1C2230">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="passéist">
 <!-- Structured data : Store + Organization (pour Knowledge Panel logo Google) -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"passéist","alternateName":["passeist","passeiste","passéiste"],"description":"Curation de mode d'auteur japonaise vintage","url":"https://passeist.com","logo":"https://passeist.com/img/favicon-512.png","image":"https://passeist.com/og.jpg","telephone":"","email":"info@passeist.com","address":{"@type":"PostalAddress","addressLocality":"Paris","addressRegion":"Île-de-France","postalCode":"75011","addressCountry":"FR"},"priceRange":"€€€","sameAs":["https://www.instagram.com/passeist_paris/"]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2107,6 +2113,39 @@ html[lang="fr"] .mobile-nav .lang-en { display: none !important; }
 .legal-body { padding: 0 16px 16px; font-size: 14px; line-height: 1.7; color: var(--text-dim); font-weight: 300; }
 .legal-body a { color: var(--ink); }
 #cgv-page .about-title, #cgv-page-en .about-title, #privacy-page .about-title, #privacy-page-en .about-title { margin-bottom: 22px; }
+
+/* Carte « Ajouter à l'écran d'accueil » (mobile, à partir de la 2e visite) */
+.install-hint {
+  position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 880; max-width: 420px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 12px 12px 14px; border-radius: 12px;
+  background: linear-gradient(160deg, rgba(40,48,66,0.94), rgba(28,34,48,0.9));
+  -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 0 0 1px rgba(244,241,236,0.08), 0 18px 40px -10px rgba(0,0,0,0.7);
+  font-family: var(--font-sans); color: var(--ink);
+  transform: translateY(24px); opacity: 0; pointer-events: none;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+.install-hint.show { transform: none; opacity: 1; pointer-events: auto; }
+.install-hint img { width: 40px; height: 40px; border-radius: 9px; flex: 0 0 auto; }
+.install-hint-txt { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.45; color: var(--text-dim); }
+.install-hint-txt strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 1px; }
+.install-hint-txt svg { width: 14px; height: 14px; vertical-align: -2px; }
+.install-hint-go {
+  flex: 0 0 auto; min-height: 36px; padding: 0 14px; border: none; border-radius: 6px; cursor: pointer;
+  background: #f4f1ec; color: #1C2230; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.install-hint-x {
+  flex: 0 0 auto; width: 30px; height: 30px; border: none; border-radius: 50%; cursor: pointer;
+  background: rgba(244,241,236,0.08); color: var(--ink); font-size: 12px;
+}
+body.detail-open .install-hint { display: none; }
+
+/* Transition douce à l'arrivée sur une page (goPage) */
+@keyframes pageEnter { from { opacity: 0; } to { opacity: 1; } }
+.page-enter { animation: pageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
 
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
@@ -8669,12 +8708,29 @@ window.updateSEO = function(p) {
   // Décore goPage pour pousser un state + reset SEO
   // Important : si une fiche produit est ouverte, on la ferme d'abord,
   // sinon l'overlay masque la page cible.
+  // Transition douce entre les pages (fondu + léger glissé), comme une application
+  const PAGE_IDS = { home: ['home-page'], shop: ['shop-page'], archive: ['shop-page'], favorites: ['shop-page'],
+    about: ['about-page', 'about-page-en'], cgv: ['cgv-page', 'cgv-page-en'], privacy: ['privacy-page', 'privacy-page-en'],
+    contact: ['contact-page', 'contact-page-en'] };
+  function pageEnter(p) {
+    (PAGE_IDS[p] || []).forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('page-enter'); void el.offsetWidth; el.classList.add('page-enter');
+      // Retirée à la fin : une animation de transform laissée active casserait
+      // les éléments fixes de la page (panneau des filtres).
+      el.addEventListener('animationend', () => el.classList.remove('page-enter'), { once: true });
+    });
+  }
+  window.__pageEnter = pageEnter;
   window.goPage = function(p, fromHistory) {
     const det = document.getElementById('detail');
     if (det && det.classList.contains('open') && _cd) {
       _cd.call(window);
     }
+    const changed = document.body.dataset.page !== p;
     _gp.call(window, p);
+    if (changed) pageEnter(p);
     document.body.dataset.page = p;
     updateSEO(null);
     if (!fromHistory) {
@@ -8765,7 +8821,9 @@ window.updateSEO = function(p) {
       const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
       const legacyHash = location.hash.replace(/^#/, '').split('/')[0];
       const p = (s && s.p) || (path && !path.startsWith('product/') ? path.split('/')[0] : null) || legacyHash || 'home';
+      const changed = document.body.dataset.page !== p;
       _gp.call(window, p);
+      if (changed) pageEnter(p);
       document.body.dataset.page = p;
       updateSEO(null);
       // Retour navigateur depuis une fiche ouverte via le carrousel d'accueil
@@ -8954,6 +9012,56 @@ document.addEventListener('DOMContentLoaded', function(){
       hideBanner();
     });
   });
+})();
+</script>
+<!-- ============ AJOUT À L'ÉCRAN D'ACCUEIL ============ -->
+<script>
+(function(){
+  var KEY = 'passeist_install_hint', VISITS = 'passeist_visits';
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var mobile = window.matchMedia && matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
+  if (standalone || !mobile) return;
+  var seen = null, visits = 0;
+  try {
+    seen = localStorage.getItem(KEY);
+    if (!sessionStorage.getItem(VISITS)) {
+      visits = (parseInt(localStorage.getItem(VISITS), 10) || 0) + 1;
+      localStorage.setItem(VISITS, String(visits)); sessionStorage.setItem(VISITS, '1');
+    } else visits = parseInt(localStorage.getItem(VISITS), 10) || 0;
+  } catch (e) { return; }
+  if (seen || visits < 2) return;
+  var ua = navigator.userAgent, ios = /iphone|ipad|ipod/i.test(ua);
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; });
+  function hide(el) {
+    el.classList.remove('show');
+    try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+    setTimeout(function () { el.remove(); }, 700);
+  }
+  setTimeout(function () {
+    if (!ios && !deferred) return;               // Android sans installation possible : rien
+    var cb = document.getElementById('cookie-banner');
+    if (cb && cb.classList.contains('open')) return;
+    if (document.body.classList.contains('detail-open')) return;
+    var en = document.documentElement.lang === 'en';
+    var share = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>';
+    var el = document.createElement('div');
+    el.className = 'install-hint';
+    el.setAttribute('role', 'dialog');
+    el.innerHTML = '<img src="/img/favicon-192.png" alt="">' +
+      '<div class="install-hint-txt"><strong>' + (en ? 'passéist on your home screen' : 'passéist sur votre écran d\'accueil') + '</strong>' +
+      (ios
+        ? (en ? 'Tap ' + share + ' Share, then “Add to Home Screen”.' : 'Touchez ' + share + ' Partager, puis « Sur l\'écran d\'accueil ».')
+        : (en ? 'Opens full screen, like an app.' : 'S\'ouvre en plein écran, comme une application.')) +
+      '</div>' +
+      (ios ? '' : '<button type="button" class="install-hint-go">' + (en ? 'Add' : 'Ajouter') + '</button>') +
+      '<button type="button" class="install-hint-x" aria-label="' + (en ? 'Close' : 'Fermer') + '">✕</button>';
+    document.body.appendChild(el);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('show'); }); });
+    el.querySelector('.install-hint-x').onclick = function () { hide(el); };
+    var go = el.querySelector('.install-hint-go');
+    if (go) go.onclick = function () { deferred.prompt(); hide(el); };
+  }, 25000);
 })();
 </script>
 <!-- ============ I18N FR/EN ============ -->
