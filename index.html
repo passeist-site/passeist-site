@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>window.__qs0 = location.search; /* adresse d'arrivée, avant réécriture par le routage */</script>
 <!-- Google Analytics (GA4) + Consent Mode v2 (RGPD) : gtag chargé tout de suite,
      mais aucun cookie analytics tant que le visiteur n'a pas accepté
      (analytics_storage 'denied' par défaut, 'granted' au clic sur Accepter). -->
@@ -2282,6 +2283,19 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
   .footer-nav { gap: 18px !important; }
 }
 
+/* Fenêtre « Newsletter » (lien du bas de page) : le bloc d'inscription dans
+   une carte vitrée, partout, y compris sur l'accueil (Tom). */
+.nl-modal { position: fixed; inset: 0; z-index: 880; display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom)); background: rgba(10,12,18,0.35);
+  opacity: 0; transition: opacity 0.35s ease; }
+.nl-modal.show { opacity: 1; }
+.nl-modal .nl { display: flex !important; width: 100%; max-width: 520px; padding: 0; position: relative;
+  transform: translateY(30px); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.nl-modal.show .nl { transform: none; }
+.nl-modal .nl-card { background: linear-gradient(160deg, rgba(40,48,66,0.98), rgba(28,34,48,0.96)); }
+.nl-modal-x { position: absolute; top: 12px; right: 12px; z-index: 2; }
+@media (min-width: 901px) { .nl-modal { align-items: center; } }
+
 /* === MARQUES, pure typo, hiérarchie editoriale === */
 #marques-page {
   height: calc(100dvh - var(--topbar-h)) !important;
@@ -4354,6 +4368,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <nav class="footer-nav">
     <a data-page="cgv">CGV</a>
     <a data-page="privacy">Confidentialité</a>
+    <a href="#newsletter" onclick="openNewsletter(event)">Newsletter</a>
     <a data-page="contact">Contact</a>
     <a href="mailto:info@passeist.com">info@passeist.com</a>
   </nav>
@@ -9407,6 +9422,7 @@ window.sharePiece = function () {
   var mobile = window.matchMedia && matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
   var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   var deferred = null;
+  var wantGuide = /[?&]app=1\b/.test(window.__qs0 || location.search);   // lien « Voir comment faire » de la newsletter
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; updateMenu(); });
   var en = function () { return document.documentElement.lang === 'en'; };
   var shareIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>';
@@ -9449,10 +9465,7 @@ window.sharePiece = function () {
   document.addEventListener('DOMContentLoaded', function () {
     updateMenu();
     // Lien « Voir comment faire » de la newsletter : ouvre le mode d'emploi
-    if (/[?&]app=1\b/.test(location.search)) {
-      try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {}
-      if (!standalone && (mobile || ios)) setTimeout(window.showAppGuide, 800);
-    }
+    if (wantGuide && !standalone && (mobile || ios)) setTimeout(window.showAppGuide, 800);
     var b = document.getElementById('mobile-nav-app');
     if (b) b.addEventListener('click', function () {
       var close = document.getElementById('mobile-nav-close'); if (close) close.click();
@@ -9583,7 +9596,7 @@ window.sharePiece = function () {
     var b = document.getElementById('nl-push');
     if (b) b.hidden = !supported || get('passeist_push_news') === '1';
     // Ouvert depuis la notification « passéist vous a répondu »
-    if (/[?&]chat=1\b/.test(location.search)) {
+    if (/[?&]chat=1\b/.test(window.__qs0 || location.search)) {
       setTimeout(function () { if (typeof openChat === 'function') openChat(); }, 400);
       try { history.replaceState(history.state, '', location.pathname + location.hash); } catch (e) {}
     }
@@ -9609,6 +9622,35 @@ window.sharePiece = function () {
 })();
 </script>
 <!-- ============ NEWSLETTER ============ -->
+<script>
+// Lien « Newsletter » du bas de page : le bloc d'inscription dans une fenêtre
+window.openNewsletter = function (e) {
+  if (e) e.preventDefault();
+  var nl = document.getElementById('newsletter');
+  if (!nl || document.querySelector('.nl-modal')) return;
+  var home = nl.parentNode, next = nl.nextSibling;
+  var m = document.createElement('div');
+  m.className = 'nl-modal'; m.setAttribute('role', 'dialog');
+  m.appendChild(nl);
+  var x = document.createElement('button');
+  x.type = 'button'; x.className = 'install-hint-x nl-modal-x'; x.setAttribute('aria-label', 'Fermer'); x.textContent = '✕';
+  nl.appendChild(x);
+  document.body.appendChild(m);
+  requestAnimationFrame(function () { requestAnimationFrame(function () { m.classList.add('show'); }); });
+  var close = function () {
+    m.classList.remove('show');
+    setTimeout(function () { x.remove(); home.insertBefore(nl, next); m.remove(); }, 450);
+  };
+  x.onclick = close;
+  m.addEventListener('click', function (ev) { if (ev.target === m) close(); });
+};
+// Lien « Newsletter » des autres pages (/?newsletter=1) : lu tout de suite,
+// avant que le routage du site ne réécrive l'adresse
+if (/[?&]newsletter=1\b/.test(window.__qs0 || location.search)) {
+  window.addEventListener('load', function () { setTimeout(window.openNewsletter, 400); });
+}
+</script>
+<!-- ============ NEWSLETTER (inscription) ============ -->
 <script>
 window.subscribeNewsletter = function (e) {
   e.preventDefault();
