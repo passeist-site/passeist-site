@@ -3378,6 +3378,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 /* « Filtres + tri » compact : 3/4 de la hauteur au maximum, le haut de
    l'écran reste libre (Tom). Défile à l'intérieur si l'écran est petit. */
 .filter-sheet { max-height: 75vh; max-height: 75dvh; padding: 10px 20px 18px; }
+/* Fermé, le panneau reste caché sous l'écran : on le masque, sinon Safari
+   (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). */
+@media (max-width: 900px) {
+  .filter-sheet:not(.open) { visibility: hidden; transition: transform 0.4s var(--ease-out), visibility 0s linear 0.4s; }
+  .filter-sheet.open { visibility: visible; transition: transform 0.4s var(--ease-out), visibility 0s; }
+}
 .filter-sheet-handle { margin-bottom: 10px; }
 .filter-sheet-header { margin-bottom: 12px; padding-bottom: 8px; }
 .filter-sheet .filter-field--search { margin-bottom: 12px; }
