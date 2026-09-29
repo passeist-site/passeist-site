@@ -12,6 +12,9 @@ const brevo = require('../lib/brevo');
 const PRODUCTS = require('./products.json'); // pièces en vente (vendues exclues)
 
 const SITE = 'https://passeist.com';
+// Profils passéist sur les plateformes (bas de la newsletter)
+const VESTIAIRE_URL = 'https://fr.vestiairecollective.com/profile/30773496/';
+const VINTED_URL = process.env.VINTED_URL || '';
 const BATCH = Number(process.env.NEWSLETTER_MIN || 8);   // minimum de pièces pour envoyer
 
 function slugify(s) {
@@ -122,6 +125,10 @@ function buildHtml(lang, groups, total, featured) {
       <div style="font-size:12px;line-height:1.5;color:#a8a6a1;margin-top:8px;">${en ? 'On Android: menu <b>⋮</b>, then <b>Install app</b>.' : 'Sur Android : menu <b>⋮</b>, puis <b>Installer l\'application</b>.'}</div>
       <div style="margin-top:12px;"><a href="${track(SITE + '/?app=1')}" style="color:#f4f1ec;font-size:13px;">${en ? 'Show me how →' : 'Voir comment faire →'}</a></div>
     </td></tr></table>
+  </td></tr>
+  <tr><td align="center" style="padding:26px 16px 0;font-size:13px;line-height:1.6;color:#d6d2cc;">
+    ${en ? 'Also find us on your favourite platform:' : 'Retrouvez-nous aussi sur votre plateforme préférée :'}<br>
+    <a href="${VESTIAIRE_URL}" style="color:#f4f1ec;">Vestiaire Collective</a> · ${VINTED_URL ? `<a href="${VINTED_URL}" style="color:#f4f1ec;">Vinted</a>` : 'Vinted'}
   </td></tr>
   <tr><td align="center" style="padding:32px 16px 8px;font-size:11px;line-height:1.6;color:#a8a6a1;">
     ${why}<br>${en
