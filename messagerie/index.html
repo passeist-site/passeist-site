@@ -202,7 +202,7 @@ async function showNewsletter() {
   $('main').innerHTML = `
     <div class="nl-box"><h3>Newsletter « nouvelles pièces »</h3>
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
-      <b>${d.fresh}</b> / ${d.batch} nouvelles pièces avant le prochain envoi (vérifié chaque jour à 9 h)<br>
+      <b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
     <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
       <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>

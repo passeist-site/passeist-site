@@ -1,6 +1,6 @@
-// Netlify Function planifiée (tous les jours, cf. netlify.toml) — newsletter
-// « nouvelles pièces » : dès que 20 pièces nouvelles sont en vente depuis le
-// dernier envoi, un e-mail part aux abonnés avec ces pièces classées par maison.
+// Netlify Function planifiée (chaque dimanche, cf. netlify.toml) — newsletter
+// « Les nouveautés du dimanche » : les pièces arrivées depuis le dernier envoi,
+// classées par maison. S'il y en a moins de 8, on attend le dimanche suivant.
 //
 // État dans Netlify Blobs (store « passeist-newsletter ») :
 //   state/seen   ids déjà annoncés (au premier passage : tout le catalogue
@@ -12,7 +12,7 @@ const brevo = require('../lib/brevo');
 const PRODUCTS = require('./products.json'); // pièces en vente (vendues exclues)
 
 const SITE = 'https://passeist.com';
-const BATCH = Number(process.env.NEWSLETTER_BATCH || 20);
+const BATCH = Number(process.env.NEWSLETTER_MIN || 8);   // minimum de pièces pour envoyer
 
 function slugify(s) {
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -48,10 +48,10 @@ async function groupsFor(ids) {
 
 function buildHtml(lang, groups, total) {
   const en = lang === 'en';
-  const head = en ? `${total} new pieces` : `${total} nouvelles pièces`;
+  const head = en ? `${total} new pieces this week` : `${total} nouvelles pièces cette semaine`;
   const intro = en
-    ? 'Just arrived at passéist, by designer. Each piece is unique.'
-    : 'Tout juste arrivées chez passéist, classées par maison. Chaque pièce est unique.';
+    ? 'Arrived at passéist this week, presented by designer. Each piece is unique.'
+    : 'Arrivées cette semaine chez passéist, présentées par maison. Chaque pièce est unique.';
   const cta = en ? 'See all new pieces' : 'Voir toutes les nouveautés';
   const unsub = en ? 'Unsubscribe' : 'Se désinscrire';
   const why = en
@@ -139,13 +139,13 @@ exports.handler = async (event) => {
   const top = groups.slice(0, 3).map(g => title(g.brand)).join(', ');
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
-    subject: `${fresh.length} nouvelles pièces : ${top}…`,
+    subject: `Les nouveautés du dimanche · ${top}…`,
     html: buildHtml('fr', groups, fresh.length),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
-      subject: `${fresh.length} new pieces: ${top}…`,
+      subject: `Sunday new arrivals · ${top}…`,
       html: buildHtml('en', groups, fresh.length),
     });
   }

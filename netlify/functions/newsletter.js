@@ -77,11 +77,11 @@ async function admin(event, action) {
     if (!EMAIL_RE.test(to)) return json(400, { error: 'adresse invalide' });
     if (!brevo.enabled()) return json(400, { error: 'clé Brevo absente' });
     // Les nouveautés en attente, ou à défaut les dernières pièces du catalogue
-    const ids = (fresh.length ? fresh : Object.keys(PRODUCTS)).slice(0, send._BATCH);
+    const ids = (fresh.length ? fresh : Object.keys(PRODUCTS)).slice(0, 40);
     const groups = await send._groupsFor(ids);
     const html = send._buildHtml('fr', groups, ids.length).replace('{{ unsubscribe }}', 'https://passeist.com/');
     try {
-      await brevo.sendOne({ to, subject: `[Test] ${ids.length} nouvelles pièces`, html });
+      await brevo.sendOne({ to, subject: `[Test] Les nouveautés du dimanche`, html });
     } catch (err) {
       console.error('test newsletter :', err.message);
       return json(502, { error: err.message.slice(0, 200) });

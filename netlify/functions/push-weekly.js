@@ -1,4 +1,4 @@
-// Netlify Function planifiée (chaque vendredi, cf. netlify.toml) — une seule
+// Netlify Function planifiée (chaque dimanche, cf. netlify.toml) — une seule
 // notification par semaine aux clients abonnés : les pièces arrivées depuis
 // la dernière, avec les maisons les plus représentées. Rien si aucune nouveauté.
 const { getStore, connectLambda } = require('@netlify/blobs');
@@ -18,7 +18,7 @@ exports.handler = async (event) => {
   }
   const seen = new Set(seenList);
   const fresh = ids.filter(id => !seen.has(id));
-  if (!fresh.length) return { statusCode: 200, body: 'rien de nouveau' };
+  if (fresh.length < 3) return { statusCode: 200, body: 'trop peu de nouveautés' };
   if (!push.ready()) return { statusCode: 200, body: 'clés VAPID absentes' };
 
   const count = new Map();

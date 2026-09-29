@@ -17,10 +17,10 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
-# Newsletter « nouvelles pièces » : vérification chaque jour à 9 h (heure de Paris, été)
+# Newsletter « Les nouveautés du dimanche » : dimanche 17 h (heure de Paris, été ; 16 h l'hiver)
 [functions."newsletter-send"]
-  schedule = "0 7 * * *"
+  schedule = "0 15 * * 0"
 
-# Notification « nouveautés de la semaine » : le vendredi à 18 h (heure de Paris, été)
+# Notification « nouveautés de la semaine » : dimanche 17 h, avec la newsletter
 [functions."push-weekly"]
-  schedule = "0 16 * * 5"
+  schedule = "0 15 * * 0"
