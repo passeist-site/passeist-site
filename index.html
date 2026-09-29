@@ -3443,6 +3443,21 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 /* « Filtres + tri » compact : 3/4 de la hauteur au maximum, le haut de
    l'écran reste libre (Tom). Défile à l'intérieur si l'écran est petit. */
 .filter-sheet { max-height: 75vh; max-height: 75dvh; padding: 10px 20px 18px; }
+/* Boutique mobile : le titre de la sélection (« Tous les articles »,
+   « Yohji Yamamoto (42) »…) à droite dans le bouton Filtres, toujours visible
+   en défilant ; la ligne de titre séparée disparaît (Tom). */
+.filter-toggle-title { display: none; }
+@media (max-width: 900px) {
+  #shop-page .shop-header { display: none !important; }
+  .filter-mobile-toggle { gap: 12px; }
+  .filter-toggle-title {
+    display: block; min-width: 0; flex: 0 1 auto; margin-left: auto;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-transform: none; letter-spacing: 0.01em; font-size: 12.5px; font-weight: 400; color: var(--text-dim);
+  }
+  .filter-toggle-label { flex: 0 0 auto; }
+}
+
 /* Boutique mobile : le titre (« Tous les articles ») au-dessus du bouton
    « Filtres + tri », qui reste ensuite accroché sous l'en-tête en défilant (Tom). */
 @media (max-width: 900px) {
@@ -3717,6 +3732,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="filter-bar">
       <button class="filter-mobile-toggle" id="filter-mobile-toggle" type="button" aria-expanded="false" aria-controls="filter-sheet">
         <span class="filter-toggle-label">Filtres + tri</span>
+        <span class="filter-toggle-title" id="filter-toggle-title" aria-hidden="true"></span>
         <span class="filter-count" id="filter-count" hidden>0</span>
       </button>
       <div class="filter-field filter-search-inline">
@@ -4322,7 +4338,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 <section class="nl" id="newsletter" aria-label="Newsletter">
   <div class="nl-card">
     <div class="nl-title"><span class="lang-fr">La sélection du dimanche</span><span class="lang-en">The Sunday selection</span></div>
-    <p class="nl-txt"><span class="lang-fr">Chaque dimanche, une sélection de nos nouveautés de la semaine, présentées par maison.</span><span class="lang-en">Every Sunday, a selection of our new arrivals of the week, presented by designer.</span></p>
+    <p class="nl-txt"><span class="lang-fr">Chaque dimanche, une sélection de nos nouveautés de la semaine.</span><span class="lang-en">Every Sunday, a selection of our new arrivals of the week.</span></p>
     <form class="nl-form" onsubmit="subscribeNewsletter(event)">
       <input type="email" name="email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
       <button type="submit"><span class="lang-fr">S'inscrire</span><span class="lang-en">Subscribe</span></button>
@@ -9471,6 +9487,17 @@ window.sharePiece = function () {
     el.querySelector('.install-hint-x').onclick = hide;
     el.querySelector('.install-hint-go').onclick = function () { hide(); window.showAppGuide(); };
   }, 25000);
+})();
+</script>
+<!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->
+<script>
+// Recopie le titre de la sélection dans le bouton Filtres (mobile)
+(function () {
+  var src = document.getElementById('shop-title'), dst = document.getElementById('filter-toggle-title');
+  if (!src || !dst) return;
+  var sync = function () { dst.textContent = src.textContent; };
+  sync();
+  new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true });
 })();
 </script>
 <!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->

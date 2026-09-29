@@ -59,8 +59,8 @@ function buildHtml(lang, groups, total, featured) {
   const en = lang === 'en';
   const head = en ? 'The Sunday selection' : 'La sélection du dimanche';
   const intro = en
-    ? 'A selection of our new arrivals this week, presented by designer. Each piece is unique.'
-    : 'Une sélection de nos nouveautés de la semaine, présentées par maison. Chaque pièce est unique.';
+    ? 'A selection of our new arrivals this week. Each piece is unique.'
+    : 'Une sélection de nos nouveautés de la semaine. Chaque pièce est unique.';
   const cta = en ? 'See all new pieces' : 'Voir toutes les nouveautés';
   const why = en
     ? 'You receive this email because you subscribed to new pieces on passeist.com.'
