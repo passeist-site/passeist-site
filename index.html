@@ -6797,6 +6797,9 @@ function renderGrid() {
       <p>Cliquez sur le cœur à côté d'un produit pour l'ajouter à vos favoris.<br>Ils restent sauvegardés dans ce navigateur.</p>
       <button class="btn btn-secondary" onclick="goPage('shop')">Parcourir la boutique</button>
     </div>`;
+    // Pas de « Voir plus » resté de la page précédente
+    window.__grid = null;
+    if (typeof gridWatch === 'function') gridWatch();
     return;
   }
   const cardHtml = (p) => {
