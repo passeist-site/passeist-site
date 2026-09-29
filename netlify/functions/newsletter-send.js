@@ -65,7 +65,7 @@ async function itemFor(id, withDetail) {
 async function featuredItems(store) {
   const f = await store.get('state/featured', { type: 'json' });
   const ids = (f && Array.isArray(f.ids) ? f.ids : []).filter(id => PRODUCTS[id]);
-  return Promise.all(ids.map(id => itemFor(id, true)));
+  return Promise.all(ids.map(id => itemFor(id, false)));   // pas de 2e photo (écartée par Tom)
 }
 
 // Pièces regroupées par maison, la plus fournie en premier
