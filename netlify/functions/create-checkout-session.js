@@ -192,7 +192,7 @@ exports.handler = async (event) => {
         allowed_countries: [
           'FR','BE','LU','DE','IT','ES','NL','GB','CH','AT','PT','IE','GR',
           'SE','DK','NO','FI','PL','CZ','HU','HR','SI','SK','EE','LV','LT',
-          'BG','RO','CY','MT','US','CA','JP','KR','AU','NZ','SG','HK',
+          'BG','RO','CY','MT','US','CA','JP','AU','NZ','SG','HK',
         ],
       },
       shipping_options: shippingOptions,
@@ -221,7 +221,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': 'https://passeist.com' },
-      body: JSON.stringify({ error: err.message }),
+      body: JSON.stringify({ error: 'server' }),
     };
   }
 };

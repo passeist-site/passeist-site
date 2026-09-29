@@ -38,11 +38,16 @@ raw = re.sub(r',\s*(\]|\})', r'\1', src[arr_start:arr_end])
 products = json.loads(raw)
 print(f'Found {len(products)} products')
 
+# Pièces vendues (SOLD_IDS) : exclues, pour que le paiement les refuse même
+# depuis un onglet resté ouvert avant la vente.
+m = re.search(r'const SOLD_IDS = new Set\(\[([\s\S]*?)\]\);', src)
+sold = set(re.findall(r'"(\d+)"', m.group(1))) if m else set()
+
 # Build a lightweight lookup: { id: { price, brand, type, size, slug } }
 lookup = {}
 for p in products:
     pid = p.get('id')
-    if not pid: continue
+    if not pid or str(pid) in sold: continue
     lookup[str(pid)] = {
         'price': str(p.get('price', '')),
         'brand': p.get('brand', ''),

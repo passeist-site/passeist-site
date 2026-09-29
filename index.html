@@ -3437,6 +3437,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
    (panier) : 0,65 s, départ franc puis longue décélération (Tom). */
 :root { --panel-ease: cubic-bezier(0.22, 1, 0.36, 1); --panel-dur: 0.8s; }
 .cart-panel { transition: transform var(--panel-dur) var(--panel-ease); }
+/* Panier fermé : masqué, sinon son ombre dépassait sur le bord droit de
+   l'écran (bande sombre sur toute la hauteur, mobile). */
+.cart-panel:not(.open) { visibility: hidden; transition: transform var(--panel-dur) var(--panel-ease), visibility 0s linear var(--panel-dur); }
 .cart-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
 .cart-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
 @media (max-width: 900px) {
