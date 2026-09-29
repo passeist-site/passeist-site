@@ -19,6 +19,27 @@
   toggle.addEventListener('click', function () { setOpen(!drawer.classList.contains('open')); });
   if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
   if (backdrop) backdrop.addEventListener('click', function () { setOpen(false); });
+  // Glisser vers la gauche pour fermer (comme sur le reste du site)
+  (function () {
+    var x0 = null, y0 = 0, dx = 0, horiz = null;
+    drawer.addEventListener('touchstart', function (e) {
+      if (!drawer.classList.contains('open') || e.touches.length !== 1) { x0 = null; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dx = 0; horiz = null;
+    }, { passive: true });
+    drawer.addEventListener('touchmove', function (e) {
+      if (x0 === null) return;
+      var mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+      if (horiz === null && (Math.abs(mx) > 8 || Math.abs(my) > 8)) horiz = Math.abs(mx) > Math.abs(my);
+      if (!horiz) return;
+      dx = Math.min(0, mx);
+      drawer.style.transition = 'none'; drawer.style.transform = 'translateX(' + dx + 'px)';
+    }, { passive: true });
+    drawer.addEventListener('touchend', function () {
+      if (x0 === null) return;
+      x0 = null; drawer.style.transition = ''; drawer.style.transform = '';
+      if (horiz && dx < -70) setOpen(false);
+    }, { passive: true });
+  })();
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && drawer.classList.contains('open')) setOpen(false);
   });

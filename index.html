@@ -3259,6 +3259,32 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   #d-price-add { display: none !important; }
 }
 
+/* Confirmation d'ajout au panier (remplace l'image volante) */
+.cart-toast {
+  position: fixed; left: 50%; z-index: 350;
+  top: calc(var(--actual-topbar-h, var(--topbar-h, 64px)) + 10px);
+  display: flex; align-items: center; gap: 12px;
+  width: min(92vw, 380px); padding: 10px 10px 10px 10px; border-radius: 12px;
+  background: linear-gradient(160deg, rgba(40,48,66,0.94), rgba(28,34,48,0.9));
+  -webkit-backdrop-filter: blur(20px) saturate(130%); backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 0 0 1px rgba(244,241,236,0.08), 0 18px 40px -10px rgba(0,0,0,0.7);
+  transform: translate(-50%, -16px); opacity: 0; pointer-events: none;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+.cart-toast.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.cart-toast img { width: 40px; height: 53px; object-fit: contain; background: #fff; border-radius: 6px; flex: 0 0 auto; }
+.cart-toast-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-family: var(--font-sans); }
+.cart-toast-txt strong { font-size: 13px; font-weight: 600; color: var(--ink); }
+.cart-toast-txt span { font-size: 12px; color: var(--text-dim); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cart-toast-btn {
+  flex: 0 0 auto; height: 36px; padding: 0 14px; border-radius: 6px; border: none; cursor: pointer;
+  background: #f4f1ec; color: #1C2230; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--tracking-wide);
+}
+.btn.is-added, .buy-bar-cta.is-added { background: #5a7593 !important; border-color: #5a7593 !important; color: #f4f1ec !important; transition: background 0.3s ease; }
+/* Image volante vers les favoris : coins arrondis comme les photos */
+.fly-to-cart { border-radius: 6px; overflow: hidden; }
+
 /* ============ LUMIÈRE ET RELIEF (choix de Tom, 2026-09-28) ============
    Options retenues : 2 Ombre, 3 Liseré (filet de lumière), 5 Contraste.
    Le fond (bleu nuit) ne change pas. */
@@ -3409,7 +3435,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 
 /* Ouverture plus lente et plus douce des panneaux gauche (menu) et droite
    (panier) : 0,65 s, départ franc puis longue décélération (Tom). */
-:root { --panel-ease: cubic-bezier(0.22, 1, 0.36, 1); --panel-dur: 0.65s; }
+:root { --panel-ease: cubic-bezier(0.22, 1, 0.36, 1); --panel-dur: 0.8s; }
 .cart-panel { transition: transform var(--panel-dur) var(--panel-ease); }
 .cart-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
 .cart-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
@@ -6639,12 +6665,10 @@ function openDetail(id) {
   if (refEl) { refEl.textContent = 'Réf. ' + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   // Phrase unique passéist (générée au build, cf plugin generate-product-pages)
+  // Phrase automatique passéist : plus affichée sur la fiche (Tom). Elle
+  // reste dans la description Google et les données produit (cf plugin).
   const introEl = document.getElementById('d-intro');
-  if (introEl) {
-    const intro = (window.__lang === 'en' && p.intro_en) ? p.intro_en : (p.intro || '');
-    introEl.textContent = intro;
-    introEl.style.display = intro ? '' : 'none';
-  }
+  if (introEl) { introEl.textContent = ''; introEl.style.display = 'none'; }
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
   document.getElementById('d-availability').style.display = sold ? 'none' : '';
@@ -7007,58 +7031,44 @@ document.addEventListener('mousedown', (e) => {
   const bd = document.getElementById('cart-backdrop'); if (bd) bd.classList.remove('open');
   cartHistoryPop();
 });
+// Ajout au panier : confirmation moderne (Tom) au lieu de l'image qui vole.
+// Le bouton passe à « ✓ Ajouté », une notification vitrée descend sous le
+// header (vignette arrondie + « Voir le panier ») et l'icône panier pulse.
 function flyToCart() {
-  // Image source (vignette qui vole) : détail > marquee > carte produit
-  let srcImg = null;
-  const detailOpen = document.getElementById('detail')?.classList.contains('open');
-  if (detailOpen) {
-    srcImg = document.querySelector('#detail-gallery img');
+  const p = (typeof currentProduct !== 'undefined' && currentProduct && document.body.classList.contains('detail-open'))
+    ? currentProduct : null;
+  const EN = window.__lang === 'en';
+  // 1. Boutons « Ajouter au panier » : état confirmé pendant 1,8 s
+  ['d-cart', 'buy-bar-cta'].forEach(id => {
+    const b = document.getElementById(id);
+    if (!b || b.offsetParent === null) return;
+    if (!b.dataset.label) b.dataset.label = b.textContent;
+    b.classList.add('is-added');
+    b.textContent = EN ? '✓ Added' : '✓ Ajouté au panier';
+    clearTimeout(b._addedT);
+    b._addedT = setTimeout(() => { b.classList.remove('is-added'); b.textContent = b.dataset.label; delete b.dataset.label; }, 1800);
+  });
+  // 2. Notification sous le header
+  let t = document.getElementById('cart-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'cart-toast'; t.className = 'cart-toast'; t.setAttribute('role', 'status');
+    document.body.appendChild(t);
   }
-  if (!srcImg) {
-    srcImg = document.querySelector('.hero-marquee-card img, .product-img-primary.loaded');
-  }
-  const cartBtn = document.querySelector('.topbar .cart-btn, .detail-header .cart-btn');
-  if (!srcImg || !cartBtn) return;
-
-  // Point de départ : priorité au petit panier à côté du prix (plus souvent visible),
-  // sinon on utilise le gros bouton "Ajouter au panier", sinon l'image source.
-  const priceAdd = document.getElementById('d-price-add');
-  const addBtn = document.getElementById('d-cart');
-  const src = (priceAdd && priceAdd.offsetParent !== null) ? priceAdd
-    : (addBtn && addBtn.offsetParent !== null) ? addBtn
-    : null;
-  const startRect = src ? src.getBoundingClientRect() : srcImg.getBoundingClientRect();
-  // Miniature de la photo, taille raisonnable pour être visible
-  const thumbW = Math.min(140, Math.max(90, startRect.width * 0.55));
-  const thumbH = thumbW * 1.25;  // léger portrait
-  const cr = cartBtn.getBoundingClientRect();
-  const clone = srcImg.cloneNode();
-  clone.className = 'fly-to-cart';
-  // Centré sur le bouton "Ajouter au panier"
-  const startX = startRect.left + startRect.width / 2 - thumbW / 2;
-  const startY = startRect.top + startRect.height / 2 - thumbH / 2;
-  clone.style.left = startX + 'px';
-  clone.style.top = startY + 'px';
-  clone.style.width = thumbW + 'px';
-  clone.style.height = thumbH + 'px';
-  document.body.appendChild(clone);
-  // Force reflow puis lance la transition
-  void clone.offsetWidth;
-  const dx = cr.left + cr.width / 2 - startX - thumbW / 2;
-  const dy = cr.top + cr.height / 2 - startY - thumbH / 2;
-  clone.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(0.08) rotate(-12deg)';
-  clone.style.opacity = '0';
-  clone.style.filter = 'blur(2px)';
-  setTimeout(() => clone.remove(), 900);
-  // Déclenche le bump à la fin pour l'effet "réception"
-  setTimeout(() => {
-    document.querySelectorAll('.cart-btn').forEach(btn => {
-      btn.classList.remove('cart-bump');
-      void btn.offsetWidth;
-      btn.classList.add('cart-bump');
-      setTimeout(() => btn.classList.remove('cart-bump'), 600);
-    });
-  }, 650);
+  const img = p ? imgUrl(p, 0, { size: 'sm', exactSize: true }) : '';
+  t.innerHTML = (img ? '<img src="' + img + '" alt="">' : '') +
+    '<div class="cart-toast-txt"><strong>' + (EN ? 'Added to cart' : 'Ajouté au panier') + '</strong>' +
+    (p ? '<span>' + p.brand + ' · ' + (window.tType ? window.tType(p) : p.type) + '</span>' : '') + '</div>' +
+    '<button type="button" class="cart-toast-btn">' + (EN ? 'View' : 'Voir') + '</button>';
+  t.querySelector('.cart-toast-btn').onclick = () => { t.classList.remove('show'); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart(); };
+  t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+  clearTimeout(t._hideT);
+  t._hideT = setTimeout(() => t.classList.remove('show'), 3200);
+  // 3. Icône panier : petite pulsation
+  document.querySelectorAll('.cart-btn').forEach(btn => {
+    btn.classList.remove('cart-bump'); void btn.offsetWidth; btn.classList.add('cart-bump');
+    setTimeout(() => btn.classList.remove('cart-bump'), 600);
+  });
 }
 
 function addToCart(id) {
@@ -7620,6 +7630,35 @@ function submitContact(e) {
     }
   }, { passive: true });
 })();
+
+// ============ GLISSER POUR FERMER LE MENU (vers la gauche) ET LE PANIER (vers la droite) ============
+// Le panneau suit le doigt ; relâché après 70 px (ou un geste rapide), il se ferme.
+function swipeToClose(panel, dir, close) {
+  if (!panel) return;
+  let x0 = null, y0 = 0, t0 = 0, dx = 0, horiz = null;
+  panel.addEventListener('touchstart', e => {
+    if (!panel.classList.contains('open') || e.touches.length !== 1) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); dx = 0; horiz = null;
+  }, { passive: true });
+  panel.addEventListener('touchmove', e => {
+    if (x0 === null) return;
+    const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+    if (horiz === null && (Math.abs(mx) > 8 || Math.abs(my) > 8)) horiz = Math.abs(mx) > Math.abs(my);
+    if (!horiz) return;
+    dx = dir < 0 ? Math.min(0, mx) : Math.max(0, mx);   // seulement dans le sens de fermeture
+    panel.style.transition = 'none';
+    panel.style.transform = 'translateX(' + dx + 'px)';
+  }, { passive: true });
+  panel.addEventListener('touchend', () => {
+    if (x0 === null) return;
+    x0 = null;
+    const fast = Math.abs(dx) > 30 && Math.abs(dx) / Math.max(1, Date.now() - t0) > 0.5;
+    panel.style.transition = ''; panel.style.transform = '';
+    if (horiz && (Math.abs(dx) > 70 || fast)) close();
+  }, { passive: true });
+}
+swipeToClose(document.getElementById('mobile-nav'), -1, () => { const c = document.getElementById('mobile-nav-close'); if (c) c.click(); });
+swipeToClose(document.getElementById('cart-panel'), 1, () => { if (document.getElementById('cart-panel').classList.contains('open')) toggleCart(); });
 
 // ============ DISCUSSION EN DIRECT ============
 // Messages stockés par netlify/functions/chat.js ; passéist répond depuis

@@ -128,7 +128,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
         <div><div class="attr-label">Genre</div><div class="attr-value" id="d-gender">${esc(getGender(p))}</div></div>
         <div><div class="attr-label">État</div><div class="attr-value">Très bon état</div></div>
       </div>
-      <p class="detail-intro" id="d-intro">${esc(p.intro || '')}</p>
+      <p class="detail-intro" id="d-intro" style="display:none"></p>
       <div class="detail-desc" id="d-desc">${esc(p.desc || '')}</div>
       <div class="detail-actions" id="d-actions"${hideIfSold}>
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
