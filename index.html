@@ -125,7 +125,10 @@ html, body {
      on laisse le comportement natif du navigateur (auto). */
   overscroll-behavior-y: auto;
 }
-body { position: relative; }
+/* display: flow-root : la marge du haut des pages reste dans body dès le
+   chargement (sinon la page entière sautait d'une hauteur d'en-tête quand
+   body[data-page] passe en overflow: auto, compté comme CLS par Google). */
+body { position: relative; display: flow-root; }
 body.no-scroll { overflow: hidden; }
 img { -webkit-user-drag: none; user-select: none; }
 
@@ -2151,6 +2154,9 @@ body.detail-open .install-hint { display: none; }
 /* === Newsletter « nouvelles pièces » === */
 .nl { padding: 8px 16px 40px; display: flex; justify-content: center; }
 body[data-page="home"] .nl, body[data-page="favorites"] .nl, body.detail-open .nl { display: none; }
+/* Pas de bloc newsletter ni de bas de page avant que la page soit construite : sinon ils
+   s'affichent en haut puis la grille les repousse (saut compté en CLS). */
+body:not([data-page]) .nl, body:not([data-page]):not(.detail-open) .footer { display: none; }
 .nl-card {
   width: 100%; max-width: 520px; padding: 22px 20px 18px; text-align: center;
   border-radius: 12px;
@@ -9628,8 +9634,14 @@ window.sharePiece = function () {
     var topbar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h-mobile')) || 54;
     var pin = anchor.getBoundingClientRect().top <= topbar && document.getElementById('shop-page').classList.contains('open');
     if (pin && !bar.classList.contains('pinned')) {
-      spacer.style.height = bar.offsetHeight + 16 + 'px';
+      // La réserve prend exactement la place laissée par la barre (marges
+      // comprises) : la grille ne bouge pas d'un pixel (CLS).
+      var next = spacer.nextElementSibling;   // 1er bloc suivant dans le flux (grille ou « Vus récemment »)
+      while (next && (/^(none|contents)$/.test(getComputedStyle(next).display) || /^(fixed|absolute)$/.test(getComputedStyle(next).position))) next = next.nextElementSibling;
+      var before = next ? next.getBoundingClientRect().top : 0;
+      spacer.style.height = '0px';
       bar.classList.add('pinned');
+      spacer.style.height = (next ? Math.max(0, before - next.getBoundingClientRect().top) : bar.offsetHeight + 16) + 'px';
     } else if (!pin && bar.classList.contains('pinned')) {
       bar.classList.remove('pinned');
     }
