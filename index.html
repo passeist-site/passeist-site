@@ -1040,16 +1040,17 @@ body[data-page="favorites"] { overflow: auto; height: auto; }
 .product-img::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(110deg, transparent 20%, rgba(30,29,27,0.03) 50%, transparent 80%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite linear;
   pointer-events: none; opacity: 0;
   transition: opacity 0.3s;
   z-index: 1;
 }
-.product-img.loading::before { opacity: 1; }
+/* Le reflet ne tourne que pendant le chargement, et glisse (transform) au
+   lieu de repeindre son dégradé à chaque image : il occupait le téléphone en
+   continu et ralentissait les gestes (INP). */
+.product-img.loading::before { opacity: 1; animation: shimmer 1.6s infinite linear; }
 @keyframes shimmer {
-  from { background-position: -120% 0; }
-  to   { background-position: 120% 0; }
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
 }
 /* REGLE FIGEE par Tom, voir PHOTOS.md, ne pas modifier sans son accord */
 .product-img-primary {
@@ -2185,22 +2186,6 @@ body:not([data-page]) .nl, body:not([data-page]):not(.detail-open) .footer { dis
 html[lang="en"] .nl .lang-fr { display: none !important; }
 html[lang="fr"] .nl .lang-en { display: none !important; }
 
-/* === Vus récemment (fiche + boutique) === */
-.recent-section { padding: 8px 40px 44px; }
-.recent-shop { margin: 0 0 22px; }
-.recent-shop-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 10px; font-family: var(--font-sans); }
-.recent-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
-.recent-row::-webkit-scrollbar { display: none; }
-.recent-card { flex: 0 0 auto; width: 96px; text-decoration: none; color: var(--ink); cursor: pointer; }
-.recent-shop .recent-card { width: 68px; }
-.recent-card .product-img { border-radius: 6px; }
-.recent-card .product-img-primary { opacity: 1; }
-.recent-card .recent-brand { margin-top: 6px; font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-sans); }
-.recent-shop .recent-brand { display: none; }
-html[lang="en"] .recent-section .lang-fr, html[lang="en"] .recent-shop .lang-fr { display: none; }
-html[lang="fr"] .recent-section .lang-en, html[lang="fr"] .recent-shop .lang-en { display: none; }
-@media (max-width: 900px) { .recent-section { padding: 4px 18px 36px; } }
 
 /* === Apparition douce des pièces au défilement (navigateurs récents) === */
 @supports (animation-timeline: view()) {
@@ -3526,7 +3511,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
    (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). */
 @media (max-width: 900px) {
   .filter-sheet:not(.open) { visibility: hidden; transition: transform 0.4s var(--ease-out), visibility 0s linear 0.4s; }
-  .filter-sheet.open { visibility: visible; transition: transform 0.4s var(--ease-out), visibility 0s; }
+  /* Ouverture plus vive (Tom : « apparaissent trop lentement ») */
+  .filter-sheet.open { visibility: visible; transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s; }
+  .filter-sheet.open::before, .filter-sheet.open::after { transition-duration: 0.2s; }
 }
 .filter-sheet-handle { margin-bottom: 10px; }
 .filter-sheet-header { margin-bottom: 12px; padding-bottom: 8px; }
@@ -3866,10 +3853,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <button class="filter-sheet-apply" id="filter-sheet-apply" type="button">Voir les résultats</button>
       <button class="filter-sheet-close" id="filter-sheet-reset" type="button" style="display:block;margin:8px auto 0;padding:4px 10px;font-weight:700;">Réinitialiser</button>
     </aside>
-    <section class="recent-shop" id="shop-recent" hidden>
-      <div class="recent-shop-title"><span class="lang-fr">Vus récemment</span><span class="lang-en">Recently viewed</span></div>
-      <div class="recent-row" id="shop-recent-row"></div>
-    </section>
     <div class="grid" id="grid"></div>
   </main>
 </section>
@@ -4076,10 +4059,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="similar-marquee" id="d-similar-marquee">
       <div class="similar-track" id="d-similar-track"></div>
     </div>
-  </section>
-  <section class="recent-section" id="d-recent" hidden>
-    <div class="similar-title"><span class="lang-fr">Vus récemment</span><span class="lang-en">Recently viewed</span></div>
-    <div class="recent-row" id="d-recent-row"></div>
   </section>
 </div>
 
@@ -7300,6 +7279,9 @@ function openDetail(id) {
 }
 function closeDetail() {
   document.getElementById('detail').classList.remove('open');
+  // Fiche fermée : le bandeau « pièces similaires » s'arrête (INP)
+  const sim = window.__simMarqueeState;
+  if (sim && sim.rafId) { cancelAnimationFrame(sim.rafId); sim.rafId = null; }
   const savedY = window.__savedScrollY || 0;
   // Retire les styles de verrouillage dans l'ordre, évite le clignotement iOS
   document.body.style.position = '';
@@ -8371,9 +8353,21 @@ function startMarqueeLoop(track) {
       else if (marqueeState.offset > 0) marqueeState.offset -= marqueeState.half;
     }
 
+    // Hors écran et immobile : la boucle s'arrête (sinon elle occupe le
+    // téléphone à chaque image et ralentit les gestes, INP). Reprise par
+    // window.__marqueeResume quand le bandeau redevient visible.
+    if (window.__marqueeVisible === false && !marqueeState.dragging && !marqueeState.inertia) {
+      marqueeState.paused = true;
+      return;
+    }
     track.style.transform = `translate3d(${marqueeState.offset}px, 0, 0)`;
     requestAnimationFrame(step);
   }
+  window.__marqueeResume = () => {
+    if (!marqueeState.paused) return;
+    marqueeState.paused = false; marqueeState.lastT = 0;
+    requestAnimationFrame(step);
+  };
   requestAnimationFrame(step);
 }
 
@@ -8599,6 +8593,11 @@ window.startSimilarMarqueeLoop = function() {
     sheet.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('no-scroll', open);
   }
+  // Le panneau se ferme d'abord (réponse immédiate au toucher), la grille se
+  // reconstruit juste après l'affichage suivant (INP).
+  function rebuildSoon() {
+    requestAnimationFrame(() => setTimeout(() => { window.renderFilters(); renderGrid(); }, 0));
+  }
   function updateCountBadge() {
     let n = 0;
     if (activeGender !== 'all') n++;
@@ -8629,14 +8628,14 @@ window.startSimilarMarqueeLoop = function() {
       const si = document.getElementById('search-input');
       if (si) { si.value = activeSearch; si.classList.toggle('active', activeSearch.trim() !== ''); }
     }
-    window.renderFilters(); renderGrid(); setOpen(false);
+    setOpen(false); rebuildSoon();
   });
   resetBtn.addEventListener('click', () => {
     activeGender='all'; activeBrand='all'; activeCat='all'; activeColor='all'; activeSort='newest';
     activeSearch = '';
     const si = document.getElementById('search-input'); if (si) { si.value=''; si.classList.remove('active'); }
     if (mSearch) mSearch.value = '';
-    window.renderFilters(); renderGrid(); setOpen(false);
+    setOpen(false); rebuildSoon();
   });
   let sy = 0, sDelta = 0, swiping = false;
   sheet.addEventListener('touchstart', (e) => {
@@ -8662,13 +8661,17 @@ window.startSimilarMarqueeLoop = function() {
   const marquee = document.getElementById('hero-marquee');
   if (!marquee || !('IntersectionObserver' in window)) return;
   window.__marqueeVisible = true;
+  let onScreen = true;
+  const sync = () => {
+    window.__marqueeVisible = onScreen && !document.hidden;
+    if (window.__marqueeVisible && window.__marqueeResume) window.__marqueeResume();
+  };
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) window.__marqueeVisible = e.isIntersecting;
+    for (const e of entries) onScreen = e.isIntersecting;
+    sync();
   }, { rootMargin: '120px' });
   io.observe(marquee);
-  document.addEventListener('visibilitychange', () => {
-    window.__marqueeVisible = !document.hidden && window.__marqueeVisible;
-  });
+  document.addEventListener('visibilitychange', sync);
 })();
 
 // ============ FOOTER NAV (pages légales) ============
@@ -9335,49 +9338,6 @@ window.sharePiece = function () {
   if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt('', url));
   else prompt('', url);
 };
-
-// Vus récemment : 12 dernières pièces ouvertes (ce navigateur uniquement)
-(function () {
-  const KEY = 'passeist_recent', MAX = 12;
-  const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } };
-  const write = (ids) => { try { localStorage.setItem(KEY, JSON.stringify(ids.slice(0, MAX))); } catch (e) {} };
-  const byId = (id) => PRODUCTS.find(x => String(x.id) === String(id));
-  const esc = (t) => String(t || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  function cards(ids) {
-    return ids.map(byId).filter(p => p && !isSold(p) && p.n).map(p =>
-      `<a class="recent-card" href="/product/${productSlug(p)}" data-id="${p.id}"><div class="product-img"><img class="product-img-primary" src="${imgUrl(p, 0, { size: 'sm', exactSize: true })}" alt="${esc(p.brand + ' ' + p.type)}" loading="lazy" decoding="async"></div><div class="recent-brand">${esc(p.brand)}</div></a>`).join('');
-  }
-  function fill(sectionId, rowId, ids, min) {
-    const sec = document.getElementById(sectionId), row = document.getElementById(rowId);
-    if (!sec || !row) return;
-    const html = cards(ids);
-    const n = (html.match(/recent-card/g) || []).length;
-    sec.hidden = n < min;
-    row.innerHTML = n >= min ? html : '';
-  }
-  window.renderRecent = function () {
-    const ids = read();
-    const cur = (typeof currentProduct !== 'undefined' && currentProduct) ? String(currentProduct.id) : null;
-    fill('d-recent', 'd-recent-row', ids.filter(id => id !== cur), 1);
-    fill('shop-recent', 'shop-recent-row', ids, 2);
-  };
-  document.addEventListener('click', (e) => {
-    const c = e.target.closest('.recent-card');
-    if (!c || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-    e.preventDefault();
-    openDetail(c.dataset.id);
-  });
-  const _open = window.openDetail;
-  window.openDetail = function (id) {
-    const r = _open.apply(this, arguments);
-    const ids = read().filter(x => String(x) !== String(id));
-    ids.unshift(String(id)); write(ids);
-    const sc = document.getElementById('d-recent-row'); if (sc) sc.scrollLeft = 0;
-    renderRecent();
-    return r;
-  };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderRecent); else renderRecent();
-})();
 </script>
 <!-- ============ PHOTO QUI S'ENVOLE JUSQU'À LA FICHE ============ -->
 <script>
@@ -9390,7 +9350,7 @@ window.sharePiece = function () {
   let from = null;
   document.addEventListener('click', function (e) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-    const card = e.target.closest('.product-card, .similar-card, .recent-card');
+    const card = e.target.closest('.product-card, .similar-card');
     const box = card && card.querySelector('.product-img');
     const img = box && box.querySelector('img');
     if (!img || !img.complete || !img.naturalWidth) { from = null; return; }
@@ -9636,7 +9596,7 @@ window.sharePiece = function () {
     if (pin && !bar.classList.contains('pinned')) {
       // La réserve prend exactement la place laissée par la barre (marges
       // comprises) : la grille ne bouge pas d'un pixel (CLS).
-      var next = spacer.nextElementSibling;   // 1er bloc suivant dans le flux (grille ou « Vus récemment »)
+      var next = spacer.nextElementSibling;   // 1er bloc suivant dans le flux (la grille)
       while (next && (/^(none|contents)$/.test(getComputedStyle(next).display) || /^(fixed|absolute)$/.test(getComputedStyle(next).position))) next = next.nextElementSibling;
       var before = next ? next.getBoundingClientRect().top : 0;
       spacer.style.height = '0px';
