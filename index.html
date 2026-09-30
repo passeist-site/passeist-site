@@ -3507,16 +3507,16 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   .filter-bar-spacer { display: none; }
   .filter-bar.pinned + .filter-bar-spacer { display: block; }
 }
-/* Fermé, le panneau reste caché sous l'écran : on le masque, sinon Safari
-   (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). */
+/* Fermé, le panneau est retiré de la page (display: none), sinon Safari
+   (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). Pas de
+   visibility: hidden : sur iPhone, Safari ne redessinait plus l'intérieur
+   du panneau à la réouverture (verre vide). Le script le remet en place
+   (.shown) juste avant de le faire monter. */
 @media (max-width: 900px) {
-  .filter-sheet:not(.open) { visibility: hidden; transition: transform 0.4s var(--ease-out), visibility 0s linear 0.4s; }
+  .filter-sheet:not(.shown) { display: none !important; }
   /* Ouverture plus vive (Tom : « apparaissent trop lentement ») */
-  .filter-sheet.open { visibility: visible; transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s; }
+  .filter-sheet.open { transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
   .filter-sheet.open::before, .filter-sheet.open::after { transition-duration: 0.2s; }
-  /* Préparé dès que le doigt touche « Filtres » : Safari dessine l'intérieur
-     (hors écran) avant la montée, les listes sont prêtes à l'ouverture. */
-  .filter-sheet.prep:not(.open) { visibility: visible; transition: none; }
 }
 .filter-sheet-handle { margin-bottom: 10px; }
 .filter-sheet-header { margin-bottom: 12px; padding-bottom: 8px; }
@@ -7450,7 +7450,7 @@ function openSearchFromRail() {
       // Mobile : ouvre le sheet de filtres et focus la recherche du sheet
       const sheet = document.getElementById('filter-sheet');
       const backdrop = document.getElementById('sheet-backdrop');
-      if (sheet) sheet.classList.add('open');
+      if (sheet) { sheet.classList.add('shown'); void sheet.offsetHeight; sheet.classList.add('open'); }
       if (backdrop) backdrop.classList.add('open');
       document.body.style.overflow = 'hidden';
       const ms = document.getElementById('m-search-input');
@@ -8587,13 +8587,19 @@ window.startSimilarMarqueeLoop = function() {
     mSort.value       = document.getElementById('sort-select').value;
     if (mSearch) mSearch.value = activeSearch || '';
   }
-  let prepT = 0;
+  let hideT = 0;
   function setOpen(open) {
-    sheet.classList.toggle('open', open);
-    if (!open) { clearTimeout(prepT); prepT = setTimeout(() => sheet.classList.remove('prep'), 450); }
-    // Listes remplies panneau visible (sur iPhone, Safari laisse vides celles
-    // remplies panneau masqué) ; déjà fait au toucher du bouton en général.
-    if (open && !sheet.classList.contains('prep')) mirrorOptions();
+    clearTimeout(hideT);
+    if (open) {
+      // Remis dans la page, dessiné en bas de l'écran, puis il monte
+      sheet.classList.add('shown');
+      mirrorOptions();
+      void sheet.offsetHeight;
+      sheet.classList.add('open');
+    } else {
+      sheet.classList.remove('open');
+      hideT = setTimeout(() => sheet.classList.remove('shown'), 420);
+    }
     backdrop.classList.toggle('open', open);
     sheet.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('no-scroll', open);
@@ -8619,11 +8625,6 @@ window.startSimilarMarqueeLoop = function() {
     originalRenderFilters.apply(this, arguments);
     updateCountBadge();
   };
-  toggle.addEventListener('pointerdown', () => {
-    clearTimeout(prepT);
-    sheet.classList.add('prep'); mirrorOptions();
-    prepT = setTimeout(() => { if (!sheet.classList.contains('open')) sheet.classList.remove('prep'); }, 1500);
-  });
   toggle.addEventListener('click', () => setOpen(true));
   closeBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
