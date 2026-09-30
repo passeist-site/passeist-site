@@ -3514,6 +3514,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   /* Ouverture plus vive (Tom : « apparaissent trop lentement ») */
   .filter-sheet.open { visibility: visible; transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s; }
   .filter-sheet.open::before, .filter-sheet.open::after { transition-duration: 0.2s; }
+  /* Préparé dès que le doigt touche « Filtres » : Safari dessine l'intérieur
+     (hors écran) avant la montée, les listes sont prêtes à l'ouverture. */
+  .filter-sheet.prep:not(.open) { visibility: visible; transition: none; }
 }
 .filter-sheet-handle { margin-bottom: 10px; }
 .filter-sheet-header { margin-bottom: 12px; padding-bottom: 8px; }
@@ -8584,11 +8587,13 @@ window.startSimilarMarqueeLoop = function() {
     mSort.value       = document.getElementById('sort-select').value;
     if (mSearch) mSearch.value = activeSearch || '';
   }
+  let prepT = 0;
   function setOpen(open) {
     sheet.classList.toggle('open', open);
-    // Remplir les listes une fois le panneau visible : sur iPhone, Safari
-    // laisse vides les listes remplies pendant que le panneau est masqué.
-    if (open) { mirrorOptions(); requestAnimationFrame(mirrorOptions); }
+    if (!open) { clearTimeout(prepT); prepT = setTimeout(() => sheet.classList.remove('prep'), 450); }
+    // Listes remplies panneau visible (sur iPhone, Safari laisse vides celles
+    // remplies panneau masqué) ; déjà fait au toucher du bouton en général.
+    if (open && !sheet.classList.contains('prep')) mirrorOptions();
     backdrop.classList.toggle('open', open);
     sheet.setAttribute('aria-hidden', String(!open));
     document.body.classList.toggle('no-scroll', open);
@@ -8614,6 +8619,11 @@ window.startSimilarMarqueeLoop = function() {
     originalRenderFilters.apply(this, arguments);
     updateCountBadge();
   };
+  toggle.addEventListener('pointerdown', () => {
+    clearTimeout(prepT);
+    sheet.classList.add('prep'); mirrorOptions();
+    prepT = setTimeout(() => { if (!sheet.classList.contains('open')) sheet.classList.remove('prep'); }, 1500);
+  });
   toggle.addEventListener('click', () => setOpen(true));
   closeBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
