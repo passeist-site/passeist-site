@@ -499,10 +499,12 @@ html[lang="en"] .lang-toggle .lang-fr { color: var(--text-mute); }
 .hero-content { position: relative; z-index: 5; }
 
 /* Accueil plein écran sans scroll, footer visible */
+/* overflow-y visible (pas auto) : body ne devient pas un conteneur de
+   défilement, sinon position: sticky (barre Filtres) ne colle jamais. */
 body[data-page="home"],
 body[data-page="shop"],
 body[data-page="archive"],
-body[data-page="favorites"] { overflow: auto; height: auto; }
+body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: auto; }
 /* Lumière rasante, gradient diagonal subtil sur fond ardoise */
 /* Fond uniforme sans gradient */
 
@@ -2253,7 +2255,7 @@ html[lang="fr"] .nl .lang-en { display: none !important; }
 .chat-push svg { width: 15px; height: 15px; }
 
 /* Favoris (20 pièces ou moins) : pas de filtres, juste la liste (Tom) */
-body.fav-few #shop-page .filter-bar, body.fav-few .filter-bar-spacer { display: none !important; }
+body.fav-few #shop-page .filter-bar { display: none !important; }
 .grid-more { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 36px 0 0; font-family: var(--font-sans); }
 .grid-more[hidden] { display: none; }
 .grid-more-count { font-size: 12px; letter-spacing: 0.08em; color: var(--text-mute); }
@@ -2736,7 +2738,7 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
   body[data-page="home"],
 body[data-page="shop"],
 body[data-page="archive"],
-body[data-page="favorites"] { overflow: auto; height: auto; }
+body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: auto; }
   body[data-page="home"] .footer { display: flex; flex-shrink: 0; }
   /* Layout home mobile : body flex column, hero fills + footer naturel.
      (La topbar est position:fixed donc hors du flow.) */
@@ -3502,10 +3504,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 @media (max-width: 900px) {
   .shop .main, .archive .main { padding-top: 18px !important; }
   .shop-header { margin-bottom: 12px !important; }
-  .filter-bar { position: relative !important; top: auto !important; margin: 0 -20px 16px !important; padding: 8px 20px !important; }
-  .filter-bar.pinned { position: fixed !important; top: var(--topbar-h-mobile) !important; left: 0; right: 0; margin: 0 !important; }
-  .filter-bar-spacer { display: none; }
-  .filter-bar.pinned + .filter-bar-spacer { display: block; }
+  /* Collée par le navigateur (sticky) : suit le doigt sans à-coup sur
+     iPhone, contrairement à l'ancien accrochage par script (Tom). */
+  .filter-bar { position: sticky !important; top: var(--topbar-h-mobile) !important; margin: 0 -20px 16px !important; padding: 8px 20px !important; }
 }
 /* Fermé, le panneau est retiré de la page (display: none), sinon Safari
    (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). Pas de
@@ -8626,6 +8627,16 @@ window.startSimilarMarqueeLoop = function() {
     updateCountBadge();
   };
   toggle.addEventListener('click', () => setOpen(true));
+  // Choisir une marque (ou autre) recalcule tout de suite les chiffres des
+  // autres filtres dans le panneau, comme sur ordinateur (Tom).
+  [mGender, mBrand, mCat, mColor].forEach(sel => sel && sel.addEventListener('change', () => {
+    activeGender = mGender.value;
+    activeBrand  = mBrand.value;
+    activeCat    = mCat.value;
+    if (mColor) activeColor = mColor.value;
+    window.renderFilters();
+    requestAnimationFrame(() => setTimeout(renderGrid, 0));
+  }));
   closeBtn.addEventListener('click', () => setOpen(false));
   backdrop.addEventListener('click', () => setOpen(false));
   applyBtn.addEventListener('click', () => {
@@ -9576,7 +9587,7 @@ window.sharePiece = function () {
   });
 })();
 </script>
-<!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->
+<!-- ============ FILTRES : TITRE DE LA SÉLECTION DANS LE BOUTON (MOBILE) ============ -->
 <script>
 // Recopie le titre de la sélection dans le bouton Filtres (mobile)
 (function () {
@@ -9585,41 +9596,6 @@ window.sharePiece = function () {
   var sync = function () { dst.textContent = src.textContent; };
   sync();
   new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true });
-})();
-</script>
-<!-- ============ FILTRES : ACCROCHÉS SOUS L'EN-TÊTE EN DÉFILANT (MOBILE) ============ -->
-<script>
-(function () {
-  var bar = document.querySelector('#shop-page .filter-bar');
-  if (!bar || !window.matchMedia) return;
-  var mq = matchMedia('(max-width: 900px)');
-  var spacer = document.createElement('div');
-  spacer.className = 'filter-bar-spacer';
-  bar.parentNode.insertBefore(spacer, bar.nextSibling);
-  var anchor = document.createElement('div');       // repère : position d'origine de la barre
-  bar.parentNode.insertBefore(anchor, bar);
-  var ticking = false;
-  function update() {
-    ticking = false;
-    if (!mq.matches) { bar.classList.remove('pinned'); return; }
-    var topbar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h-mobile')) || 54;
-    var pin = anchor.getBoundingClientRect().top <= topbar && document.getElementById('shop-page').classList.contains('open');
-    if (pin && !bar.classList.contains('pinned')) {
-      // La réserve prend exactement la place laissée par la barre (marges
-      // comprises) : la grille ne bouge pas d'un pixel (CLS).
-      var next = spacer.nextElementSibling;   // 1er bloc suivant dans le flux (la grille)
-      while (next && (/^(none|contents)$/.test(getComputedStyle(next).display) || /^(fixed|absolute)$/.test(getComputedStyle(next).position))) next = next.nextElementSibling;
-      var before = next ? next.getBoundingClientRect().top : 0;
-      spacer.style.height = '0px';
-      bar.classList.add('pinned');
-      spacer.style.height = (next ? Math.max(0, before - next.getBoundingClientRect().top) : bar.offsetHeight + 16) + 'px';
-    } else if (!pin && bar.classList.contains('pinned')) {
-      bar.classList.remove('pinned');
-    }
-  }
-  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-  window.addEventListener('resize', update);
-  update();
 })();
 </script>
 <!-- ============ NOTIFICATIONS CLIENTS ============ -->
@@ -9786,7 +9762,7 @@ window.subscribeNewsletter = function (e) {
       'gender.Femme': 'Femme', 'gender.Homme': 'Homme', 'gender.': 'Accessoires',
       'cat.Hauts': 'Hauts', 'cat.Bas': 'Bas', 'cat.Vestes': 'Vestes',
       'cat.Maille': 'Maille', 'cat.Robes': 'Robes', 'cat.Chaussures': 'Chaussures',
-      'cat.Accessoires': 'Accessoires',
+      'cat.Accessoires': 'Accessoires', 'cat.Autres': 'Autres',
       // Couleurs
       'color.Noir': 'Noir', 'color.Anthracite': 'Anthracite', 'color.Marine': 'Marine',
       'color.Indigo': 'Indigo', 'color.Bleu': 'Bleu', 'color.Gris': 'Gris',
@@ -9829,7 +9805,7 @@ window.subscribeNewsletter = function (e) {
       'gender.Femme': 'Women', 'gender.Homme': 'Men', 'gender.': 'Accessories',
       'cat.Hauts': 'Tops', 'cat.Bas': 'Bottoms', 'cat.Vestes': 'Jackets',
       'cat.Maille': 'Knits', 'cat.Robes': 'Dresses', 'cat.Chaussures': 'Shoes',
-      'cat.Accessoires': 'Accessories',
+      'cat.Accessoires': 'Accessories', 'cat.Autres': 'Other',
       'color.Noir': 'Black', 'color.Anthracite': 'Charcoal', 'color.Marine': 'Navy',
       'color.Indigo': 'Indigo', 'color.Bleu': 'Blue', 'color.Gris': 'Grey',
       'color.Blanc': 'White', 'color.Beige': 'Beige', 'color.Camel': 'Camel',
