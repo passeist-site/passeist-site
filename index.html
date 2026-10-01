@@ -8091,7 +8091,9 @@ function openChat() {
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
   try {
-    const n = localStorage.getItem('passeist_chat_name'); if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
+    let n = localStorage.getItem('passeist_chat_name');
+    if (n && chatLooksLikeMessage(n)) { localStorage.removeItem('passeist_chat_name'); n = ''; }   // ancienne phrase gardée comme prénom
+    if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
   } catch (e) {}
   const ov = document.getElementById('chat-overlay');
   ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim());

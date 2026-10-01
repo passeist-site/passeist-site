@@ -130,8 +130,11 @@ exports.handler = async (event) => {
         id, createdAt: now, messages: [], name: '', email: '', product: '',
       };
       if (conv.messages.length >= MAX_MESSAGES) return json(429, { error: 'too many messages' });
+      // Prénom : jamais une phrase (visiteur qui a tapé sa question dans le
+      // champ prénom, par ex. depuis une ancienne version de la page restée ouverte)
       const name = clean(body.name, 60);
-      if (name) conv.name = name;
+      const looksLikeMessage = /[?!.,:]/.test(name) || name.split(/\s+/).length > 3 || name.length > 30;
+      if (name && !looksLikeMessage) conv.name = name;
       const email = clean(body.email, 200);
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) conv.email = email;
       const product = clean(body.product, 200);
