@@ -59,7 +59,7 @@ gtag('config', 'G-J3DSYD6B68'); // ancienne propriété, gardée pour l'historiq
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="passéist">
 <!-- Structured data : Store + Organization (pour Knowledge Panel logo Google) -->
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"passéist","alternateName":["passeist","passeiste","passéiste"],"description":"Curation de mode d'auteur japonaise vintage","url":"https://passeist.com","logo":"https://passeist.com/img/favicon-512.png","image":"https://passeist.com/og.jpg","telephone":"","email":"info@passeist.com","address":{"@type":"PostalAddress","addressLocality":"Paris","addressRegion":"Île-de-France","postalCode":"75011","addressCountry":"FR"},"priceRange":"€€€","sameAs":["https://www.instagram.com/passeist_paris/"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"passéist","alternateName":["passeist","passeiste","passéiste"],"description":"Curation de mode d'auteur japonaise vintage","url":"https://passeist.com","logo":"https://passeist.com/img/favicon-512.png","image":"https://passeist.com/og.jpg","telephone":"","email":"info@passeist.com","address":{"@type":"PostalAddress","addressLocality":"Paris","addressRegion":"Île-de-France","postalCode":"75011","addressCountry":"FR"},"priceRange":"€€€","sameAs":["https://www.instagram.com/passeist_paris/","https://fr.vestiairecollective.com/profile/30773496/"]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.vestiairecollective.com" crossorigin>
@@ -7071,7 +7071,7 @@ function openDetail(id) {
   // Note : onerror enlève le thumb cassé (404) pour qu'il ne reste pas un slot vide.
   // Pour la principale, fallback sur la première photo qui charge, on retire aussi
   // tous les thumbs qui ne chargent pas pour aligner le compteur.
-  const altBase = [p.brand, (window.tType ? window.tType(p) : p.type)].filter(Boolean).join(' ') + ' vintage';
+  const altBase = [p.brand, (window.tType ? window.tType(p) : p.type)].filter(Boolean).join(' ') + ' vintage, passéist';
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
   // Thumbs : on inclut TOUTES les photos (y compris la photo 0) pour qu'on puisse revenir à la principale via le carrousel.
   // Une seule photo (pièce vendue) : pas de vignette, elle répéterait la photo principale (Tom).

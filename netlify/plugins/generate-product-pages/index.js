@@ -80,7 +80,8 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   }
 
   // Texte alternatif riche (Google Images) : marque, type, couleur, n° de photo
-  const altBase = esc([p.brand, p.type, p.color && colorFR(p.color)].filter(Boolean).join(' ') + ' vintage');
+  // « passéist » dans le texte des photos : recherche « passeist » dans Google Images
+  const altBase = esc([p.brand, p.type, p.color && colorFR(p.color)].filter(Boolean).join(' ') + ' vintage, passéist');
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
 
   const thumbsHtml = photos.slice(1).map((src, idx) => {
