@@ -29,6 +29,8 @@ function nextSendDate(now = new Date()) {
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 const BATCH = Number(process.env.NEWSLETTER_MIN || 8);   // minimum de pièces pour envoyer
+let EDITION = null;
+try { EDITION = require('./newsletter-edition.json'); } catch (e) { /* pas de semaine composée */ }
 
 function slugify(s) {
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -77,7 +79,74 @@ async function groupsFor(ids) {
     .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
 }
 
-function buildHtml(lang, groups, total, featured, note, edition) {
+// Semaine composée par Tom : sections titrées (« Le surprenant »…), une grande
+// photo ou des paires, chaque photo et son nom mènent à la fiche. Typographie
+// du site : Inter (Helvetica si la messagerie ne charge pas les polices),
+// marque en capitales, nom en italique, date en JetBrains Mono.
+function editionHtml(lang, ed, total) {
+  const en = lang === 'en';
+  const L = (v) => (v && typeof v === 'object') ? (v[lang] || v.fr || '') : (v || '');
+  const INK = '#1C2230', DIM = '#5b6070', MUTE = '#9a9ca3', LINE = '#e6e4df';
+  const FONT = "Inter,'Helvetica Neue',Helvetica,Arial,sans-serif";
+  const MONO = "'JetBrains Mono','SF Mono',Menlo,monospace";
+  const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
+  const [y, m, d] = ed.date.split('-').map(Number);
+  const dateTxt = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
+  const piece = (it, big) => {
+    const p = PRODUCTS[it.id];
+    const w = big ? 472 : 230;
+    const src = `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;
+    return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
+      <img src="${src}" width="${w}" alt="${esc(title(p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
+      <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(p.brand)}</div>
+      <div style="font-family:${FONT};font-size:${big ? 16 : 12}px;font-style:italic;font-weight:300;letter-spacing:-0.01em;line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
+      <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
+  };
+  const heading = (t) => {
+    const mm = t.match(/^(Le |Les |La |L’|L'|The )(.*)$/);
+    const h = mm ? `${esc(mm[1])}<span style="font-weight:500;">${esc(mm[2])}</span>` : `<span style="font-weight:500;">${esc(t)}</span>`;
+    return `<tr><td align="center" style="padding:36px 0 30px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:-0.035em;line-height:1;color:${INK};">${h}</td></tr>`;
+  };
+  const sections = (ed.sections || []).map(sec => {
+    const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
+    if (!items.length) return '';
+    if (sec.hero) return heading(L(sec.title)) + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
+    const rows = [];
+    for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
+      items.slice(i, i + 2).map(it => `<td width="50%" valign="top" align="center" style="padding:0 8px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
+    return heading(L(sec.title)) + rows.join('');
+  }).join('');
+
+  return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<title>${esc(L(ed.subject))}</title></head>
+<body style="margin:0;padding:0;background:#ffffff;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
+  <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
+  <tr><td align="center" style="padding:24px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
+  ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 20px 8px;font-family:${FONT};font-size:20px;line-height:1.45;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
+  ${sections}
+  <tr><td align="center" style="padding:20px 0 80px;">
+    <a href="${track(SITE + '/shop')}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${en ? 'See all new pieces' : 'Voir toutes les nouveautés'}</a>
+  </td></tr>
+  <tr><td align="center" style="border-top:1px solid ${LINE};padding:36px 0 0;font-family:${FONT};font-size:12px;font-weight:300;line-height:2;color:${DIM};">
+    ${en ? 'Also on' : 'Aussi sur'} <a href="${VESTIAIRE_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vestiaire Collective</a> ${en ? 'and' : 'et'} <a href="${VINTED_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vinted</a><br>
+    <a href="${track(SITE + '/?app=1')}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">${en ? 'passéist on your phone' : 'passéist sur votre téléphone'}</a>
+  </td></tr>
+  <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:11px;font-weight:300;line-height:1.8;color:${MUTE};">
+    ${en
+      ? 'We never want to clutter your inbox: to unsubscribe, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">click here</a>.'
+      : 'Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>passéist · Paris
+  </td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+function buildHtml(lang, groups, total, featured, note) {
+  // Semaine composée par Tom (newsletter-edition.json) : elle remplace la mise en page automatique
+  if (EDITION && EDITION.date === nextSendDate()) return editionHtml(lang, EDITION, total);
   // Version « hyper luxe » (Tom) : fond blanc où les photos se fondent, texte
   // bleu nuit, petites capitales espacées, beaucoup de vide, 8 pièces au plus.
   const en = lang === 'en';
@@ -119,36 +188,9 @@ function buildHtml(lang, groups, total, featured, note, edition) {
   const rows = [];
   for (let i = 0; i < shown.length; i += 2) rows.push(`<tr>${cell(shown[i])}${cell(shown[i + 1])}</tr>`);
 
-  // Édition composée par Tom (newsletter-edition.json) : remplace la grille
   let body = `${noteBlock}
   ${picks}
   <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>`;
-  if (edition) {
-    const L = (v) => (v && typeof v === 'object') ? (v[lang] || v.fr || '') : (v || '');
-    const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
-    const piece = (it, big) => {
-      const p = PRODUCTS[it.id];
-      const src = `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;
-      const w = big ? 472 : 230;
-      return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;"><img src="${src}" width="${w}" alt="${esc(p.brand + ' ' + p.type)}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">${caption({ brand: p.brand, type: L(it.name) || p.label || p.type, price: p.price }, big)}</a>`;
-    };
-    const text = (t) => t ? `<tr><td align="center" style="padding:0 18px 56px;font-family:${FONT};font-size:14px;line-height:1.85;font-weight:300;color:${DIM};">${esc(t)}</td></tr>` : '';
-    const heading = (t) => t ? `<tr><td align="center" style="padding:24px 0 12px;font-family:${FONT};font-size:20px;font-weight:300;letter-spacing:0.5px;color:${INK};">${esc(t)}</td></tr>
-  <tr><td align="center" style="padding:0 0 28px;"><div style="width:24px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>` : '';
-    const edNote = L(edition.note);
-    body = (edNote ? `<tr><td align="center" style="padding:0 18px 64px;font-family:${FONT};font-size:14px;line-height:1.85;font-style:italic;font-weight:300;color:${DIM};">${esc(edNote)}</td></tr>` : '') +
-      (edition.sections || []).map(sec => {
-        if (sec.type === 'hero') {
-          if (!PRODUCTS[sec.id]) return '';   // pièce vendue entre-temps : retirée
-          return heading(L(sec.title)) + `<tr><td align="center" style="padding:0 0 26px;">${piece(sec, true)}</td></tr>` + text(L(sec.text));
-        }
-        const pairs = (sec.pairs || []).map(pr => pr.filter(it => PRODUCTS[it.id])).filter(pr => pr.length);
-        if (!pairs.length) return '';
-        return heading(L(sec.title)) + text(L(sec.text)) + pairs.map(pr => `<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
-          pr.map(it => `<td width="50%" valign="top" align="center" style="padding:0 8px 52px;">${piece(it, false)}</td>`).join('') +
-          (pr.length === 1 ? '' : '') + `</tr></table></td></tr>`).join('');
-      }).join('');
-  }
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
@@ -229,13 +271,13 @@ exports.handler = async (event) => {
   const top = groups.slice(0, 3).map(g => title(g.brand)).join(', ');
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
-    subject: `Cette semaine chez passéist · ${top}…`,
+    subject: (EDITION && EDITION.date === nextSendDate() && EDITION.subject) ? EDITION.subject.fr : `Cette semaine chez passéist · ${top}…`,
     html: buildHtml('fr', groups, fresh.length, featured, note),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
-      subject: `This week at passéist · ${top}…`,
+      subject: (EDITION && EDITION.date === nextSendDate() && EDITION.subject) ? (EDITION.subject.en || EDITION.subject.fr) : `This week at passéist · ${top}…`,
       html: buildHtml('en', groups, fresh.length, featured, note),
     });
   }

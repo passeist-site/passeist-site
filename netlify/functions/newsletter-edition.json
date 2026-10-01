@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-04",
+  "subject": { "fr": "Cette semaine chez passéist", "en": "This week at passéist" },
+  "intro": { "fr": "Parmi nos nouveautés de la semaine :", "en": "Among our new pieces this week:" },
+  "sections": [
+    { "title": { "fr": "Le surprenant", "en": "The surprising one" }, "hero": true,
+      "items": [ { "id": "71766804", "photo": 0, "name": { "fr": "Cardigan plissé effet lichen", "en": "Pleated lichen-effect cardigan" } } ] },
+    { "title": { "fr": "Les chaleureux", "en": "The warm ones" },
+      "items": [
+        { "id": "71766560", "name": { "fr": "Gilet zippé en laine marine", "en": "Navy wool zip cardigan" } },
+        { "id": "71766532", "name": { "fr": "Cardigan torsadé noir et marine", "en": "Black and navy cable-knit cardigan" } },
+        { "id": "71766587", "name": { "fr": "Pull op-art moutarde et noir", "en": "Mustard and black op-art jumper" } },
+        { "id": "71766610", "name": { "fr": "Pull dégradé jaune et gris", "en": "Yellow and grey gradient jumper" } },
+        { "id": "71766822", "name": { "fr": "Pull ample moucheté", "en": "Oversized speckled jumper" } },
+        { "id": "71766918", "name": { "fr": "Pull-cardigan effet nuage", "en": "Cloud-effect cardigan" } } ] },
+    { "title": { "fr": "Le parfait duo", "en": "The perfect pair" },
+      "items": [
+        { "id": "71766947", "name": { "fr": "Sweat zippé asymétrique", "en": "Asymmetric zip-up hoodie" } },
+        { "id": "71767006", "name": { "fr": "Jean arqué à sashiko", "en": "Curved sashiko jeans" } } ] },
+    { "title": { "fr": "Le raffiné", "en": "The refined one" }, "hero": true,
+      "items": [ { "id": "71767224", "photo": 1, "name": { "fr": "Chemisier plissé vert sauge", "en": "Sage-green pleated blouse" } } ] }
+  ]
+}
