@@ -106,7 +106,7 @@ function editionHtml(lang, ed, total) {
   const heading = (t) => {
     const mm = t.match(/^(Le |Les |La |L’|L'|The )(.*)$/);
     const h = mm ? `${esc(mm[1])}<span style="font-weight:500;">${esc(mm[2])}</span>` : `<span style="font-weight:500;">${esc(t)}</span>`;
-    return `<tr><td align="center" style="padding:36px 0 30px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:-0.035em;line-height:1;color:${INK};">${h}</td></tr>`;
+    return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
   };
   const sections = (ed.sections || []).map(sec => {
     const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
@@ -126,8 +126,8 @@ function editionHtml(lang, ed, total) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
   <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
-  <tr><td align="center" style="padding:24px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
-  ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 20px 8px;font-family:${FONT};font-size:20px;line-height:1.45;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
+  <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
+  ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px 8px;font-family:${FONT};font-size:25px;line-height:1.35;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
   ${sections}
   <tr><td align="center" style="padding:20px 0 80px;">
     <a href="${track(SITE + '/shop')}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${en ? 'See all new pieces' : 'Voir toutes les nouveautés'}</a>
