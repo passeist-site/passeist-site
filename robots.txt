@@ -5,4 +5,13 @@ Disallow: /cart
 Disallow: /checkout
 Crawl-delay: 1
 
+# Google Images : seules les photos xl (celles de la fiche de chaque pièce)
+# sont indexées. Les versions sm/md servent aux grilles et carrousels
+# (accueil, boutique, pièces similaires, pages marques) : indexées, elles
+# faisaient atterrir les clics sur l'accueil ou sur une autre fiche.
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /img/*-sm.webp
+Disallow: /img/*-md.webp
+
 Sitemap: https://passeist.com/sitemap.xml

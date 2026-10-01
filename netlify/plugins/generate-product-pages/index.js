@@ -435,7 +435,8 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     .filter(p => !soldIds.has(p.id) && p.sold !== true) // exclude sold
     .map(p => {
     const link  = 'https://passeist.com/product/' + productSlug(p);
-    const imgRel = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
+    // Version xl, la même que dans la fiche (Google rattache la photo à la fiche)
+    const imgRel = productImgUrl(p, 0, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
     const img    = imgRel ? (imgRel.startsWith('/') ? 'https://passeist.com' + imgRel : imgRel) : '';
 
     // Title: same formula as <title> tag minus "— passéist"
@@ -508,7 +509,8 @@ function brandCardImg(p, imgReorder, imgSuffix, validatedLocal, publishDir) {
   if (!p.n) return { src: '', srcset: '' };
   if (validatedLocal.has(p.id) && fs.existsSync(path.join(publishDir, 'img', p.id + '-0-md.webp'))) {
     const base = '/img/' + p.id + '-0-';
-    return { src: base + 'md.webp', srcset: base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w' };
+    // sm/md seulement : la version xl est réservée à la fiche (Google Images, PHOTOS.md § 7)
+    return { src: base + 'md.webp', srcset: base + 'sm.webp 400w, ' + base + 'md.webp 800w' };
   }
   const reorder = imgReorder[p.id];
   const photoNum = reorder ? reorder[0] : 1;
@@ -639,7 +641,8 @@ function clip(text, max) {
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
   const url  = 'https://passeist.com/product/' + productSlug(p);
-  const img  = productImgUrl(p, 0, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
+  // Version xl : la photo telle qu'affichée dans la fiche (og:image, JSON-LD)
+  const img  = productImgUrl(p, 0, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
 
   // Extract components
   const baseTypeFR = p.type.replace(/\s+en\s+.*$/i, '').trim();

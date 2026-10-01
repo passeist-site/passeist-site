@@ -5917,8 +5917,11 @@ function imgSrcset(product, i, opts) {
            _vestiaireUrl(product, i, 1600) + ' 1600w';
   }
   if (VALIDATED_LOCAL.has(product.id)) {
+    // Grilles et carrousels : sm/md seulement. La version xl n'existe que
+    // dans la fiche de la pièce, pour que Google Images rattache la photo à
+    // sa fiche et pas à l'accueil ou à une autre fiche (cf. PHOTOS.md § 7).
     const base = '/img/' + product.id + '-' + i + '-';
-    return base + 'sm.webp 400w, ' + base + 'md.webp 800w, ' + base + 'xl.webp 1600w';
+    return base + 'sm.webp 400w, ' + base + 'md.webp 800w';
   }
   return _vestiaireUrl(product, i, 400) + ' 400w, ' +
          _vestiaireUrl(product, i, 800) + ' 800w, ' +
@@ -9010,7 +9013,8 @@ window.updateSEO = function(p) {
 
   if (p) {
     const gender = (typeof getGender === 'function') ? (getGender(p) || 'Mode') : 'Mode';
-    const img = (typeof imgUrl === 'function') ? imgUrl(p, 0) : '';
+    // Photo xl : la version propre à la fiche (cf. PHOTOS.md § 7)
+    const img = (typeof imgUrl === 'function') ? imgUrl(p, 0, {size: 'xl'}) : '';
     const url = BASE + '/product/' + productSlug(p);
     const title = p.brand + ', ' + p.type + ' · ' + p.size + ' · Vintage japonais, passéist';
     const short = (p.desc || '').replace(/\s+/g, ' ').trim().slice(0, 155);
@@ -9039,7 +9043,7 @@ window.updateSEO = function(p) {
       '@type': 'Product',
       name: p.brand + ', ' + p.type,
       brand: { '@type': 'Brand', name: p.brand },
-      image: img ? [img, (typeof imgUrl === 'function') ? imgUrl(p, 0, {size:'xl'}) : img] : undefined,
+      image: img ? [img] : undefined,
       description: desc,
       sku: p.id,
       mpn: p.id,

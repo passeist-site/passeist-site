@@ -141,3 +141,17 @@ Les scripts d'import (`tools/import_vestiaire.py`, `tools/import_hd.py`,
 fichiers conformes à la section 1 (carrés, photo 1 plein carré, photos 2+ en
 3:4 centré avec bandes de 12,5 %), sans recadrage ni rognage. Vérifier ce
 point avant toute modification de ces scripts.
+
+**Hébergement et Google Images (validé par Tom le 2026-10-01) :**
+
+- Les photos de chaque pièce importée sont hébergées sur passeist.com
+  (`img/<id>-<i>-{sm,md,xl}.webp`, id ajouté à `VALIDATED_LOCAL`), jamais
+  affichées depuis le CDN Vestiaire. Le workflow `sync-vestiaire` les
+  télécharge à l'import ; le workflow « Import photos manquantes » rattrape
+  automatiquement toute pièce en vente restée sur le CDN.
+- La version **xl** d'une photo n'apparaît que dans **la fiche de sa pièce**
+  (galerie, `og:image`, JSON-LD, plan du site, flux Google Merchant). Les
+  grilles et carrousels (accueil, boutique, pièces similaires, pages marques)
+  n'utilisent que sm/md, et `robots.txt` interdit sm/md à Googlebot-Image :
+  ainsi un clic dans Google Images mène à la bonne fiche, pas à l'accueil
+  ou à une autre pièce.
