@@ -132,17 +132,14 @@ function editionHtml(lang, ed, total) {
   <tr><td align="center" style="padding:20px 0 80px;">
     <a href="${track(SITE + '/shop')}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${en ? 'See all new pieces' : 'Voir toutes les nouveautés'}</a>
   </td></tr>
-  <tr><td align="center" style="border-top:1px solid ${LINE};padding:40px 12px 0;font-family:${FONT};font-size:13px;font-weight:300;line-height:1.9;color:${DIM};">
-    ${en
-      ? `Find our full selection on <a href="${track(SITE + '/shop')}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">passeist.com</a>, and as always on <a href="${VINTED_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vinted</a> and <a href="${VESTIAIRE_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vestiaire Collective</a>.`
-      : `Retrouvez toute notre sélection sur <a href="${track(SITE + '/shop')}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">passeist.com</a>, et toujours sur <a href="${VINTED_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vinted</a> et <a href="${VESTIAIRE_URL}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">Vestiaire Collective</a>.`}
-  </td></tr>
-  <tr><td align="center" style="padding:28px 12px 0;font-family:${FONT};font-size:13px;font-weight:300;line-height:1.9;color:${DIM};">
-    <div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-bottom:6px;">${en ? 'passéist on your phone' : 'passéist sur votre téléphone'}</div>
-    ${en
-      ? 'Add our website to your home screen and open it like an app.<br>iPhone: in Safari, tap Share, then “Add to Home Screen”.<br>Android: in Chrome, tap ⋮, then “Add to Home screen”.'
-      : 'Ajoutez notre site à l’écran d’accueil et ouvrez-le comme une application.<br>iPhone : dans Safari, touchez Partager, puis « Sur l’écran d’accueil ».<br>Android : dans Chrome, touchez ⋮, puis « Ajouter à l’écran d’accueil ».'}
-    <div style="margin-top:10px;"><a href="${track(SITE + '/?app=1')}" style="color:${INK};text-decoration:none;border-bottom:1px solid ${LINE};">${en ? 'Step-by-step guide' : 'Le mode d’emploi en images'}</a></div>
+  <tr><td align="center" style="border-top:1px solid ${LINE};padding:40px 0 22px;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${en ? 'Find us' : 'Retrouvez-nous'}</td></tr>
+  <tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:360px;"><tr>
+      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${track(SITE + '/?app=1')}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-app.png" width="56" height="56" alt="${en ? 'Our app' : 'Notre app'}" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">${en ? 'Our app' : 'Notre app'}</div></a></td>
+      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${VINTED_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vinted.png" width="56" height="56" alt="Vinted" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">Vinted</div></a></td>
+      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${VESTIAIRE_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vc.png" width="56" height="56" alt="Vestiaire Collective" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">Vestiaire Collective</div></a></td>
+  </tr></table></td></tr>
+  <tr><td align="center" style="padding:22px 16px 0;font-family:${FONT};font-size:12px;font-weight:300;line-height:1.7;color:${DIM};">
+    ${en ? 'To install the app: on passeist.com, tap Share, then “Add to Home Screen”.' : 'Pour installer l’app : sur passeist.com, touchez Partager, puis « Sur l’écran d’accueil ».'}
   </td></tr>
   <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:11px;font-weight:300;line-height:1.8;color:${MUTE};">
     ${en
