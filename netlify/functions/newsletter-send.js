@@ -77,7 +77,7 @@ async function groupsFor(ids) {
     .sort((a, b) => b.items.length - a.items.length || a.brand.localeCompare(b.brand));
 }
 
-function buildHtml(lang, groups, total, featured, note) {
+function buildHtml(lang, groups, total, featured, note, edition) {
   // Version « hyper luxe » (Tom) : fond blanc où les photos se fondent, texte
   // bleu nuit, petites capitales espacées, beaucoup de vide, 8 pièces au plus.
   const en = lang === 'en';
@@ -107,7 +107,6 @@ function buildHtml(lang, groups, total, featured, note) {
   const noteBlock = note ? `
   <tr><td align="center" style="padding:0 22px 64px;font-family:${FONT};font-size:14px;line-height:1.8;font-style:italic;font-weight:300;color:${DIM};">
     ${esc(note).replace(/\n/g, '<br>')}
-    <div style="font-style:normal;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:${MUTE};margin-top:14px;">Tom</div>
   </td></tr>` : '';
 
   const rest = [];
@@ -120,20 +119,49 @@ function buildHtml(lang, groups, total, featured, note) {
   const rows = [];
   for (let i = 0; i < shown.length; i += 2) rows.push(`<tr>${cell(shown[i])}${cell(shown[i + 1])}</tr>`);
 
+  // Édition composée par Tom (newsletter-edition.json) : remplace la grille
+  let body = `${noteBlock}
+  ${picks}
+  <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>`;
+  if (edition) {
+    const L = (v) => (v && typeof v === 'object') ? (v[lang] || v.fr || '') : (v || '');
+    const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
+    const piece = (it, big) => {
+      const p = PRODUCTS[it.id];
+      const src = `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;
+      const w = big ? 472 : 230;
+      return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;"><img src="${src}" width="${w}" alt="${esc(p.brand + ' ' + p.type)}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">${caption({ brand: p.brand, type: L(it.name) || p.label || p.type, price: p.price }, big)}</a>`;
+    };
+    const text = (t) => t ? `<tr><td align="center" style="padding:0 18px 56px;font-family:${FONT};font-size:14px;line-height:1.85;font-weight:300;color:${DIM};">${esc(t)}</td></tr>` : '';
+    const heading = (t) => t ? `<tr><td align="center" style="padding:24px 0 12px;font-family:${FONT};font-size:20px;font-weight:300;letter-spacing:0.5px;color:${INK};">${esc(t)}</td></tr>
+  <tr><td align="center" style="padding:0 0 28px;"><div style="width:24px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>` : '';
+    const edNote = L(edition.note);
+    body = (edNote ? `<tr><td align="center" style="padding:0 18px 64px;font-family:${FONT};font-size:14px;line-height:1.85;font-style:italic;font-weight:300;color:${DIM};">${esc(edNote)}</td></tr>` : '') +
+      (edition.sections || []).map(sec => {
+        if (sec.type === 'hero') {
+          if (!PRODUCTS[sec.id]) return '';   // pièce vendue entre-temps : retirée
+          return heading(L(sec.title)) + `<tr><td align="center" style="padding:0 0 26px;">${piece(sec, true)}</td></tr>` + text(L(sec.text));
+        }
+        const pairs = (sec.pairs || []).map(pr => pr.filter(it => PRODUCTS[it.id])).filter(pr => pr.length);
+        if (!pairs.length) return '';
+        return heading(L(sec.title)) + text(L(sec.text)) + pairs.map(pr => `<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
+          pr.map(it => `<td width="50%" valign="top" align="center" style="padding:0 8px 52px;">${piece(it, false)}</td>`).join('') +
+          (pr.length === 1 ? '' : '') + `</tr></table></td></tr>`).join('');
+      }).join('');
+  }
+
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
 <title>${en ? 'This week at passéist' : 'Cette semaine chez passéist'}</title></head>
 <body style="margin:0;padding:0;background:${BG};">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${BG};"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
-  <tr><td align="center" style="font-family:${FONT};font-size:30px;letter-spacing:-0.5px;font-weight:300;">
-    <a href="${track(SITE + '/')}" style="color:${INK};text-decoration:none;">passéist<span style="color:#5a7593;">.</span></a></td></tr>
-  <tr><td align="center" style="padding:18px 0 0;">${caps(esc(dateTxt), 9, MUTE)}</td></tr>
+  <tr><td align="center">
+    <a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="200" alt="passéist." style="display:block;width:200px;max-width:200px;height:auto;margin:0 auto;border:0;"></a></td></tr>
+  <tr><td align="center" style="padding:22px 0 0;">${caps(esc(dateTxt), 9, MUTE)}</td></tr>
   <tr><td align="center" style="padding:64px 0 14px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:0.5px;color:${INK};">${en ? 'This week' : 'Cette semaine'}</td></tr>
   <tr><td align="center" style="padding:0 0 72px;"><div style="width:32px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>
-  ${noteBlock}
-  ${picks}
-  <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0">${rows.join('')}</table></td></tr>
+  ${body}
   <tr><td align="center" style="padding:12px 0 80px;">
     <a href="${track(SITE + '/shop')}" style="display:inline-block;font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:0 0 6px;">${en ? 'Discover the ' + total + ' new pieces' : 'Découvrir les ' + total + ' nouveautés'}</a>
   </td></tr>
