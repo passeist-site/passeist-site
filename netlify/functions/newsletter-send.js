@@ -139,7 +139,7 @@ function editionHtml(lang, ed, total) {
       <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${VESTIAIRE_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vc.png" width="56" height="56" alt="Vestiaire Collective" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">Vestiaire Collective</div></a></td>
   </tr></table></td></tr>
   <tr><td align="center" style="padding:22px 16px 0;font-family:${FONT};font-size:12px;font-weight:300;line-height:1.7;color:${DIM};">
-    ${en ? 'To install the app: on passeist.com, tap Share, then “Add to Home Screen”.' : 'Pour installer l’app : sur passeist.com, touchez Partager, puis « Sur l’écran d’accueil ».'}
+    ${en ? '<strong style="font-weight:600;color:' + INK + ';">No App Store needed</strong>: on passeist.com, tap Share, then “Add to Home Screen”.' : '<strong style="font-weight:600;color:' + INK + ';">Pas besoin de l’App Store</strong> : sur passeist.com, touchez Partager, puis « Sur l’écran d’accueil ».'}
   </td></tr>
   <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:11px;font-weight:300;line-height:1.8;color:${MUTE};">
     ${en
