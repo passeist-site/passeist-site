@@ -27,7 +27,7 @@ env:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45  # scan complet (mercredi, dimanche) ≈ 17 min pour ~760 pièces + installation ≈ 3 min
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
