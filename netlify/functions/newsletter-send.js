@@ -16,7 +16,7 @@ const PRODUCTS = require('./products.json'); // pièces en vente (vendues exclue
 const SITE = 'https://passeist.com';
 // Profils passéist sur les plateformes (bas de la newsletter)
 const VESTIAIRE_URL = 'https://fr.vestiairecollective.com/profile/30773496/';
-const VINTED_URL = process.env.VINTED_URL || '';
+const VINTED_URL = process.env.VINTED_URL || 'https://www.vinted.fr/member/16032770';
 // Date (AAAA-MM-JJ, heure de Paris) du prochain envoi : aujourd'hui si on est
 // dimanche avant 17 h, sinon le dimanche suivant. Sert à la validation par Tom.
 function nextSendDate(now = new Date()) {
