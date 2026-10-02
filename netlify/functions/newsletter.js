@@ -134,9 +134,10 @@ async function admin(event, action) {
     const featured = await send._featuredItems(store);
     const featIds = new Set(featured.map(f => f.id));
     const groups = await send._groupsFor(ids.filter(id => !featIds.has(id)));
-    const html = send._buildHtml('fr', groups, ids.length, featured, ((await store.get('state/note', { type: 'json' })) || {}).text || '').replace('{{ unsubscribe }}', 'https://passeist.com/');
+    const lang = body.lang === 'en' ? 'en' : 'fr';
+    const html = send._buildHtml(lang, groups, ids.length, featured, ((await store.get('state/note', { type: 'json' })) || {}).text || '').replace('{{ unsubscribe }}', 'https://passeist.com/');
     try {
-      await brevo.sendOne({ to, subject: '[Test] ' + (send._composed() && send._edition().subject ? send._edition().subject.fr : 'Cette semaine chez passéist'), html });
+      await brevo.sendOne({ to, subject: '[Test] ' + (send._composed() && send._edition().subject ? (send._edition().subject[lang] || send._edition().subject.fr) : 'Cette semaine chez passéist'), html });
     } catch (err) {
       console.error('test newsletter :', err.message);
       return json(502, { error: err.message.slice(0, 200) });

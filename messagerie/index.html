@@ -233,7 +233,7 @@ async function showNewsletter() {
       <div class="nl-test"><button type="button" id="nlpreview">Voir l'aperçu</button></div></div>
     <div class="nl-box"><h3>Recevoir un e-mail de test</h3>
       <div class="nl-stat">Le même e-mail que les abonnés, avec les nouveautés en attente (ou les dernières pièces).</div>
-      <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit">Envoyer</button></form>
+      <form class="nl-test" id="nltest"><input type="email" id="nlto" placeholder="Votre e-mail" value="${esc(last)}" required><button type="submit" data-lang="fr">Français</button><button type="submit" data-lang="en">Anglais</button></form>
       <div class="nl-msg" id="nlmsg"></div></div>
     <div class="nl-box"><h3>Derniers inscrits</h3>
       ${d.subs.length ? d.subs.map(x => `<div class="nl-sub"><span>${esc(x.email)}</span><span>${x.lang.toUpperCase()} · ${when(Date.parse(x.at))}</span></div>`).join('') : '<div class="nl-stat">Personne pour l\'instant.</div>'}</div>`;
@@ -283,13 +283,14 @@ async function showNewsletter() {
   };
   $('nltest').onsubmit = async (e) => {
     e.preventDefault();
+    const lang = (e.submitter && e.submitter.dataset.lang) || 'fr';
     const to = $('nlto').value.trim();
     try { localStorage.setItem('passeist_nl_test', to); } catch (err) {}
     $('nlmsg').textContent = 'Envoi…';
     const res = await fetch('/.netlify/functions/newsletter?action=test', {
-      method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) });
+      method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ to, lang }) });
     const j = await res.json().catch(() => ({}));
-    $('nlmsg').textContent = res.ok ? '✓ Envoyé (' + j.pieces + ' pièces). Regardez votre boîte, et les spams.' : 'Échec : ' + (j.error || res.status);
+    $('nlmsg').textContent = res.ok ? '✓ Version ' + (lang === 'en' ? 'anglaise' : 'française') + ' envoyée. Regardez votre boîte, et les spams.' : 'Échec : ' + (j.error || res.status);
   };
 }
 
