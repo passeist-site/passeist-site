@@ -104,6 +104,7 @@ function editionHtml(lang, ed, total) {
       <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
   };
   const heading = (t) => {
+    if (!t) return `<tr><td align="center" style="padding:20px 0 56px;"><div style="width:32px;height:1px;background:${INK};opacity:0.3;font-size:0;line-height:0;">&nbsp;</div></td></tr>`;
     const mm = t.match(/^(Le |Les |La |L’|L'|The )(.*)$/);
     const h = mm ? `${esc(mm[1])}<span style="font-weight:500;">${esc(mm[2])}</span>` : `<span style="font-weight:500;">${esc(t)}</span>`;
     return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
@@ -295,6 +296,7 @@ exports.handler = async (event) => {
 
 // Utilisés par newsletter.js (test depuis la messagerie) et l'aperçu local
 exports._buildHtml = buildHtml;
+exports._editionHtml = editionHtml;
 exports._groupsFor = groupsFor;
 exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;
