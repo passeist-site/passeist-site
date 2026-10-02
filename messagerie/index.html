@@ -208,11 +208,10 @@ async function showNewsletter() {
   $('main').innerHTML = `
     <div class="nl-box"><h3>Newsletter « nouvelles pièces »</h3>
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
-      ${d.composed ? 'Votre sélection est prête pour dimanche 17 h' : `<b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)`}<br>
+      ${d.composed ? (d.editionSent ? 'Votre sélection est partie ✓' : 'Votre sélection est prête : envoyez-la quand vous voulez') : 'Aucune sélection prête'}<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
-    <div class="nl-box"><h3>Envoi du ${esc(d.nextDate ? new Date(d.nextDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '')}</h3>
-      <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>
-      <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div>
+    <div class="nl-box"><h3>Envoi</h3>
+      <div class="nl-stat">Rien ne part automatiquement. Recevez d\'abord un e-mail de test (plus bas), puis envoyez.</div>
       ${d.composed ? (d.editionSent ? '<div class="nl-stat"><b>Envoyée ✓</b> : votre sélection est partie.</div>' : '<div class="nl-test"><button type="button" id="nlsendnow">Envoyer maintenant</button></div><div class="nl-msg" id="nlsendmsg"></div>') : ''}</div>
     <div class="nl-box"><h3>Votre mot de la semaine</h3>
       <div class="nl-stat">Deux ou trois lignes, en tête de la newsletter, signées Tom. Facultatif ; repart à zéro après chaque envoi.</div>
@@ -263,10 +262,6 @@ async function showNewsletter() {
     $('nlnotemsg').textContent = 'Enregistrement…';
     const res = await fetch('/.netlify/functions/newsletter?action=note', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ text: $('nlnote').value }) });
     $('nlnotemsg').textContent = res.ok ? '✓ Enregistré' : 'Échec';
-  };
-  $('nlapprove').onclick = async () => {
-    await fetch('/.netlify/functions/newsletter?action=approve', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ approve: !d.approved }) });
-    showNewsletter();
   };
   if ($('nlsendnow')) $('nlsendnow').onclick = async () => {
     if (!confirm('Envoyer la newsletter maintenant à tous les abonnés ?')) return;

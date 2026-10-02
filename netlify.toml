@@ -17,13 +17,11 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
-# Newsletter « Les nouveautés du dimanche » : dimanche 17 h (heure de Paris, été ; 16 h l'hiver)
+# Newsletter : plus d'envoi automatique, Tom l'envoie quand il veut depuis la
+# messagerie (« Envoyer maintenant »). Ce passage hebdomadaire ne fait que garder
+# la clé Brevo active et y ajouter les abonnés.
 [functions."newsletter-send"]
   schedule = "0 15 * * 0"
-
-# Notification « nouveautés de la semaine » : dimanche 17 h, avec la newsletter
-[functions."newsletter-preview"]
-  schedule = "0 16 * * 6"   # aperçu à valider : samedi 18 h (Paris, été)
 
 [functions."push-weekly"]
   schedule = "0 15 * * 0"

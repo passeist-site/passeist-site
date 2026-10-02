@@ -38,7 +38,8 @@ let EDITION = null;
 try { EDITION = require('./newsletter-edition.json'); } catch (e) { /* pas de semaine composée */ }
 // Semaine composée par Tom : sa date tombe entre aujourd'hui et le prochain dimanche
 // (date du jour si Tom l'envoie lui-même avant dimanche)
-const composed = () => !!(EDITION && EDITION.date >= todayParis() && EDITION.date <= nextSendDate());
+// Tom l'envoie quand il veut : la sélection reste prête tant qu'elle n'est pas partie
+const composed = () => !!(EDITION && EDITION.sections && EDITION.sections.length);
 
 function slugify(s) {
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -98,7 +99,7 @@ function editionHtml(lang, ed, total) {
   const FONT = "Inter,'Helvetica Neue',Helvetica,Arial,sans-serif";
   const MONO = "'JetBrains Mono','SF Mono',Menlo,monospace";
   const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
-  const [y, m, d] = ed.date.split('-').map(Number);
+  const [y, m, d] = todayParis().split('-').map(Number);   // date du jour de l'envoi
   const dateTxt = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
   const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
   const piece = (it, big) => {
@@ -256,6 +257,9 @@ exports.handler = async (event) => {
       } catch (err) { console.error('brevo abonné :', err.message); }
     }
   }
+
+  // Plus d'envoi automatique (Tom, oct. 2026) : il envoie quand il veut depuis la messagerie
+  if (!process.env.NEWSLETTER_AUTO) return { statusCode: 200, body: 'manual only' };
 
   // 2. Pièces nouvelles depuis le dernier envoi
   const ids = Object.keys(PRODUCTS);
