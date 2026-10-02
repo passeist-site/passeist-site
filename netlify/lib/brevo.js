@@ -6,6 +6,8 @@
 //   BREVO_LIST_EN    id de la liste des abonnés des autres langues
 //                    (si absente : tout le monde dans BREVO_LIST_FR)
 //   NEWSLETTER_FROM  adresse d'envoi validée dans Brevo (défaut info@passeist.com)
+//   BREVO_UNSUB_FR   id de la page de désinscription Brevo (français), facultatif
+//   BREVO_UNSUB_EN   id de la page de désinscription Brevo (anglais), facultatif
 // Sans BREVO_API_KEY, rien n'est envoyé : les inscriptions restent en attente.
 const API = 'https://api.brevo.com/v3';
 
@@ -46,6 +48,9 @@ async function sendCampaign({ lang, subject, html, name }) {
     replyTo: from,
     htmlContent: html,
     recipients: { listIds: [listId] },
+    // Page de désinscription Brevo avec bouton de confirmation (les robots
+    // antivirus qui ouvrent tous les liens ne désinscrivent plus personne)
+    ...(process.env['BREVO_UNSUB_' + String(lang).toUpperCase()] ? { unsubscriptionPageId: process.env['BREVO_UNSUB_' + String(lang).toUpperCase()] } : {}),
   });
   await call(`/emailCampaigns/${id}/sendNow`, 'POST');
   return true;
