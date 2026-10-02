@@ -6655,6 +6655,7 @@ function loadFiltersForView(view) {
   if (si) si.classList.toggle('active', !!activeSearch);
 }
 function goPage(p) {
+  if (window.__homePending) window.__homePending();   // fiche ouverte directement : l'accueil se construit maintenant
   currentPage = p;
   document.getElementById('home-page').style.display = p === 'home' ? '' : 'none';
   const showCatalog = (p === 'shop' || p === 'archive' || p === 'favorites');
@@ -7334,6 +7335,7 @@ function openDetail(id) {
   document.body.style.overflow = 'hidden';
 }
 function closeDetail() {
+  if (window.__homePending) window.__homePending();   // fiche ouverte directement : l'accueil se construit maintenant
   document.getElementById('detail').classList.remove('open');
   // Fiche fermée : le bandeau « pièces similaires » s'arrête (INP)
   const sim = window.__simMarqueeState;
@@ -9355,9 +9357,20 @@ window.updateSEO = function(p) {
 
 // ============ INIT ============
 renderFilters();
-renderGrid();
 renderCart();
-renderHeroMarquee();
+// Arrivée directe sur une fiche (newsletter, Google) : la grille et le bandeau
+// de l'accueil, cachés derrière la fiche, attendent que le téléphone soit libre
+// (INP : le premier toucher sur la fiche répond tout de suite)
+(function () {
+  function home() { window.__homePending = null; renderGrid(); renderHeroMarquee(); }
+  if (/^\/product\//.test(location.pathname) || /^#product\//.test(location.hash)) {
+    window.__homePending = home;
+    const later = () => { if (window.__homePending) home(); };
+    const idle = () => ('requestIdleCallback' in window) ? requestIdleCallback(later, { timeout: 3000 }) : setTimeout(later, 500);
+    if (document.readyState === 'complete') setTimeout(idle, 2500);
+    else window.addEventListener('load', () => setTimeout(idle, 2500), { once: true });
+  } else home();
+})();
 
 // Pièces vendues sur le site depuis la dernière republication (Netlify Blobs,
 // enregistrées par le webhook Stripe) : affichées tout de suite comme vendues.
@@ -10012,7 +10025,7 @@ window.subscribeNewsletter = function (e) {
 
     // Re-render grid + filters pour propager les traductions sur les options ALL/options dynamiques
     if (typeof renderFilters === 'function') renderFilters();
-    if (typeof renderGrid === 'function') renderGrid();
+    if (typeof renderGrid === 'function' && !window.__homePending) renderGrid();   // grille en attente (fiche ouverte directement) : construite plus tard, dans la bonne langue
     // Re-render le détail courant si ouvert (met à jour nom + genre + desc selon lang)
     if (window.currentProduct && document.body.classList.contains('detail-open')) {
       const p = window.currentProduct;
