@@ -160,8 +160,8 @@ ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opaci
   </td></tr>
   <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:11px;font-weight:300;line-height:1.8;color:${MUTE};">
     ${en
-      ? 'You are receiving this email as a passéist customer, Vinted, Vestiaire Collective or passeist.com. We never want to clutter your inbox: to unsubscribe, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">click here</a>.'
-      : 'Vous recevez cet e-mail en tant que client de passéist, Vinted, Vestiaire Collective ou passeist.com. Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>PASSEIST EURL · Paris · <a href="${SITE}/privacy" style="color:${DIM};">${en ? 'Privacy' : 'Confidentialité'}</a>
+      ? 'You are receiving this email as a customer on Vinted, Vestiaire Collective or passeist.com. We never want to clutter your inbox: to unsubscribe, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">click here</a>.'
+      : 'Vous recevez cet e-mail en tant que client sur Vinted, Vestiaire Collective ou passeist.com. Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>PASSEIST EURL · Paris · <a href="${SITE}/privacy" style="color:${DIM};">${en ? 'Privacy' : 'Confidentialité'}</a>
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
