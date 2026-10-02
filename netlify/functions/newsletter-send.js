@@ -133,7 +133,7 @@ function editionHtml(lang, ed, total) {
 ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(L(ed.preheader))}${'&#8199;&#847;'.repeat(60)}</div>` : ''}
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;padding:56px 14px 40px;">
-  <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
+  <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo-2.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
   <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
   ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px 40px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
   ${sections}
@@ -213,7 +213,7 @@ function buildHtml(lang, groups, total, featured, note) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${BG};"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
   <tr><td align="center">
-    <a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="200" alt="passéist." style="display:block;width:200px;max-width:200px;height:auto;margin:0 auto;border:0;"></a></td></tr>
+    <a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo-2.png" width="200" alt="passéist." style="display:block;width:200px;max-width:200px;height:auto;margin:0 auto;border:0;"></a></td></tr>
   <tr><td align="center" style="padding:22px 0 0;">${caps(esc(dateTxt), 9, MUTE)}</td></tr>
   <tr><td align="center" style="padding:64px 0 14px;font-family:${FONT};font-size:24px;font-weight:300;letter-spacing:0.5px;color:${INK};">${en ? 'This week' : 'Cette semaine'}</td></tr>
   <tr><td align="center" style="padding:0 0 72px;"><div style="width:32px;height:1px;background:${INK};opacity:0.35;font-size:0;line-height:0;">&nbsp;</div></td></tr>
@@ -310,4 +310,5 @@ exports._groupsFor = groupsFor;
 exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;
 exports._nextSendDate = nextSendDate;
+exports._edition = () => EDITION;
 exports._composed = () => !!(EDITION && EDITION.date === nextSendDate());
