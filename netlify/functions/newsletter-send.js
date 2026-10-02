@@ -111,14 +111,15 @@ function editionHtml(lang, ed, total) {
     const h = mm ? `${esc(mm[1])}<span style="font-weight:500;">${esc(mm[2])}</span>` : `<span style="font-weight:500;">${esc(t)}</span>`;
     return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
   };
-  const sections = (ed.sections || []).map(sec => {
+  const sections = (ed.sections || []).map((sec, si) => {
     const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
     if (!items.length) return '';
-    if (sec.hero) return heading(L(sec.title)) + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
+    const head = (si === 0 && !L(sec.title)) ? '' : heading(L(sec.title));   // pas de point avant la première pièce
+    if (sec.hero) return head + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
     const rows = [];
     for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
       items.slice(i, i + 2).map(it => `<td width="50%" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
-    return heading(L(sec.title)) + rows.join('');
+    return head + rows.join('');
   }).join('');
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
