@@ -100,7 +100,13 @@ async function admin(event, action) {
     const subs = (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })))).filter(Boolean);
     subs.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return json(200, {
-      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, composed: send._composed(), editionSent: send._composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === send._edition().date, featured: await featuredList(),
+      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, composed: send._composed(), lists: await (async () => {
+        const out = {};
+        for (const [lang, v] of [['fr', process.env.BREVO_LIST_FR], ['en', process.env.BREVO_LIST_EN]]) {
+          try { out[lang] = v ? await brevo.listInfo(Number(v)) : null; } catch (e) { out[lang] = { error: e.message.slice(0, 120) }; }
+        }
+        return out;
+      })(), editionSent: send._composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === send._edition().date, featured: await featuredList(),
       nextDate: send._nextSendDate(),
       note: ((await store.get('state/note', { type: 'json' })) || {}).text || '',
       approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),

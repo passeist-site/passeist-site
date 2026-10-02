@@ -211,7 +211,8 @@ async function showNewsletter() {
       ${d.composed ? (d.editionSent ? 'Votre sélection est partie ✓' : 'Votre sélection est prête : envoyez-la quand vous voulez') : 'Aucune sélection prête'}<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
     <div class="nl-box"><h3>Envoi</h3>
-      <div class="nl-stat">Rien ne part automatiquement. Recevez d\'abord un e-mail de test (plus bas), puis envoyez.</div>
+      <div class="nl-stat">Rien ne part automatiquement. Recevez d\'abord un e-mail de test (plus bas), puis envoyez.<br><br>
+        ${[['fr', 'Version française'], ['en', 'Version anglaise']].map(([k, t]) => { const l = (d.lists || {})[k]; return t + ' → ' + (!l ? '<b>aucune liste configurée</b>' : l.error ? '<b>liste introuvable</b> (' + esc(l.error) + ')' : 'liste « ' + esc(l.name) + ' » : <b>' + l.count + '</b> contacts'); }).join('<br>')}</div>
       ${d.composed ? (d.editionSent ? '<div class="nl-stat"><b>Envoyée ✓</b> : votre sélection est partie.</div>' : '<div class="nl-test"><button type="button" id="nlsendnow">Envoyer maintenant</button></div><div class="nl-msg" id="nlsendmsg"></div>') : ''}</div>
     <div class="nl-box"><h3>Votre mot de la semaine</h3>
       <div class="nl-stat">Deux ou trois lignes, en tête de la newsletter, signées Tom. Facultatif ; repart à zéro après chaque envoi.</div>
@@ -264,7 +265,8 @@ async function showNewsletter() {
     $('nlnotemsg').textContent = res.ok ? '✓ Enregistré' : 'Échec';
   };
   if ($('nlsendnow')) $('nlsendnow').onclick = async () => {
-    if (!confirm('Envoyer la newsletter maintenant à tous les abonnés ?')) return;
+    const ls = d.lists || {};
+    if (!confirm('Envoyer la newsletter maintenant ?\n\nFrançais : ' + (ls.fr && ls.fr.name ? ls.fr.name + ' (' + ls.fr.count + ' contacts)' : '—') + '\nAnglais : ' + (ls.en && ls.en.name ? ls.en.name + ' (' + ls.en.count + ' contacts)' : '—'))) return;
     $('nlsendnow').disabled = true; $('nlsendmsg').textContent = 'Envoi…';
     const res = await fetch('/.netlify/functions/newsletter?action=sendnow', { method: 'POST', headers: { 'x-admin-key': key } });
     const j = await res.json().catch(() => ({}));

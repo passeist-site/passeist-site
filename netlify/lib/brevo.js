@@ -66,4 +66,11 @@ async function ping() {
   return true;
 }
 
-module.exports = { enabled, listFor, addToBrevo, sendCampaign, sendOne, ping };
+// Nom et nombre de contacts d'une liste (vérification avant l'envoi, messagerie)
+async function listInfo(id) {
+  if (!enabled() || !id) return null;
+  const l = await call(`/contacts/lists/${id}`, 'GET');
+  return { id, name: l.name, count: l.uniqueSubscribers ?? l.totalSubscribers ?? 0 };
+}
+
+module.exports = { enabled, listFor, listInfo, addToBrevo, sendCampaign, sendOne, ping };
