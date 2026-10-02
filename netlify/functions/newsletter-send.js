@@ -105,7 +105,7 @@ function editionHtml(lang, ed, total) {
   };
   const heading = (t) => {
     // Pas de titre : le point bleu du logo passéist sépare les groupes
-    if (!t) return `<tr><td align="center" style="padding:24px 0 60px;"><div style="width:7px;height:7px;border-radius:50%;background:#5a7593;font-size:0;line-height:0;">&nbsp;</div></td></tr>`;
+    if (!t) return `<tr><td align="center" style="padding:24px 0 60px;"><div style="width:13px;height:13px;border-radius:50%;background:#5a7593;font-size:0;line-height:0;">&nbsp;</div></td></tr>`;
     const mm = t.match(/^(Le |Les |La |L’|L'|The )(.*)$/);
     const h = mm ? `${esc(mm[1])}<span style="font-weight:500;">${esc(mm[2])}</span>` : `<span style="font-weight:500;">${esc(t)}</span>`;
     return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
