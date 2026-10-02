@@ -128,6 +128,7 @@ function editionHtml(lang, ed, total) {
 <style>@media (max-width:340px){.nm{white-space:normal !important;}}</style>
 <title>${esc(L(ed.subject))}</title></head>
 <body style="margin:0;padding:0;background:#ffffff;">
+${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(L(ed.preheader))}${'&#8199;&#847;'.repeat(60)}</div>` : ''}
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;padding:56px 14px 40px;">
   <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
@@ -150,7 +151,7 @@ function editionHtml(lang, ed, total) {
   <tr><td align="center" style="padding:28px 0 0;font-family:${FONT};font-size:11px;font-weight:300;line-height:1.8;color:${MUTE};">
     ${en
       ? 'We never want to clutter your inbox: to unsubscribe, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">click here</a>.'
-      : 'Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>passéist · Paris
+      : 'Nous ne voulons surtout pas encombrer votre boîte mail : pour vous désabonner, <a href="{{ unsubscribe }}" style="color:' + DIM + ';">cliquez ici</a>.'}<br>PASSEIST EURL · Paris · <a href="${SITE}/privacy" style="color:${DIM};">${en ? 'Privacy' : 'Confidentialité'}</a>
   </td></tr>
 </table></td></tr></table></body></html>`;
 }

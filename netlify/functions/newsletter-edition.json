@@ -1,8 +1,8 @@
 {
   "date": "2026-10-04",
   "subject": {
-    "fr": "Cette semaine chez passéist",
-    "en": "This week at passéist"
+    "fr": "Issey Miyake, Yohji Yamamoto, Junko Koshino, Yoshiki Hishinuma",
+    "en": "Issey Miyake, Yohji Yamamoto, Junko Koshino, Yoshiki Hishinuma"
   },
   "intro": {
     "fr": "Parmi nos nouveautés de la semaine, retrouvez :",
@@ -23,7 +23,7 @@
             "fr": "Cardigan plissé effet lichen",
             "en": "Pleated lichen-effect cardigan"
           },
-          "img": "nl-71766804-0.webp"
+          "img": "nl-71766804-0.jpg"
         }
       ]
     },
@@ -39,7 +39,7 @@
             "fr": "Gilet zippé en laine marine",
             "en": "Navy wool zip cardigan"
           },
-          "img": "nl-71766560-0.webp"
+          "img": "nl-71766560-0.jpg"
         },
         {
           "id": "71766532",
@@ -47,7 +47,7 @@
             "fr": "Cardigan noir et marine",
             "en": "Black and navy cardigan"
           },
-          "img": "nl-71766532-0.webp"
+          "img": "nl-71766532-0.jpg"
         },
         {
           "id": "71766587",
@@ -55,7 +55,7 @@
             "fr": "Pull op-art moutarde et noir",
             "en": "Mustard and black op-art jumper"
           },
-          "img": "nl-71766587-0.webp"
+          "img": "nl-71766587-0.jpg"
         },
         {
           "id": "71766610",
@@ -63,7 +63,7 @@
             "fr": "Pull dégradé jaune et gris",
             "en": "Yellow gradient jumper"
           },
-          "img": "nl-71766610-0.webp"
+          "img": "nl-71766610-0.jpg"
         },
         {
           "id": "71766822",
@@ -71,7 +71,7 @@
             "fr": "Pull en laine moucheté",
             "en": "Speckled wool jumper"
           },
-          "img": "nl-71766822-0.webp"
+          "img": "nl-71766822-0.jpg"
         },
         {
           "id": "71766918",
@@ -79,7 +79,7 @@
             "fr": "Pull-cardigan effet nuage",
             "en": "Cloud-effect cardigan"
           },
-          "img": "nl-71766918-0.webp"
+          "img": "nl-71766918-0.jpg"
         }
       ]
     },
@@ -97,7 +97,7 @@
             "fr": "Chemisier plissé vert sauge",
             "en": "Sage-green pleated blouse"
           },
-          "img": "nl-71767224-1.webp"
+          "img": "nl-71767224-1.jpg"
         }
       ]
     },
@@ -113,7 +113,7 @@
             "fr": "Sweat zippé asymétrique",
             "en": "Asymmetric zip-up hoodie"
           },
-          "img": "nl-71766947-0.webp"
+          "img": "nl-71766947-0.jpg"
         },
         {
           "id": "71767006",
@@ -121,9 +121,13 @@
             "fr": "Jean arqué à sashiko",
             "en": "Curved sashiko jeans"
           },
-          "img": "nl-71767006-0.webp"
+          "img": "nl-71767006-0.jpg"
         }
       ]
     }
-  ]
+  ],
+  "preheader": {
+    "fr": "Les nouveautés de la semaine chez passéist",
+    "en": "This week’s new arrivals at passéist"
+  }
 }
