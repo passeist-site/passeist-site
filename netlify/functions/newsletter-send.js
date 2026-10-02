@@ -273,7 +273,7 @@ exports.handler = async (event) => {
   const fresh = ids.filter(id => !seen.has(id));
   console.log(`newsletter : ${fresh.length} nouvelles pièces (envoi à partir de ${BATCH})`);
   // Semaine composée déjà envoyée par Tom (bouton « Envoyer maintenant ») : rien de plus
-  if (composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === EDITION.date) {
+  if (composed() && (((await store.get('state/editionSent', { type: 'json' })) || {}).date === EDITION.date)) {
     console.log('newsletter : sélection du ' + EDITION.date + ' déjà envoyée');
     return { statusCode: 200, body: 'already sent' };
   }
@@ -331,16 +331,27 @@ exports._composed = composed;
 // Envoi immédiat de la semaine composée (bouton « Envoyer maintenant » de la messagerie)
 exports._sendEditionNow = async (store) => {
   if (!composed()) throw new Error('aucune sélection pour cette semaine');
-  if (((await store.get('state/editionSent', { type: 'json' })) || {}).date === EDITION.date) throw new Error('déjà envoyée');
+  // Envoi suivi langue par langue : si une version échoue, un nouveau clic n'envoie que celle qui manque
+  const prev = (await store.get('state/editionSent', { type: 'json' })) || {};
+  const done = prev.date === EDITION.date ? prev : { date: EDITION.date };
+  if (done.fr && done.en) throw new Error('déjà envoyée');
   if (!brevo.enabled()) throw new Error('clé Brevo absente');
   // Les deux listes (français et anglais) doivent exister et être distinctes
   const fr = Number(process.env.BREVO_LIST_FR || 0), en = Number(process.env.BREVO_LIST_EN || 0);
   if (!fr || !en || fr === en) throw new Error('listes Brevo française et anglaise à configurer (BREVO_LIST_FR, BREVO_LIST_EN)');
   await brevo.listInfo(fr); await brevo.listInfo(en);   // erreur si une liste n'existe pas dans Brevo
-  await store.setJSON('state/editionSent', { date: EDITION.date, at: new Date().toISOString() });   // avant l'envoi : jamais deux fois
-  await brevo.sendCampaign({ lang: 'fr', name: `Nouveautés ${EDITION.date} (FR)`, subject: EDITION.subject.fr, html: editionHtml('fr', EDITION, 0) });
-  {
-    await brevo.sendCampaign({ lang: 'en', name: `New pieces ${EDITION.date} (EN)`, subject: EDITION.subject.en || EDITION.subject.fr, html: editionHtml('en', EDITION, 0) });
+  for (const lang of ['fr', 'en']) {
+    if (done[lang]) continue;
+    done[lang] = new Date().toISOString();
+    await store.setJSON('state/editionSent', done);   // avant l'envoi : jamais deux fois la même version
+    try {
+      await brevo.sendCampaign({ lang, name: lang === 'fr' ? `Nouveautés ${EDITION.date} (FR)` : `New pieces ${EDITION.date} (EN)`,
+        subject: EDITION.subject[lang] || EDITION.subject.fr, html: editionHtml(lang, EDITION, 0) });
+    } catch (err) {
+      delete done[lang];
+      await store.setJSON('state/editionSent', done);
+      throw new Error((lang === 'fr' ? 'version française' : 'version anglaise') + ' non envoyée : ' + err.message);
+    }
   }
   await store.setJSON('state/seen', Object.keys(PRODUCTS));   // pièces annoncées
   await store.delete('state/approved');

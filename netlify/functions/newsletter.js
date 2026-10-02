@@ -106,7 +106,7 @@ async function admin(event, action) {
           try { out[lang] = v ? await brevo.listInfo(Number(v)) : null; } catch (e) { out[lang] = { error: e.message.slice(0, 120) }; }
         }
         return out;
-      })(), editionSent: send._composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === send._edition().date, featured: await featuredList(),
+      })(), editionSent: await (async () => { const e = (await store.get('state/editionSent', { type: 'json' })) || {}; return send._composed() && e.date === send._edition().date && !!e.fr && !!e.en; })(), featured: await featuredList(),
       nextDate: send._nextSendDate(),
       note: ((await store.get('state/note', { type: 'json' })) || {}).text || '',
       approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),
