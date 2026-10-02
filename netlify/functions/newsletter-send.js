@@ -96,7 +96,7 @@ function editionHtml(lang, ed, total) {
   const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
   const piece = (it, big) => {
     const p = PRODUCTS[it.id];
-    const w = big ? 472 : 230;
+    const w = big ? 512 : 252;
     const src = it.img ? `${SITE}/img/${it.img}` : `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;   // it.img : photo préparée pour la newsletter
     return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
       <img src="${src}" width="${w}" alt="${esc(title(p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
@@ -128,7 +128,7 @@ function editionHtml(lang, ed, total) {
 <title>${esc(L(ed.subject))}</title></head>
 <body style="margin:0;padding:0;background:#ffffff;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;padding:56px 24px 40px;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;padding:56px 14px 40px;">
   <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
   <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
   ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px 40px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}

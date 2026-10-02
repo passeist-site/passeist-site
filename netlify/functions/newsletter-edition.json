@@ -22,7 +22,8 @@
           "name": {
             "fr": "Cardigan plissé effet lichen",
             "en": "Pleated lichen-effect cardigan"
-          }
+          },
+          "img": "nl-71766804-0.webp"
         }
       ]
     },
@@ -37,42 +38,48 @@
           "name": {
             "fr": "Gilet zippé en laine marine",
             "en": "Navy wool zip cardigan"
-          }
+          },
+          "img": "nl-71766560-0.webp"
         },
         {
           "id": "71766532",
           "name": {
             "fr": "Cardigan noir et marine",
             "en": "Black and navy cardigan"
-          }
+          },
+          "img": "nl-71766532-0.webp"
         },
         {
           "id": "71766587",
           "name": {
             "fr": "Pull op-art moutarde et noir",
             "en": "Mustard and black op-art jumper"
-          }
+          },
+          "img": "nl-71766587-0.webp"
         },
         {
           "id": "71766610",
           "name": {
             "fr": "Pull dégradé jaune et gris",
             "en": "Yellow gradient jumper"
-          }
+          },
+          "img": "nl-71766610-0.webp"
         },
         {
           "id": "71766822",
           "name": {
             "fr": "Pull en laine moucheté",
             "en": "Speckled wool jumper"
-          }
+          },
+          "img": "nl-71766822-0.webp"
         },
         {
           "id": "71766918",
           "name": {
             "fr": "Pull-cardigan effet nuage",
             "en": "Cloud-effect cardigan"
-          }
+          },
+          "img": "nl-71766918-0.webp"
         }
       ]
     },
@@ -105,14 +112,16 @@
           "name": {
             "fr": "Sweat zippé asymétrique",
             "en": "Asymmetric zip-up hoodie"
-          }
+          },
+          "img": "nl-71766947-0.webp"
         },
         {
           "id": "71767006",
           "name": {
             "fr": "Jean arqué à sashiko",
             "en": "Curved sashiko jeans"
-          }
+          },
+          "img": "nl-71767006-0.webp"
         }
       ]
     }
