@@ -97,7 +97,7 @@ function editionHtml(lang, ed, total) {
   const piece = (it, big) => {
     const p = PRODUCTS[it.id];
     const w = big ? 472 : 230;
-    const src = `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;
+    const src = it.img ? `${SITE}/img/${it.img}` : `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;   // it.img : photo préparée pour la newsletter
     return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
       <img src="${src}" width="${w}" alt="${esc(title(p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
       <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(p.brand)}</div>
