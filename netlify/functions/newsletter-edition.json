@@ -11,8 +11,8 @@
   "sections": [
     {
       "title": {
-        "fr": "Un cardigan Issey Miyake",
-        "en": "A cardigan by Issey Miyake"
+        "fr": "",
+        "en": ""
       },
       "hero": true,
       "items": [
@@ -28,8 +28,8 @@
     },
     {
       "title": {
-        "fr": "Six pulls pour l’hiver",
-        "en": "Six jumpers for winter"
+        "fr": "",
+        "en": ""
       },
       "items": [
         {
@@ -78,8 +78,8 @@
     },
     {
       "title": {
-        "fr": "Un chemisier Yoshiki Hishinuma",
-        "en": "A blouse by Yoshiki Hishinuma"
+        "fr": "",
+        "en": ""
       },
       "hero": true,
       "items": [
@@ -95,8 +95,8 @@
     },
     {
       "title": {
-        "fr": "Un duo Mihara Yasuhiro et Y’s",
-        "en": "A Mihara Yasuhiro and Y’s pair"
+        "fr": "",
+        "en": ""
       },
       "items": [
         {
