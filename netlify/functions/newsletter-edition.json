@@ -11,8 +11,8 @@
   "sections": [
     {
       "title": {
-        "fr": "Le surprenant",
-        "en": "The surprising one"
+        "fr": "Un cardigan Issey Miyake",
+        "en": "A cardigan by Issey Miyake"
       },
       "hero": true,
       "items": [
@@ -28,8 +28,8 @@
     },
     {
       "title": {
-        "fr": "Les chaleureux",
-        "en": "The warm ones"
+        "fr": "Six pulls pour l’hiver",
+        "en": "Six jumpers for winter"
       },
       "items": [
         {
@@ -78,8 +78,8 @@
     },
     {
       "title": {
-        "fr": "Le raffiné",
-        "en": "The refined one"
+        "fr": "Un chemisier Yoshiki Hishinuma",
+        "en": "A blouse by Yoshiki Hishinuma"
       },
       "hero": true,
       "items": [
@@ -95,8 +95,8 @@
     },
     {
       "title": {
-        "fr": "Le parfait duo",
-        "en": "The perfect pair"
+        "fr": "Un duo Mihara Yasuhiro et Y’s",
+        "en": "A Mihara Yasuhiro and Y’s pair"
       },
       "items": [
         {
