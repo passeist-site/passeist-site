@@ -15,6 +15,7 @@ exports.handler = async (event) => {
   const seen = new Set(seenList);
   const fresh = Object.keys(PRODUCTS).filter(id => !seen.has(id));
   const date = send._nextSendDate();
+  if (send._composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === send._edition().date) return { statusCode: 200, body: 'déjà envoyée' };
   if (fresh.length < send._BATCH && !send._composed()) {   // semaine choisie par Tom : aperçu quand même
     await notifyAdmin({ title: 'passéist · newsletter', body: `Seulement ${fresh.length} nouvelles pièces : pas d'envoi demain.`, url: '/messagerie/#newsletter', tag: 'newsletter' });
     return { statusCode: 200, body: 'trop peu' };

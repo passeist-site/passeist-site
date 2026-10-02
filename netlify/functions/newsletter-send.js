@@ -29,9 +29,16 @@ function nextSendDate(now = new Date()) {
   d.setDate(d.getDate() + add);
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
+// Aujourd'hui (AAAA-MM-JJ, heure de Paris)
+function todayParis(now = new Date()) {
+  return now.toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' });
+}
 const BATCH = Number(process.env.NEWSLETTER_MIN || 8);   // minimum de pièces pour envoyer
 let EDITION = null;
 try { EDITION = require('./newsletter-edition.json'); } catch (e) { /* pas de semaine composée */ }
+// Semaine composée par Tom : sa date tombe entre aujourd'hui et le prochain dimanche
+// (date du jour si Tom l'envoie lui-même avant dimanche)
+const composed = () => !!(EDITION && EDITION.date >= todayParis() && EDITION.date <= nextSendDate());
 
 function slugify(s) {
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -160,7 +167,7 @@ ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opaci
 
 function buildHtml(lang, groups, total, featured, note) {
   // Semaine composée par Tom (newsletter-edition.json) : elle remplace la mise en page automatique
-  if (EDITION && EDITION.date === nextSendDate()) return editionHtml(lang, EDITION, total);
+  if (composed()) return editionHtml(lang, EDITION, total);
   // Version « hyper luxe » (Tom) : fond blanc où les photos se fondent, texte
   // bleu nuit, petites capitales espacées, beaucoup de vide, 8 pièces au plus.
   const en = lang === 'en';
@@ -261,8 +268,12 @@ exports.handler = async (event) => {
   const seen = new Set(seenList);
   const fresh = ids.filter(id => !seen.has(id));
   console.log(`newsletter : ${fresh.length} nouvelles pièces (envoi à partir de ${BATCH})`);
-  const composed = !!(EDITION && EDITION.date === nextSendDate());   // semaine choisie par Tom : pas de minimum
-  if (fresh.length < BATCH && !composed) return { statusCode: 200, body: 'waiting' };
+  // Semaine composée déjà envoyée par Tom (bouton « Envoyer maintenant ») : rien de plus
+  if (composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === EDITION.date) {
+    console.log('newsletter : sélection du ' + EDITION.date + ' déjà envoyée');
+    return { statusCode: 200, body: 'already sent' };
+  }
+  if (fresh.length < BATCH && !composed()) return { statusCode: 200, body: 'waiting' };
   if (!brevo.enabled()) {
     console.log('newsletter : BREVO_API_KEY absent, rien n\'est envoyé');
     return { statusCode: 200, body: 'no brevo' };
@@ -286,13 +297,13 @@ exports.handler = async (event) => {
   const top = groups.slice(0, 3).map(g => title(g.brand)).join(', ');
   await brevo.sendCampaign({
     lang: 'fr', name: `Nouveautés ${date} (FR)`,
-    subject: (EDITION && EDITION.date === nextSendDate() && EDITION.subject) ? EDITION.subject.fr : `Cette semaine chez passéist · ${top}…`,
+    subject: (composed() && EDITION.subject) ? EDITION.subject.fr : `Cette semaine chez passéist · ${top}…`,
     html: buildHtml('fr', groups, fresh.length, featured, note),
   });
   if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
     await brevo.sendCampaign({
       lang: 'en', name: `New pieces ${date} (EN)`,
-      subject: (EDITION && EDITION.date === nextSendDate() && EDITION.subject) ? (EDITION.subject.en || EDITION.subject.fr) : `This week at passéist · ${top}…`,
+      subject: (composed() && EDITION.subject) ? (EDITION.subject.en || EDITION.subject.fr) : `This week at passéist · ${top}…`,
       html: buildHtml('en', groups, fresh.length, featured, note),
     });
   }
@@ -311,4 +322,20 @@ exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;
 exports._nextSendDate = nextSendDate;
 exports._edition = () => EDITION;
-exports._composed = () => !!(EDITION && EDITION.date === nextSendDate());
+exports._composed = composed;
+
+// Envoi immédiat de la semaine composée (bouton « Envoyer maintenant » de la messagerie)
+exports._sendEditionNow = async (store) => {
+  if (!composed()) throw new Error('aucune sélection pour cette semaine');
+  if (((await store.get('state/editionSent', { type: 'json' })) || {}).date === EDITION.date) throw new Error('déjà envoyée');
+  if (!brevo.enabled()) throw new Error('clé Brevo absente');
+  await store.setJSON('state/editionSent', { date: EDITION.date, at: new Date().toISOString() });   // avant l'envoi : jamais deux fois
+  await brevo.sendCampaign({ lang: 'fr', name: `Nouveautés ${EDITION.date} (FR)`, subject: EDITION.subject.fr, html: editionHtml('fr', EDITION, 0) });
+  if (brevo.listFor('en') && brevo.listFor('en') !== brevo.listFor('fr')) {
+    await brevo.sendCampaign({ lang: 'en', name: `New pieces ${EDITION.date} (EN)`, subject: EDITION.subject.en || EDITION.subject.fr, html: editionHtml('en', EDITION, 0) });
+  }
+  await store.setJSON('state/seen', Object.keys(PRODUCTS));   // pièces annoncées
+  await store.delete('state/approved');
+  await store.delete('state/featured');
+  await store.delete('state/note');
+};

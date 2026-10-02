@@ -212,7 +212,8 @@ async function showNewsletter() {
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
     <div class="nl-box"><h3>Envoi du ${esc(d.nextDate ? new Date(d.nextDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '')}</h3>
       <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>
-      <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div></div>
+      <div class="nl-test"><button type="button" id="nlapprove">${d.approved ? 'Annuler la validation' : 'Valider l\'envoi'}</button></div>
+      ${d.composed ? (d.editionSent ? '<div class="nl-stat"><b>Envoyée ✓</b> : votre sélection est partie.</div>' : '<div class="nl-test"><button type="button" id="nlsendnow">Envoyer maintenant</button></div><div class="nl-msg" id="nlsendmsg"></div>') : ''}</div>
     <div class="nl-box"><h3>Votre mot de la semaine</h3>
       <div class="nl-stat">Deux ou trois lignes, en tête de la newsletter, signées Tom. Facultatif ; repart à zéro après chaque envoi.</div>
       <textarea id="nlnote" rows="3" class="nl-area" placeholder="Cette semaine…">${esc(d.note || '')}</textarea>
@@ -265,6 +266,14 @@ async function showNewsletter() {
   };
   $('nlapprove').onclick = async () => {
     await fetch('/.netlify/functions/newsletter?action=approve', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ approve: !d.approved }) });
+    showNewsletter();
+  };
+  if ($('nlsendnow')) $('nlsendnow').onclick = async () => {
+    if (!confirm('Envoyer la newsletter maintenant à tous les abonnés ?')) return;
+    $('nlsendnow').disabled = true; $('nlsendmsg').textContent = 'Envoi…';
+    const res = await fetch('/.netlify/functions/newsletter?action=sendnow', { method: 'POST', headers: { 'x-admin-key': key } });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) { $('nlsendmsg').textContent = 'Échec : ' + (j.error || res.status); $('nlsendnow').disabled = false; return; }
     showNewsletter();
   };
   $('promobtn').onclick = async () => {

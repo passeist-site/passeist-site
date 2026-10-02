@@ -90,12 +90,17 @@ async function admin(event, action) {
     else await store.delete('state/approved');
     return json(200, { ok: true });
   }
+  if (action === 'sendnow' && event.httpMethod === 'POST') {
+    try { await send._sendEditionNow(store); }
+    catch (err) { console.error('envoi immédiat :', err.message); return json(400, { error: err.message.slice(0, 200) }); }
+    return json(200, { ok: true });
+  }
   if (action === 'stats') {
     const { blobs } = await store.list({ prefix: 'sub/' });
     const subs = (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })))).filter(Boolean);
     subs.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return json(200, {
-      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, composed: send._composed(), featured: await featuredList(),
+      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, composed: send._composed(), editionSent: send._composed() && ((await store.get('state/editionSent', { type: 'json' })) || {}).date === send._edition().date, featured: await featuredList(),
       nextDate: send._nextSendDate(),
       note: ((await store.get('state/note', { type: 'json' })) || {}).text || '',
       approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),
