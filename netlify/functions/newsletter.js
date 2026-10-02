@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const { getStore, connectLambda } = require('@netlify/blobs');
 const brevo = require('../lib/brevo');
 const { addToBrevo } = brevo;
+const { notifyAdmin } = require('../lib/admin-push');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -167,9 +168,16 @@ exports.handler = async (event) => {
     connectLambda(event);
     const store = getStore('passeist-newsletter');
     const key = 'sub/' + crypto.createHash('sha256').update(email).digest('hex').slice(0, 32);
+    const already = await store.get(key, { type: 'json' });
     const sub = { email, lang, at: new Date().toISOString(), synced: false };
     try { sub.synced = await addToBrevo(email, lang); } catch (err) { console.error('brevo :', err.message); }
     await store.setJSON(key, sub);
+    // Notification sur le téléphone de Tom : nouvel abonné (pas une réinscription),
+    // une par abonné (étiquette propre, pas remplacée par la suivante)
+    if (!already) {
+      try { await notifyAdmin({ title: 'passéist · nouvel abonné', body: email + (lang === 'en' ? ' (anglais)' : ' (français)'), url: '/messagerie/#newsletter', tag: 'newsletter-sub-' + key.slice(4, 12) }); }
+      catch (err) { console.error('notif abonné :', err.message); }
+    }
     return json(200, { ok: true });
   } catch (err) {
     console.error('newsletter :', err.message);
