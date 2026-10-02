@@ -134,14 +134,14 @@ function editionHtml(lang, ed, total) {
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>@media (max-width:340px){.nm{white-space:normal !important;}}</style>
 <title>${esc(L(ed.subject))}</title></head>
 <body style="margin:0;padding:0;background:#ffffff;">
 ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(L(ed.preheader))}${'&#8199;&#847;'.repeat(60)}</div>` : ''}
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;padding:56px 14px 40px;">
-  <tr><td align="center"><a href="${track(SITE + '/')}" style="text-decoration:none;"><img src="${SITE}/img/newsletter-logo-2.png" width="260" alt="passéist." style="display:block;width:260px;max-width:260px;height:auto;margin:0 auto;border:0;"></a></td></tr>
+  <tr><td align="center" style="font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:71px;font-weight:200;letter-spacing:-0.045em;line-height:1;color:${INK};"><a href="${track(SITE + '/')}" style="text-decoration:none;color:${INK};font-weight:200;">passéist<span style="color:#5a7593;font-weight:400;font-size:99px;line-height:0;">.</span></a></td></tr>
   <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
   ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px 40px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
   ${sections}
