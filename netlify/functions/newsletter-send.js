@@ -100,7 +100,7 @@ function editionHtml(lang, ed, total) {
     return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
       <img src="${src}" width="${w}" alt="${esc(title(p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
       <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(p.brand)}</div>
-      <div style="font-family:${FONT};font-size:${big ? 16 : 12}px;font-style:italic;font-weight:300;letter-spacing:-0.01em;line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
+      <div class="nm" style="font-family:${FONT};font-size:${big ? 16 : 11.5}px;font-style:italic;font-weight:300;letter-spacing:-0.015em;${big ? '' : 'white-space:nowrap;'}line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
       <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
   };
   const heading = (t) => {
@@ -116,13 +116,14 @@ function editionHtml(lang, ed, total) {
     if (sec.hero) return heading(L(sec.title)) + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
     const rows = [];
     for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
-      items.slice(i, i + 2).map(it => `<td width="50%" valign="top" align="center" style="padding:0 8px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
+      items.slice(i, i + 2).map(it => `<td width="50%" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
     return heading(L(sec.title)) + rows.join('');
   }).join('');
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>@media (max-width:340px){.nm{white-space:normal !important;}}</style>
 <title>${esc(L(ed.subject))}</title></head>
 <body style="margin:0;padding:0;background:#ffffff;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;"><tr><td align="center">
@@ -136,9 +137,9 @@ function editionHtml(lang, ed, total) {
   </td></tr>
   <tr><td align="center" style="border-top:1px solid ${LINE};padding:40px 0 22px;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${en ? 'Find us' : 'Retrouvez-nous'}</td></tr>
   <tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:360px;"><tr>
-      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${track(SITE + '/?app=1')}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-app.png" width="56" height="56" alt="${en ? 'Create the app' : 'Créer l’app'}" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">${en ? 'Create the app' : 'Créer l’app'}</div></a></td>
-      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${VINTED_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vinted.png" width="56" height="56" alt="Vinted" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">Vinted</div></a></td>
-      <td width="33%" align="center" valign="top" style="padding:0 4px;"><a href="${VESTIAIRE_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vc.png" width="56" height="56" alt="Vestiaire Collective" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10.5px;font-weight:600;letter-spacing:0.04em;color:${INK};margin-top:10px;">Vestiaire Collective</div></a></td>
+      <td width="33%" align="center" valign="top" style="padding:0 2px;"><a href="${track(SITE + '/?app=1')}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-app.png" width="56" height="56" alt="${en ? 'Create the app' : 'Créer l’app'}" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10px;font-weight:600;letter-spacing:0;color:${INK};margin-top:10px;">${en ? 'Create the app' : 'Créer l’app'}</div></a></td>
+      <td width="33%" align="center" valign="top" style="padding:0 2px;"><a href="${VINTED_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vinted.png" width="56" height="56" alt="Vinted" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10px;font-weight:600;letter-spacing:0;color:${INK};margin-top:10px;">Vinted</div></a></td>
+      <td width="33%" align="center" valign="top" style="padding:0 2px;"><a href="${VESTIAIRE_URL}" style="text-decoration:none;color:${INK};"><img src="${SITE}/img/nl-icon-vc.png" width="56" height="56" alt="Vestiaire Collective" style="display:block;width:56px;height:56px;margin:0 auto;border:0;"><div style="font-family:${FONT};font-size:10px;font-weight:600;letter-spacing:0;color:${INK};margin-top:10px;">Vestiaire Collective</div></a></td>
   </tr></table></td></tr>
   <tr><td align="center" style="padding:22px 16px 0;font-family:${FONT};font-size:12px;font-weight:300;line-height:1.7;color:${DIM};">
     ${en ? '<strong style="font-weight:600;color:' + INK + ';">Create your app</strong>, no App Store needed: on passeist.com, tap Share, then “Add to Home Screen”.' : '<strong style="font-weight:600;color:' + INK + ';">Créez votre application</strong>, sans passer par l’App Store : sur passeist.com, touchez Partager, puis « Sur l’écran d’accueil ».'}
