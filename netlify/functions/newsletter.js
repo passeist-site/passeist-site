@@ -95,7 +95,7 @@ async function admin(event, action) {
     const subs = (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' })))).filter(Boolean);
     subs.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return json(200, {
-      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, featured: await featuredList(),
+      brevo: brevo.enabled(), batch: send._BATCH, fresh: fresh.length, composed: send._composed(), featured: await featuredList(),
       nextDate: send._nextSendDate(),
       note: ((await store.get('state/note', { type: 'json' })) || {}).text || '',
       approved: !!((await store.get('state/approved', { type: 'json' })) || {}).date && ((await store.get('state/approved', { type: 'json' })) || {}).date === send._nextSendDate(),

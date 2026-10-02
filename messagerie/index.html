@@ -208,7 +208,7 @@ async function showNewsletter() {
   $('main').innerHTML = `
     <div class="nl-box"><h3>Newsletter « nouvelles pièces »</h3>
       <div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''}${d.pending ? ' · ' + d.pending + ' en attente d\'ajout dans Brevo' : ''}<br>
-      <b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)<br>
+      ${d.composed ? 'Votre sélection est prête pour dimanche 17 h' : `<b>${d.fresh}</b> nouvelles pièces pour dimanche (envoi à 17 h dès ${d.batch} pièces, sinon le dimanche suivant)`}<br>
       Brevo : ${d.brevo ? 'branché' : '<b>clé absente</b>'}</div></div>
     <div class="nl-box"><h3>Envoi du ${esc(d.nextDate ? new Date(d.nextDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '')}</h3>
       <div class="nl-stat">${d.approved ? '<b>Validé ✓</b> : la newsletter partira dimanche à 17 h.' : '<b>À valider</b> : rien ne part sans votre accord. Regardez l\'aperçu (reçu le samedi, ou « Recevoir un e-mail de test » plus bas), puis validez.'}</div>

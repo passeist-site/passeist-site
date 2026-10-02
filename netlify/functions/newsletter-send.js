@@ -261,7 +261,8 @@ exports.handler = async (event) => {
   const seen = new Set(seenList);
   const fresh = ids.filter(id => !seen.has(id));
   console.log(`newsletter : ${fresh.length} nouvelles pièces (envoi à partir de ${BATCH})`);
-  if (fresh.length < BATCH) return { statusCode: 200, body: 'waiting' };
+  const composed = !!(EDITION && EDITION.date === nextSendDate());   // semaine choisie par Tom : pas de minimum
+  if (fresh.length < BATCH && !composed) return { statusCode: 200, body: 'waiting' };
   if (!brevo.enabled()) {
     console.log('newsletter : BREVO_API_KEY absent, rien n\'est envoyé');
     return { statusCode: 200, body: 'no brevo' };
@@ -309,3 +310,4 @@ exports._groupsFor = groupsFor;
 exports._featuredItems = featuredItems;
 exports._BATCH = BATCH;
 exports._nextSendDate = nextSendDate;
+exports._composed = () => !!(EDITION && EDITION.date === nextSendDate());

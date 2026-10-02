@@ -15,7 +15,7 @@ exports.handler = async (event) => {
   const seen = new Set(seenList);
   const fresh = Object.keys(PRODUCTS).filter(id => !seen.has(id));
   const date = send._nextSendDate();
-  if (fresh.length < send._BATCH) {
+  if (fresh.length < send._BATCH && !send._composed()) {   // semaine choisie par Tom : aperçu quand même
     await notifyAdmin({ title: 'passéist · newsletter', body: `Seulement ${fresh.length} nouvelles pièces : pas d'envoi demain.`, url: '/messagerie/#newsletter', tag: 'newsletter' });
     return { statusCode: 200, body: 'trop peu' };
   }
@@ -26,6 +26,6 @@ exports.handler = async (event) => {
   const to = process.env.NEWSLETTER_PREVIEW_TO || process.env.NEWSLETTER_FROM || 'info@passeist.com';
   try { await brevo.sendOne({ to, subject: `[À valider] Newsletter du ${date}`, html }); }
   catch (err) { console.error('aperçu newsletter :', err.message); }
-  await notifyAdmin({ title: 'passéist · newsletter à valider', body: `${fresh.length} nouvelles pièces. Aperçu envoyé sur ${to} : validez avant dimanche 17 h.`, url: '/messagerie/#newsletter', tag: 'newsletter' });
+  await notifyAdmin({ title: 'passéist · newsletter à valider', body: `${send._composed() ? 'Votre sélection' : fresh.length + ' nouvelles pièces'}. Aperçu envoyé sur ${to} : validez avant dimanche 17 h.`, url: '/messagerie/#newsletter', tag: 'newsletter' });
   return { statusCode: 200, body: 'aperçu envoyé' };
 };
