@@ -6662,6 +6662,10 @@ function loadFiltersForView(view) {
 function goPage(p) {
   if (window.__homePending) window.__homePending();   // fiche ouverte directement : l'accueil se construit maintenant
   currentPage = p;
+  // Page marquée avant de construire la grille : de Boutique vers Vendu, Safari
+  // dessinait les pièces vendues avec la mise en page de la boutique (une grande
+  // carte sur cinq) puis les rétrécissait d'un coup (effet de zoom, page figée)
+  document.body.dataset.page = p;
   document.getElementById('home-page').style.display = p === 'home' ? '' : 'none';
   const showCatalog = (p === 'shop' || p === 'archive' || p === 'favorites');
   document.getElementById('shop-page').classList.toggle('open', showCatalog);
