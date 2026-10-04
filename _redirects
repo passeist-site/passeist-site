@@ -1,3 +1,13 @@
+# Domaines secondaires de Tom (passeiste.com, passeiste.fr) : redirection
+# permanente vers passeist.com, page par page (pas de copie du site pour Google)
+https://passeiste.com/*      https://passeist.com/:splat  301!
+https://www.passeiste.com/*  https://passeist.com/:splat  301!
+http://passeiste.com/*       https://passeist.com/:splat  301!
+http://www.passeiste.com/*   https://passeist.com/:splat  301!
+https://passeiste.fr/*       https://passeist.com/:splat  301!
+https://www.passeiste.fr/*   https://passeist.com/:splat  301!
+http://passeiste.fr/*        https://passeist.com/:splat  301!
+http://www.passeiste.fr/*    https://passeist.com/:splat  301!
 # SPA fallback : routes connues vers index.html (status 200)
 # Toute autre URL retourne /404.html avec status 404 (vraie 404 pour Google).
 /sitemap.xml      /sitemap.xml      200
