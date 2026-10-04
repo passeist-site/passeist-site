@@ -679,6 +679,10 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   // Description : la phrase unique passéist d'abord (contenu propre au site)
   const intro    = p.intro || buildIntro(p).fr;
   const desc     = clip(intro, 158);
+  // Description Google (résultats de recherche seulement, jamais affichée sur
+  // le site) : « passéiste » pour que la recherche de ce mot mène à passéist (Tom)
+  const DESC_SUF = ' · passéist, boutique passéiste';
+  const metaDesc = clip(intro, 158 - DESC_SUF.length) + DESC_SUF;
   const descLong = (intro + (descRaw ? ' ' + descRaw : '')).slice(0, 4900);
   const robots = sold ? 'noindex,nofollow' : 'index,follow';
 
@@ -730,7 +734,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   html = html.replace(/<title>[\s\S]*?<\/title>/,
     `<title>${esc(title)}</title>`);
   html = html.replace(/<meta\s+name="description"[^>]*>/,
-    `<meta name="description" content="${esc(desc)}">`);
+    `<meta name="description" content="${esc(metaDesc)}">`);
   html = html.replace(/<meta\s+name="robots"[^>]*>/,
     `<meta name="robots" content="${robots}">`);
   html = html.replace(/<link\s+rel="canonical"[^>]*>/,
