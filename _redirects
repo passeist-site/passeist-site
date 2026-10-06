@@ -29,6 +29,8 @@ http://www.passeiste.fr/*    https://passeist.com/:splat  301!
 /cgv              /index.html           200
 /privacy          /index.html           200
 /contact          /index.html           200
+# Marque corrigée (Yohji → JUN, 71766675) : l'ancienne adresse connue de Google
+/product/yohji-yamamoto-wool-pull-71766675  /product/jun-wool-pull-71766675  301
 /product/*        /index.html           200
 # Tout le reste → 404 propre
 /*                /404.html             404

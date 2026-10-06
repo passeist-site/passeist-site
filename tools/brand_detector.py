@@ -7,6 +7,9 @@ import re
 # Marques connues du catalogue passeist (canonique → patterns lowercase)
 KNOWN_BRANDS = [
     # Japonaises majeures
+    # JUN en tête : son texte de présentation cite Yohji Yamamoto en comparaison
+    # (« semblable à celle de Yohji Yamamoto »), qui ne doit pas l'emporter (71766675)
+    ('JUN',                 ['junmen', 'jun men', 'jun a été fondé', 'jun was founded', 'fondé en 1958 par tadashi sasaki', 'founded in 1958 by tadashi sasaki']),
     ('YOHJI YAMAMOTO',      ['yohji yamamoto', "y's", 'ys ', 'yohji', 'pour homme', 'y-3']),
     ('COMME DES GARÇONS',   ['comme des garcons', 'comme des garçons', 'cdg', 'tao', 'tricot comme']),
     ('JUNYA WATANABE',      ['junya watanabe', 'junya']),
@@ -39,7 +42,6 @@ KNOWN_BRANDS = [
     ('LIMI FEU',            ['limi feu']),
     ('FINAL HOME',          ['final home']),
     ('ASPESI',              ['aspesi']),
-    ('JUN',                 ['jun a été fondé', 'jun was founded', 'fondé en 1958 par tadashi sasaki', 'founded in 1958 by tadashi sasaki']),
     # Belges / autres
     ('MAISON MARGIELA',     ['maison margiela', 'martin margiela']),
     ('HELMUT LANG',         ['helmut lang']),
