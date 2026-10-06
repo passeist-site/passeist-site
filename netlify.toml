@@ -23,5 +23,4 @@
 [functions."newsletter-send"]
   schedule = "0 15 * * 0"
 
-[functions."push-weekly"]
-  schedule = "0 15 * * 0"
+# Notification « nouveautés » du dimanche arrêtée (Tom, oct. 2026)
