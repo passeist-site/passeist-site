@@ -2454,6 +2454,9 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
 }
 .about-info-value a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
+/* Mentions légales : un petit paragraphe discret en bas de « À propos » (Tom) */
+.about-section.about-legal p { margin: 0; font-size: 9.5px; line-height: 1.6; letter-spacing: 0.01em; color: var(--text-mute); opacity: 0.8; }
+.about-legal-t { text-transform: uppercase; letter-spacing: 0.12em; margin-right: 6px; }
 /* Variante compacte pour mentions légales */
 .about-section--small { margin-top: 72px; opacity: 0.9; }
 .about-section--small .about-section-title { font-size: 9px; margin-bottom: 16px; padding-bottom: 10px; }
@@ -3871,14 +3874,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <p class="about-body">Chaque pièce est photographiée en détail, mesurée, et décrite honnêtement.</p>
   </div>
 
-<div class="about-section">
-    <div class="about-section-title">Mentions légales</div>
-    <div class="about-info-grid">
-      <div><div class="about-info-label">Raison sociale</div><div class="about-info-value">passéist</div></div>
-      <div><div class="about-info-label">SIREN</div><div class="about-info-value">933 244 261 00014</div></div>
-      <div><div class="about-info-label">Immatriculation</div><div class="about-info-value">Tribunal de commerce de Paris</div></div>
-      <div><div class="about-info-label">Conformité</div><div class="about-info-value">S'engage à respecter la législation de l'UE</div></div>
-    </div>
+<div class="about-section about-legal">
+    <p><span class="about-legal-t">Mentions légales</span> PASSEIST EURL au capital de 400&nbsp;€, siège à Paris · RCS Paris 933&nbsp;244&nbsp;261 · SIRET 933&nbsp;244&nbsp;261&nbsp;00014 · TVA FR67933244261 · Directeur de la publication&nbsp;: le gérant · Hébergeur&nbsp;: Netlify, Inc., 512 2nd Street, Suite 200, San Francisco, CA 94107, États-Unis · info@passeist.com</p>
   </div>
 </section>
 
@@ -3890,14 +3887,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <p class="about-body">Each piece is photographed in detail, measured, and described honestly.</p>
   </div>
 
-  <div class="about-section">
-    <div class="about-section-title">Legal information</div>
-    <div class="about-info-grid">
-      <div><div class="about-info-label">Company</div><div class="about-info-value">passéist</div></div>
-      <div><div class="about-info-label">SIREN</div><div class="about-info-value">933 244 261 00014</div></div>
-      <div><div class="about-info-label">Registration</div><div class="about-info-value">Paris Commercial Court</div></div>
-      <div><div class="about-info-label">Compliance</div><div class="about-info-value">Compliant with EU regulations</div></div>
-    </div>
+  <div class="about-section about-legal">
+    <p><span class="about-legal-t">Legal information</span> PASSEIST EURL, share capital €400, registered office in Paris · Paris Trade Register (RCS) 933&nbsp;244&nbsp;261 · SIRET 933&nbsp;244&nbsp;261&nbsp;00014 · VAT FR67933244261 · Publication director: the manager · Host: Netlify, Inc., 512 2nd Street, Suite 200, San Francisco, CA 94107, USA · info@passeist.com</p>
   </div>
 </section>
 
