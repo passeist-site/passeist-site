@@ -221,6 +221,14 @@
     "cols": 7,
     "photos": [
       {
+        "img": "nl-cover-aw99.jpg",
+        "alt": {
+          "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999",
+          "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999"
+        },
+        "link": "71919847"
+      },
+      {
         "img": "nl-cover-72093528.jpg",
         "alt": {
           "fr": "Yohji Yamamoto, Pull fin coton-cachemire",
