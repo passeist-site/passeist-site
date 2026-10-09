@@ -9,8 +9,8 @@
     "en": "Ten pieces from the same Parisian wardrobe, and the boots from the 1999 “gipsy” show"
   },
   "intro": {
-    "fr": "Cette semaine, passéist a la chance de vous proposer dix pièces issues d’un même vestiaire parisien, une collection privée de grande qualité, principalement Y’s pour femme.",
-    "en": "This week, passéist is lucky to offer you ten pieces from the same Parisian wardrobe, a private collection of great quality, mostly Y’s for women."
+    "fr": "Cette semaine, passéist a la chance de vous proposer un ensemble de dix pièces issues d’un même vestiaire parisien, une collection privée de grande qualité.",
+    "en": "This week, passéist is lucky to offer you a set of ten pieces from the same Parisian wardrobe, a private collection of great quality."
   },
   "sections": [
     {
@@ -138,22 +138,22 @@
         }
       ],
       "text": {
-        "fr": "Paire de boots du défilé homme automne-hiver 1999, la collection dite « gipsy ». Toutes les chaussures du défilé ont été réalisées avec le bottier italien Bruno Bordese. Cuir noir entièrement doublé cuir, talon massif de 4 cm, pourtour orné de points hexagonaux emboutis, lanières de cuir reliées aux œillets. Neuve d’ancien stock, avec sa boîte et son dustbag d’origine. Taille 42.",
-        "en": "Boots from the autumn-winter 1999 men’s show, the so-called “gipsy” collection. Every pair in the show was made with Italian bootmaker Bruno Bordese. Black leather fully lined in leather, solid 4 cm heel, welt embossed with hexagonal dots, leather straps tied into the eyelets. New old stock, with the original box and dust bag. Size 42."
+        "fr": "Paire de boots du défilé homme automne-hiver 1999, la collection dite « gipsy ». Toutes les chaussures du défilé ont été réalisées en collaboration avec le shoemaker italien Bruno Bordese. Cuir noir entièrement doublé cuir, talon massif de 4 cm, pourtour orné de points hexagonaux emboutis, lanières de cuir reliées aux œillets. Neuve d’ancien stock, avec sa boîte et son dustbag d’origine. Taille 42.",
+        "en": "Boots from the autumn-winter 1999 men’s show, the so-called “gipsy” collection. Every pair in the show was made in collaboration with Italian shoemaker Bruno Bordese. Black leather fully lined in leather, solid 4 cm heel, welt embossed with hexagonal dots, leather straps tied into the eyelets. New old stock, with the original box and dust bag. Size 42."
       },
       "details": [
+        {
+          "img": "nl-71919847-5.jpg",
+          "alt": {
+            "fr": "Boots de profil, lanière à la cheville",
+            "en": "Side view, ankle strap"
+          }
+        },
         {
           "img": "nl-71919847-10.jpg",
           "alt": {
             "fr": "Intérieur signé Yohji Yamamoto pour homme by Bruno Bordese",
             "en": "Insole signed Yohji Yamamoto pour homme by Bruno Bordese"
-          }
-        },
-        {
-          "img": "nl-71919847-12.jpg",
-          "alt": {
-            "fr": "Détail du pourtour à points emboutis",
-            "en": "Detail of the embossed welt"
           }
         }
       ]
