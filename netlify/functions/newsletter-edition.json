@@ -136,7 +136,27 @@
             "en": "Insole signed Yohji Yamamoto pour homme by Bruno Bordese"
           }
         }
-      ]
+      ],
+      "photos": [
+        {
+          "img": "nl-yohji-aw99-1.jpg",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+            "en": "Yohji Yamamoto show, autumn-winter 1999"
+          }
+        },
+        {
+          "img": "nl-yohji-aw99-2.jpg",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+            "en": "Yohji Yamamoto show, autumn-winter 1999"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999.",
+        "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999."
+      }
     },
     {
       "title": {
@@ -201,30 +221,6 @@
     "cols": 3,
     "photos": [
       {
-        "img": "nl-cover-aw99-1.jpg",
-        "alt": {
-          "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-          "en": "Yohji Yamamoto show, autumn-winter 1999"
-        },
-        "link": "71919847"
-      },
-      {
-        "img": "nl-cover-71919847.jpg",
-        "alt": {
-          "fr": "Leather combat boots Yohji Yamamoto",
-          "en": "Yohji Yamamoto leather combat boots"
-        },
-        "link": "71919847"
-      },
-      {
-        "img": "nl-cover-aw99-2.jpg",
-        "alt": {
-          "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-          "en": "Yohji Yamamoto show, autumn-winter 1999"
-        },
-        "link": "71919847"
-      },
-      {
         "img": "nl-cover-72062810.jpg",
         "alt": {
           "fr": "Robe combinaison Y’s",
@@ -241,12 +237,36 @@
         "link": "72063304"
       },
       {
+        "img": "nl-cover-72093528.jpg",
+        "alt": {
+          "fr": "Pull fin Y’s",
+          "en": "Y’s fine knit"
+        },
+        "link": "72093528"
+      },
+      {
+        "img": "nl-cover-71919847.jpg",
+        "alt": {
+          "fr": "Leather combat boots Yohji Yamamoto",
+          "en": "Yohji Yamamoto leather combat boots"
+        },
+        "link": "71919847"
+      },
+      {
         "img": "nl-cover-71919376.jpg",
         "alt": {
           "fr": "Blouse Issey Miyake Pleats Please",
           "en": "Issey Miyake Pleats Please blouse"
         },
         "link": "71919376"
+      },
+      {
+        "img": "nl-cover-71919530.jpg",
+        "alt": {
+          "fr": "Tunique Issey Miyake Pleats Please",
+          "en": "Issey Miyake Pleats Please tunic"
+        },
+        "link": "71919530"
       }
     ]
   }
