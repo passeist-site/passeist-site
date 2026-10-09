@@ -221,20 +221,20 @@
     "cols": 6,
     "photos": [
       {
-        "img": "nl-cover-71919376.jpg",
-        "alt": {
-          "fr": "Issey Miyake, Blouse plissée col montant",
-          "en": "Issey Miyake, High-neck pleated blouse"
-        },
-        "link": "71919376"
-      },
-      {
         "img": "nl-cover-72093577.jpg",
         "alt": {
           "fr": "Yohji Yamamoto, Pull fin à coudières",
           "en": "Yohji Yamamoto, Fine knit with elbow patches"
         },
         "link": "72093577"
+      },
+      {
+        "img": "nl-cover-71919376.jpg",
+        "alt": {
+          "fr": "Issey Miyake, Blouse plissée col montant",
+          "en": "Issey Miyake, High-neck pleated blouse"
+        },
+        "link": "71919376"
       },
       {
         "img": "nl-cover-72062300.jpg",
@@ -301,20 +301,20 @@
         "link": "72062579"
       },
       {
-        "img": "nl-cover-72062424.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pantalon large à boucles",
-          "en": "Yohji Yamamoto, Wide buckled trousers"
-        },
-        "link": "72062424"
-      },
-      {
         "img": "nl-cover-71919530.jpg",
         "alt": {
           "fr": "Issey Miyake, Tunique plissée longue",
           "en": "Issey Miyake, Long pleated tunic"
         },
         "link": "71919530"
+      },
+      {
+        "img": "nl-cover-72062424.jpg",
+        "alt": {
+          "fr": "Yohji Yamamoto, Pantalon large à boucles",
+          "en": "Yohji Yamamoto, Wide buckled trousers"
+        },
+        "link": "72062424"
       }
     ]
   }
