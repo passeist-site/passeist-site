@@ -133,7 +133,7 @@ function editionHtml(lang, ed, total) {
     const focus = row(sec.details) + ((sec.details || []).length && (sec.photos || []).length ? '<tr><td style="height:8px;font-size:0;line-height:0;">&nbsp;</td></tr>' : '') +
       row(sec.photos) +
       (L(sec.caption) ? `<tr><td align="center" style="padding:12px 16px 0;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '') +
-      (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${esc(L(sec.text))}</td></tr>` : '<tr><td style="height:30px;"></td></tr>');
+      (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:30px;"></td></tr>');
     if (sec.hero) return head + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('') + focus;
     const rows = [];
     for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td align="center"><table role="presentation" width="${items.length - i > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
