@@ -152,7 +152,8 @@ ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opaci
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;padding:56px 14px 40px;">
   <tr><td align="center" style="font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:71px;font-weight:200;letter-spacing:-0.045em;line-height:1;color:${INK};"><a href="${track(SITE + '/')}" style="text-decoration:none;color:${INK};font-weight:200;">passéist<span style="color:#5a7593;font-weight:400;font-size:99px;line-height:0;">.</span></a></td></tr>
   <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
-  ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px 40px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
+  ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px ${(ed.introList && L(ed.introList).length) ? 18 : 40}px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
+  ${(ed.introList && L(ed.introList).length) ? `<tr><td align="center" style="padding:0 16px 44px;font-family:${FONT};font-size:15px;line-height:1.5;font-weight:300;color:${INK};">${L(ed.introList).map(x => `<div style="padding:6px 0;">${esc(x)}</div>`).join('')}</td></tr>` : ''}
   ${sections}
   <tr><td align="center" style="padding:20px 0 80px;">
     <a href="${track(SITE + '/shop')}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${en ? 'See all new pieces' : 'Voir toutes les nouveautés'}</a>
