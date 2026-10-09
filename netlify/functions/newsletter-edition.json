@@ -9,8 +9,8 @@
     "en": "A Parisian wardrobe, iconic Yohji Yamamoto boots, two Pleats Please pieces"
   },
   "intro": {
-    "fr": "Cette semaine, trois gros plans.",
-    "en": "Three close-ups this week."
+    "fr": "Cette semaine, trois gros plans.",
+    "en": "Three close-ups this week."
   },
   "sections": [
     {
@@ -190,8 +190,8 @@
   "introList": {
     "fr": [
       {
-        "label": "Collection privée",
-        "text": "Une sélection en provenance d’un vestiaire parisien du début des années 2000"
+        "label": "Collection privée parisienne",
+        "text": "Une sélection issue d’un même vestiaire, début des années 2000"
       },
       {
         "label": "Yohji Yamamoto, 1999",
@@ -199,13 +199,13 @@
       },
       {
         "label": "Issey Miyake",
-        "text": "Deux pièces Pleats Please des années 90"
+        "text": "Deux pièces Pleats Please des années 90"
       }
     ],
     "en": [
       {
-        "label": "Private collection",
-        "text": "A selection from a Parisian wardrobe of the early 2000s"
+        "label": "Private Parisian collection",
+        "text": "A selection from a single wardrobe, early 2000s"
       },
       {
         "label": "Yohji Yamamoto, 1999",
@@ -213,7 +213,7 @@
       },
       {
         "label": "Issey Miyake",
-        "text": "Two Pleats Please pieces from the 90s"
+        "text": "Two Pleats Please pieces from the 90s"
       }
     ]
   }
