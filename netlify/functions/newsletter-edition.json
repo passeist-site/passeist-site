@@ -218,7 +218,7 @@
     ]
   },
   "cover": {
-    "cols": 7,
+    "cols": 6,
     "photos": [
       {
         "img": "nl-cover-72063183.jpg",
@@ -243,14 +243,6 @@
           "en": "Issey Miyake, High-neck pleated blouse"
         },
         "link": "71919376"
-      },
-      {
-        "img": "nl-cover-72063584.jpg",
-        "alt": {
-          "fr": "Comme Des Garçons, Pantalon coton et lin",
-          "en": "Comme Des Garçons, Cotton-linen trousers"
-        },
-        "link": "72063584"
       },
       {
         "img": "nl-cover-72093577.jpg",
@@ -315,14 +307,6 @@
           "en": "Yohji Yamamoto, Boxy cotton-linen jacket"
         },
         "link": "72062579"
-      },
-      {
-        "img": "nl-cover-aw99.jpg",
-        "alt": {
-          "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999",
-          "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999"
-        },
-        "link": "71919847"
       },
       {
         "img": "nl-cover-72062424.jpg",
