@@ -9,8 +9,8 @@
     "en": "A private Parisian wardrobe, collector’s Yohji Yamamoto boots, a Pleats Please duo"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose un gros plan sur :",
-    "en": "This week, passéist takes a closer look at:"
+    "fr": "Cette semaine, trois gros plans.",
+    "en": "Three close-ups this week."
   },
   "sections": [
     {
@@ -189,14 +189,32 @@
   ],
   "introList": {
     "fr": [
-      "un vestiaire privé parisien de dix pièces",
-      "une paire de boots Yohji Yamamoto de collection",
-      "un duo d’été moucheté Issey Miyake"
+      {
+        "label": "Un vestiaire parisien",
+        "text": "Dix pièces d’une même collection privée"
+      },
+      {
+        "label": "Yohji Yamamoto, 1999",
+        "text": "Les boots du défilé « gipsy »"
+      },
+      {
+        "label": "Issey Miyake",
+        "text": "Un duo Pleats Please, moucheté pour l’été"
+      }
     ],
     "en": [
-      "a private Parisian wardrobe of ten pieces",
-      "a collector’s pair of Yohji Yamamoto boots",
-      "a speckled Issey Miyake summer duo"
+      {
+        "label": "A Parisian wardrobe",
+        "text": "Ten pieces from one private collection"
+      },
+      {
+        "label": "Yohji Yamamoto, 1999",
+        "text": "Boots from the “gipsy” show"
+      },
+      {
+        "label": "Issey Miyake",
+        "text": "A speckled Pleats Please duo for summer"
+      }
     ]
   }
 }
