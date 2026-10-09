@@ -221,28 +221,12 @@
     "cols": 7,
     "photos": [
       {
-        "img": "nl-cover-aw99.jpg",
+        "img": "nl-cover-72063183.jpg",
         "alt": {
-          "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999",
-          "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999"
+          "fr": "Yohji Yamamoto, Top long asymétrique",
+          "en": "Yohji Yamamoto, Long asymmetric top"
         },
-        "link": "71919847"
-      },
-      {
-        "img": "nl-cover-72093528.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pull fin coton-cachemire",
-          "en": "Yohji Yamamoto, Fine cotton-cashmere knit"
-        },
-        "link": "72093528"
-      },
-      {
-        "img": "nl-cover-72062424.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pantalon large à boucles",
-          "en": "Yohji Yamamoto, Wide buckled trousers"
-        },
-        "link": "72062424"
+        "link": "72063183"
       },
       {
         "img": "nl-cover-72062810.jpg",
@@ -253,44 +237,12 @@
         "link": "72062810"
       },
       {
-        "img": "nl-cover-72063304.jpg",
+        "img": "nl-cover-71919376.jpg",
         "alt": {
-          "fr": "Yohji Yamamoto, Robe chemise longue grise",
-          "en": "Yohji Yamamoto, Long grey shirt dress"
+          "fr": "Issey Miyake, Blouse plissée col montant",
+          "en": "Issey Miyake, High-neck pleated blouse"
         },
-        "link": "72063304"
-      },
-      {
-        "img": "nl-cover-72093577.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pull fin à coudières",
-          "en": "Yohji Yamamoto, Fine knit with elbow patches"
-        },
-        "link": "72093577"
-      },
-      {
-        "img": "nl-cover-72063183.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Top long asymétrique",
-          "en": "Yohji Yamamoto, Long asymmetric top"
-        },
-        "link": "72063183"
-      },
-      {
-        "img": "nl-cover-72062579.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Veste boxy coton et lin",
-          "en": "Yohji Yamamoto, Boxy cotton-linen jacket"
-        },
-        "link": "72062579"
-      },
-      {
-        "img": "nl-cover-72062300.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pantalon à oreilles",
-          "en": "Yohji Yamamoto, Jodhpur-style trousers"
-        },
-        "link": "72062300"
+        "link": "71919376"
       },
       {
         "img": "nl-cover-72063584.jpg",
@@ -301,12 +253,36 @@
         "link": "72063584"
       },
       {
+        "img": "nl-cover-72093577.jpg",
+        "alt": {
+          "fr": "Yohji Yamamoto, Pull fin à coudières",
+          "en": "Yohji Yamamoto, Fine knit with elbow patches"
+        },
+        "link": "72093577"
+      },
+      {
         "img": "nl-cover-72063494.jpg",
         "alt": {
           "fr": "Yohji Yamamoto, Robe chemise en popeline",
           "en": "Yohji Yamamoto, Poplin shirt dress"
         },
         "link": "72063494"
+      },
+      {
+        "img": "nl-cover-72063304.jpg",
+        "alt": {
+          "fr": "Yohji Yamamoto, Robe chemise longue grise",
+          "en": "Yohji Yamamoto, Long grey shirt dress"
+        },
+        "link": "72063304"
+      },
+      {
+        "img": "nl-cover-71919530.jpg",
+        "alt": {
+          "fr": "Issey Miyake, Tunique plissée longue",
+          "en": "Issey Miyake, Long pleated tunic"
+        },
+        "link": "71919530"
       },
       {
         "img": "nl-cover-71919847.jpg",
@@ -317,20 +293,44 @@
         "link": "71919847"
       },
       {
-        "img": "nl-cover-71919376.jpg",
+        "img": "nl-cover-72062300.jpg",
         "alt": {
-          "fr": "Issey Miyake, Blouse plissée col montant",
-          "en": "Issey Miyake, High-neck pleated blouse"
+          "fr": "Yohji Yamamoto, Pantalon à oreilles",
+          "en": "Yohji Yamamoto, Jodhpur-style trousers"
         },
-        "link": "71919376"
+        "link": "72062300"
       },
       {
-        "img": "nl-cover-71919530.jpg",
+        "img": "nl-cover-72093528.jpg",
         "alt": {
-          "fr": "Issey Miyake, Tunique plissée longue",
-          "en": "Issey Miyake, Long pleated tunic"
+          "fr": "Yohji Yamamoto, Pull fin coton-cachemire",
+          "en": "Yohji Yamamoto, Fine cotton-cashmere knit"
         },
-        "link": "71919530"
+        "link": "72093528"
+      },
+      {
+        "img": "nl-cover-72062579.jpg",
+        "alt": {
+          "fr": "Yohji Yamamoto, Veste boxy coton et lin",
+          "en": "Yohji Yamamoto, Boxy cotton-linen jacket"
+        },
+        "link": "72062579"
+      },
+      {
+        "img": "nl-cover-aw99.jpg",
+        "alt": {
+          "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999",
+          "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999"
+        },
+        "link": "71919847"
+      },
+      {
+        "img": "nl-cover-72062424.jpg",
+        "alt": {
+          "fr": "Yohji Yamamoto, Pantalon large à boucles",
+          "en": "Yohji Yamamoto, Wide buckled trousers"
+        },
+        "link": "72062424"
       }
     ]
   }
