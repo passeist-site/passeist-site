@@ -107,25 +107,9 @@
         "en": ""
       },
       "hero": true,
-      "photos": [
-        {
-          "img": "nl-yohji-aw99-1.jpg",
-          "alt": {
-            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-            "en": "Yohji Yamamoto show, autumn-winter 1999"
-          }
-        },
-        {
-          "img": "nl-yohji-aw99-2.jpg",
-          "alt": {
-            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-            "en": "Yohji Yamamoto show, autumn-winter 1999"
-          }
-        }
-      ],
       "caption": {
-        "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999.",
-        "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999."
+        "fr": "À droite, le même défilé, automne‑hiver 1999.",
+        "en": "Right, the same show, autumn‑winter 1999."
       },
       "items": [
         {
@@ -154,6 +138,13 @@
           "alt": {
             "fr": "Intérieur signé Yohji Yamamoto pour homme by Bruno Bordese",
             "en": "Insole signed Yohji Yamamoto pour homme by Bruno Bordese"
+          }
+        },
+        {
+          "img": "nl-yohji-aw99-2.jpg",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+            "en": "Yohji Yamamoto show, autumn-winter 1999"
           }
         }
       ]
@@ -216,5 +207,22 @@
         "text": "Two speckled Pleats Please pieces, the 90s"
       }
     ]
+  },
+  "cover": {
+    "photos": [
+      {
+        "img": "nl-yohji-aw99-1.jpg",
+        "alt": {
+          "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+          "en": "Yohji Yamamoto show, autumn-winter 1999"
+        }
+      }
+    ],
+    "width": 340,
+    "link": "71919847",
+    "caption": {
+      "fr": "Défilé Yohji Yamamoto Pour Homme, automne‑hiver 1999.",
+      "en": "Yohji Yamamoto Pour Homme show, autumn‑winter 1999."
+    }
   }
 }
