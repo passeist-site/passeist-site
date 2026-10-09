@@ -5,8 +5,8 @@
     "en": "New in: Y’s women, Pleats Please, Yohji Yamamoto"
   },
   "preheader": {
-    "fr": "Un vestiaire parisien, des boots Yohji Yamamoto iconiques, deux pièces Pleats Please mouchetées",
-    "en": "A Parisian wardrobe, iconic Yohji Yamamoto boots, two speckled Pleats Please pieces"
+    "fr": "Un vestiaire parisien, des combat boots Yohji Yamamoto iconiques, deux pièces Pleats Please mouchetées",
+    "en": "A Parisian wardrobe, iconic Yohji Yamamoto combat boots, two speckled Pleats Please pieces"
   },
   "intro": {
     "fr": "Cette semaine, trois gros plans.",
@@ -131,15 +131,15 @@
         {
           "id": "71919847",
           "name": {
-            "fr": "Boots en cuir du défilé",
-            "en": "Leather boots from the show"
+            "fr": "Combat boots du défilé",
+            "en": "Combat boots from the show"
           },
           "img": "nl-71919847-0.jpg"
         }
       ],
       "text": {
-        "fr": "La collection homme automne-hiver 1999 de Yohji Yamamoto, dite « Gypsy », est toute en mouvement : des superpositions d’étoffes riches et patinées, portées sur le podium par des artistes et des musiciens qui en incarnaient l’esprit libre. Toutes les chaussures du défilé ont été réalisées en collaboration avec le shoemaker italien Bruno Bordese.\nCette paire en est issue : cuir noir entièrement doublé cuir, talon massif de 4 cm, pourtour orné de points hexagonaux emboutis, lanières de cuir reliées aux œillets. Neuve d’ancien stock, avec sa boîte et son dustbag d’origine. Taille 42.",
-        "en": "Yohji Yamamoto’s autumn-winter 1999 men’s collection, known as the “Gypsy” collection, was defined by movement: layers of rich yet distressed fabrics, worn on the runway by artists and musicians who embodied its free spirit. Every pair of shoes in the show was made in collaboration with Italian shoemaker Bruno Bordese.\nThis pair comes from it: black leather fully lined in leather, solid 4 cm heel, welt embossed with hexagonal dots, leather straps tied into the eyelets. New old stock, with the original box and dust bag. Size 42."
+        "fr": "Pour sa collection homme « Gypsy », automne-hiver 1999, Yohji Yamamoto fait défiler artistes et musiciens dans des superpositions d’étoffes riches et patinées. Toutes les chaussures sont réalisées en collaboration avec le shoemaker italien Bruno Bordese.\nCes combat boots en cuir noir, entièrement doublées cuir, sont neuves d’ancien stock, avec leur boîte et leur dustbag d’origine. Talon massif, pourtour à points emboutis, lanières reliées aux œillets. Taille 42.",
+        "en": "For his “Gypsy” men’s collection, autumn-winter 1999, Yohji Yamamoto sent artists and musicians down the runway in layers of rich, distressed fabrics. Every pair of shoes was made in collaboration with Italian shoemaker Bruno Bordese.\nThese black leather combat boots, fully lined in leather, are new old stock, with their original box and dust bag. Solid heel, embossed welt, leather straps tied into the eyelets. Size 42."
       },
       "details": [
         {
@@ -195,11 +195,11 @@
       },
       {
         "label": "Yohji Yamamoto",
-        "text": "Une paire de boots iconique de 1999"
+        "text": "Une paire de combat boots iconique, automne-hiver 1999"
       },
       {
         "label": "Issey Miyake",
-        "text": "Deux pièces Pleats Please mouchetées des années 90"
+        "text": "Deux pièces Pleats Please mouchetées, années 90"
       }
     ],
     "en": [
@@ -209,11 +209,11 @@
       },
       {
         "label": "Yohji Yamamoto",
-        "text": "An iconic pair of boots from 1999"
+        "text": "An iconic pair of combat boots, autumn-winter 1999"
       },
       {
         "label": "Issey Miyake",
-        "text": "Two speckled Pleats Please pieces from the 90s"
+        "text": "Two speckled Pleats Please pieces, the 90s"
       }
     ]
   }
