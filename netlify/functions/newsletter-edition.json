@@ -5,8 +5,8 @@
     "en": "New in: Y’s women, Pleats Please, Yohji Yamamoto"
   },
   "preheader": {
-    "fr": "Un vestiaire parisien, des boots Yohji Yamamoto iconiques, deux pièces Pleats Please",
-    "en": "A Parisian wardrobe, iconic Yohji Yamamoto boots, two Pleats Please pieces"
+    "fr": "Un vestiaire parisien, des boots Yohji Yamamoto iconiques, deux pièces Pleats Please mouchetées",
+    "en": "A Parisian wardrobe, iconic Yohji Yamamoto boots, two speckled Pleats Please pieces"
   },
   "intro": {
     "fr": "Cette semaine, trois gros plans.",
@@ -194,12 +194,12 @@
         "text": "Une sélection issue d’un même vestiaire, début des années 2000"
       },
       {
-        "label": "Yohji Yamamoto, 1999",
-        "text": "Une paire de boots iconique"
+        "label": "Yohji Yamamoto",
+        "text": "Une paire de boots iconique de 1999"
       },
       {
         "label": "Issey Miyake",
-        "text": "Deux pièces Pleats Please des années 90"
+        "text": "Deux pièces Pleats Please mouchetées des années 90"
       }
     ],
     "en": [
@@ -208,12 +208,12 @@
         "text": "A selection from a single wardrobe, early 2000s"
       },
       {
-        "label": "Yohji Yamamoto, 1999",
-        "text": "An iconic pair of boots"
+        "label": "Yohji Yamamoto",
+        "text": "An iconic pair of boots from 1999"
       },
       {
         "label": "Issey Miyake",
-        "text": "Two Pleats Please pieces from the 90s"
+        "text": "Two speckled Pleats Please pieces from the 90s"
       }
     ]
   }
