@@ -120,10 +120,14 @@ function editionHtml(lang, ed, total) {
     return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
   };
   let first = true;
-  const sections = (ed.sections || []).map((sec) => {
+  // Sommaire en tête (introList) : chaque section reprend son numéro et son intitulé
+  // à la place du point bleu, comme un magazine
+  const toc = (ed.introList && L(ed.introList)) || [];
+  const tocHead = (i) => toc[i] && typeof toc[i] === 'object' ? `<tr><td align="center" style="padding:${i ? 34 : 4}px 0 30px;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};"><span style="color:${MUTE};padding-right:10px;">${String(i + 1).padStart(2, '0')}</span>${esc(toc[i].label)}</td></tr>` : '';
+  const sections = (ed.sections || []).map((sec, si) => {
     const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
     if (!items.length) return '';
-    const head = (first && !L(sec.title)) ? '' : heading(L(sec.title));   // pas de point avant la première pièce
+    const head = toc.length ? tocHead(si) : (first && !L(sec.title)) ? '' : heading(L(sec.title));   // pas de point avant la première pièce
     first = false;
     // Focus : la pièce en grand, un texte, des photos de détail puis du défilé (côte à côte,
     // menant à la pièce) et une légende
@@ -153,7 +157,7 @@ ${L(ed.preheader) ? `<div style="display:none;max-height:0;overflow:hidden;opaci
   <tr><td align="center" style="font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:71px;font-weight:200;letter-spacing:-0.045em;line-height:1;color:${INK};"><a href="${track(SITE + '/')}" style="text-decoration:none;color:${INK};font-weight:200;">passéist<span style="color:#5a7593;font-weight:400;font-size:99px;line-height:0;">.</span></a></td></tr>
   <tr><td align="center" style="padding:8px 0 0;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(dateTxt)}</td></tr>
   ${L(ed.intro) ? `<tr><td align="center" style="padding:60px 16px ${(ed.introList && L(ed.introList).length) ? 30 : 40}px;font-family:${FONT};font-size:21px;line-height:1.4;font-weight:300;letter-spacing:-0.01em;color:${INK};">${esc(L(ed.intro))}</td></tr>` : ''}
-  ${(ed.introList && L(ed.introList).length) ? `<tr><td align="center" style="padding:0 16px 56px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:380px;border-bottom:1px solid ${LINE};">${L(ed.introList).map((x, i) => `<tr>
+  ${(ed.introList && L(ed.introList).length) ? `<tr><td align="center" style="padding:0 16px 48px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:380px;border-bottom:1px solid ${LINE};">${L(ed.introList).map((x, i) => `<tr>
       <td width="40" valign="top" style="border-top:1px solid ${LINE};padding:17px 0 16px;font-family:${MONO};font-size:10px;letter-spacing:0.12em;color:${MUTE};">${String(i + 1).padStart(2, '0')}</td>
       <td valign="top" align="left" style="border-top:1px solid ${LINE};padding:16px 0;text-align:left;"><div style="font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};">${esc(typeof x === 'string' ? '' : x.label)}</div><div style="font-family:${FONT};font-size:16px;font-style:italic;font-weight:300;letter-spacing:-0.015em;line-height:1.4;color:${DIM};margin-top:6px;">${esc(typeof x === 'string' ? x : x.text)}</div></td></tr>`).join('')}</table></td></tr>` : ''}
   ${sections}
