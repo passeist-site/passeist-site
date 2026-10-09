@@ -120,14 +120,12 @@ function editionHtml(lang, ed, total) {
     return `<tr><td align="center" style="padding:34px 0 26px;font-family:${FONT};font-size:19px;font-weight:300;letter-spacing:-0.02em;line-height:1;color:${INK};">${h}</td></tr>`;
   };
   let first = true;
-  // Sommaire en tête (introList) : chaque section reprend son numéro et son intitulé
-  // à la place du point bleu, comme un magazine
   const toc = (ed.introList && L(ed.introList)) || [];
-  const tocHead = (i) => toc[i] && typeof toc[i] === 'object' ? `<tr><td align="center" style="padding:${i ? 34 : 4}px 0 30px;font-family:${MONO};font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:${INK};"><span style="color:${MUTE};padding-right:10px;">${String(i + 1).padStart(2, '0')}</span>${esc(toc[i].label)}</td></tr>` : '';
   const sections = (ed.sections || []).map((sec, si) => {
     const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
     if (!items.length) return '';
-    const head = toc.length ? tocHead(si) : (first && !L(sec.title)) ? '' : heading(L(sec.title));   // pas de point avant la première pièce
+    // Point bleu entre les parties ; avant la première seulement s'il y a un sommaire au-dessus
+    const head = (first && !L(sec.title) && !toc.length) ? '' : heading(L(sec.title));
     first = false;
     // Focus : la pièce en grand, un texte, des photos de détail puis du défilé (côte à côte,
     // menant à la pièce) et une légende
