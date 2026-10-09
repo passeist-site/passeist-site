@@ -1,12 +1,16 @@
 {
-  "date": "2026-10-02",
+  "date": "2026-10-09",
   "subject": {
-    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, Junko Koshino",
-    "en": "New in: Issey Miyake, Yohji Yamamoto, Junko Koshino"
+    "fr": "Nouveautés : Y’s femme, Pleats Please, Yohji Yamamoto",
+    "en": "New in: Y’s women, Pleats Please, Yohji Yamamoto"
+  },
+  "preheader": {
+    "fr": "Un ensemble Y’s pour femme, et les boots du défilé « gipsy » de 1999",
+    "en": "A set of Y’s pieces for women, and the boots from the 1999 “gipsy” show"
   },
   "intro": {
-    "fr": "Parmi nos nouveautés de la semaine, retrouvez :",
-    "en": "Among our new pieces this week, discover:"
+    "fr": "Cette semaine, passéist a la chance de vous proposer un ensemble homogène de pièces Y’s pour femme.",
+    "en": "This week, passéist is lucky to offer you a cohesive set of Y’s pieces for women."
   },
   "sections": [
     {
@@ -14,16 +18,123 @@
         "fr": "",
         "en": ""
       },
+      "items": [
+        {
+          "id": "72093577",
+          "name": {
+            "fr": "Pull fin à coudières",
+            "en": "Fine knit with elbow patches"
+          },
+          "img": "nl-72093577-0.jpg"
+        },
+        {
+          "id": "72093528",
+          "name": {
+            "fr": "Pull fin coton-cachemire",
+            "en": "Fine cotton-cashmere knit"
+          },
+          "img": "nl-72093528-0.jpg"
+        },
+        {
+          "id": "72063494",
+          "name": {
+            "fr": "Robe chemise en popeline",
+            "en": "Poplin shirt dress"
+          },
+          "img": "nl-72063494-0.jpg"
+        },
+        {
+          "id": "72063304",
+          "name": {
+            "fr": "Robe chemise longue grise",
+            "en": "Long grey shirt dress"
+          },
+          "img": "nl-72063304-0.jpg"
+        },
+        {
+          "id": "72063183",
+          "name": {
+            "fr": "Top long asymétrique",
+            "en": "Long asymmetric top"
+          },
+          "img": "nl-72063183-0.jpg"
+        },
+        {
+          "id": "72062810",
+          "name": {
+            "fr": "Robe combinaison",
+            "en": "Long jumpsuit dress"
+          },
+          "img": "nl-72062810-0.jpg"
+        },
+        {
+          "id": "72062579",
+          "name": {
+            "fr": "Veste boxy coton et lin",
+            "en": "Boxy cotton-linen jacket"
+          },
+          "img": "nl-72062579-0.jpg"
+        },
+        {
+          "id": "72062424",
+          "name": {
+            "fr": "Pantalon large à boucles",
+            "en": "Wide buckled trousers"
+          },
+          "img": "nl-72062424-0.jpg"
+        },
+        {
+          "id": "72062300",
+          "name": {
+            "fr": "Pantalon à oreilles",
+            "en": "Jodhpur-style trousers"
+          },
+          "img": "nl-72062300-0.jpg"
+        },
+        {
+          "id": "72063584",
+          "name": {
+            "fr": "Pantalon coton et lin",
+            "en": "Cotton-linen trousers"
+          },
+          "img": "nl-72063584-0.jpg"
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
       "hero": true,
+      "photos": [
+        {
+          "img": "nl-yohji-aw99-1.jpg",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+            "en": "Yohji Yamamoto show, autumn-winter 1999"
+          }
+        },
+        {
+          "img": "nl-yohji-aw99-2.jpg",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
+            "en": "Yohji Yamamoto show, autumn-winter 1999"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Défilé Yohji Yamamoto homme, automne-hiver 1999, dit « gipsy ». Chaussures réalisées avec le bottier Bruno Bordese.",
+        "en": "Yohji Yamamoto men’s show, autumn-winter 1999, known as the “gipsy” collection. Shoes made with bootmaker Bruno Bordese."
+      },
       "items": [
         {
-          "id": "71766804",
-          "photo": 0,
+          "id": "71919847",
           "name": {
-            "fr": "Cardigan plissé effet lichen",
-            "en": "Pleated lichen-effect cardigan"
+            "fr": "Boots en cuir du défilé",
+            "en": "Leather boots from the show"
           },
-          "img": "nl-71766804-0.jpg"
+          "img": "nl-71919847-0.jpg"
         }
       ]
     },
@@ -34,100 +145,24 @@
       },
       "items": [
         {
-          "id": "71766560",
+          "id": "71919376",
           "name": {
-            "fr": "Gilet zippé en laine marine",
-            "en": "Navy wool zip cardigan"
+            "fr": "Blouse plissée col montant",
+            "en": "High-neck pleated blouse"
           },
-          "img": "nl-71766560-0.jpg"
+          "img": "nl-71919376-0.jpg",
+          "brand": "PLEATS PLEASE"
         },
         {
-          "id": "71766532",
+          "id": "71919530",
           "name": {
-            "fr": "Cardigan noir et marine",
-            "en": "Black and navy cardigan"
+            "fr": "Tunique plissée longue",
+            "en": "Long pleated tunic"
           },
-          "img": "nl-71766532-0.jpg"
-        },
-        {
-          "id": "71766587",
-          "name": {
-            "fr": "Pull op-art moutarde et noir",
-            "en": "Mustard and black op-art jumper"
-          },
-          "img": "nl-71766587-0.jpg"
-        },
-        {
-          "id": "71766610",
-          "name": {
-            "fr": "Pull dégradé jaune et gris",
-            "en": "Yellow gradient jumper"
-          },
-          "img": "nl-71766610-0.jpg"
-        },
-        {
-          "id": "71766822",
-          "name": {
-            "fr": "Pull en laine moucheté",
-            "en": "Speckled wool jumper"
-          },
-          "img": "nl-71766822-0.jpg"
-        },
-        {
-          "id": "71766918",
-          "name": {
-            "fr": "Pull-cardigan effet nuage",
-            "en": "Cloud-effect cardigan"
-          },
-          "img": "nl-71766918-0.jpg"
-        }
-      ]
-    },
-    {
-      "title": {
-        "fr": "",
-        "en": ""
-      },
-      "hero": true,
-      "items": [
-        {
-          "id": "71767224",
-          "photo": 1,
-          "name": {
-            "fr": "Chemisier plissé vert sauge",
-            "en": "Sage-green pleated blouse"
-          },
-          "img": "nl-71767224-1.jpg"
-        }
-      ]
-    },
-    {
-      "title": {
-        "fr": "",
-        "en": ""
-      },
-      "items": [
-        {
-          "id": "71766947",
-          "name": {
-            "fr": "Sweat zippé asymétrique",
-            "en": "Asymmetric zip-up hoodie"
-          },
-          "img": "nl-71766947-0.jpg"
-        },
-        {
-          "id": "71767006",
-          "name": {
-            "fr": "Jean arqué à sashiko",
-            "en": "Curved sashiko jeans"
-          },
-          "img": "nl-71767006-0.jpg"
+          "img": "nl-71919530-0.jpg",
+          "brand": "PLEATS PLEASE"
         }
       ]
     }
-  ],
-  "preheader": {
-    "fr": "Les nouveautés de la semaine chez passéist",
-    "en": "This week’s new arrivals at passéist"
-  }
+  ]
 }

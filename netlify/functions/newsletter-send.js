@@ -107,8 +107,8 @@ function editionHtml(lang, ed, total) {
     const w = big ? 512 : 252;
     const src = it.img ? `${SITE}/img/${it.img}` : `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;   // it.img : photo préparée pour la newsletter
     return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
-      <img src="${src}" width="${w}" alt="${esc(title(p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
-      <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(p.brand)}</div>
+      <img src="${src}" width="${w}" alt="${esc(title(it.brand || p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
+      <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(it.brand || p.brand)}</div>
       <div class="nm" style="font-family:${FONT};font-size:${big ? 16 : 11.5}px;font-style:italic;font-weight:300;letter-spacing:-0.015em;${big ? '' : 'white-space:nowrap;'}line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
       <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
   };
@@ -125,7 +125,12 @@ function editionHtml(lang, ed, total) {
     if (!items.length) return '';
     const head = (first && !L(sec.title)) ? '' : heading(L(sec.title));   // pas de point avant la première pièce
     first = false;
-    if (sec.hero) return head + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
+    // Focus : photos de défilé (côte à côte, menant à la pièce) et une légende, puis la pièce en grand
+    const photos = (sec.photos || []).length ? `<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
+      sec.photos.map(ph => `<td width="${Math.floor(100 / sec.photos.length)}%" valign="bottom" align="center" style="padding:0 4px;"><a href="${track(urlOf(items[0].id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${ph.img}" width="${sec.photos.length > 1 ? 252 : 512}" alt="${esc(L(ph.alt))}" style="display:block;width:100%;max-width:${sec.photos.length > 1 ? 252 : 512}px;height:auto;margin:0 auto;border:0;"></a></td>`).join('') +
+      `</tr></table></td></tr>` +
+      (L(sec.caption) ? `<tr><td align="center" style="padding:14px 16px 44px;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '<tr><td style="height:40px;"></td></tr>') : '';
+    if (sec.hero) return head + photos + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('');
     const rows = [];
     for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td align="center"><table role="presentation" width="${items.length - i > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
       items.slice(i, i + 2).map(it => `<td width="${items.length - i > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
