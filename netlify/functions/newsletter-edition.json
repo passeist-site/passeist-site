@@ -68,12 +68,12 @@
           "img": "nl-72063183-0.jpg"
         },
         {
-          "id": "72063494",
+          "id": "72062579",
           "name": {
-            "fr": "Robe chemise en popeline",
-            "en": "Poplin shirt dress"
+            "fr": "Veste boxy coton et lin",
+            "en": "Boxy cotton-linen jacket"
           },
-          "img": "nl-72063494-0.jpg"
+          "img": "nl-72062579-0.jpg"
         },
         {
           "id": "72062300",
@@ -92,12 +92,12 @@
           "img": "nl-72063584-0.jpg"
         },
         {
-          "id": "72062579",
+          "id": "72063494",
           "name": {
-            "fr": "Veste boxy coton et lin",
-            "en": "Boxy cotton-linen jacket"
+            "fr": "Robe chemise en popeline",
+            "en": "Poplin shirt dress"
           },
-          "img": "nl-72062579-0.jpg"
+          "img": "nl-72063494-0.jpg"
         }
       ]
     },
