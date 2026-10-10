@@ -164,6 +164,14 @@ exports.handler = async (event) => {
   const lang = body.lang === 'en' ? 'en' : 'fr';
   if (!EMAIL_RE.test(email)) return json(400, { error: 'invalid' });
 
+  // Anti-robots : on répond « ok » sans rien enregistrer (le robot ne sait pas qu'il est filtré)
+  const fake = (why) => { console.log('newsletter : inscription ignorée (' + why + ')'); return json(200, { ok: true }); };
+  if (String(body.website || '').trim()) return fake('champ piège rempli');
+  if (!(Number(body.ms) >= 3000)) return fake('trop rapide ou hors formulaire');
+  const [local, domain] = email.split('@');
+  if (local.includes('..')) return fake('adresse invalide');
+  if (/^(gmail|googlemail)\.com$/.test(domain) && (local.match(/\./g) || []).length >= 3) return fake('Gmail à points');
+
   try {
     connectLambda(event);
     const store = getStore('passeist-newsletter');
