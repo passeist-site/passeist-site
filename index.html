@@ -3289,6 +3289,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 20px -8px rgba(0,0,0,0.7);
 }
 #chat-overlay .chat-form { display: none; }
+/* Écran d'accueil du chat : au milieu de la fenêtre, avant la discussion */
+#chat-overlay:not(.chat-ready) .chat-msgs { display: none; }
+#chat-overlay:not(.chat-ready) .chat-start { flex: 1; justify-content: center; align-items: stretch; gap: 12px; padding: 24px 4px; text-align: center; }
+.chat-start-txt { margin: 0 0 4px; font-size: 16px; line-height: 1.45; color: var(--ink); }
+#chat-overlay .chat-start .chat-name { flex: none; width: 100%; text-align: center; }
+.chat-start-go { height: 46px; border: none; border-radius: 12px; background: #f4f1ec; color: #1C2230; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; }
 #chat-overlay.chat-ready .chat-form { display: flex; }
 #chat-overlay.chat-ready .chat-start { display: none; }
 /* iPhone zoome sur tout champ en dessous de 16 px : on reste à 16 px partout */
@@ -4336,10 +4342,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <h2 class="checkout-title chat-title"><span class="chat-title-txt">Votre discussion avec</span> passéist<span class="chat-dot">.</span></h2>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
-      <div class="chat-row">
-        <input type="text" id="chat-name" class="chat-name" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required enterkeyhint="go">
-        <button type="submit" class="chat-send" id="chat-start-btn" aria-label="Valider"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
-      </div>
+      <p class="chat-start-txt" id="chat-start-txt">Pour commencer, inscrivez votre prénom</p>
+      <input type="text" id="chat-name" class="chat-name" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required enterkeyhint="go">
+      <button type="submit" class="chat-start-go" id="chat-start-btn">Commencer</button>
     </form>
     <form class="chat-form" id="chat-form">
       <div class="chat-row">
@@ -8166,13 +8171,10 @@ function chatPoll() {
 function openChat() {
   const en = window.__lang === 'en';
   const box = document.getElementById('chat-msgs');
-  if (!box.children.length) {
-    chatAdd({ from: 'passeist', at: 0, text: en
-      ? 'Hello, any question?'
-      : 'Bonjour, une question ?' });
-  }
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
+  document.getElementById('chat-start-txt').textContent = en ? 'To start, enter your first name' : 'Pour commencer, inscrivez votre prénom';
+  document.getElementById('chat-start-btn').textContent = en ? 'Start' : 'Commencer';
   try {
     let n = localStorage.getItem('passeist_chat_name');
     if (n && chatLooksLikeMessage(n)) { localStorage.removeItem('passeist_chat_name'); n = ''; }   // ancienne phrase gardée comme prénom
@@ -8180,6 +8182,10 @@ function openChat() {
   } catch (e) {}
   const ov = document.getElementById('chat-overlay');
   ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim());
+  // Client qui revient (prénom connu) : directement la discussion
+  if (ov.classList.contains('chat-ready') && !box.children.length) {
+    chatAdd({ from: 'passeist', at: 0, text: (en ? 'Hello ' : 'Bonjour ') + document.getElementById('chat-name').value.trim() + (en ? ', your question?' : ', votre question ?') });
+  }
   ov.classList.add('open');
   chatPoll();
   clearInterval(chatTimer);
@@ -8202,33 +8208,21 @@ function chatLooksLikeMessage(v) {
 document.getElementById('chat-start').addEventListener('submit', e => {
   e.preventDefault();
   const field = document.getElementById('chat-name');
-  const name = field.value.trim();
-  if (!name) return;
+  const v = field.value.trim();
+  if (!v) return;
   const EN = window.__lang === 'en';
-  if (chatLooksLikeMessage(name)) {
-    chatPending = (chatPending ? chatPending + '\n' : '') + name;
-    chatAdd({ from: 'client', at: Date.now(), text: name });
-    chatAdd({ from: 'passeist', at: Date.now() + 1, text: EN ? 'Thank you! What is your first name?' : 'Merci ! Quel est votre prénom ?' });
-    field.value = '';
-    field.focus();
+  if (chatLooksLikeMessage(v)) {   // une phrase tapée à la place du prénom
+    field.setCustomValidity(EN ? 'Just your first name, you can write your message next.' : 'Juste votre prénom, vous écrirez votre message juste après.');
+    field.reportValidity();
     return;
   }
-  try {
-    localStorage.setItem('passeist_chat_name', name);
-  } catch (err) {}
-  document.querySelectorAll('#chat-msgs .chat-who.client').forEach(w => { w.textContent = name; });
-  chatAdd({ from: 'passeist', at: 1, text: (window.__lang === 'en' ? 'Hello ' : 'Bonjour ') + name + ' !' });
+  try { localStorage.setItem('passeist_chat_name', v); } catch (err) {}
+  document.querySelectorAll('#chat-msgs .chat-who.client').forEach(w => { w.textContent = v; });
+  chatAdd({ from: 'passeist', at: 1, text: (EN ? 'Hello ' : 'Bonjour ') + v + (EN ? ', your question?' : ', votre question ?') });
   document.getElementById('chat-overlay').classList.add('chat-ready');
-  if (chatPending) {
-    // Message écrit avant le prénom : envoyé maintenant, avec le prénom
-    const ta = document.getElementById('chat-text');
-    ta.value = chatPending; chatPending = '';
-    chatSkipEcho = true;
-    document.getElementById('chat-form').requestSubmit();
-  } else {
-    document.getElementById('chat-text').focus();
-  }
+  document.getElementById('chat-text').focus();
 });
+document.getElementById('chat-name').addEventListener('input', function () { this.setCustomValidity(''); });
 let chatSkipEcho = false;  // message déjà affiché : ne pas le redessiner à l'envoi
 document.getElementById('chat-text').addEventListener('input', function () {
   this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px';
