@@ -4404,6 +4404,8 @@ const IMG_SUFFIX = {
 };
 
 const PRODUCTS = [
+  {"id": "72606740", "brand": "YOHJI YAMAMOTO", "type": "Petite maroquinerie en cuir", "size": "", "price": "120", "gender": "h", "color": "Green", "path": "/sacs-homme/petite-maroquinerie/yohji-yamamoto/petite-maroquinerie-yohji-yamamoto-en-cuir-vert-72606740.shtml", "slug": "petite-maroquinerie-yohji-yamamoto-en-cuir-vert-72606740", "n": 10, "desc": "Yohji Yamamoto\n\nTrès beau Porte carte en cuir teint vert et un séparateur intérieur cuir fauve.\n\nParfait état quelques éraflures sur les parties extérieures.\n\n12x7,5cm", "desc_en": "", "type_en": "Leather small bag", "size_en": ""},
+  {"id": "72534946", "brand": "YOHJI YAMAMOTO", "type": "Jean", "size": "38", "price": "240", "gender": "f", "color": "Navy", "path": "/vetements-femme/jeans/ys/jean-ys-en-coton-marine-72534946.shtml", "slug": "jean-ys-en-coton-marine-72534946", "n": 15, "desc": "Collection Y’s pour femme printemps été 2024 \n\nPhoto portée disponible par message \n\nTrès beau pantalon denim légèrement carotte, jolies détails bords francs et lanière asymétrique sur chaque côté extérieure au deux jambes \n\nTaille de 34 à 40cm max \nHanches 54cm \nLongueur jambes 98cm et 68cm depuis l’entre jambes\nLargeur cheville 16cm", "desc_en": "", "type_en": "Jeans", "size_en": "38"},
   {"id": "72535452", "brand": "YOHJI YAMAMOTO", "type": "Veste", "size": "M", "price": "230", "gender": "f", "color": "Navy", "path": "/vetements-femme/vestes/ys/vesteblouson-ys-en-coton-marine-72535452.shtml", "slug": "vesteblouson-ys-en-coton-marine-72535452", "n": 15, "desc": "Collection automne hiver 2023 \n\nPhoto portée disponible par message \n\nVeste en denim à deux couleurs extérieur bleu et revers marron. Très joli détails de bords francs décoratifs à longs fils.\n\nCoton 100%\nMade in Japan\n\nTaille indiquée 2 \n\nDimensions :\n\n- épaule à épaule : 43cm\n- aisselle à aisselle : 51cm\n- longueur dos depuis bas du col : 52cm \n- longueur manche depuis épaule 59cm et depuis aisselle :44cm\n- ouverture bas :48cm", "desc_en": "", "type_en": "Jacket", "size_en": "M"},
   {"id": "72536389", "brand": "Y'S", "type": "Chemise", "size": "Taille Unique", "price": "240", "gender": "f", "color": "Black", "path": "/vetements-femme/tops/ys/haut-ys-en-coton-noir-72536389.shtml", "slug": "haut-ys-en-coton-noir-72536389", "n": 15, "desc": "Collection Y’s pour femme été 2011\n\nRavissant blouse chemise oversized bimatiere , partie corps avant coton lyocell 50/50%, manches et doc en lin 45% et lyocell 55%. \n\nDimensions :\n\n- épaule à épaule : 63cm\n- aisselle à aisselle : 70cm\n- longueur dos depuis bas du col : 93cm \n- longueur manche depuis épaule 56cm et depuis aisselle :56cm\n- ouverture bas :69cm", "desc_en": "", "type_en": "Shirt", "size_en": "One size"},
   {"id": "72536565", "brand": "YOHJI YAMAMOTO", "type": "Cardigan", "size": "Taille Unique", "price": "230", "gender": "f", "color": "Black", "path": "/vetements-femme/pulls-gilets/yohji-yamamoto/pullgilet-yohji-yamamoto-en-coton-noir-72536565.shtml", "slug": "pullgilet-yohji-yamamoto-en-coton-noir-72536565", "n": 12, "desc": "Yohji Yamamoto \n\nCollection Y’s pour femme \n\nSuperbe fin et doux cardigan noir en coton 70% et laine 30%. Très beau montage à large bande d’empiètement sur les fins de manches et bas du corps. cordon d’ajustement taille. \n\nParfait état. \n\nTaille indiquée 2 convient à un M/L\n\n Dimensions :\n\n- épaule à épaule : 59cm\n- aisselle à aisselle : 64cm\n- longueur dos depuis bas du col : 78cm \n- longueur manche depuis épaule 60cm et depuis aisselle :54cm\n- ouverture bas :55cm", "desc_en": "", "type_en": "Cardigan", "size_en": "One size"},
@@ -4813,6 +4815,8 @@ let lbIdx = 0;
 //   2. Override local /img/{id}-{i}-{size}.webp uniquement pour les IDs dans VALIDATED_LOCAL
 //      (ajoutés un par un après validation visuelle du cadrage HQ)
 const VALIDATED_LOCAL = new Set([
+  "72606740",
+  "72534946",
   "72535452",
   "72536389",
   "72536565",
@@ -6049,6 +6053,11 @@ window.tGender = function(p) {
 
 // IDs des pièces vendues, à compléter au fur et à mesure
 const SOLD_IDS = new Set([
+  "70328914",
+  "68310578",
+  "70328201",
+  "71766587",
+  "71310064",
   "63584904",
   "72412658",
   "71766610",
