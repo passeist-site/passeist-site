@@ -18,8 +18,6 @@ KNOWN_BRANDS = [
     # MONITALY avant MATSUDA : son texte cite son fondateur Yuki Matsuda (73093028)
     ('MONITALY',            ['monitaly']),
     ('MATSUDA',             ['matsuda']),
-    # Étiquette « todo kotohayokozawa » (Vestiaire dit seulement « Todo »)
-    ('TODO KOTOHAYOKOZAWA', ['todo kotohayokozawa', 'kotohayokozawa', 'kotoha yokozawa']),
     ('KANSAI YAMAMOTO',     ['kansai yamamoto']),
     ('HIROKO KOSHINO',      ['hiroko koshino']),
     ('JUNKO KOSHINO',       ['junko koshino']),

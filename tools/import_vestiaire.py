@@ -47,7 +47,6 @@ BRAND_TO_SLUG = {
     'KENZO': 'kenzo',
     'MATSUDA': 'matsuda',
     'MONITALY': 'monitaly',
-    'TODO KOTOHAYOKOZAWA': 'todo-kotohayokozawa',
     'KANSAI YAMAMOTO': 'kansai-yamamoto',
     'HIROKO KOSHINO': 'hiroko-koshino',
     'TAKEO KIKUCHI': 'takeo-kikuchi',
