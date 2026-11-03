@@ -36,6 +36,11 @@ http://www.passeiste.fr/*    https://passeist.com/:splat  301!
 /product/matsuda-sweat-73092398  /product/monitaly-sweat-73092398  301
 /product/matsuda-chemise-73092530  /product/monitaly-chemise-73092530  301
 /product/matsuda-veste-73093011  /product/monitaly-veste-73093011  301
+# Marque complète (Todo → Todo Kotohayokozawa) : anciennes adresses
+/product/todo-blouse-73092249  /product/todo-kotohayokozawa-blouse-73092249  301
+/product/todo-blouse-73093105  /product/todo-kotohayokozawa-blouse-73093105  301
+/product/todo-blouse-73093140  /product/todo-kotohayokozawa-blouse-73093140  301
+/product/todo-blouse-73092210  /product/todo-kotohayokozawa-blouse-73092210  301
 /product/*        /index.html           200
 # Tout le reste → 404 propre
 /*                /404.html             404
