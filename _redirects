@@ -31,6 +31,11 @@ http://www.passeiste.fr/*    https://passeist.com/:splat  301!
 /contact          /index.html           200
 # Marque corrigée (Yohji → JUN, 71766675) : l'ancienne adresse connue de Google
 /product/yohji-yamamoto-wool-pull-71766675  /product/jun-wool-pull-71766675  301
+# Marque corrigée (Matsuda → Monitaly) : anciennes adresses
+/product/matsuda-sweat-73093028  /product/monitaly-sweat-73093028  301
+/product/matsuda-sweat-73092398  /product/monitaly-sweat-73092398  301
+/product/matsuda-chemise-73092530  /product/monitaly-chemise-73092530  301
+/product/matsuda-veste-73093011  /product/monitaly-veste-73093011  301
 /product/*        /index.html           200
 # Tout le reste → 404 propre
 /*                /404.html             404

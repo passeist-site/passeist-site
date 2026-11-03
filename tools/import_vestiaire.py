@@ -46,6 +46,7 @@ BRAND_TO_SLUG = {
     'ISSEY MIYAKE': 'issey-miyake',
     'KENZO': 'kenzo',
     'MATSUDA': 'matsuda',
+    'MONITALY': 'monitaly',
     'KANSAI YAMAMOTO': 'kansai-yamamoto',
     'HIROKO KOSHINO': 'hiroko-koshino',
     'TAKEO KIKUCHI': 'takeo-kikuchi',

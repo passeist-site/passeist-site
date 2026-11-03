@@ -15,6 +15,8 @@ KNOWN_BRANDS = [
     ('JUNYA WATANABE',      ['junya watanabe', 'junya']),
     ('ISSEY MIYAKE',        ['issey miyake', 'pleats please', 'homme plisse', 'homme plissé', 'me issey', 'a-poc', 'haat', 'bao bao']),
     ('KENZO',               ['kenzo']),
+    # MONITALY avant MATSUDA : son texte cite son fondateur Yuki Matsuda (73093028)
+    ('MONITALY',            ['monitaly']),
     ('MATSUDA',             ['matsuda']),
     ('KANSAI YAMAMOTO',     ['kansai yamamoto']),
     ('HIROKO KOSHINO',      ['hiroko koshino']),

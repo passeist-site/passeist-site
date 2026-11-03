@@ -46,6 +46,9 @@ def motif(desc):
 def saison(desc):
     """(libellé, année) : « Automne-hiver 2003 », « Printemps-été 1998 », « Années 90 »."""
     d = _norm(desc)
+    # Une date de fondation de marque n'est pas l'année de la pièce
+    # (« fondée en 1989 par Yuki Matsuda », Monitaly)
+    d = re.sub(r"(fond[ée]+e?s?|cr[ée]+e?s?|founded|established|created|depuis|since)\s+(en\s+|in\s+)?((?:19|20)\d{2})", r"\1", d)
     m = re.search(r'(automne|printemps)[\s-]*(hiver|été|ete)\s*(?:\d{4}\s*[/-]\s*)?((?:19|20)\d{2})', d)
     if m:
         s = 'Automne-hiver' if m.group(1) == 'automne' else 'Printemps-été'
