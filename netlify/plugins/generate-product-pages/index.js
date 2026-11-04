@@ -82,7 +82,8 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   // Texte alternatif riche (Google Images) : marque, type, couleur, n° de photo
   // « passéist » dans le texte des photos : recherche « passeist » dans Google Images
   const altBase = esc([p.brand, p.type, p.color && colorFR(p.color)].filter(Boolean).join(' ') + ' vintage, passéist');
-  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
+  // fetchpriority : la grande photo passe avant tout le reste (fichier du site, vignettes)
+  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" fetchpriority="high" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
 
   // Même galerie que celle que le site reconstruit au chargement (openDetail
   // dans index.html) : toutes les vignettes, photo 1 comprise, et aucune
@@ -1015,9 +1016,6 @@ module.exports = {
     if (scriptOpen !== -1) {
       slimHtml = baseHtml.slice(0, scriptOpen) + '<script src="/' + catRel + '"></script>\n' + baseHtml.slice(scriptOpen);
       slimHtml = slimHtml.replace(prodMatch[0], () => 'const PRODUCTS = window.__PRODUCTS__ || [];\n');
-      // Téléchargé dès le début de la page, avant les photos : le site est
-      // prêt plus tôt (fiche ouverte directement depuis Google).
-      slimHtml = slimHtml.replace('</head>', () => '<link rel="preload" href="/' + catRel + '" as="script">\n</head>');
     }
     // Accueil : versions FR/EN déclarées (uniquement sur l'accueil ; les
     // fiches produits ont les leurs, cf applyProductSEO)

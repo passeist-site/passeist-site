@@ -7488,7 +7488,7 @@ function openDetail(id) {
   // Pour la principale, fallback sur la première photo qui charge, on retire aussi
   // tous les thumbs qui ne chargent pas pour aligner le compteur.
   const altBase = [p.brand, (window.tType ? window.tType(p) : p.type)].filter(Boolean).join(' ') + ' vintage, passéist';
-  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
+  const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" fetchpriority="high" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
   // Thumbs : on inclut TOUTES les photos (y compris la photo 0) pour qu'on puisse revenir à la principale via le carrousel.
   // Une seule photo (pièce vendue) : pas de vignette, elle répéterait la photo principale (Tom).
   const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) => {
