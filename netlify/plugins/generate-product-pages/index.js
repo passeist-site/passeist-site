@@ -84,12 +84,16 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   const altBase = esc([p.brand, p.type, p.color && colorFR(p.color)].filter(Boolean).join(' ') + ' vintage, passéist');
   const mainHtml = `<img class="main-photo" src="${photos[0]}" data-idx="0" loading="eager" decoding="async" alt="${altBase} — photo 1" onerror="this.style.display='none'">`;
 
-  const thumbsHtml = photos.slice(1).map((src, idx) => {
-    const i = idx + 1;
-    return `<div class="thumb" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
-  }).join('');
+  // Même galerie que celle que le site reconstruit au chargement (openDetail
+  // dans index.html) : toutes les vignettes, photo 1 comprise, et aucune
+  // pour une pièce vendue. Avant, la page « sautait » quand le site
+  // finissait de charger (rangée de vignettes différente).
+  const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) =>
+    `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`
+  ).join('');
+  const badges = sold ? '<span class="sold-stamp">VENDU</span><span class="sold-badge">VENDU</span>' : '';
 
-  return `<div class="main-photo-wrap">${mainHtml}<span class="vendu-badge">VENDU</span></div><div class="thumbs-row">${thumbsHtml}</div>`;
+  return `<div class="main-photo-wrap">${mainHtml}${badges}</div><div class="thumbs-row">${thumbsHtml}</div>`;
 }
 
 // ── Build pre-populated <div class="detail"> ──────────────────────────────
@@ -102,7 +106,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
   const classes        = 'detail open' + (sold ? ' detail-sold' : '');
   const simHtml        = buildSimilarHtml(p, imgReorder, imgSuffix, validatedLocal, publishDir);
 
-  return `<div class="${classes}" id="detail">
+  return `<div class="${classes}" id="detail" data-pid="${esc(p.id)}">
   <div class="detail-header">
     <button class="detail-back" id="detail-back-btn" onclick="closeDetail()">← Retour à la boutique</button>
   </div>
@@ -999,25 +1003,9 @@ module.exports = {
     //    index.html du dépôt reste la source (imports, sync, webhook). ──
     // Le champ « path » (adresse de la fiche chez Vestiaire) ne sert pas au
     // site : Google le lisait comme un lien et tombait sur 723 pages 404.
-    // Allègement (nov. 2026, 2 Mo -> ~1 Mo) : la phrase passéist (intro,
-    // intro_en) ne sert plus au site, seulement aux pages générées ici ; les
-    // descriptions des pièces vendues partent dans un fichier à part, chargé
-    // seulement quand on en a besoin (fiche vendue, recherche), cf
-    // ensureSoldDesc() dans index.html.
-    const soldDesc = {};
-    const catProducts = products.map(({ path: _vc, intro: _i, intro_en: _ie, ...rest }) => {
-      if ((soldIds.has(rest.id) || rest.sold === true) && (rest.desc || rest.desc_en)) {
-        const { desc, desc_en, ...light } = rest;
-        soldDesc[rest.id] = [desc || '', desc_en || ''];
-        return light;
-      }
-      return rest;
-    });
-    const soldDescJson = JSON.stringify(soldDesc);
-    const soldDescRel = 'data/sold-desc.' + require('crypto').createHash('md5').update(soldDescJson).digest('hex').slice(0, 10) + '.json';
-    fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });
-    fs.writeFileSync(path.join(publishDir, soldDescRel), soldDescJson, 'utf8');
-    const catalogueJs = 'window.__SOLD_DESC__="/' + soldDescRel + '";window.__PRODUCTS__=' + JSON.stringify(catProducts) + ';';
+    // Allègement (nov. 2026, -490 Ko) : la phrase passéist (intro, intro_en)
+    // ne sert plus au site, seulement aux pages générées ici.
+    const catalogueJs = 'window.__PRODUCTS__=' + JSON.stringify(products.map(({ path: _vc, intro: _i, intro_en: _ie, ...rest }) => rest)) + ';';
     const catHash = require('crypto').createHash('md5').update(catalogueJs).digest('hex').slice(0, 10);
     const catRel = 'data/catalogue.' + catHash + '.js';
     fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });
@@ -1027,6 +1015,9 @@ module.exports = {
     if (scriptOpen !== -1) {
       slimHtml = baseHtml.slice(0, scriptOpen) + '<script src="/' + catRel + '"></script>\n' + baseHtml.slice(scriptOpen);
       slimHtml = slimHtml.replace(prodMatch[0], () => 'const PRODUCTS = window.__PRODUCTS__ || [];\n');
+      // Téléchargé dès le début de la page, avant les photos : le site est
+      // prêt plus tôt (fiche ouverte directement depuis Google).
+      slimHtml = slimHtml.replace('</head>', () => '<link rel="preload" href="/' + catRel + '" as="script">\n</head>');
     }
     // Accueil : versions FR/EN déclarées (uniquement sur l'accueil ; les
     // fiches produits ont les leurs, cf applyProductSEO)

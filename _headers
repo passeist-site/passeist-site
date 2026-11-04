@@ -10,5 +10,3 @@
 # téléchargé une seule fois puis gardé en cache.
 /data/catalogue.*
   Cache-Control: public, max-age=31536000, immutable
-/data/sold-desc.*
-  Cache-Control: public, max-age=31536000, immutable

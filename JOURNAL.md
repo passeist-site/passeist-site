@@ -10,6 +10,8 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
+### Fiche produit : galerie de la page identique à celle du site (vignette 1 comprise), position de lecture gardée au chargement
+
 ### Mot « archive » invisible pour les clients (Tom) + langue de Googlebot
 - Retiré de tout ce que voit le client : titres d'onglet, aperçus de partage (og:title des pages marques), titre de la page Vendu (« Pièces vendues »), légendes Final Home / Jun Men, texte Y's BANG ON!. Gardé dans ce que seul Google lit (mots-clés, descriptions).
 - Page Vendu : adresse `/vendu` (nom interne `archive` inchangé), `/archive` redirigée en 301.
@@ -20,7 +22,7 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - Titre Google des fiches : marque + pièce + matière + couleur accordée + homme/femme + saison (`seoTitle()` du plugin). Ex. « Monitaly Sweat en coton vert, vintage homme · passéist ».
 - Un seul `<h1>` par fiche : marque + pièce (`.detail-title`, `display: contents`, affichage identique au pixel près) ; le logo de l'accueil passe en `<div>` sur les fiches.
 - Pages marques : au-delà des 24 du carrousel, toutes les autres pièces disponibles en grille (`.brand-all`), avec leur lien.
-- Catalogue 2,07 Mo -> 0,98 Mo : `intro`/`intro_en` retirés (inutilisés par le site), descriptions des pièces vendues dans `data/sold-desc.<empreinte>.json`, chargé à la demande (`ensureSoldDesc()`).
+- Catalogue 2,07 Mo -> 1,5 Mo : `intro`/`intro_en` retirés (inutilisés par le site). Essai de sortir aussi les descriptions des pièces vendues (chargées à la demande) : abandonné, la description d'une pièce vendue mettait plusieurs secondes à s'afficher sur téléphone (Tom). Catalogue préchargé dans le `<head>`.
 - Les 693 « 404 » de Search Console : anciennes adresses Vestiaire lues dans le catalogue (champ `path`), déjà corrigé ; elles disparaîtront d'elles-mêmes.
 
 ### Page marque Plantation (1982, date officielle de la marque, photo fournie par Tom)

@@ -6866,26 +6866,8 @@ function normalizeForSearch(s) {
   return (s || '').toString().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
-// Descriptions des pièces vendues : hors du catalogue (allègement), chargées
-// une seule fois à la demande (fiche vendue, recherche). Cf plugin.
-window.ensureSoldDesc = function() {
-  if (window.__soldDescP) return window.__soldDescP;
-  if (!window.__SOLD_DESC__) return (window.__soldDescP = Promise.resolve(false));
-  window.__soldDescP = fetch(window.__SOLD_DESC__).then(r => r.ok ? r.json() : {}).then(map => {
-    PRODUCTS.forEach(p => {
-      const d = map[p.id];
-      if (d && p.desc === undefined && p.desc_en === undefined) { p.desc = d[0]; p.desc_en = d[1]; }
-    });
-    return true;
-  }).catch(() => { window.__soldDescP = null; return false; });
-  return window.__soldDescP;
-};
 function matchesSearch(p, q) {
   if (!q) return true;
-  // Recherche : les descriptions des pièces vendues arrivent, puis on relance
-  if (!window.__soldDescP && window.__SOLD_DESC__) {
-    window.ensureSoldDesc().then(ok => { if (ok && typeof window.renderGrid === 'function') window.renderGrid(); });
-  }
   const terms = normalizeForSearch(q).split(/\s+/).filter(Boolean);
   // Inclure l'ID + slug + couleur + desc_en pour que les recherches par ID,
   // par mot anglais ou par couleur tombent juste.
@@ -7316,6 +7298,10 @@ function openDetail(id) {
   currentProduct = p;
   const sold = isSold(p);
   const detailEl = document.getElementById('detail');
+  // Fiche déjà affichée par la page elle-même (arrivée directe) : on garde
+  // l'endroit où le visiteur a déjà fait défiler, au lieu de remonter en haut.
+  const _samePage = detailEl.classList.contains('open') && detailEl.dataset.pid === String(p.id);
+  const _prevTop = detailEl.scrollTop;
   detailEl.classList.toggle('detail-sold', sold);
   document.getElementById('d-brand').textContent = p.brand;
   document.getElementById('d-name').textContent = (window.tType ? window.tType(p) : p.type);
@@ -7330,21 +7316,7 @@ function openDetail(id) {
   // Réf discrète pour usage interne (clic = copie)
   const refEl = document.getElementById('d-ref');
   if (refEl) { refEl.textContent = 'Réf. ' + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
-  // Pièce vendue : sa description n'est pas dans le catalogue (allègement),
-  // elle arrive à part (ensureSoldDesc). Sur sa propre page, le texte déjà
-  // écrit dans la page reste affiché en attendant.
-  const descEl = document.getElementById('d-desc');
-  if (p.desc !== undefined || p.desc_en !== undefined) {
-    descEl.textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : (p.desc || '');
-    descEl.dataset.pid = p.id;
-  } else {
-    if (descEl.dataset.pid !== p.id) descEl.textContent = '';
-    if (window.ensureSoldDesc) window.ensureSoldDesc().then(() => {
-      if (currentProduct !== p || p.desc === undefined) return;
-      descEl.textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : (p.desc || '');
-      descEl.dataset.pid = p.id;
-    });
-  }
+  document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   // Phrase unique passéist (générée au build, cf plugin generate-product-pages)
   // Phrase automatique passéist : plus affichée sur la fiche (Tom). Elle
   // reste dans la description Google et les données produit (cf plugin).
@@ -7634,7 +7606,8 @@ function openDetail(id) {
   _detailEl.classList.add('open');
   // Force scroll au top de la fiche produit (sinon le panel garde la position
   // précédente, Tom : "ça me met au milieu pas en haut des photos").
-  _detailEl.scrollTop = 0;
+  _detailEl.scrollTop = _samePage ? _prevTop : 0;
+  _detailEl.dataset.pid = p.id;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + window.__savedScrollY + 'px';
   document.body.style.left = '0';
@@ -10353,7 +10326,7 @@ window.subscribeNewsletter = function (e) {
       const dd = document.getElementById('d-desc');
       if (dn) dn.textContent = window.tType ? window.tType(p) : p.type;
       if (dg) dg.textContent = window.tGender ? window.tGender(p) : (p.gender || '');
-      if (dd && (p.desc !== undefined || p.desc_en !== undefined)) dd.textContent = (lang === 'en' && p.desc_en) ? p.desc_en : (p.desc || '');
+      if (dd) dd.textContent = (lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
     }
 
     // Meta hreflang canonical
