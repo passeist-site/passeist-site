@@ -7032,7 +7032,7 @@ function normalizeForSearch(s) {
 }
 function matchesSearch(p, q) {
   if (!q) return true;
-  const terms = normalizeForSearch(q).replace(/[-·,]/g, ' ').split(/\s+/).filter(Boolean);
+  const terms = normalizeForSearch(q).replace(/^\s*ref\.?\s*:?/, '').replace(/[-·,]/g, ' ').split(/\s+/).filter(Boolean);
   // Inclure l'ID + slug + couleur + desc_en pour que les recherches par ID,
   // par mot anglais ou par couleur tombent juste.
   const hay = normalizeForSearch([
@@ -7245,8 +7245,15 @@ function renderFilters() {
   if (reset) reset.hidden = !anyActive;
 }
 
+// Recherche par référence (« 73092452 », « Réf. 73092452 ») : la pièce est
+// trouvée où qu'elle soit (boutique, vendue), sans tenir compte des filtres.
+function refQuery(q) {
+  const s = normalizeForSearch(q).replace(/^\s*ref\.?\s*:?\s*/, '').trim();
+  return /^\d{6,}$/.test(s) ? s : '';
+}
 function renderGrid() {
-  let filtered = viewProducts().filter(p =>
+  const _ref = refQuery(activeSearch);
+  let filtered = _ref ? PRODUCTS.filter(p => String(p.id).includes(_ref)) : viewProducts().filter(p =>
     (activeBrand === 'all' || p.brand === activeBrand) &&
     (activeCat === 'all' || getCategory(p.type) === activeCat) &&
     (activeGender === 'all' || getGender(p) === activeGender) &&
