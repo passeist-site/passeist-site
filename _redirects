@@ -12,6 +12,10 @@ https://passeist.fr/*        https://passeist.com/:splat  301!
 https://www.passeist.fr/*    https://passeist.com/:splat  301!
 http://passeist.fr/*         https://passeist.com/:splat  301!
 http://www.passeist.fr/*     https://passeist.com/:splat  301!
+# Robots venus de Chine (environ 240 « visites » par mois, système et
+# navigateur inconnus, Cloudflare nov. 2026) : une page vide de 300 octets au
+# lieu du site et de ses photos, pour ne plus payer leur bande passante.
+/*  /403.html  403!  Country=cn
 # SPA fallback : routes connues vers index.html (status 200)
 # Toute autre URL retourne /404.html avec status 404 (vraie 404 pour Google).
 /sitemap.xml      /sitemap.xml      200
