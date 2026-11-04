@@ -1336,6 +1336,7 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 .similar-card {
   flex: 0 0 180px;
   cursor: pointer;
+  color: inherit; text-decoration: none;
   display: flex; flex-direction: column;
   gap: 6px;
 }
@@ -3767,7 +3768,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <a href="/marques/comme-des-garcons">Comme des Garçons</a>
     </div>
     <div class="hbs-others">
-      <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/final-home">Final Home</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/jun-men">Jun Men</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a> …
+      <a href="/marques/blue-blue-japan">Blue Blue Japan</a> · <a href="/marques/final-home">Final Home</a> · <a href="/marques/fumito-ganryu">Fumito Ganryu</a> · <a href="/marques/jun-men">Jun Men</a> · <a href="/marques/junko-koshino">Junko Koshino</a> · <a href="/marques/junya-watanabe">Junya Watanabe</a> · <a href="/marques/kansai-yamamoto">Kansai Yamamoto</a> · <a href="/marques/kijima-takayuki">Kijima Takayuki</a> · <a href="/marques/limi-feu">Limi Feu</a> · <a href="/marques/maison-mihara-yasuhiro">Maison Mihara Yasuhiro</a> · <a href="/marques/noir-kei-ninomiya">Noir Kei Ninomiya</a> · <a href="/marques/plantation">Plantation</a> · <a href="/marques/tigre-brocante">Tigre Brocante</a> · <a href="/marques/tsumori-chisato">Tsumori Chisato</a> · <a href="/marques/yoshiki-hishinuma">Yoshiki Hishinuma</a> · <a href="/marques/zucca">Zucca</a> …
     </div>
     <a href="/marques" class="hbs-cta"><span>Tout voir</span><span class="arrow-symbol">→</span></a>
   </div>
@@ -7376,22 +7377,27 @@ function openDetail(id) {
           // Même carte que la Boutique (photo 1, cadre 3:4 contain, cf PHOTOS.md)
           const g = getGender(x) ? (window.tGender ? window.tGender(x) : getGender(x)) : '';
           const sz = (window.formatSize ? window.formatSize(x.size) : x.size) + (g ? ' · ' + g : '');
-          return `<div class="similar-card" data-id="${x.id}">
+          // Vrai lien <a href> : Google suit les fiches entre elles (le clic reste géré ci-dessous)
+          return `<a class="similar-card" href="/product/${productSlug(x)}" data-id="${x.id}" draggable="false">
             <div class="product-img"><img class="product-img-primary loaded" src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="(max-width: 900px) 45vw, 300px" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false" onerror="this.closest('.similar-card').style.display='none'"></div>
             <div class="product-body">
               <div class="product-brand"><span class="brand-name">${x.brand}</span><div class="product-price-wrap"><span class="product-price">${x.price} €</span></div></div>
               <div class="product-name-row"><div class="product-name">${(window.tType ? window.tType(x) : x.type)}</div></div>
               <div class="product-meta"><div class="product-size">${sz}</div></div>
             </div>
-          </div>`;
+          </a>`;
         }).join('');
         // Duplique les cards pour boucle infinie sans saut visible
         simTrack.innerHTML = cardsHtml + cardsHtml;
         simTrack.querySelectorAll('.similar-card').forEach(c => {
           c.addEventListener('click', (e) => {
+            // Le lien sert à Google ; dans le site, la fiche s'ouvre sans recharger
+            // (Cmd/Ctrl-clic : nouvel onglet, comme un lien normal)
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+            e.preventDefault();
             // N'ouvre pas la fiche si l'utilisateur a vraiment fait un drag
             if (window.__simMarqueeState && window.__simMarqueeState.dragged) {
-              e.preventDefault(); e.stopPropagation(); return;
+              e.stopPropagation(); return;
             }
             const id = c.dataset.id;
             if (id && typeof openDetail === 'function') {
@@ -9326,7 +9332,7 @@ window.updateSEO = function(p) {
     // BreadcrumbList Schema pour la fiche produit (passeist › Boutique › {brand} › {produit})
     const cat = (typeof getCategory === 'function') ? getCategory(p.type) : '';
     const brandSlug = slugify(p.brand);
-    const BRAND_PAGES = ['45rpm','blue-blue-japan','comme-des-garcons','final-home','fumito-ganryu','issey-miyake','jun-men','junko-koshino','junya-watanabe','kansai-yamamoto','kijima-takayuki','limi-feu','maison-mihara-yasuhiro','noir-kei-ninomiya','tigre-brocante','tsumori-chisato','yohji-yamamoto','yoshiki-hishinuma','zucca'];
+    const BRAND_PAGES = ['45rpm','blue-blue-japan','comme-des-garcons','final-home','fumito-ganryu','issey-miyake','jun-men','junko-koshino','junya-watanabe','kansai-yamamoto','kijima-takayuki','limi-feu','maison-mihara-yasuhiro','noir-kei-ninomiya','plantation','tigre-brocante','tsumori-chisato','yohji-yamamoto','yoshiki-hishinuma','zucca'];
     const brandItem = BRAND_PAGES.includes(brandSlug) ? BASE + '/marques/' + brandSlug : BASE + '/shop?brand=' + encodeURIComponent(p.brand);
     const breadcrumb = {
       '@context': 'https://schema.org',

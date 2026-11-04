@@ -100,6 +100,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
   const sizeText       = p.size && p.size !== '' ? esc(p.size) : 'Taille unique';
   const priceText      = sold ? '' : (p.price + ' €');
   const classes        = 'detail open' + (sold ? ' detail-sold' : '');
+  const simHtml        = buildSimilarHtml(p, imgReorder, imgSuffix, validatedLocal, publishDir);
 
   return `<div class="${classes}" id="detail">
   <div class="detail-header">
@@ -141,13 +142,67 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
       <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)">Réf. ${esc(p.id)}</div>
     </div>
   </div>
-  <section class="similar-section" id="d-similar" hidden>
+  <section class="similar-section" id="d-similar"${simHtml ? '' : ' hidden'}>
     <div class="similar-title">Articles similaires</div>
     <div class="similar-marquee" id="d-similar-marquee">
-      <div class="similar-track" id="d-similar-track"></div>
+      <div class="similar-track" id="d-similar-track">${simHtml}</div>
     </div>
   </section>
 </div>`;
+}
+
+// ── Articles similaires, écrits dans la page ──────────────────────────────
+// Avant, le bloc était vide dans le HTML et rempli en JavaScript avec des
+// <div> cliquables : Google ne voyait aucun lien d'une fiche à l'autre, et ne
+// trouvait les 750 fiches que par le sitemap (919 pages « explorées, non
+// indexées » en novembre 2026). Ici : 8 vrais liens <a href> vers des pièces
+// disponibles, même score que la fiche (marque +5, catégorie +3, couleur +2,
+// genre +1, cf index.html « Articles similaires »). Le JavaScript de la fiche
+// remplace ensuite le bloc par son carrousel habituel.
+let SIM_CTX = { products: [], soldIds: new Set() };
+
+function categoryOf(type) {
+  const t = String(type || '').toLowerCase();
+  const has = (...w) => w.some(x => t.includes(x));
+  if (has('sac', 'banane', 'étole', 'foulard', 'echarpe', 'écharpe', 'cheche', 'chèche', 'chapeau', 'bonnet', 'ceinture', 'portefeuille', 'maroquinerie', 'cartable')) return 'Accessoires';
+  if (has('bottes', 'basket', 'ballerine', 'escarpin', 'mocassin', 'derby', 'sandale')) return 'Chaussures';
+  if (has('robe', 'tunique')) return 'Robes';
+  if (has('pantalon', 'jean', 'jupe', 'short', 'bermuda', 'legging')) return 'Bas';
+  if (has('veste', 'blouson', 'manteau', 'parka', 'blazer')) return 'Vestes';
+  if (has('sweat', 'pull', 'cardigan', 'gilet')) return 'Maille';
+  if (has('chemise', 'top', 'tee', 't-shirt', 'blouse', 'polo', 'débardeur', 'debardeur', 'haut')) return 'Hauts';
+  return 'Autres';
+}
+
+function buildSimilarHtml(p, imgReorder, imgSuffix, validatedLocal, publishDir) {
+  const cat = categoryOf(p.type);
+  const top = SIM_CTX.products
+    .filter(x => x.id && x.id !== p.id && String(x.id).length < 10 && x.n)
+    .filter(x => !SIM_CTX.soldIds.has(x.id) && x.sold !== true)
+    .map(x => {
+      let sc = 0;
+      if (x.brand === p.brand) sc += 5;
+      if (categoryOf(x.type) === cat) sc += 3;
+      if (p.color && x.color === p.color) sc += 2;
+      if (p.gender && x.gender === p.gender) sc += 1;
+      return { x, sc };
+    })
+    .filter(o => o.sc > 0)
+    .sort((a, b) => b.sc - a.sc)
+    .slice(0, 8)
+    .map(o => o.x);
+  return top.map(x => {
+    const img = brandCardImg(x, imgReorder, imgSuffix, validatedLocal, publishDir);
+    const g = x.gender === 'h' ? 'Homme' : x.gender === 'f' ? 'Femme' : '';
+    return `<a class="similar-card" href="/product/${esc(productSlug(x))}" data-id="${esc(x.id)}" draggable="false">
+            <div class="product-img"><img class="product-img-primary loaded" src="${esc(img.src)}" srcset="${esc(img.srcset)}" sizes="(max-width: 900px) 45vw, 300px" alt="${esc(x.brand + ' ' + x.type)}" loading="lazy" decoding="async" draggable="false"></div>
+            <div class="product-body">
+              <div class="product-brand"><span class="brand-name">${esc(x.brand)}</span><div class="product-price-wrap"><span class="product-price">${esc(x.price)} €</span></div></div>
+              <div class="product-name-row"><div class="product-name">${esc(x.type)}</div></div>
+              <div class="product-meta"><div class="product-size">${esc(sizeFR(x.size))}${g ? ' · ' + g : ''}</div></div>
+            </div>
+          </a>`;
+  }).join('');
 }
 
 // ── Season + year in French and English ───────────────────────────────────
@@ -316,7 +371,7 @@ const STATIC_ROUTES = [
     'issey-miyake', 'yohji-yamamoto', 'comme-des-garcons', '45rpm', 'junko-koshino',
     'kansai-yamamoto', 'blue-blue-japan', 'zucca', 'kijima-takayuki', 'tsumori-chisato',
     'yoshiki-hishinuma', 'limi-feu', 'junya-watanabe', 'maison-mihara-yasuhiro',
-    'fumito-ganryu', 'noir-kei-ninomiya', 'tigre-brocante', 'jun-men', 'final-home',
+    'fumito-ganryu', 'noir-kei-ninomiya', 'tigre-brocante', 'jun-men', 'final-home', 'plantation',
   ].map(slug => ({ loc: 'https://passeist.com/marques/' + slug, changefreq: 'weekly', priority: '0.7' })),
 ];
 
@@ -330,7 +385,7 @@ function buildSitemap(products, soldIds, imgReorder, imgSuffix, validatedLocal, 
   </url>`);
 
   // Uniquement les pièces disponibles : les fiches vendues sont en
-  // robots "noindex,nofollow" (cf applyProductSEO), donc pas de raison
+  // robots "noindex,follow" (cf applyProductSEO), donc pas de raison
   // de les pousser dans le sitemap non plus.
   const productUrls = products
     .filter(p => p.id && !soldIds.has(p.id) && p.sold !== true)
@@ -684,7 +739,9 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const DESC_SUF = ' · passéist, boutique passéiste';
   const metaDesc = clip(intro, 158 - DESC_SUF.length) + DESC_SUF;
   const descLong = (intro + (descRaw ? ' ' + descRaw : '')).slice(0, 4900);
-  const robots = sold ? 'noindex,nofollow' : 'index,follow';
+  // Pièce vendue : hors de Google, mais ses liens (articles similaires,
+  // disponibles) sont suivis, au lieu d'un cul-de-sac (« nofollow » avant)
+  const robots = sold ? 'noindex,follow' : 'index,follow';
 
   // Ensure image URL is absolute for og:image, twitter:image and JSON-LD
   const imgAbs = img ? (img.startsWith('/') ? 'https://passeist.com' + img : img) : '';
@@ -950,6 +1007,7 @@ module.exports = {
     const productDir = path.join(publishDir, 'product');
     fs.mkdirSync(productDir, { recursive: true });
 
+    SIM_CTX = { products, soldIds };
     let count = 0;
     for (const p of products) {
       if (!p.id) continue;
