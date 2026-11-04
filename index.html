@@ -7766,6 +7766,21 @@ function openDetail(id) {
     applyMainTransform(animate !== false);
   }
   // Helper : passe à la photo suivante/précédente (utilisé par swipe + thumbs)
+  // Grandes photos voisines téléchargées à l'avance (les vignettes sont en
+  // petite taille) : la photo suivante est prête avant le glissé.
+  const preloaded = new Set();
+  function preloadAround(i) {
+    [i + 1, i - 1, i + 2].forEach(k => {
+      const j = (k + photos.length) % photos.length;
+      if (photos.length < 2 || preloaded.has(j)) return;
+      preloaded.add(j);
+      const im = new Image(); im.decoding = 'async'; im.src = photos[j];
+    });
+  }
+  if (photos.length > 1) {
+    const start = () => setTimeout(() => preloadAround(curIdx || 0), 300);
+    if (mainEl.complete) start(); else mainEl.addEventListener('load', start, { once: true });
+  }
   function navigateMainPhoto(direction) {
     if (photos.length < 2) return;
     curIdx = (curIdx + direction + photos.length) % photos.length;
@@ -7773,6 +7788,22 @@ function openDetail(id) {
     mainEl.dataset.idx = curIdx;
     thumbs.forEach((x, i) => x.classList.toggle('is-active', parseInt(x.dataset.idx) === curIdx));
     resetMainZoom(false);
+    preloadAround(curIdx);
+  }
+  // Glissé réussi : la photo sort du côté du doigt, la suivante entre de l'autre
+  function slideToPhoto(direction) {
+    const w = mainEl.getBoundingClientRect().width || window.innerWidth;
+    mainEl.style.transition = 'transform 0.16s cubic-bezier(.4,0,.6,1)';
+    mainEl.style.transform = 'translateX(' + (direction > 0 ? -w : w) + 'px)';
+    setTimeout(() => {
+      navigateMainPhoto(direction);
+      mainEl.style.transition = 'none';
+      mainEl.style.transform = 'translateX(' + (direction > 0 ? w : -w) + 'px)';
+      void mainEl.offsetWidth;
+      mainEl.style.transition = 'transform 0.24s cubic-bezier(.2,.8,.25,1)';
+      mainEl.style.transform = 'translateX(0)';
+      setTimeout(() => { mainEl.style.transition = 'none'; mainEl.style.transform = ''; }, 260);
+    }, 160);
   }
   mainEl.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
@@ -7820,10 +7851,10 @@ function openDetail(id) {
       const dx = e.touches[0].clientX - mSwipeStart.x;
       const dy = e.touches[0].clientY - mSwipeStart.y;
       if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
-        // Feedback visuel : décale l'image pendant le drag
+        // La photo suit le doigt (1 pour 1)
         e.preventDefault();
         mainEl.style.transition = 'none';
-        mainEl.style.transform = 'translateX(' + (dx * 0.6) + 'px)';
+        mainEl.style.transform = 'translateX(' + dx + 'px)';
         mDidSwipe = true;
       }
     }
@@ -7838,14 +7869,19 @@ function openDetail(id) {
       const dx = t ? t.clientX - mSwipeStart.x : 0;
       const dy = t ? t.clientY - mSwipeStart.y : 0;
       const dt = Date.now() - mSwipeStart.t;
-      // Snap back de la transform
-      mainEl.style.transition = 'transform 0.25s cubic-bezier(.2,.8,.25,1)';
-      mainEl.style.transform = '';
-      setTimeout(() => { mainEl.style.transition = 'none'; }, 260);
-      // Seuil : 50px horizontal dominant en moins de 700ms
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 700) {
+      // Photo suivante si on a tiré d'un cinquième de la photo, ou d'un petit
+      // coup rapide (avant : 50 px en moins de 0,7 s, la photo suivant le doigt
+      // à 60 % : il fallait tirer énormément, Tom)
+      const w = mainEl.getBoundingClientRect().width || window.innerWidth;
+      const fast = Math.abs(dx) / Math.max(dt, 1) > 0.3 && Math.abs(dx) > 25;
+      if (Math.abs(dx) > Math.abs(dy) && (Math.abs(dx) > w * 0.2 || fast)) {
         // dx < 0 (swipe gauche) → photo SUIVANTE | dx > 0 (swipe droite) → précédente
-        navigateMainPhoto(dx < 0 ? 1 : -1);
+        slideToPhoto(dx < 0 ? 1 : -1);
+      } else {
+        // Pas assez tiré : la photo revient en place
+        mainEl.style.transition = 'transform 0.22s cubic-bezier(.2,.8,.25,1)';
+        mainEl.style.transform = '';
+        setTimeout(() => { mainEl.style.transition = 'none'; }, 240);
       }
     }
     mSwipeStart = null;
