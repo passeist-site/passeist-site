@@ -7032,13 +7032,13 @@ function normalizeForSearch(s) {
 }
 function matchesSearch(p, q) {
   if (!q) return true;
-  const terms = normalizeForSearch(q).split(/\s+/).filter(Boolean);
+  const terms = normalizeForSearch(q).replace(/[-·,]/g, ' ').split(/\s+/).filter(Boolean);
   // Inclure l'ID + slug + couleur + desc_en pour que les recherches par ID,
   // par mot anglais ou par couleur tombent juste.
   const hay = normalizeForSearch([
     p.id, p.slug, p.brand, p.type, p.type_en, p.size, p.size_en,
-    getGender(p), p.color, p.desc, p.desc_en
-  ].filter(Boolean).join(' '));
+    getGender(p), p.color, p.desc, p.desc_en, p.edition, p.edition_en
+  ].filter(Boolean).join(' ').replace(/[-·,]/g, ' '));
   return terms.every(t => hay.includes(t));
 }
 

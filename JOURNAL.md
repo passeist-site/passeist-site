@@ -6,6 +6,9 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-04
 
+### Recherche boutique : le titre complet de la carte trouve la pièce
+- La ligne et la saison (« Pour Homme · Printemps-été 2023 ») n'étaient pas dans la recherche : taper le titre tel qu'affiché ne donnait rien. Ajoutées (FR et EN) ; tirets, points et virgules ignorés (« printemps ete 2023 » = « Printemps-été 2023 »).
+
 ### Bing Webmaster Tools : accueil indexé, 3 alertes SEO corrigées
 - Titre de l'accueil raccourci (95 → 66 caractères) : « passéist · vintage Yohji Yamamoto, Issey Miyake, Comme des Garçons » (FR et EN). Titre Boutique raccourci aussi.
 - Meta description de l'accueil ramenée à 155 caractères (Bing : 25 à 160).
