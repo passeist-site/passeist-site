@@ -10,6 +10,12 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
+### Mot « archive » invisible pour les clients (Tom) + langue de Googlebot
+- Retiré de tout ce que voit le client : titres d'onglet, aperçus de partage (og:title des pages marques), titre de la page Vendu (« Pièces vendues »), légendes Final Home / Jun Men, texte Y's BANG ON!. Gardé dans ce que seul Google lit (mots-clés, descriptions).
+- Page Vendu : adresse `/vendu` (nom interne `archive` inchangé), `/archive` redirigée en 301.
+- Googlebot navigue en anglais : il voyait tout le site traduit, avec une canonique `?lang=en` contraire à celle de la page. Robots désormais servis en français ; canonique `?lang=en` seulement si l'adresse la demande.
+- Titres et canoniques propres à Boutique / Vendu / À propos après chargement (avant : ceux de l'accueil).
+
 ### SEO (2) : titres, H1, pages marques, catalogue allégé
 - Titre Google des fiches : marque + pièce + matière + couleur accordée + homme/femme + saison (`seoTitle()` du plugin). Ex. « Monitaly Sweat en coton vert, vintage homme · passéist ».
 - Un seul `<h1>` par fiche : marque + pièce (`.detail-title`, `display: contents`, affichage identique au pixel près) ; le logo de l'accueil passe en `<div>` sur les fiches.

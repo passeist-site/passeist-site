@@ -361,7 +361,7 @@ function extractMaterialFromDesc(desc) {
 const STATIC_ROUTES = [
   { loc: 'https://passeist.com/',        changefreq: 'daily',   priority: '1.0' },
   { loc: 'https://passeist.com/shop',    changefreq: 'daily',   priority: '0.95' },
-  { loc: 'https://passeist.com/archive', changefreq: 'weekly',  priority: '0.7' },
+  { loc: 'https://passeist.com/vendu',   changefreq: 'weekly',  priority: '0.7' },
   { loc: 'https://passeist.com/about',   changefreq: 'monthly', priority: '0.5' },
   { loc: 'https://passeist.com/marques', changefreq: 'weekly',  priority: '0.85' },
   // Une entrée par page marque statique servie via _redirects ("/marques/* -> /marques/:splat.html").
@@ -1042,7 +1042,7 @@ module.exports = {
     const ROUTES = {
       shop:    ['Boutique · mode japonaise vintage (Yohji Yamamoto, Comme des Garçons, Issey Miyake) · passéist',
                 'Toutes les pièces disponibles : vêtements vintage et archive de créateurs japonais, authentifiés à Paris.'],
-      archive: ['Pièces vendues · archive de mode japonaise · passéist',
+      vendu:   ['Pièces vendues · mode japonaise vintage · passéist',
                 'Les pièces déjà vendues par passéist : Yohji Yamamoto, Comme des Garçons, Issey Miyake et autres créateurs japonais.'],
       about:   ['À propos · passéist, mode d\'auteur japonaise à Paris',
                 'passéist : curation de vêtements vintage de créateurs japonais, sélectionnés et authentifiés à Paris.'],

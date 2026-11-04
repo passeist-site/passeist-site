@@ -23,7 +23,8 @@ http://www.passeiste.fr/*    https://passeist.com/:splat  301!
 # Routes SPA explicitement reconnues
 /                 /index.html           200
 /shop             /index.html           200
-/archive          /index.html           200
+/vendu            /index.html           200
+/archive          /vendu                301
 /favorites        /index.html           200
 /about            /index.html           200
 /cgv              /index.html           200
