@@ -1068,7 +1068,7 @@ module.exports = {
     //    canonique), au lieu de celui de l'accueil que Google prenait pour un
     //    doublon (« explorée, non indexée »). Le site reste la même appli. ──
     const ROUTES = {
-      shop:    ['Boutique · mode japonaise vintage (Yohji Yamamoto, Comme des Garçons, Issey Miyake) · passéist',
+      shop:    ['Boutique · mode japonaise vintage · passéist',
                 'Toutes les pièces disponibles : vêtements vintage et archive de créateurs japonais, authentifiés à Paris.'],
       archive: ['Pièces vendues · archive de mode japonaise · passéist',
                 'Les pièces déjà vendues par passéist : Yohji Yamamoto, Comme des Garçons, Issey Miyake et autres créateurs japonais.'],

@@ -6,6 +6,11 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-04
 
+### Bing Webmaster Tools : accueil indexé, 3 alertes SEO corrigées
+- Titre de l'accueil raccourci (95 → 51 caractères) : « passéist · mode japonaise vintage & archive à Paris » (EN pareil). Titre Boutique raccourci aussi.
+- Meta description de l'accueil ramenée à 155 caractères (Bing : 25 à 160).
+- Un seul <h1> sur l'accueil : le titre (vide) de la fiche dans index.html passe en <div>. Les pages produit générées gardent leur <h1> marque + pièce.
+
 ### SEO : liens entre les fiches (Search Console : 919 pages « explorées, non indexées »)
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
