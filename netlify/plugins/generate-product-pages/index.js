@@ -152,6 +152,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
       <div class="detail-availability" id="d-availability"${hideIfSold}>
         Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.
       </div>
+      <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
       <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)">Réf. ${esc(p.id)}</div>
     </div>
   </div>

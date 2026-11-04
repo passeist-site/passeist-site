@@ -57,6 +57,8 @@ for p in products:
         'size':  p.get('size', ''),
         'slug':  p.get('slug', ''),
     }
+    # Genre (h / f) : alertes « nouvelles pièces » (netlify/functions/alerts-send.js)
+    if p.get('gender'): lookup[str(pid)]['gender'] = p.get('gender')
     # Désignation précise + saison / année (newsletter, e-mails)
     label, season, year = designation(p)
     if label != p.get('type', ''): lookup[str(pid)]['label'] = label

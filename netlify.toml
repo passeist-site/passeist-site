@@ -23,4 +23,9 @@
 [functions."newsletter-send"]
   schedule = "0 15 * * 0"
 
+# Alertes « nouvelles pièces » des clients : chaque heure, e-mail aux alertes
+# concernées par les pièces arrivées depuis le passage précédent (alerts-send.js)
+[functions."alerts-send"]
+  schedule = "@hourly"
+
 # Notification « nouveautés » du dimanche arrêtée (Tom, oct. 2026)

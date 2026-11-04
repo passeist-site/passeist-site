@@ -10,6 +10,10 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
+### Alertes « nouvelles pièces » (clients)
+- Boutique filtrée par marque et/ou catégorie : « Me prévenir des nouvelles pièces · Yohji Yamamoto · Vestes » ; fiche (y compris vendue) : même marque + catégorie + genre. Petit panneau e-mail (anti-robots comme la newsletter).
+- `netlify/functions/alerts.js` (création, suppression avec bouton de confirmation, liste pour la messagerie), `alerts-send.js` planifiée chaque heure : un e-mail Brevo par alerte concernée par les pièces arrivées. Store Blobs « passeist-alerts ». Adresses jamais ajoutées à la newsletter. Notification à Tom à chaque alerte créée. Mention ajoutée à la politique de confidentialité.
+
 ### Boutique : loupe sur mobile, « Vus récemment »
 - Loupe à droite de « Filtres + tri » (mobile) : la barre devient le champ de recherche, résultats en direct, × pour revenir (Tom : « le réflexe c'est de taper »).
 - « Vus récemment » en bas de l'accueil et de la boutique : 12 dernières pièces regardées (disponibles), gardées dans le navigateur (`passeist_recent`), même carte que la Boutique.
