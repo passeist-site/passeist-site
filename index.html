@@ -2319,9 +2319,18 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
   .product-img.show-2 .card-dots i:first-child { background: rgba(28,34,48,0.22); }
 }
 
+/* Cartes de la grille : elles peuvent rétrécir sous la largeur de leur texte
+   (sinon une saison longue, « Automne-hiver 2017 », élargissait toute sa
+   colonne sur iPhone : colonnes inégales, nov. 2026). Colonnes égales comme
+   prévu (grille : REGLE FIGEE, voir PHOTOS.md). */
+.grid > .product-card { min-width: 0; }
 /* Ligne + saison (« Homme Plus · Automne-hiver 2003 ») : cartes et fiche (Tom) */
 .product-edition { font-family: var(--font-sans); font-size: 11.5px; font-style: italic; color: var(--text-mute); margin: -2px 0 6px; line-height: 1.3;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Petits écrans : saison en toutes lettres sur 2 lignes plutôt que coupée (…) */
+@media (max-width: 420px) {
+  .product-edition { white-space: normal; overflow: visible; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}
 .detail-edition { font-family: var(--font-sans); font-size: 13px; font-style: italic; color: var(--text-mute); margin: 6px 0 18px; }
 .detail-edition:empty { display: none; }
 @media (max-width: 900px) { .detail-info > .detail-edition { grid-column: 1; grid-row: 3; margin-top: -22px; } }
