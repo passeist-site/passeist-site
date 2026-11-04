@@ -4,6 +4,18 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ---
 
+## 2026-11-04
+
+### SEO : liens entre les fiches (Search Console : 919 pages « explorées, non indexées »)
+- « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
+- Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
+
+### Page marque Plantation : à faire plus tard (Tom)
+Texte validé par Tom, à reprendre tel quel :
+- « Lancée en 1981 par Issey Miyake, Plantation privilégie la matière et le confort : lin, chanvre, coton, laine, des coupes amples faites pour durer. »
+- « Plissés tissés asymétriques, toiles flammées, imprimés à la planche, tailles élastiquées : une mode discrète et organique, souvent en taille unique M, qui prolonge loin des podiums le travail de Miyake sur la matière. »
+- Gabarit : `git show 60c91626 -- marques/plantation.html` (+ `marques.html`, accueil, `BRAND_PAGES`, `STATIC_ROUTES`).
+
 ## 2026-09-27
 
 ### Audit technique du site (SEO, photos, données)
