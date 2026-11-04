@@ -3520,6 +3520,45 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
      iPhone, contrairement à l'ancien accrochage par script (Tom). */
   .filter-bar { position: sticky !important; top: var(--topbar-h-mobile) !important; margin: 0 -20px 16px !important; padding: 8px 20px !important; }
 }
+
+/* Boutique mobile : loupe à droite de « Filtres + tri » ; un toucher et la
+   barre devient le champ de recherche (résultats en direct), × pour revenir.
+   Avant, il fallait ouvrir les filtres pour trouver la recherche (Tom). */
+.filter-search-btn, .filter-search-close { display: none; }
+@media (max-width: 880px) {
+  .filter-bar { display: flex; align-items: stretch; gap: 8px; }
+  .filter-search-btn {
+    display: flex; flex: 0 0 auto; align-items: center; justify-content: center;
+    width: 42px; padding: 0; cursor: pointer; position: relative;
+    border: 1px solid var(--line-strong); border-radius: 6px;
+    background: rgba(244,241,236,0.07); color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 14px -6px rgba(0,0,0,0.6);
+  }
+  /* Recherche en cours, barre refermée : petit point sur la loupe */
+  .filter-search-btn.active::after {
+    content: ''; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px;
+    border-radius: 50%; background: #5a7593;
+  }
+  .filter-bar.searching .filter-mobile-toggle,
+  .filter-bar.searching .filter-search-btn { display: none; }
+  .filter-bar.searching .filter-search-inline {
+    display: flex; flex: 1; flex-direction: row; align-items: center; gap: 10px;
+    box-sizing: border-box; min-width: 0; max-width: 100%;
+    padding: 0 6px 0 12px; min-height: 40px;
+    border: 1px solid var(--ink); border-radius: 6px;
+    background: rgba(244,241,236,0.07);
+  }
+  .filter-bar.searching .filter-search-inline .filter-label { display: inline-flex; margin: 0; color: var(--text-mute); }
+  .filter-bar.searching .filter-search-inline .filter-input {
+    flex: 1; min-width: 0; border: none; background: transparent; padding: 8px 0;
+    font-size: 16px; color: var(--ink); outline: none;
+  }
+  .filter-bar.searching .filter-search-close {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; flex: 0 0 auto; padding: 0;
+    background: none; border: none; color: var(--ink); font-size: 22px; font-weight: 300; cursor: pointer;
+  }
+}
 /* Fermé, le panneau est retiré de la page (display: none), sinon Safari
    (iOS 26) teinte sa barre du bas avec sa couleur claire (Tom). Pas de
    visibility: hidden : sur iPhone, Safari ne redessinait plus l'intérieur
@@ -3792,11 +3831,15 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
         <span class="filter-toggle-title" id="filter-toggle-title" aria-hidden="true"></span>
         <span class="filter-count" id="filter-count" hidden>0</span>
       </button>
+      <button class="filter-search-btn" id="filter-search-btn" type="button" aria-label="Rechercher">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+      </button>
       <div class="filter-field filter-search-inline">
         <label class="filter-label" for="search-input" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
         </label>
-        <input class="filter-input" id="search-input" type="text" placeholder="Recherche" autocomplete="off">
+        <input class="filter-input" id="search-input" type="text" placeholder="Recherche" autocomplete="off" enterkeyhint="search">
+        <button class="filter-search-close" id="filter-search-close" type="button" aria-label="Fermer la recherche">×</button>
       </div>
       <div class="filter-field filter-desktop-hidden">
         <label class="filter-label" for="gender-select">Genre</label>
@@ -7282,6 +7325,38 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
       }, 120);
     });
   }
+})();
+// Boutique mobile : la loupe ouvre la recherche dans la barre
+(function(){
+  const bar = document.querySelector('#shop-page .filter-bar');
+  const btn = document.getElementById('filter-search-btn');
+  const close = document.getElementById('filter-search-close');
+  const si = document.getElementById('search-input');
+  if (!bar || !btn || !si) return;
+  const sync = () => btn.classList.toggle('active', !!(activeSearch && activeSearch.trim()));
+  btn.addEventListener('click', () => {
+    bar.classList.add('searching');
+    si.value = activeSearch || '';
+    si.focus();
+  });
+  if (close) close.addEventListener('click', () => {
+    bar.classList.remove('searching');
+    si.blur();
+    if (si.value || activeSearch) {
+      si.value = ''; activeSearch = ''; si.classList.remove('active');
+      const msi = document.getElementById('m-search-input'); if (msi) msi.value = '';
+      renderFilters(); renderGrid();
+    }
+    sync();
+  });
+  // Touche « Rechercher » du clavier : on range le clavier, les résultats restent
+  si.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); si.blur(); } });
+  // Champ vidé et quitté : la barre redevient « Filtres + tri » + loupe
+  si.addEventListener('blur', () => { setTimeout(() => {
+    if (!si.value.trim() && document.activeElement !== si) bar.classList.remove('searching');
+    sync();
+  }, 150); });
+  si.addEventListener('input', sync);
 })();
 document.getElementById('filter-reset').addEventListener('click', () => {
   activeBrand = 'all'; activeCat = 'all'; activeGender = 'all'; activeColor = 'all'; activeSort = 'newest';
