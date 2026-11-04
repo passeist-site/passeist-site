@@ -3568,7 +3568,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .alert-chip.on { background: #f4f1ec; color: #1C2230; border-color: #f4f1ec; }
 .alert-chip.more { border-style: dashed; color: var(--text-dim); }
 .alert-summary { margin: 18px 0 12px; padding: 10px 12px; border-radius: 8px; background: rgba(244,241,236,0.06); font-size: 12.5px; line-height: 1.5; color: var(--ink); min-height: 18px; }
-.alert-summary.empty { color: var(--text-mute); }
 .alert-form button:disabled { opacity: 0.45; cursor: default; }
 .alert-form { display: flex; gap: 8px; }
 .alert-form input[type="email"] {
@@ -7468,15 +7467,14 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
   }
   function summary() {
     const e = en();
-    const b = [...sel.brands].map(titleCase), c = [...sel.cats];
+    const b = [...sel.brands].map(titleCase);
     const box = $('alert-summary');
-    if (!b.length && !c.length) {
-      box.textContent = e ? 'Pick at least one house or one type of piece.' : 'Choisissez au moins une maison ou un type de pièce.';
-      box.classList.add('empty'); $('alert-submit').disabled = true; return;
-    }
     box.classList.remove('empty'); $('alert-submit').disabled = false;
-    const parts = [];
-    if (b.length) parts.push(b.join(', '));
+    // Rien de choisi = tout : chaque nouvelle pièce
+    if (!b.length && !sel.cats.size && !sel.gender) {
+      box.textContent = e ? 'All new pieces' : 'Toutes les nouvelles pièces'; return;
+    }
+    const parts = [b.length ? b.join(', ') : (e ? 'All houses' : 'Toutes les maisons')];
     if (sel.cats.size) parts.push([...sel.cats].map(x => e ? CAT_EN[x] : x).join(', '));
     if (sel.gender) parts.push(e ? (sel.gender === 'Homme' ? 'Men' : 'Women') : sel.gender);
     box.textContent = (e ? 'New pieces · ' : 'Nouvelles pièces · ') + parts.join(' · ');
@@ -7486,9 +7484,11 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     const bx = $('alert-brands'); bx.innerHTML = '';
     const all = brandList();
     const shown = showAllBrands ? all : all.slice(0, 8).concat([...sel.brands].filter(x => all.indexOf(x) >= 8));
+    bx.appendChild(chip(e ? 'All' : 'Toutes', !sel.brands.size, () => { sel.brands.clear(); render(); }));
     shown.forEach(br => bx.appendChild(chip(titleCase(br), sel.brands.has(br), () => { sel.brands.has(br) ? sel.brands.delete(br) : sel.brands.add(br); render(); })));
     if (!showAllBrands && all.length > 8) bx.appendChild(chip(e ? '+ more' : '+ autres maisons', false, () => { showAllBrands = true; render(); }, 'more'));
     const cx = $('alert-cats'); cx.innerHTML = '';
+    cx.appendChild(chip(e ? 'All' : 'Toutes', !sel.cats.size, () => { sel.cats.clear(); render(); }));
     CATS.forEach(c => cx.appendChild(chip(e ? CAT_EN[c] : c, sel.cats.has(c), () => { sel.cats.has(c) ? sel.cats.delete(c) : sel.cats.add(c); render(); })));
     const gx = $('alert-gender'); gx.innerHTML = '';
     [['', e ? 'Both' : 'Les deux'], ['Homme', e ? 'Men' : 'Homme'], ['Femme', e ? 'Women' : 'Femme']].forEach(([v, l]) =>
@@ -7524,7 +7524,6 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!sel.brands.size && !sel.cats.size) return;
       const email = emailEl.value.trim();
       const btn = $('alert-submit');
       btn.disabled = true;

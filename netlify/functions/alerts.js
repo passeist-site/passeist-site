@@ -1,7 +1,7 @@
 // Netlify Function — alertes « nouvelles pièces » (Tom, nov. 2026).
 //
 //   POST {email, lang, brands[], cats[], gender, website, ms}
-//        → enregistre l'alerte (marques et/ou catégories, genre facultatif)
+//        → enregistre l'alerte (marques, catégories, genre ; vide = tout)
 //   GET  ?action=off&t=<jeton>  → page « Supprimer cette alerte ? » (bouton)
 //   POST ?action=off&t=<jeton>  → supprime l'alerte
 // Messagerie (en-tête x-admin-key = CHAT_ADMIN_KEY) :
@@ -67,6 +67,7 @@ function label(a, lang) {
   const en = lang === 'en';
   const parts = [];
   const b = brandsOf(a), c = catsOf(a);
+  if (!b.length && !c.length && !a.gender) return en ? 'All new pieces' : 'Toutes les nouvelles pièces';
   if (b.length) parts.push(b.join(', '));
   if (c.length) parts.push(c.map(x => en ? (CAT_EN[x] || x) : x).join(', '));
   if (a.gender) parts.push(en ? (a.gender === 'Homme' ? 'Men' : 'Women') : a.gender);
@@ -122,7 +123,7 @@ exports.handler = async (event) => {
   const cats = [...new Set(list(body.cats, body.cat).filter(x => CATS.includes(x)))].sort();
   const gender = body.gender === 'Homme' || body.gender === 'Femme' ? body.gender : '';
   if (!EMAIL_RE.test(email)) return json(400, { error: 'email' });
-  if (!brands.length && !cats.length) return json(400, { error: 'criteria' });
+  // Aucune maison ni catégorie = toutes les nouvelles pièces (choix « Toutes »)
   // Robots : champ piège rempli, envoi en moins de 3 s, adresse piégée → on fait comme si
   if (body.website || Number(body.ms || 0) < 3000 || suspicious(email)) return json(200, { ok: true });
 

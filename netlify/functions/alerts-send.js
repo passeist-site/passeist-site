@@ -39,6 +39,7 @@ function matches(a, p) {
 function label(a, en) {
   const parts = [];
   const b = brandsOf(a), c = catsOf(a);
+  if (!b.length && !c.length && !a.gender) return en ? 'All new pieces' : 'Toutes les nouvelles pièces';
   if (b.length) parts.push(b.join(', '));
   if (c.length) parts.push(c.map(x => en ? (CAT_EN[x] || x) : x).join(', '));
   if (a.gender) parts.push(en ? (a.gender === 'Homme' ? 'Men' : 'Women') : a.gender);
