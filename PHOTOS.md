@@ -155,3 +155,8 @@ point avant toute modification de ces scripts.
   n'utilisent que sm/md, et `robots.txt` interdit sm/md à Googlebot-Image :
   ainsi un clic dans Google Images mène à la bonne fiche, pas à l'accueil
   ou à une autre pièce.
+- Vignettes de la fiche (validé par Tom le 2026-11-04) : versions sm/md
+  (`srcset` 400w/800w, le navigateur choisit selon l'écran : sm sur
+  téléphone, md sur ordinateur), au lieu de xl : 3 Mo -> 0,3 Mo sur une
+  fiche de 15 photos. La grande photo, le zoom et la visionneuse restent en
+  xl (« tant que les photos en grand sont en archi bonne qualité », Tom).

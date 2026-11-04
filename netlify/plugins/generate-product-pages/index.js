@@ -89,9 +89,18 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   // dans index.html) : toutes les vignettes, photo 1 comprise, et aucune
   // pour une pièce vendue. Avant, la page « sautait » quand le site
   // finissait de charger (rangée de vignettes différente).
-  const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) =>
-    `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${src}" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`
-  ).join('');
+  // Vignettes : versions 400 / 800 px (le navigateur choisit selon l'écran),
+  // au lieu de la 1600 px de la grande photo : 3 Mo -> 0,3 Mo sur une fiche
+  // de 15 photos (Tom, nov. 2026). La grande photo, le zoom et la visionneuse
+  // restent en 1600 px.
+  const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) => {
+    const sm = productImgUrl(p, i, 400, imgReorder, imgSuffix, validatedLocal, publishDir);
+    const md = productImgUrl(p, i, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
+    const local = /-xl\.webp$/.test(src);
+    const small = local ? src.replace(/-xl\.webp$/, '-sm.webp') : sm;
+    const medium = local ? src.replace(/-xl\.webp$/, '-md.webp') : md;
+    return `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${small}" srcset="${small} 400w, ${medium} 800w" sizes="(max-width: 920px) 110px, 360px" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
+  }).join('');
   const badges = sold ? '<span class="sold-stamp">VENDU</span><span class="sold-badge">VENDU</span>' : '';
 
   return `<div class="main-photo-wrap">${mainHtml}${badges}</div><div class="thumbs-row">${thumbsHtml}</div>`;
