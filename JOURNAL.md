@@ -6,6 +6,10 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-04
 
+### Import Vestiaire : plus aucune pièce laissée sur Vestiaire (Tom)
+- Pièce « Non signé » : la marque est lue en tête de description. D'abord les marques connues, puis toute marque déjà sur le site (« Junko Shimada, collection… »), puis ce qui précède la 1ère ponctuation (« Mina Perhonen, … », « Atelier X - automne-hiver… »). Les débuts descriptifs (« Superbe pull, … ») ne sont jamais pris pour une marque.
+- Sans marque lisible, la pièce est importée quand même, en « NON SIGNÉ » (avant : laissée de côté, cf. 72606166, 73092118, 69708104, 68563799). Elles entrent à la prochaine synchro.
+
 ### Recherche boutique : le titre complet de la carte trouve la pièce
 - La ligne et la saison (« Pour Homme · Printemps-été 2023 ») n'étaient pas dans la recherche : taper le titre tel qu'affiché ne donnait rien. Ajoutées (FR et EN) ; tirets, points et virgules ignorés (« printemps ete 2023 » = « Printemps-été 2023 »).
 - Recherche par référence (« 73092452 » ou « Réf. 73092452 ») : la pièce sort où qu'elle soit, même vendue ou avec des filtres actifs. Avant, une pièce vendue cherchée depuis la Boutique ne donnait rien.

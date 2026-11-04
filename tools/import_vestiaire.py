@@ -415,14 +415,22 @@ def main():
     if final_brand.replace('’', "'") in ("Y'S", 'Y S', 'GROUND Y', "Y'S FOR MEN"):
         final_brand = 'YOHJI YAMAMOTO'
     if is_unsigned(vc_brand):
-        detected, pattern, ctx = detect_brand_in_desc(desc)
+        # Marques déjà présentes sur le site (« Marque … » en tête de desc)
+        try:
+            site_brands = set(re.findall(r'"brand":\s*"([^"]+)"', open(INDEX, encoding='utf-8').read()))
+        except Exception:
+            site_brands = set()
+        detected, pattern, ctx = detect_brand_in_desc(desc, site_brands)
         if detected:
             print(f'  ⚠ NON SIGNÉ → brand détectée dans desc: {detected} (pattern: {pattern})')
             final_brand = detected
             desc = clean_desc_after_brand_extraction(desc, detected)
         else:
-            print(f'  ⚠ NON SIGNÉ + aucune brand détectée → EXIT 2 (Issue à ouvrir)')
-            sys.exit(2)
+            # Règle Tom (nov. 2026) : rien ne reste sur Vestiaire sans être sur le
+            # site. Sans marque lisible, la pièce est importée en « NON SIGNÉ ».
+            first = next((l.strip() for l in desc.split('\n') if l.strip()), '')
+            print(f'  ⚠ NON SIGNÉ + aucune brand détectée (1ère ligne : {first[:80]!r}) → importée en NON SIGNÉ')
+            final_brand = 'NON SIGNÉ'
     else:
         # Même pour les produits "signés" sur VC : si la description révèle
         # une vraie marque différente (pattern connu, pas juste 1ère ligne),

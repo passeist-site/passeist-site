@@ -57,12 +57,21 @@ UNSIGNED_BRANDS = {'non signé / unsigned', 'non signe / unsigned', 'unsigned',
                    'non signé', 'non signe'}
 
 
+# Débuts de phrase descriptifs : jamais pris pour une marque (« Superbe pull, … »)
+DESC_WORDS = {'superbe', 'magnifique', 'très', 'tres', 'joli', 'jolie', 'belle', 'beau', 'bel',
+              'rare', 'ravissant', 'ravissante', 'sublime', 'parfait', 'excellent', 'bon', 'bonne',
+              'pull', 'veste', 'manteau', 'chemise', 'tee-shirt', 't-shirt', 'tee', 'robe', 'jupe',
+              'pantalon', 'cardigan', 'gilet', 'sweat', 'sac', 'collection', 'vintage', 'modèle',
+              'modele', 'taille', 'état', 'etat', 'pièce', 'piece', 'un', 'une', 'le', 'la', 'les',
+              'ce', 'cette', 'en', 'made', 'fabriqué', 'fabrique', 'dimensions', 'super', 'top'}
+
+
 def is_unsigned(brand_name):
     """True si le brand Vestiaire est 'Non Signé / Unsigned' ou variante."""
     return (brand_name or '').strip().lower() in UNSIGNED_BRANDS
 
 
-def detect_brand_in_desc(desc):
+def detect_brand_in_desc(desc, site_brands=None):
     """Cherche une marque dans la description.
 
     0) PRIORITÉ : si la 1ère ligne correspond à un pattern KNOWN_BRANDS, retourner
@@ -93,6 +102,14 @@ def detect_brand_in_desc(desc):
                     ctx_end = min(len(desc), idx + len(pat) + 30)
                     return canonical, pat, desc[ctx_start:ctx_end]
 
+    # Étape 0b : 1ère ligne qui commence par une marque déjà sur le site
+    if first_line_lc and site_brands:
+        for sb in sorted({str(x).strip() for x in site_brands if x}, key=len, reverse=True):
+            sbl = sb.lower()
+            if sbl in UNSIGNED_BRANDS or len(sbl) < 2: continue
+            if first_line_lc == sbl or re.match(re.escape(sbl) + r'(\W|$)', first_line_lc):
+                return sb.upper(), 'SITE_BRAND', first_line_lc[:80]
+
     # Étape 1 : scan complet de la description
     for canonical, patterns in KNOWN_BRANDS:
         for pat in patterns:
@@ -112,6 +129,15 @@ def detect_brand_in_desc(desc):
                 and not re.search(r'[,;:]', line)
                 and not re.match(r'^\d', line)):
             return line.upper(), 'FIRST_LINE', line
+        # Tom écrit la marque en tête de description : « Marque, collection… »,
+        # « Marque - automne-hiver 1998 »… → ce qui précède la 1ère ponctuation
+        head = re.split(r'\s[-–—]\s|[,;:.()|/–—]', line)[0].strip()
+        hw = head.split()
+        if (1 <= len(hw) <= 4 and 2 <= len(head) <= 40
+                and hw[0].lower().strip("'’") not in DESC_WORDS
+                and re.search(r'[A-Za-zÀ-ÿ]', head)
+                and not re.match(r'^\d', head)):
+            return head.upper(), 'FIRST_WORDS', line[:80]
         break
     return None, None, None
 
