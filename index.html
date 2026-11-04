@@ -7556,7 +7556,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     const show = typeof activeView !== 'undefined' && activeView === 'shop';
     b.hidden = !show;
     if (!show) return;
-    $('alert-cta-txt').textContent = en() ? 'Create an alert for new pieces' : 'Créer une alerte nouvelles pièces';
+    $('alert-cta-txt').textContent = en() ? 'Create your personalised alert' : 'Créer votre alerte personnalisée';
     b.onclick = () => window.openAlert({
       brands: activeBrand !== 'all' ? [activeBrand] : [],
       cats: activeCat !== 'all' && CATS.includes(activeCat) ? [activeCat] : [],
