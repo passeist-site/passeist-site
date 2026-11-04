@@ -527,12 +527,12 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     const link  = 'https://passeist.com/product/' + productSlug(p);
     // Version xl, la même que dans la fiche (Google rattache la photo à la fiche)
     const imgRel = productImgUrl(p, 0, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
-    // 4 photos de plus que la principale = 5 par pièce, seuil « Exceptionnel »
-    // de Merchant Center (« Images par offre : 1, Faible », nov. 2026). Pas
-    // davantage : Google et Pinterest téléchargent chaque photo sur le site
-    // (bande passante Netlify). Pinterest les lit aussi.
+    // 7 photos de plus que la principale = 8 par pièce, haut de la fourchette
+    // « Exceptionnel » de Merchant Center (« Images par offre : 1, Faible »,
+    // nov. 2026 ; validé par Tom). Google et Pinterest téléchargent chaque
+    // photo une fois (bande passante Netlify), puis la gardent en cache.
     const extraImgs = [];
-    for (let i = 1; i < Math.min(p.n || 1, 5); i++) {
+    for (let i = 1; i < Math.min(p.n || 1, 8); i++) {
       const u = productImgUrl(p, i, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
       if (u) extraImgs.push(u.startsWith('/') ? 'https://passeist.com' + u : u);
     }
