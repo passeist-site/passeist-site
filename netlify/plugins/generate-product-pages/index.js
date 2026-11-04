@@ -527,6 +527,15 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     const link  = 'https://passeist.com/product/' + productSlug(p);
     // Version xl, la même que dans la fiche (Google rattache la photo à la fiche)
     const imgRel = productImgUrl(p, 0, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
+    // 4 photos de plus que la principale = 5 par pièce, seuil « Exceptionnel »
+    // de Merchant Center (« Images par offre : 1, Faible », nov. 2026). Pas
+    // davantage : Google et Pinterest téléchargent chaque photo sur le site
+    // (bande passante Netlify). Pinterest les lit aussi.
+    const extraImgs = [];
+    for (let i = 1; i < Math.min(p.n || 1, 5); i++) {
+      const u = productImgUrl(p, i, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
+      if (u) extraImgs.push(u.startsWith('/') ? 'https://passeist.com' + u : u);
+    }
     const img    = imgRel ? (imgRel.startsWith('/') ? 'https://passeist.com' + imgRel : imgRel) : '';
 
     // Title: same formula as <title> tag minus "— passéist"
@@ -561,7 +570,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:id>${xmlesc(p.id)}</g:id>
       <title>${title}</title>
       <description>${desc}</description>
-      <link>${xmlesc(link)}</link>${img ? '\n      <g:image_link>' + xmlesc(img) + '</g:image_link>' : ''}
+      <link>${xmlesc(link)}</link>${img ? '\n      <g:image_link>' + xmlesc(img) + '</g:image_link>' : ''}${extraImgs.map(u => '\n      <g:additional_image_link>' + xmlesc(u) + '</g:additional_image_link>').join('')}
       <g:price>${price}</g:price>
       <g:availability>in stock</g:availability>
       <g:condition>used</g:condition>
