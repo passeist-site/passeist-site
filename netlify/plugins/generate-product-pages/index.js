@@ -294,9 +294,9 @@ function lineOf(p) {
 }
 function shortSeason(sy, en) {
   if (!sy) return '';
+  // En toutes lettres (Tom, nov. 2026 : plus de « AH » / « PE »)
   const t = en ? sy.en : sy.fr;
-  return t.replace(/^Automne-Hiver /, 'AH ').replace(/^Printemps-Été /, 'PE ')
-          .replace(/^Fall-Winter /, 'FW ').replace(/^Spring-Summer /, 'SS ');
+  return t.replace(/^Automne-Hiver /, 'Automne-hiver ').replace(/^Printemps-Été /, 'Printemps-été ');
 }
 function editionOf(p, en) {
   return [lineOf(p), shortSeason(seasonYear(p.desc || ''), en)].filter(Boolean).join(' · ');
@@ -470,6 +470,26 @@ const GOOGLE_CATEGORY = {
   gloves:   'Apparel & Accessories > Clothing Accessories > Gloves & Mittens',
   jewelry:  'Apparel & Accessories > Jewelry',
 };
+// Catégorie Google détaillée (Pinterest et Google Shopping la veulent sur 3
+// niveaux ou plus : « Clothing » seul limitait la visibilité, alerte
+// Pinterest nov. 2026). Taxonomie Google officielle, en anglais.
+function googleCategory(type, kind) {
+  const t = String(type || '').toLowerCase();
+  const C = 'Apparel & Accessories > Clothing';
+  if (kind === 'bag') {
+    if (/portefeuille|maroquinerie/.test(t)) return 'Apparel & Accessories > Handbags, Wallets & Cases > Wallets & Money Clips';
+    return 'Apparel & Accessories > Handbags, Wallets & Cases > Handbags';
+  }
+  if (kind !== 'clothing') return GOOGLE_CATEGORY[kind];
+  if (/costume|tailleur/.test(t)) return C + ' > Suits';
+  if (/combinaison|salopette|jumpsuit/.test(t)) return C + ' > One-Pieces > Jumpsuits & Rompers';
+  if (/veste|blouson|manteau|parka|caban|puffer|doudoune|trench|imperm|blazer|jacket|coat/.test(t)) return C + ' > Outerwear > Coats & Jackets';
+  if (/robe|tunique|tunic|dress/.test(t)) return C + ' > Dresses';
+  if (/jupe|skirt/.test(t)) return C + ' > Skirts';
+  if (/short|bermuda/.test(t)) return C + ' > Shorts';
+  if (/pantalon|jean|harem|legging|chino|trouser|pants/.test(t)) return C + ' > Pants';
+  return C + ' > Shirts & Tops';
+}
 const KIND_FR = { clothing: 'Vêtements', shoes: 'Chaussures', bag: 'Sacs', hat: 'Chapeaux',
   scarf: 'Foulards et écharpes', belt: 'Ceintures', tie: 'Cravates', gloves: 'Gants',
   jewelry: 'Bijoux' };
@@ -547,7 +567,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:condition>used</g:condition>
       <g:brand>${xmlesc(p.brand)}</g:brand>
       <g:identifier_exists>no</g:identifier_exists>
-      <g:google_product_category>${xmlesc(GOOGLE_CATEGORY[kind])}</g:google_product_category>
+      <g:google_product_category>${xmlesc(googleCategory(p.type, kind))}</g:google_product_category>
       <g:product_type>${productType}</g:product_type>
       <g:gender>${genderFeed}</g:gender>
       <g:age_group>adult</g:age_group>${color ? '\n      <g:color>' + color + '</g:color>' : ''}${sizeTag}

@@ -2319,7 +2319,7 @@ html[lang="en"] .footer .lang-fr, html[lang="fr"] .footer .lang-en { display: no
   .product-img.show-2 .card-dots i:first-child { background: rgba(28,34,48,0.22); }
 }
 
-/* Ligne + saison (« Homme Plus · AH 2003 ») : cartes et fiche (Tom) */
+/* Ligne + saison (« Homme Plus · Automne-hiver 2003 ») : cartes et fiche (Tom) */
 .product-edition { font-family: var(--font-sans); font-size: 11.5px; font-style: italic; color: var(--text-mute); margin: -2px 0 6px; line-height: 1.3;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .detail-edition { font-family: var(--font-sans); font-size: 13px; font-style: italic; color: var(--text-mute); margin: 6px 0 18px; }
@@ -7672,7 +7672,7 @@ function openDetail(id) {
   detailEl.classList.toggle('detail-sold', sold);
   document.getElementById('d-brand').textContent = p.brand;
   document.getElementById('d-name').textContent = (window.tType ? window.tType(p) : p.type);
-  // Ligne + saison lues dans la description (« Homme Plus · AH 2003 »), cf. plugin
+  // Ligne + saison lues dans la description (« Homme Plus · Automne-hiver 2003 »), cf. plugin
   const edEl = document.getElementById('d-edition');
   if (edEl) edEl.textContent = (window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition) || '';
   const priceEl = document.getElementById('d-price');
