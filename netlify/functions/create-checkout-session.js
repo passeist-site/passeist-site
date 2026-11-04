@@ -184,9 +184,17 @@ exports.handler = async (event) => {
       },
     }];
 
-    const session = await stripe.checkout.sessions.create({
+    // Moyens de paiement (Tom, nov. 2026) : uniquement des paiements
+    // immédiats. La pièce est marquée vendue dès « commande passée » (cf
+    // stripe-webhook) : un prélèvement SEPA, un virement ou un paiement en
+    // espèces, confirmés des jours plus tard, la bloqueraient sans être payée.
+    // card = carte + Apple Pay + Google Pay ; link = Link (Stripe) ;
+    // klarna = paiement en 3 ou 4 fois. Stripe n'affiche que ceux qui
+    // conviennent au pays et à la devise du client.
+    const PAYMENT_METHODS = ['card', 'link', 'klarna', 'bancontact', 'ideal', 'revolut_pay'];
+    const sessionParams = {
       mode: 'payment',
-      payment_method_types: ['card'],
+      payment_method_types: PAYMENT_METHODS,
       line_items: lineItems,
       shipping_address_collection: {
         allowed_countries: [
@@ -208,7 +216,20 @@ exports.handler = async (event) => {
       metadata: {
         passeist_ids: items.map(i => i.id).join(','),
       },
-    });
+    };
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (e) {
+      // Un moyen refusé par Stripe (désactivé dans le tableau de bord…) ne doit
+      // jamais empêcher de payer : on repasse à la carte seule (+ Apple/Google Pay).
+      if (e && e.type === 'StripeInvalidRequestError' && /payment_method/i.test(String(e.param || '') + ' ' + String(e.message || ''))) {
+        console.warn('Moyens de paiement refusés, retour à la carte seule :', e.message);
+        session = await stripe.checkout.sessions.create({ ...sessionParams, payment_method_types: ['card'] });
+      } else {
+        throw e;
+      }
+    }
 
     return {
       statusCode: 200,
