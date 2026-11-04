@@ -3521,6 +3521,19 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   .filter-bar { position: sticky !important; top: var(--topbar-h-mobile) !important; margin: 0 -20px 16px !important; padding: 8px 20px !important; }
 }
 
+/* Vus récemment : même carte que la Boutique (photo 1, 3:4 contain, cf
+   PHOTOS.md), rangée qui défile au doigt, sans défilement automatique. */
+.recent-section { padding-left: 56px; padding-right: 56px; }
+@media (max-width: 900px) { .recent-section { padding-left: 20px; padding-right: 20px; } }
+.recent-track {
+  display: flex; gap: 36px; overflow-x: auto; overflow-y: visible;
+  padding-bottom: 28px; scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.recent-track::-webkit-scrollbar { display: none; }
+.recent-track .similar-card { scroll-snap-align: start; }
+@media (max-width: 900px) { .recent-track { gap: 14px; } }
+
 /* Boutique mobile : loupe à droite de « Filtres + tri » ; un toucher et la
    barre devient le champ de recherche (résultats en direct), × pour revenir.
    Avant, il fallait ouvrir les filtres pour trouver la recherche (Tom). */
@@ -4412,6 +4425,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 </div>
 
 <div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 28 28"><line x1="14" y1="3" x2="14" y2="8" transform="rotate(0 14 14)" style="stroke-opacity:1.0"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(30 14 14)" style="stroke-opacity:0.93"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(60 14 14)" style="stroke-opacity:0.86"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(90 14 14)" style="stroke-opacity:0.79"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(120 14 14)" style="stroke-opacity:0.72"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(150 14 14)" style="stroke-opacity:0.65"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(180 14 14)" style="stroke-opacity:0.58"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(210 14 14)" style="stroke-opacity:0.51"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(240 14 14)" style="stroke-opacity:0.44"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(270 14 14)" style="stroke-opacity:0.37"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(300 14 14)" style="stroke-opacity:0.3"/><line x1="14" y1="3" x2="14" y2="8" transform="rotate(330 14 14)" style="stroke-opacity:0.23"/></svg></div>
+
+<!-- Vus récemment (accueil et boutique) : les dernières pièces regardées,
+     gardées dans le navigateur du visiteur. Rempli par renderRecent(). -->
+<section class="similar-section recent-section" id="recent" hidden>
+  <div class="similar-title" id="recent-title">Vus récemment</div>
+  <div class="recent-track" id="recent-track"></div>
+</section>
 
 <!-- Newsletter « nouvelles pièces » (toutes les pages sauf l'accueil) -->
 <section class="nl" id="newsletter" aria-label="Newsletter">
@@ -6967,6 +6987,7 @@ function loadFiltersForView(view) {
 function goPage(p) {
   if (window.__homePending) window.__homePending();   // fiche ouverte directement : l'accueil se construit maintenant
   currentPage = p;
+  if (window.renderRecent) setTimeout(window.renderRecent, 0);
   // Page marquée avant de construire la grille : de Boutique vers Vendu, Safari
   // dessinait les pièces vendues avec la mise en page de la boutique (une grande
   // carte sur cinq) puis les rétrécissait d'un coup (effet de zoom, page figée)
@@ -7326,6 +7347,48 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     });
   }
 })();
+// ============ VUS RÉCEMMENT ============
+(function(){
+  const KEY = 'passeist_recent';
+  const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { return []; } };
+  window.rememberViewed = function(id) {
+    id = String(id);
+    const ids = read().filter(x => x !== id);
+    ids.unshift(id);
+    try { localStorage.setItem(KEY, JSON.stringify(ids.slice(0, 12))); } catch (e) {}
+  };
+  window.renderRecent = function() {
+    const sec = document.getElementById('recent');
+    const track = document.getElementById('recent-track');
+    if (!sec || !track || typeof PRODUCTS === 'undefined') return;
+    const page = document.body.dataset.page;
+    const items = read().map(id => PRODUCTS.find(p => p.id === id)).filter(p => p && !isSold(p));
+    // Au moins 2 pièces, seulement sur l'accueil et la boutique
+    if ((page !== 'home' && page !== 'shop') || items.length < 2) { sec.hidden = true; track.innerHTML = ''; return; }
+    const en = window.__lang === 'en';
+    document.getElementById('recent-title').textContent = en ? 'Recently viewed' : 'Vus récemment';
+    track.innerHTML = items.map(x => {
+      const g = getGender(x) ? (window.tGender ? window.tGender(x) : getGender(x)) : '';
+      const sz = (window.formatSize ? window.formatSize(x.size) : x.size) + (g ? ' · ' + g : '');
+      return `<a class="similar-card" href="/product/${productSlug(x)}" data-id="${x.id}">
+        <div class="product-img"><img class="product-img-primary loaded" src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="(max-width: 900px) 45vw, 300px" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" onerror="this.closest('.similar-card').style.display='none'"></div>
+        <div class="product-body">
+          <div class="product-brand"><span class="brand-name">${x.brand}</span><div class="product-price-wrap"><span class="product-price">${x.price} €</span></div></div>
+          <div class="product-name-row"><div class="product-name">${(window.tType ? window.tType(x) : x.type)}</div></div>
+          <div class="product-meta"><div class="product-size">${sz}</div></div>
+        </div>
+      </a>`;
+    }).join('');
+    track.querySelectorAll('.similar-card').forEach(c => c.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      e.preventDefault();
+      if (typeof openDetail === 'function') openDetail(c.dataset.id);
+    }));
+    sec.hidden = false;
+  };
+  window.addEventListener('load', () => setTimeout(window.renderRecent, 0));
+})();
+
 // Boutique mobile : la loupe ouvre la recherche dans la barre
 (function(){
   const bar = document.querySelector('#shop-page .filter-bar');
@@ -7371,6 +7434,7 @@ function openDetail(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
   currentProduct = p;
+  if (window.rememberViewed) window.rememberViewed(p.id);
   const sold = isSold(p);
   const detailEl = document.getElementById('detail');
   // Fiche déjà affichée par la page elle-même (arrivée directe) : on garde
@@ -7692,6 +7756,7 @@ function openDetail(id) {
 }
 function closeDetail() {
   if (window.__homePending) window.__homePending();   // fiche ouverte directement : l'accueil se construit maintenant
+  if (window.renderRecent) setTimeout(window.renderRecent, 0);
   document.getElementById('detail').classList.remove('open');
   // Fiche fermée : le bandeau « pièces similaires » s'arrête (INP)
   const sim = window.__simMarqueeState;

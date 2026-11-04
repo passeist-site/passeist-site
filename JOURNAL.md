@@ -10,6 +10,10 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
+### Boutique : loupe sur mobile, « Vus récemment »
+- Loupe à droite de « Filtres + tri » (mobile) : la barre devient le champ de recherche, résultats en direct, × pour revenir (Tom : « le réflexe c'est de taper »).
+- « Vus récemment » en bas de l'accueil et de la boutique : 12 dernières pièces regardées (disponibles), gardées dans le navigateur (`passeist_recent`), même carte que la Boutique.
+
 ### Fiche produit : galerie de la page identique à celle du site (vignette 1 comprise), position de lecture gardée au chargement
 
 ### « archive » : gardé partout où c'est invisible (adresses, titres pour Google), Tom
