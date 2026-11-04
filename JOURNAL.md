@@ -11,7 +11,7 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
 ### Alertes « nouvelles pièces » (clients)
-- Boutique filtrée par marque et/ou catégorie : « Me prévenir des nouvelles pièces · Yohji Yamamoto · Vestes » ; fiche (y compris vendue) : même marque + catégorie + genre. Petit panneau e-mail (anti-robots comme la newsletter).
+- Panneau « Créez votre alerte » (Tom : « plus ludique ») : maisons, pièces et genre à choisir en touchant des étiquettes (plusieurs possibles), résumé en direct, puis e-mail. Lien « Créer une alerte nouvelles pièces » toujours présent dans la boutique (prérempli avec les filtres) et sur chaque fiche (prérempli avec la pièce, « Vendue. … » si vendue). Anti-robots comme la newsletter.
 - `netlify/functions/alerts.js` (création, suppression avec bouton de confirmation, liste pour la messagerie), `alerts-send.js` planifiée chaque heure : un e-mail Brevo par alerte concernée par les pièces arrivées. Store Blobs « passeist-alerts ». Adresses jamais ajoutées à la newsletter. Notification à Tom à chaque alerte créée. Mention ajoutée à la politique de confidentialité.
 
 ### Boutique : loupe sur mobile, « Vus récemment »

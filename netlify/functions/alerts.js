@@ -1,7 +1,7 @@
 // Netlify Function — alertes « nouvelles pièces » (Tom, nov. 2026).
 //
-//   POST {email, lang, brand, cat, gender, website, ms}
-//        → enregistre l'alerte (marque et/ou catégorie, genre facultatif)
+//   POST {email, lang, brands[], cats[], gender, website, ms}
+//        → enregistre l'alerte (marques et/ou catégories, genre facultatif)
 //   GET  ?action=off&t=<jeton>  → page « Supprimer cette alerte ? » (bouton)
 //   POST ?action=off&t=<jeton>  → supprime l'alerte
 // Messagerie (en-tête x-admin-key = CHAT_ADMIN_KEY) :
@@ -59,12 +59,16 @@ function suspicious(email) {
   return false;
 }
 
+// Alerte : listes de marques et de catégories (anciennes alertes : brand / cat seuls)
+const brandsOf = a => (Array.isArray(a.brands) ? a.brands : (a.brand ? [a.brand] : []));
+const catsOf = a => (Array.isArray(a.cats) ? a.cats : (a.cat ? [a.cat] : []));
 function label(a, lang) {
   const { CAT_EN } = require('../lib/category');
   const en = lang === 'en';
   const parts = [];
-  if (a.brand) parts.push(a.brand);
-  if (a.cat) parts.push(en ? (CAT_EN[a.cat] || a.cat) : a.cat);
+  const b = brandsOf(a), c = catsOf(a);
+  if (b.length) parts.push(b.join(', '));
+  if (c.length) parts.push(c.map(x => en ? (CAT_EN[x] || x) : x).join(', '));
   if (a.gender) parts.push(en ? (a.gender === 'Homme' ? 'Men' : 'Women') : a.gender);
   return parts.join(' · ');
 }
@@ -113,11 +117,12 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch (e) { return json(400, { error: 'json' }); }
   const email = String(body.email || '').trim().toLowerCase().slice(0, 200);
   const lang = body.lang === 'en' ? 'en' : 'fr';
-  const brand = String(body.brand || '').trim().toUpperCase().slice(0, 80);
-  const cat = CATS.includes(body.cat) ? body.cat : '';
+  const list = (v, one) => (Array.isArray(v) ? v : (v ? [v] : (one ? [one] : [])));
+  const brands = [...new Set(list(body.brands, body.brand).map(x => String(x || '').trim().toUpperCase().slice(0, 80)).filter(Boolean))].slice(0, 20).sort();
+  const cats = [...new Set(list(body.cats, body.cat).filter(x => CATS.includes(x)))].sort();
   const gender = body.gender === 'Homme' || body.gender === 'Femme' ? body.gender : '';
   if (!EMAIL_RE.test(email)) return json(400, { error: 'email' });
-  if (!brand && !cat) return json(400, { error: 'criteria' });
+  if (!brands.length && !cats.length) return json(400, { error: 'criteria' });
   // Robots : champ piège rempli, envoi en moins de 3 s, adresse piégée → on fait comme si
   if (body.website || Number(body.ms || 0) < 3000 || suspicious(email)) return json(200, { ok: true });
 
@@ -127,15 +132,15 @@ exports.handler = async (event) => {
   for (const b of blobs) {
     const a = await store.get(b.key, { type: 'json' });
     if (!a || a.eh !== emailHash) continue;
-    if (a.brand === brand && a.cat === cat && a.gender === gender) return json(200, { ok: true, already: true });
+    if (brandsOf(a).join('|') === brands.join('|') && catsOf(a).join('|') === cats.join('|') && (a.gender || '') === gender) return json(200, { ok: true, already: true });
     mine++;
   }
   if (mine >= MAX_PER_EMAIL) return json(400, { error: 'max' });
 
   const token = crypto.randomBytes(16).toString('hex');
-  await store.setJSON('a/' + token, { email, eh: emailHash, lang, brand, cat, gender, created: new Date().toISOString() });
+  await store.setJSON('a/' + token, { email, eh: emailHash, lang, brands, cats, gender, created: new Date().toISOString() });
   try {
-    await notifyAdmin({ title: 'Nouvelle alerte', body: label({ brand, cat, gender }, 'fr'), url: '/messagerie/', tag: 'alert-' + token.slice(0, 8) });
+    await notifyAdmin({ title: 'Nouvelle alerte', body: label({ brands, cats, gender }, 'fr'), url: '/messagerie/', tag: 'alert-' + token.slice(0, 8) });
   } catch (e) { /* notification facultative */ }
   return json(200, { ok: true });
 };

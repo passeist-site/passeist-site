@@ -3532,6 +3532,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 .alert-cta[hidden], .detail-alert[hidden] { display: none; }
 .alert-cta:hover, .detail-alert:hover { color: var(--ink); text-decoration-color: currentColor; }
 .alert-cta { margin: -40px 0 28px; }
+.alert-cta span { text-decoration: none; }
 .detail-alert { margin: 4px 0 14px; text-align: left; }
 @media (max-width: 900px) { .alert-cta { margin: -6px 0 14px; } }
 .alert-modal {
@@ -3552,7 +3553,23 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 .alert-x { position: absolute; top: 8px; right: 10px; width: 34px; height: 34px; background: none; border: none; color: var(--ink); font-size: 22px; font-weight: 300; cursor: pointer; }
 .alert-title { font-family: var(--font-sans); font-size: 15px; color: var(--ink); margin: 0 30px 4px 0; }
-.alert-what { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 16px; }
+.alert-card { max-width: 520px; max-height: 88vh; max-height: 88dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.alert-sub { margin: 2px 30px 6px 0; font-size: 12.5px; line-height: 1.5; color: var(--text-dim); }
+.alert-group-label { margin: 16px 0 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute); }
+.alert-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.alert-chip {
+  padding: 8px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(244,241,236,0.22); background: rgba(244,241,236,0.04);
+  color: var(--ink); font-family: var(--font-sans); font-size: 12.5px; line-height: 1;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.alert-chip:active { transform: scale(0.95); }
+.alert-chip.on { background: #f4f1ec; color: #1C2230; border-color: #f4f1ec; }
+.alert-chip.more { border-style: dashed; color: var(--text-dim); }
+.alert-summary { margin: 18px 0 12px; padding: 10px 12px; border-radius: 8px; background: rgba(244,241,236,0.06); font-size: 12.5px; line-height: 1.5; color: var(--ink); min-height: 18px; }
+.alert-summary.empty { color: var(--text-mute); }
+.alert-form button:disabled { opacity: 0.45; cursor: default; }
 .alert-form { display: flex; gap: 8px; }
 .alert-form input[type="email"] {
   flex: 1; min-width: 0; min-height: 42px; padding: 0 12px; border-radius: 6px;
@@ -4489,13 +4506,22 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <div class="alert-card" role="dialog" aria-modal="true" aria-labelledby="alert-title">
     <button class="alert-x" id="alert-x" type="button" aria-label="Fermer">×</button>
     <div class="alert-title" id="alert-title"></div>
-    <div class="alert-what" id="alert-what"></div>
-    <form class="alert-form" id="alert-form">
-      <input type="email" name="email" id="alert-email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
-      <input type="text" name="website" class="nl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" id="alert-submit"></button>
-    </form>
-    <p class="alert-legal" id="alert-legal"></p>
+    <p class="alert-sub" id="alert-sub"></p>
+    <div class="alert-step" id="alert-step">
+      <div class="alert-group-label" id="alert-l-brands"></div>
+      <div class="alert-chips" id="alert-brands"></div>
+      <div class="alert-group-label" id="alert-l-cats"></div>
+      <div class="alert-chips" id="alert-cats"></div>
+      <div class="alert-group-label" id="alert-l-gender"></div>
+      <div class="alert-chips" id="alert-gender"></div>
+      <div class="alert-summary" id="alert-summary"></div>
+      <form class="alert-form" id="alert-form">
+        <input type="email" name="email" id="alert-email" required autocomplete="email" placeholder="E-mail" aria-label="E-mail">
+        <input type="text" name="website" class="nl-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" id="alert-submit"></button>
+      </form>
+      <p class="alert-legal" id="alert-legal"></p>
+    </div>
     <p class="alert-done" id="alert-done" hidden></p>
   </div>
 </div>
@@ -7416,60 +7442,106 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
   }
 })();
 // ============ ALERTES « NOUVELLES PIÈCES » ============
+// Panneau « Créez votre alerte » : le client choisit maisons, pièces et
+// genre en touchant des étiquettes, puis donne son e-mail (alerts.js).
 (function(){
+  const CATS = ['Vestes', 'Maille', 'Hauts', 'Bas', 'Robes', 'Chaussures', 'Accessoires'];
   const CAT_EN = { Accessoires: 'Accessories', Chaussures: 'Shoes', Robes: 'Dresses', Bas: 'Bottoms', Vestes: 'Jackets', Maille: 'Knitwear', Hauts: 'Tops', Autres: 'Other' };
   const en = () => window.__lang === 'en';
-  const titleCase = b => String(b || '').toLowerCase().replace(/(^|[\s-])([a-zà-ÿ])/g, (m, a, c) => a + c.toUpperCase());
-  function label(c) {
-    const parts = [];
-    if (c.brand) parts.push(titleCase(c.brand));
-    if (c.cat) parts.push(en() ? (CAT_EN[c.cat] || c.cat) : c.cat);
-    if (c.gender) parts.push(en() ? (c.gender === 'Homme' ? 'Men' : 'Women') : c.gender);
-    return parts.join(' · ');
+  const titleCase = b => String(b || '').split(/(\s+)/).map(w => /\d/.test(w) ? w.toUpperCase()
+    : /^(des|by|de|du)$/i.test(w) ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+  const sel = { brands: new Set(), cats: new Set(), gender: '' };
+  let showAllBrands = false;
+  const $ = id => document.getElementById(id);
+  const modal = $('alert-modal'), form = $('alert-form'), emailEl = $('alert-email');
+  function brandList() {
+    const n = {};
+    (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []).forEach(p => { if (!isSold(p) && p.brand && p.brand !== 'DIVERS') n[p.brand] = (n[p.brand] || 0) + 1; });
+    // Maisons avec au moins 2 pièces en vente (les pièces isolées encombrent)
+    return Object.keys(n).filter(b => n[b] >= 2).sort((a, b) => n[b] - n[a]);
   }
-  let crit = null;
-  const modal = document.getElementById('alert-modal');
-  const form = document.getElementById('alert-form');
-  const emailEl = document.getElementById('alert-email');
+  function chip(label, on, onClick, extra) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'alert-chip' + (on ? ' on' : '') + (extra ? ' ' + extra : '');
+    b.textContent = label; b.addEventListener('click', onClick);
+    return b;
+  }
+  function summary() {
+    const e = en();
+    const b = [...sel.brands].map(titleCase), c = [...sel.cats];
+    const box = $('alert-summary');
+    if (!b.length && !c.length) {
+      box.textContent = e ? 'Pick at least one house or one type of piece.' : 'Choisissez au moins une maison ou un type de pièce.';
+      box.classList.add('empty'); $('alert-submit').disabled = true; return;
+    }
+    box.classList.remove('empty'); $('alert-submit').disabled = false;
+    const parts = [];
+    if (b.length) parts.push(b.join(', '));
+    if (sel.cats.size) parts.push([...sel.cats].map(x => e ? CAT_EN[x] : x).join(', '));
+    if (sel.gender) parts.push(e ? (sel.gender === 'Homme' ? 'Men' : 'Women') : sel.gender);
+    box.textContent = (e ? 'New pieces · ' : 'Nouvelles pièces · ') + parts.join(' · ');
+  }
+  function render() {
+    const e = en();
+    const bx = $('alert-brands'); bx.innerHTML = '';
+    const all = brandList();
+    const shown = showAllBrands ? all : all.slice(0, 8).concat([...sel.brands].filter(x => all.indexOf(x) >= 8));
+    shown.forEach(br => bx.appendChild(chip(titleCase(br), sel.brands.has(br), () => { sel.brands.has(br) ? sel.brands.delete(br) : sel.brands.add(br); render(); })));
+    if (!showAllBrands && all.length > 8) bx.appendChild(chip(e ? '+ more' : '+ autres maisons', false, () => { showAllBrands = true; render(); }, 'more'));
+    const cx = $('alert-cats'); cx.innerHTML = '';
+    CATS.forEach(c => cx.appendChild(chip(e ? CAT_EN[c] : c, sel.cats.has(c), () => { sel.cats.has(c) ? sel.cats.delete(c) : sel.cats.add(c); render(); })));
+    const gx = $('alert-gender'); gx.innerHTML = '';
+    [['', e ? 'Both' : 'Les deux'], ['Homme', e ? 'Men' : 'Homme'], ['Femme', e ? 'Women' : 'Femme']].forEach(([v, l]) =>
+      gx.appendChild(chip(l, sel.gender === v, () => { sel.gender = v; render(); })));
+    summary();
+  }
   function close() { if (modal) modal.hidden = true; }
+  // c : préremplissage {brands:[], cats:[], gender}
   window.openAlert = function(c) {
     if (!modal) return;
-    crit = c;
-    document.getElementById('alert-title').textContent = en() ? 'Be notified of new pieces' : 'Être prévenu des nouvelles pièces';
-    document.getElementById('alert-what').textContent = label(c);
-    document.getElementById('alert-submit').textContent = en() ? 'Notify me' : 'Me prévenir';
-    document.getElementById('alert-legal').textContent = en()
+    c = c || {};
+    sel.brands = new Set(c.brands || []); sel.cats = new Set(c.cats || []); sel.gender = c.gender || '';
+    showAllBrands = false;
+    const e = en();
+    $('alert-title').textContent = e ? 'Create your alert' : 'Créez votre alerte';
+    $('alert-sub').textContent = e ? 'Choose what you are looking for: we email you as soon as a matching piece arrives.' : 'Choisissez ce que vous cherchez : on vous écrit dès qu\'une pièce correspondante arrive.';
+    $('alert-l-brands').textContent = e ? 'Houses' : 'Maisons';
+    $('alert-l-cats').textContent = e ? 'Pieces' : 'Pièces';
+    $('alert-l-gender').textContent = e ? 'For' : 'Pour';
+    $('alert-submit').textContent = e ? 'Create my alert' : 'Créer mon alerte';
+    $('alert-legal').textContent = e
       ? 'One email when a matching piece arrives, nothing else. Your address is used for this alert only; remove it in one click from each email.'
       : 'Un e-mail quand une pièce correspondante arrive, rien d\'autre. Votre adresse ne sert qu\'à cette alerte ; suppression en un clic dans chaque e-mail.';
-    form.hidden = false; document.getElementById('alert-legal').hidden = false;
-    document.getElementById('alert-done').hidden = true;
-    try { emailEl.value = localStorage.getItem('passeist_alert_email') || ''; } catch (e) {}
+    $('alert-step').hidden = false; $('alert-done').hidden = true;
+    try { emailEl.value = localStorage.getItem('passeist_alert_email') || ''; } catch (x) {}
+    render();
     modal.hidden = false;
-    if (!emailEl.value) setTimeout(() => emailEl.focus(), 250);
+    modal.querySelector('.alert-card').scrollTop = 0;
   };
   if (modal) {
     modal.addEventListener('click', e => { if (e.target === modal) close(); });
-    document.getElementById('alert-x').addEventListener('click', close);
+    $('alert-x').addEventListener('click', close);
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!sel.brands.size && !sel.cats.size) return;
       const email = emailEl.value.trim();
-      const btn = document.getElementById('alert-submit');
+      const btn = $('alert-submit');
       btn.disabled = true;
       let ok = false, err = '';
       try {
         const r = await fetch('/.netlify/functions/alerts', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, lang: en() ? 'en' : 'fr', brand: crit.brand || '', cat: crit.cat || '', gender: crit.gender || '',
+          body: JSON.stringify({ email, lang: en() ? 'en' : 'fr', brands: [...sel.brands], cats: [...sel.cats], gender: sel.gender,
             website: form.website.value, ms: Date.now() - (window.__nlT0 || Date.now()) }) });
         const j = await r.json().catch(() => ({}));
         ok = r.ok && j.ok; err = j.error || '';
       } catch (x) {}
       btn.disabled = false;
-      const done = document.getElementById('alert-done');
+      const done = $('alert-done');
       if (ok) {
         try { localStorage.setItem('passeist_alert_email', email); } catch (x) {}
-        form.hidden = true; document.getElementById('alert-legal').hidden = true;
-        done.textContent = en() ? 'Done. You will receive an email as soon as a matching piece arrives.' : 'C\'est noté. Vous recevrez un e-mail dès qu\'une pièce correspondante arrivera.';
+        $('alert-step').hidden = true;
+        done.textContent = (en() ? 'Your alert is set: ' : 'Votre alerte est créée : ') + $('alert-summary').textContent + '. ' + (en() ? 'You will receive an email as soon as a matching piece arrives.' : 'Vous recevrez un e-mail dès qu\'une pièce correspondante arrivera.');
       } else {
         done.textContent = err === 'max'
           ? (en() ? 'You already have 10 alerts: remove one from an alert email first.' : 'Vous avez déjà 10 alertes : supprimez-en une depuis un e-mail d\'alerte.')
@@ -7478,26 +7550,28 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
       done.hidden = false;
     });
   }
-  // Boutique : seulement avec une marque ou une catégorie choisie
+  // Boutique : toujours proposé, prérempli avec les filtres en cours
   window.updateAlertCta = function() {
-    const b = document.getElementById('alert-cta');
+    const b = $('alert-cta');
     if (!b) return;
-    const show = typeof activeView !== 'undefined' && activeView === 'shop' && (activeBrand !== 'all' || activeCat !== 'all');
+    const show = typeof activeView !== 'undefined' && activeView === 'shop';
     b.hidden = !show;
     if (!show) return;
-    const c = { brand: activeBrand !== 'all' ? activeBrand : '', cat: activeCat !== 'all' ? activeCat : '', gender: activeGender !== 'all' ? activeGender : '' };
-    document.getElementById('alert-cta-txt').textContent = (en() ? 'Notify me of new pieces · ' : 'Me prévenir des nouvelles pièces · ') + label(c);
-    b.onclick = () => window.openAlert(c);
+    $('alert-cta-txt').textContent = en() ? 'Create an alert for new pieces' : 'Créer une alerte nouvelles pièces';
+    b.onclick = () => window.openAlert({
+      brands: activeBrand !== 'all' ? [activeBrand] : [],
+      cats: activeCat !== 'all' && CATS.includes(activeCat) ? [activeCat] : [],
+      gender: activeGender !== 'all' ? activeGender : '' });
   };
-  // Fiche : même marque et même catégorie que la pièce (vendue ou non)
+  // Fiche : préremplie avec la marque et le type de la pièce
   window.updateDetailAlert = function(p) {
-    const b = document.getElementById('d-alert');
+    const b = $('d-alert');
     if (!b || !p) return;
-    const c = { brand: p.brand, cat: getCategory(p.type), gender: getGender(p) };
-    document.getElementById('d-alert-txt').textContent = (isSold(p)
-      ? (en() ? 'Sold. Be notified of new pieces · ' : 'Vendue. Être prévenu des nouvelles pièces · ')
-      : (en() ? 'Be notified of new pieces · ' : 'Être prévenu des nouvelles pièces · ')) + label(c);
-    b.onclick = () => window.openAlert(c);
+    const cat = getCategory(p.type);
+    $('d-alert-txt').textContent = isSold(p)
+      ? (en() ? 'Sold. Create an alert for similar pieces' : 'Vendue. Créer une alerte pour des pièces semblables')
+      : (en() ? 'Create an alert for similar pieces' : 'Créer une alerte pour des pièces semblables');
+    b.onclick = () => window.openAlert({ brands: [p.brand], cats: CATS.includes(cat) ? [cat] : [], gender: getGender(p) });
     b.hidden = false;
   };
 })();

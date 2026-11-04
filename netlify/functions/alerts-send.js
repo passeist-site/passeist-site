@@ -25,9 +25,12 @@ const productUrl = (id, p) => SITE + '/product/' + [slugify(p.brand), slugify(p.
 const genderOf = p => { const g = String(p.gender || '').toLowerCase(); return g === 'h' || g === 'homme' ? 'Homme' : g === 'f' || g === 'femme' ? 'Femme' : ''; };
 const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().trim();
 
+const brandsOf = a => (Array.isArray(a.brands) ? a.brands : (a.brand ? [a.brand] : []));
+const catsOf = a => (Array.isArray(a.cats) ? a.cats : (a.cat ? [a.cat] : []));
 function matches(a, p) {
-  if (a.brand && norm(a.brand) !== norm(p.brand)) return false;
-  if (a.cat && categoryOf(p.type) !== a.cat) return false;
+  const b = brandsOf(a), c = catsOf(a);
+  if (b.length && !b.some(x => norm(x) === norm(p.brand))) return false;
+  if (c.length && !c.includes(categoryOf(p.type))) return false;
   // Pièce sans genre (accessoire) : envoyée aux alertes homme comme femme
   if (a.gender && genderOf(p) && genderOf(p) !== a.gender) return false;
   return true;
@@ -35,8 +38,9 @@ function matches(a, p) {
 
 function label(a, en) {
   const parts = [];
-  if (a.brand) parts.push(a.brand);
-  if (a.cat) parts.push(en ? (CAT_EN[a.cat] || a.cat) : a.cat);
+  const b = brandsOf(a), c = catsOf(a);
+  if (b.length) parts.push(b.join(', '));
+  if (c.length) parts.push(c.map(x => en ? (CAT_EN[x] || x) : x).join(', '));
   if (a.gender) parts.push(en ? (a.gender === 'Homme' ? 'Men' : 'Women') : a.gender);
   return parts.join(' · ');
 }
