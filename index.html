@@ -7441,7 +7441,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
   }
 })();
 // ============ ALERTES « NOUVELLES PIÈCES » ============
-// Panneau « Créez votre alerte » : le client choisit maisons, pièces et
+// Panneau « Créez votre alerte » : le client choisit auteurs, pièces et
 // genre en touchant des étiquettes, puis donne son e-mail (alerts.js).
 (function(){
   const CATS = ['Vestes', 'Maille', 'Hauts', 'Bas', 'Robes', 'Chaussures', 'Accessoires'];
@@ -7474,7 +7474,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     if (!b.length && !sel.cats.size && !sel.gender) {
       box.textContent = e ? 'All new pieces' : 'Toutes les nouvelles pièces'; return;
     }
-    const parts = [b.length ? b.join(', ') : (e ? 'All houses' : 'Toutes les maisons')];
+    const parts = [b.length ? b.join(', ') : (e ? 'All authors' : 'Tous les auteurs')];
     if (sel.cats.size) parts.push([...sel.cats].map(x => e ? CAT_EN[x] : x).join(', '));
     if (sel.gender) parts.push(e ? (sel.gender === 'Homme' ? 'Men' : 'Women') : sel.gender);
     box.textContent = (e ? 'New pieces · ' : 'Nouvelles pièces · ') + parts.join(' · ');
@@ -7484,9 +7484,9 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     const bx = $('alert-brands'); bx.innerHTML = '';
     const all = brandList();
     const shown = showAllBrands ? all : all.slice(0, 8).concat([...sel.brands].filter(x => all.indexOf(x) >= 8));
-    bx.appendChild(chip(e ? 'All' : 'Toutes', !sel.brands.size, () => { sel.brands.clear(); render(); }));
+    bx.appendChild(chip(e ? 'All' : 'Tous', !sel.brands.size, () => { sel.brands.clear(); render(); }));
     shown.forEach(br => bx.appendChild(chip(titleCase(br), sel.brands.has(br), () => { sel.brands.has(br) ? sel.brands.delete(br) : sel.brands.add(br); render(); })));
-    if (!showAllBrands && all.length > 8) bx.appendChild(chip(e ? '+ more' : '+ autres maisons', false, () => { showAllBrands = true; render(); }, 'more'));
+    if (!showAllBrands && all.length > 8) bx.appendChild(chip(e ? '+ more' : '+ autres auteurs', false, () => { showAllBrands = true; render(); }, 'more'));
     const cx = $('alert-cats'); cx.innerHTML = '';
     cx.appendChild(chip(e ? 'All' : 'Toutes', !sel.cats.size, () => { sel.cats.clear(); render(); }));
     CATS.forEach(c => cx.appendChild(chip(e ? CAT_EN[c] : c, sel.cats.has(c), () => { sel.cats.has(c) ? sel.cats.delete(c) : sel.cats.add(c); render(); })));
@@ -7505,7 +7505,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     const e = en();
     $('alert-title').textContent = e ? 'Create your alert' : 'Créez votre alerte';
     $('alert-sub').textContent = e ? 'Choose what you are looking for: we email you as soon as a matching piece arrives.' : 'Choisissez ce que vous cherchez : on vous écrit dès qu\'une pièce correspondante arrive.';
-    $('alert-l-brands').textContent = e ? 'Houses' : 'Maisons';
+    $('alert-l-brands').textContent = e ? 'Authors' : 'Auteurs';
     $('alert-l-cats').textContent = e ? 'Pieces' : 'Pièces';
     $('alert-l-gender').textContent = e ? 'For' : 'Pour';
     $('alert-submit').textContent = e ? 'Create my alert' : 'Créer mon alerte';
