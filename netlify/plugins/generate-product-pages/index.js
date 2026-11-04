@@ -109,8 +109,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
   <div class="detail-main">
     <div class="detail-gallery" id="detail-gallery">${galleryHtml}</div>
     <div class="detail-info">
-      <div class="detail-brand" id="d-brand">${esc(p.brand)}</div>
-      <h1 class="detail-name" id="d-name">${esc(p.type)}</h1>
+      <h1 class="detail-title"><span class="detail-brand" id="d-brand">${esc(p.brand)}</span> <span class="detail-name" id="d-name">${esc(p.type)}</span></h1>
       <div class="detail-price-row" id="d-price-row">
         <div class="detail-price-wrap" id="d-price-wrap"${sold ? ' style="display:none"' : ''}>
           <svg class="nav-ink nav-ink--price-detail" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="68" filter="url(#ink-rough-h)"/></svg>
@@ -131,7 +130,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
         <div><div class="attr-label">État</div><div class="attr-value">Très bon état</div></div>
       </div>
       <p class="detail-intro" id="d-intro" style="display:none"></p>
-      <div class="detail-desc" id="d-desc">${esc(p.desc || '')}</div>
+      <div class="detail-desc" id="d-desc" data-pid="${esc(p.id)}">${esc(p.desc || '')}</div>
       <div class="detail-actions" id="d-actions"${hideIfSold}>
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
         <button class="btn btn-secondary" id="d-contact">Demander un renseignement</button>
@@ -607,13 +606,23 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
     const brandParam = html.match(/href="\/shop\?brand=([^"&]+)"/);
     if (!m || !brandParam) return;
     const brand = normBrand(decodeURIComponent(brandParam[1]));
-    const items = products
-      .filter(p => normBrand(p.brand) === brand && !soldIds.has(p.id) && p.sold !== true)
-      .slice(0, 24);
+    const all = products
+      .filter(p => normBrand(p.brand) === brand && !soldIds.has(p.id) && p.sold !== true);
+    const items = all.slice(0, 24);
     const cards = items.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('');
     const open = items.length ? '<div class="carousel">' : '<div class="carousel" style="display:none">';
     // Remplacement par fonction : aucun motif "$" des textes produits n'est interprété
-    fs.writeFileSync(file, html.replace(re, () => open + cards + '\n      </div>'), 'utf8');
+    let out = html.replace(re, () => open + cards + '\n      </div>');
+    // Au-delà des 24 du carrousel : toutes les autres pièces disponibles en
+    // grille, chacune avec son lien (Google atteint ainsi chaque fiche depuis
+    // la page de sa marque ; avant, 183 pièces Yohji n'y avaient aucun lien).
+    const rest = all.slice(24);
+    if (rest.length) {
+      const grid = '<h3 class="brand-all-title"><span class="lang-fr">Les autres pièces disponibles</span><span class="lang-en">More available pieces</span></h3>\n'
+        + '      <div class="brand-all">' + rest.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('') + '\n      </div>\n      ';
+      out = out.replace('<div class="cta-shop">', () => grid + '<div class="cta-shop">');
+    }
+    fs.writeFileSync(file, out, 'utf8');
     updated++;
   });
   return updated;
@@ -693,6 +702,55 @@ function clip(text, max) {
   return cut.slice(0, Math.max(cut.lastIndexOf(' '), max - 20)).replace(/[,;:\s]+$/, '') + '…';
 }
 
+// ── Titre Google de la fiche (balise <title>, jamais affiché sur le site) ──
+// Les mots que les gens tapent : marque, pièce, matière, couleur, homme /
+// femme, saison. Ex. « Yohji Yamamoto Pull en laine noir, vintage homme ·
+// passéist ». Matière : même règle que tools/designation.py (« en laine »
+// dans la description, sinon la matière la plus citée).
+const MATIERES_T = ['cachemire', 'mohair', 'mérinos', 'alpaga', 'angora', 'laine', 'soie', 'coton', 'lin', 'velours',
+  'cuir', 'daim', 'denim', 'nylon', 'polyester', 'viscose', 'rayonne', 'satin', 'tweed', 'flanelle', 'jersey',
+  'crêpe', 'organza', 'gabardine', 'toile', 'feutre', 'chanvre', 'ramie', 'cupro', 'tulle', 'dentelle',
+  'mousseline', 'seersucker', 'shetland'];
+function matiereOf(p) {
+  const t = String(p.type || '').toLowerCase();
+  if (/\ben\s/.test(t)) return '';
+  const d = String(p.desc || '').toLowerCase().replace(/’/g, "'");
+  const re = /\ben\s+(?:\d+\s*%\s*(?:de\s+)?)?([a-zéèêàçûô'-]+)/g;
+  let m;
+  while ((m = re.exec(d))) if (MATIERES_T.includes(m[1])) return m[1];
+  let best = null;
+  for (const w of MATIERES_T) {
+    const n = (d.match(new RegExp('(^|[^a-zéèêàçûô])' + w + '(?![a-zéèêàçûô])', 'g')) || []).length;
+    if (n && (!best || n > best[1])) best = [w, n];
+  }
+  return best ? best[0] : '';
+}
+// Couleur accordée à la pièce : « veste noire », « bottes noires »
+const COUL_INVAR = new Set(['marine', 'marron', 'kaki', 'bordeaux', 'argent', 'or', 'camel', 'orange']);
+const COUL_FEM = { noir: 'noire', gris: 'grise', blanc: 'blanche', bleu: 'bleue', vert: 'verte', violet: 'violette', 'écru': 'écrue' };
+const NOMS_FEM = new Set(['blouse', 'jupe', 'robe', 'veste', 'chemise', 'parka', 'salopette', 'combinaison', 'cape',
+  'tunique', 'marinière', 'doudoune', 'écharpe', 'echarpe', 'étole', 'ceinture', 'casquette', 'pochette', 'besace',
+  'ballerines', 'espadrilles', 'bottes', 'sandales', 'baskets', 'chaussures', 'petite']);
+const NOMS_PLUR = new Set(['ballerines', 'espadrilles', 'bottes', 'sandales', 'baskets', 'chaussures', 'derbies',
+  'mocassins', 'escarpins', 'boots']);
+function couleurOf(p) {
+  const c = colorFR(p.color).toLowerCase();
+  if (!c || c === 'autre' || !/^[a-zéèêàçûô]+$/.test(c)) return '';
+  const head = String(p.type || '').toLowerCase().split(/[\s/]+/).filter(w => w !== 'mini')[0] || '';
+  if (COUL_INVAR.has(c)) return c;
+  let out = NOMS_FEM.has(head) ? (COUL_FEM[c] || c) : c;
+  if (NOMS_PLUR.has(head) && !/s$/.test(out)) out += 's';
+  return out;
+}
+function seoTitle(p, brandTC, line, sy) {
+  const mat = matiereOf(p);
+  const col = couleurOf(p);
+  const g = p.gender === 'h' ? 'homme' : p.gender === 'f' ? 'femme' : '';
+  const lineHasG = /homme|femme/i.test(line || '');
+  return brandTC + (line ? ' ' + line : '') + ' ' + p.type + (mat ? ' en ' + mat : '') + (col ? ' ' + col : '')
+    + ', vintage' + (g && !lineHasG ? ' ' + g : '') + (sy ? ' ' + sy.fr : '') + ' · passéist';
+}
+
 // ── Apply product-specific SEO to the full HTML string ────────────────────
 
 function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, publishDir) {
@@ -717,7 +775,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   // Titre : les mots que les gens tapent (marque lisible + type + vintage)
   const brandTC = titleCaseBrand(p.brand);
   const line  = lineOf(p);
-  const title = brandTC + (line ? ' ' + line : '') + ' ' + p.type + ' vintage' + (sy ? ' ' + sy.fr : '') + ' · passéist';
+  const title = seoTitle(p, brandTC, line, sy);
 
   // English og:title: BRAND — Material Type Gender Fall-Winter 2003 — passéist
   // Use p.type_en if available (already translated), else fall back to dictionary
@@ -847,6 +905,10 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
     html = html.slice(0, detailStart) + detailHtml + '\n' + html.slice(detailEnd);
   }
 
+  // ── Un seul <h1> par fiche : marque + pièce. Le logo « passéist » de
+  //    l'accueil (caché sur la fiche) passe en <div>, même classe. ──────
+  html = html.replace(/<h1 class="hero-logo">([\s\S]*?)<\/h1>/, (m, inner) => '<div class="hero-logo">' + inner + '</div>');
+
   // ── Set body class so layout renders correctly on first paint ──────
   html = html.replace('<body>', '<body class="detail-open">');
 
@@ -937,7 +999,25 @@ module.exports = {
     //    index.html du dépôt reste la source (imports, sync, webhook). ──
     // Le champ « path » (adresse de la fiche chez Vestiaire) ne sert pas au
     // site : Google le lisait comme un lien et tombait sur 723 pages 404.
-    const catalogueJs = 'window.__PRODUCTS__=' + JSON.stringify(products.map(({ path: _vc, ...rest }) => rest)) + ';';
+    // Allègement (nov. 2026, 2 Mo -> ~1 Mo) : la phrase passéist (intro,
+    // intro_en) ne sert plus au site, seulement aux pages générées ici ; les
+    // descriptions des pièces vendues partent dans un fichier à part, chargé
+    // seulement quand on en a besoin (fiche vendue, recherche), cf
+    // ensureSoldDesc() dans index.html.
+    const soldDesc = {};
+    const catProducts = products.map(({ path: _vc, intro: _i, intro_en: _ie, ...rest }) => {
+      if ((soldIds.has(rest.id) || rest.sold === true) && (rest.desc || rest.desc_en)) {
+        const { desc, desc_en, ...light } = rest;
+        soldDesc[rest.id] = [desc || '', desc_en || ''];
+        return light;
+      }
+      return rest;
+    });
+    const soldDescJson = JSON.stringify(soldDesc);
+    const soldDescRel = 'data/sold-desc.' + require('crypto').createHash('md5').update(soldDescJson).digest('hex').slice(0, 10) + '.json';
+    fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });
+    fs.writeFileSync(path.join(publishDir, soldDescRel), soldDescJson, 'utf8');
+    const catalogueJs = 'window.__SOLD_DESC__="/' + soldDescRel + '";window.__PRODUCTS__=' + JSON.stringify(catProducts) + ';';
     const catHash = require('crypto').createHash('md5').update(catalogueJs).digest('hex').slice(0, 10);
     const catRel = 'data/catalogue.' + catHash + '.js';
     fs.mkdirSync(path.join(publishDir, 'data'), { recursive: true });

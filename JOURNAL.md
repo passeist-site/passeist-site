@@ -10,6 +10,13 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - « Articles similaires » : 8 vrais liens `<a href>` écrits dans chaque fiche générée (`buildSimilarHtml()` du plugin), et liens `<a>` dans le carrousel du site (avant : `<div>` cliquables, vides dans le HTML). Pièces vendues en `noindex,follow` (avant `nofollow`).
 - Marques corrigées : Monitaly (et non Matsuda, 4 pièces) ; dates de fondation de marque plus prises pour l'année de la pièce (`tools/designation.py`).
 
+### SEO (2) : titres, H1, pages marques, catalogue allégé
+- Titre Google des fiches : marque + pièce + matière + couleur accordée + homme/femme + saison (`seoTitle()` du plugin). Ex. « Monitaly Sweat en coton vert, vintage homme · passéist ».
+- Un seul `<h1>` par fiche : marque + pièce (`.detail-title`, `display: contents`, affichage identique au pixel près) ; le logo de l'accueil passe en `<div>` sur les fiches.
+- Pages marques : au-delà des 24 du carrousel, toutes les autres pièces disponibles en grille (`.brand-all`), avec leur lien.
+- Catalogue 2,07 Mo -> 0,98 Mo : `intro`/`intro_en` retirés (inutilisés par le site), descriptions des pièces vendues dans `data/sold-desc.<empreinte>.json`, chargé à la demande (`ensureSoldDesc()`).
+- Les 693 « 404 » de Search Console : anciennes adresses Vestiaire lues dans le catalogue (champ `path`), déjà corrigé ; elles disparaîtront d'elles-mêmes.
+
 ### Page marque Plantation (1982, date officielle de la marque, photo fournie par Tom)
 Texte validé par Tom, à reprendre tel quel :
 - « Lancée en 1981 par Issey Miyake, Plantation privilégie la matière et le confort : lin, chanvre, coton, laine, des coupes amples faites pour durer. »

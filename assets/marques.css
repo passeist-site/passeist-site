@@ -10,9 +10,11 @@
 
 /* ---- Langue (FR/EN) pour le menu et les cartes ---- */
 html[lang="en"] .mobile-nav .lang-fr,
-html[lang="en"] .bc-card .lang-fr { display: none !important; }
+html[lang="en"] .bc-card .lang-fr,
+html[lang="en"] .brand-all-title .lang-fr { display: none !important; }
 html[lang="fr"] .mobile-nav .lang-en,
-html[lang="fr"] .bc-card .lang-en { display: none !important; }
+html[lang="fr"] .bc-card .lang-en,
+html[lang="fr"] .brand-all-title .lang-en { display: none !important; }
 html[lang] .mobile-nav .mobile-nav-lang .lang-fr,
 html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
 
@@ -173,6 +175,22 @@ body.no-scroll { overflow: hidden; }
   .bc-name { font-size: 13px; margin-bottom: 4px; }
   .bc-body { padding-top: 8px; }
   .bc-meta { padding-top: 4px; }
+}
+
+/* ---- Toutes les autres pièces disponibles de la marque (au-delà des 24 du
+   carrousel) : mêmes cartes, en grille (liens pour Google, cf plugin). ---- */
+.brand-all-title {
+  font-family: var(--font-sans); font-size: 15px; font-weight: 500;
+  color: var(--ink); margin: 48px 0 20px;
+}
+.brand-all {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 32px 18px;
+}
+.brand-all .bc-card { display: block; background: transparent; color: var(--ink); text-decoration: none; min-width: 0; }
+.brand-all .bc-card:hover { transform: none; }
+@media (max-width: 600px) {
+  .brand-all { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
 }
 
 /* ---- Bouton « Voir toutes les pièces <marque> » : même style que EXPLORER
