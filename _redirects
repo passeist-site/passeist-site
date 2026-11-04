@@ -44,6 +44,9 @@ http://www.passeist.fr/*     https://passeist.com/:splat  301!
 /product/matsuda-sweat-73092398  /product/monitaly-sweat-73092398  301
 /product/matsuda-chemise-73092530  /product/monitaly-chemise-73092530  301
 /product/matsuda-veste-73093011  /product/monitaly-veste-73093011  301
+# Marque Y'S rangée sous YOHJI YAMAMOTO (ligne Y's), comme les autres pièces
+/product/y-s-chemise-72536389  /product/yohji-yamamoto-chemise-72536389  301
+/product/y-s-echarpe-en-laine-72536669  /product/yohji-yamamoto-echarpe-en-laine-72536669  301
 /product/*        /index.html           200
 # Tout le reste → 404 propre
 /*                /404.html             404

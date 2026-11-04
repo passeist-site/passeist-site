@@ -410,6 +410,10 @@ def main():
 
     # === Brand detection ===
     final_brand = vc_brand.upper()
+    # Lignes Yohji vendues sous leur propre nom sur Vestiaire : rangées sous
+    # YOHJI YAMAMOTO sur le site (la ligne est lue dans la description)
+    if final_brand.replace('’', "'") in ("Y'S", 'Y S', 'GROUND Y', "Y'S FOR MEN"):
+        final_brand = 'YOHJI YAMAMOTO'
     if is_unsigned(vc_brand):
         detected, pattern, ctx = detect_brand_in_desc(desc)
         if detected:
