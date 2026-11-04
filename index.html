@@ -28,7 +28,7 @@ gtag('config', 'G-J3DSYD6B68'); // ancienne propriété, gardée pour l'historiq
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<title>passéist, mode japonaise vintage : Yohji Yamamoto, Comme des Garçons, Issey Miyake</title>
+<title>passéist, mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake</title>
 <meta name="description" content="passéist, friperie de luxe passéiste à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm. Pièces archive et avant-garde chinées et authentifiées.">
 <meta name="keywords" content="vintage, japonais, japon, archive, mode, avant-garde, Yohji Yamamoto, Yohji Yamamoto Pour Homme, Comme des Garçons, Comme des Garçons Homme Plus, Issey Miyake, Junya Watanabe, Junya Watanabe MAN, Rei Kawakubo, Sacai, Kenzo, Pleats Please, Homme Plissé, Bao Bao, 132 5. Issey Miyake, Kansai Yamamoto, Junko Koshino, Tsumori Chisato, Y-3, Y's, Ground Y, Limi Feu, Plantation, Tao, 45rpm, Kijima Takayuki, Yoshiki Hishinuma, Maison Margiela, friperie paris, friperie de luxe, friperie marais, frip paris, vetements vintage homme, vetements vintage femme, vetements japonais, marque japonaise vetement, mode vintage Paris, vintage japonais, mode japonaise, archive japonais, archive fashion, archival, archival fashion, archive piece, runway piece, pièce de défilé, preloved, seconde main, second-hand de luxe, dépôt vente, pièce collector, pièces rares, collection capsule, intemporel, timeless, conceptual fashion, mode conceptuelle, déconstruit, deconstructed, minimalisme, minimal, silhouette, iconique, Made in Japan, Tokyo, mode 90s, mode 2000s, Y2K, streetwear japonais, avant-garde japonaise">
 <meta name="robots" content="index,follow">
@@ -39,14 +39,14 @@ gtag('config', 'G-J3DSYD6B68'); // ancienne propriété, gardée pour l'historiq
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="passéist">
-<meta property="og:title" content="passéist, mode japonaise vintage">
+<meta property="og:title" content="passéist, mode japonaise vintage & archive">
 <meta property="og:description" content="Friperie de luxe à Paris : vêtements vintage de designers japonais : Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai. Archive et avant-garde authentifiées.">
 <meta property="og:url" content="https://passeist.com/">
 <meta property="og:image" content="https://passeist.com/og.jpg">
 <meta property="og:locale" content="fr_FR">
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="passéist, mode japonaise vintage">
+<meta name="twitter:title" content="passéist, mode japonaise vintage & archive">
 <meta name="twitter:description" content="Yohji Yamamoto, Comme des Garçons, Issey Miyake. Vintage japonais authentifié à Paris.">
 <!-- Favicon (Google SERP : utilise le 192px ou 512px le plus approprié) -->
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
@@ -9369,16 +9369,16 @@ window.updateSEO = function(p) {
     // Titre et canonique propres à chaque page (Boutique, Vendu, À propos…),
     // comme dans leur HTML généré : avant, toutes reprenaient ceux de l'accueil.
     const pg = (window.currentPageName && window.currentPageName()) || 'home';
-    const t = (window.pageTitle && window.pageTitle(pg)) || 'passéist, mode japonaise vintage : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
+    const t = (window.pageTitle && window.pageTitle(pg)) || 'passéist, Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake';
     const d = 'passéist : curation passéiste de mode japonaise vintage et archive à Paris. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Kansai Yamamoto, Pleats Please, 45rpm, pièces rares chinées et authentifiées.';
     document.title = t;
     setMeta('meta[name="description"]', 'content', d);
-    setLink('canonical', BASE + (pg === 'home' ? '/' : '/' + (pg === 'archive' ? 'vendu' : pg)));
+    setLink('canonical', BASE + (pg === 'home' ? '/' : '/' + pg));
     setMeta('meta[property="og:type"]', 'content', 'website');
-    setMeta('meta[property="og:title"]', 'content', 'passéist, mode japonaise vintage');
+    setMeta('meta[property="og:title"]', 'content', 'passéist, Mode japonaise vintage & archive');
     setMeta('meta[property="og:description"]', 'content', d);
     setMeta('meta[property="og:url"]', 'content', BASE + '/');
-    setMeta('meta[name="twitter:title"]', 'content', 'passéist, mode japonaise vintage');
+    setMeta('meta[name="twitter:title"]', 'content', 'passéist, Mode japonaise vintage & archive');
     setMeta('meta[name="twitter:description"]', 'content', 'Yohji Yamamoto, Comme des Garçons, Issey Miyake. Vintage japonais authentifié à Paris.');
   }
 };
@@ -9421,9 +9421,7 @@ window.updateSEO = function(p) {
     document.body.dataset.page = p;
     updateSEO(null);
     if (!fromHistory) {
-      // Page Vendu : adresse /vendu (nom interne « archive », Tom ne veut pas
-      // que le client voie ce mot)
-      const path = (p === 'home') ? '/' : ('/' + (p === 'archive' ? 'vendu' : p));
+      const path = (p === 'home') ? '/' : ('/' + p);
       try { history.pushState({ t:'page', p: p }, '', path); } catch(e){}
     }
   };
@@ -9520,14 +9518,14 @@ window.updateSEO = function(p) {
       if (s && s.scrollToId) scrollToShopCard(s.scrollToId);
     }
   });
-  // État initial (au chargement), supporte les URLs propres /shop, /vendu, /product/{slug}
+  // État initial (au chargement), supporte les URLs propres /shop, /archive, /product/{slug}
   // ET les anciens liens hash #shop, #product/{slug} pour rétrocompatibilité
   function parseInitialRoute() {
     const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
     if (path.startsWith('product/')) return { type: 'detail', slug: path.slice('product/'.length) };
     const hash = location.hash.replace(/^#/, '');
     if (hash.startsWith('product/')) return { type: 'detail', slug: hash.slice('product/'.length) };
-    if (path && path !== 'home') { const n = path.split('/')[0]; return { type: 'page', name: n === 'vendu' ? 'archive' : n }; }
+    if (path && path !== 'home') return { type: 'page', name: path.split('/')[0] };
     if (hash && hash !== 'home') return { type: 'page', name: hash };
     return { type: 'page', name: 'home' };
   }
@@ -9547,7 +9545,7 @@ window.updateSEO = function(p) {
   } else if (route.name && route.name !== 'home') {
     _gp.call(window, route.name);
     document.body.dataset.page = route.name;
-    try { history.replaceState({ t:'page', p: route.name }, '', '/' + (route.name === 'archive' ? 'vendu' : route.name)); } catch(e){}
+    try { history.replaceState({ t:'page', p: route.name }, '', '/' + route.name); } catch(e){}
   } else {
     document.body.dataset.page = 'home';
     try { history.replaceState({ t:'page', p: 'home' }, '', '/'); } catch(e){}
@@ -10062,7 +10060,7 @@ window.subscribeNewsletter = function (e) {
 (function(){
   const I18N = {
     fr: {
-      title: 'passéist, mode japonaise vintage : Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      title: 'passéist, Mode japonaise vintage & archive : Yohji Yamamoto, Comme des Garçons, Issey Miyake',
       desc: 'passéist, friperie de luxe passéiste à Paris : vêtements vintage de designers japonais. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm. Pièces archive et avant-garde chinées et authentifiées.',
       'nav.home': 'Accueil', 'nav.shop': 'Boutique', 'nav.archive': 'Vendu', 'nav.marques': 'Auteurs', 'nav.about': 'À propos',
       'hero.tagline.html': "<em>mode d'auteur</em> japonaise",
@@ -10106,7 +10104,7 @@ window.subscribeNewsletter = function (e) {
       'color.Métal': 'Métal', 'color.Multicolore': 'Multicolore', 'color.Autre': 'Autre',
     },
     en: {
-      title: 'passéist, Japanese vintage fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
+      title: 'passéist, Vintage & archive Japanese fashion: Yohji Yamamoto, Comme des Garçons, Issey Miyake',
       desc: 'passéist, luxury vintage shop in Paris: archival Japanese designer pieces. Yohji Yamamoto, Comme des Garçons, Issey Miyake, Junya Watanabe, Sacai, Kenzo, Pleats Please, Kansai Yamamoto, 45rpm, authenticated archive and avant-garde fashion.',
       'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.archive': 'Sold', 'nav.marques': 'Authors', 'nav.about': 'About',
       'hero.tagline.html': "japanese <em>author fashion</em>",
@@ -10178,20 +10176,20 @@ window.subscribeNewsletter = function (e) {
     const el = document.head.querySelector(sel);
     if (el) el.setAttribute(attr, val);
   }
-  // Page courante (« archive » = page Vendu, adresse /vendu)
+  // Page courante (« archive » = page Vendu)
   window.currentPageName = function() {
     if (document.body.dataset.page) return document.body.dataset.page;
     const seg = (location.pathname || '/').replace(/^\/+|\/+$/g, '').split('/')[0];
-    return !seg ? 'home' : seg === 'vendu' ? 'archive' : seg;
+    return seg || 'home';
   };
   const PAGE_TITLES = {
     fr: { shop: 'Boutique · mode japonaise vintage (Yohji Yamamoto, Comme des Garçons, Issey Miyake) · passéist',
-          archive: 'Pièces vendues · mode japonaise vintage · passéist',
+          archive: 'Pièces vendues · archive de mode japonaise · passéist',
           about: "À propos · passéist, mode d'auteur japonaise à Paris",
           favorites: 'Favoris · passéist', contact: 'Contact · passéist',
           cgv: 'Conditions générales de vente · passéist', privacy: 'Confidentialité · passéist' },
     en: { shop: 'Shop · Japanese vintage fashion (Yohji Yamamoto, Comme des Garçons, Issey Miyake) · passéist',
-          archive: 'Sold pieces · Japanese vintage fashion · passéist',
+          archive: 'Sold pieces · Japanese fashion archive · passéist',
           about: 'About · passéist, Japanese designer fashion in Paris',
           favorites: 'Favourites · passéist', contact: 'Contact · passéist',
           cgv: 'Terms of sale · passéist', privacy: 'Privacy · passéist' },

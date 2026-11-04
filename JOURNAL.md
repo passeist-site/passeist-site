@@ -12,9 +12,8 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ### Fiche produit : galerie de la page identique à celle du site (vignette 1 comprise), position de lecture gardée au chargement
 
-### Mot « archive » invisible pour les clients (Tom) + langue de Googlebot
-- Retiré de tout ce que voit le client : titres d'onglet, aperçus de partage (og:title des pages marques), titre de la page Vendu (« Pièces vendues »), légendes Final Home / Jun Men, texte Y's BANG ON!. Gardé dans ce que seul Google lit (mots-clés, descriptions).
-- Page Vendu : adresse `/vendu` (nom interne `archive` inchangé), `/archive` redirigée en 301.
+### « archive » : gardé partout où c'est invisible (adresses, titres pour Google), Tom
+- Les gens tapent « archive » : l'adresse `/archive`, les titres et descriptions pour Google le gardent. Retiré seulement de deux textes visibles (titre de la page Vendu « Pièces vendues », légendes Final Home / Jun Men).
 - Googlebot navigue en anglais : il voyait tout le site traduit, avec une canonique `?lang=en` contraire à celle de la page. Robots désormais servis en français ; canonique `?lang=en` seulement si l'adresse la demande.
 - Titres et canoniques propres à Boutique / Vendu / À propos après chargement (avant : ceux de l'accueil).
 
