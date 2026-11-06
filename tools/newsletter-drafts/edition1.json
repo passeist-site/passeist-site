@@ -15,8 +15,8 @@
  "introList": {
   "fr": [
    {
-    "label": "En noir",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro et Y’s"
+    "label": "En noir et en camel",
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Kijima Takayuki"
    },
    {
     "label": "IM Issey Miyake",
@@ -37,8 +37,8 @@
   ],
   "en": [
    {
-    "label": "In black",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro and Y’s"
+    "label": "In black and camel",
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Kijima Takayuki"
    },
    {
     "label": "IM Issey Miyake",
@@ -134,12 +134,12 @@
     "link": "73317897"
    },
    {
-    "img": "73341539-0-md.webp",
+    "img": "73092918-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73341539"
+    "link": "73092918"
    },
    {
     "img": "73332466-0-md.webp",
@@ -258,6 +258,28 @@
     "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
     "en": "Issey Miyake Men show, autumn-winter 2011."
    }
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73092918",
+     "name": {
+      "fr": "Veste chemise camel",
+      "en": "Camel shirt jacket"
+     }
+    },
+    {
+     "id": "73092610",
+     "name": {
+      "fr": "Casquette double visière",
+      "en": "Double-peak cap"
+     }
+    }
+   ]
   },
   {
    "title": {
