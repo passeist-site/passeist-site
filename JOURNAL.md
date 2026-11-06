@@ -6,6 +6,11 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Synchro complète du 6/11 : 32 pièces importées, toutes les photos
+- Import en 5 photos à la fois : 32 pièces (dont les 4 « Non signé » : 3 × 45RPM, 1 × X-LARGE), toutes leurs photos, accents corrects. 816 pièces en vente.
+- Types : quand Vestiaire donne un mot générique ou faux dans un même rayon (« Cravate » pour des chaussettes, « Chapeau » pour une casquette), la description l'emporte : 4 chaussettes, 3 casquettes, 1 bonnet, 1 cagoule (nouveau type, rayon Chapeaux). Panama, Cartable, Ballerines… restent tels quels. 9 adresses redirigées.
+- 32 descriptions et 25 noms traduits en anglais (la traduction automatique de l'import ne marche plus).
+
 ### Import bloqué pour toutes les nouvelles pièces : nom des photos Vestiaire changé
 - 2e synchro : 28 pièces importées mais incomplètes (1 à 7 photos sur 15) : le CDN photo refuse GitHub (403), le secours ScrapingBee échoue par moments et l'import s'arrêtait à la 1re photo ratée. Accents abîmés sur 6 pièces (réponse ScrapingBee lue en latin-1), « T-shirt » devenu « Chemise » (double traduction). Corrigé : 3 essais par photo (le dernier en proxy premium), on continue à la photo suivante, encodage UTF-8 forcé, « T-shirt » reconnu comme français, « Tie » = Cravate, MIHARA YASUHIRO = MAISON MIHARA YASUHIRO. Les 28 pièces et leurs 381 photos retirées pour être réimportées proprement.
 - 68563799 : collaboration X-Large × Eames Office → marque X-LARGE (BRAND_OVERRIDES).

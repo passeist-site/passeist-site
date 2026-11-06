@@ -286,6 +286,15 @@ http://www.passeist.fr/*     https://passeist.com/:splat  301!
 /product/issey-miyake-blouse-63583841  /product/issey-miyake-top-63583841  301
 /product/yohji-yamamoto-gilet-long-en-laine-56353434  /product/yohji-yamamoto-sweat-a-capuche-en-laine-56353434  301
 /product/yohji-yamamoto-gilet-long-60874907  /product/yohji-yamamoto-sweat-60874907  301
+/product/kijima-takayuki-chapeau-73331582  /product/kijima-takayuki-casquette-73331582  301
+/product/issey-miyake-cravate-73331444  /product/issey-miyake-chaussettes-73331444  301
+/product/issey-miyake-cravate-73331372  /product/issey-miyake-chaussettes-73331372  301
+/product/yohji-yamamoto-cravate-73317674  /product/yohji-yamamoto-chaussettes-73317674  301
+/product/issey-miyake-cravate-73317769  /product/issey-miyake-chaussettes-73317769  301
+/product/yohji-yamamoto-chapeau-73317897  /product/yohji-yamamoto-casquette-73317897  301
+/product/kijima-takayuki-chapeau-73092610  /product/kijima-takayuki-casquette-73092610  301
+/product/yohji-yamamoto-chapeau-en-laine-73079487  /product/yohji-yamamoto-bonnet-en-laine-73079487  301
+/product/yohji-yamamoto-chapeau-en-laine-72536778  /product/yohji-yamamoto-cagoule-en-laine-72536778  301
 /product/*        /index.html           200
 # Tout le reste → 404 propre
 /*                /404.html             404

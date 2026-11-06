@@ -46,7 +46,7 @@ GARMENTS = [
     (r"ceintures?", 'Ceinture'), (r"cravates?", 'Cravate'), (r"gants", 'Gants'), (r"moufles", 'Moufles'),
     (r"bracelets?", 'Bracelet'), (r"boucles d.oreilles", "Boucles d'oreilles"), (r"colliers?", 'Collier'),
     (r"bagues?", 'Bague'), (r"chaussettes?", 'Chaussettes'), (r"clips? d.oreilles?", "Boucles d'oreilles"),
-    (r"port[eé][- ]clés?", 'Porte-clés'), (r"cagoules?", 'Bonnet'), (r"richelieus?", 'Derbies'),
+    (r"port[eé][- ]clés?", 'Porte-clés'), (r"cagoules?", 'Cagoule'), (r"richelieus?", 'Derbies'),
     (r"vareuses?", 'Chemise'), (r"mailles?", 'Pull'),
 ]
 _ALT = '|'.join(g for g, _ in GARMENTS)
@@ -108,7 +108,7 @@ _CATS = [
     ('Écharpes', r"étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou"),
     ('Accessoires', r"porte-clé|breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette"),
     ('Sacs', r"porte-carte|\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie"),
-    ('Chapeaux', r"\bbob\b|chapeau|bonnet|panama|casquette|\bcap\b|béret|beret"),
+    ('Chapeaux', r"cagoule|\bbob\b|chapeau|bonnet|panama|casquette|\bcap\b|béret|beret"),
     ('Chaussures', r"botte|boots|basket|trainer|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|sneaker|espadrille|\btongs?\b|\bmules?\b|lace.?ups?"),
     ('Costumes', r"costume|tailleur"),
     ('Combinaisons', r"combinaison|jumpsuit|salopette"),
@@ -145,6 +145,19 @@ def site_type(vestiaire_type, desc):
     if dt and VAGUE.search(vestiaire_type or ''):
         mat = re.search(r' en (laine|lin|soie|cuir|cachemire|coton|toile)\b', (vestiaire_type or '').lower())
         return dt + (mat.group(0) if mat else '')
+    # Rayons qui mélangent des objets différents (une cravate et des
+    # chaussettes sont toutes deux « Accessoires ») : la pièce nommée dans la
+    # description l'emporte dès que le mot diffère (Tom, 6/11 : chaussettes
+    # rangées en « cravates » sur Vestiaire)
+    # Seulement quand le mot de Vestiaire est générique ou mal choisi
+    # (« Cravate » pour des chaussettes, « Chapeau » pour une casquette) :
+    # « Panama », « Cartable », « Ballerines »… restent tels quels.
+    if dt and category_of(dt) == category_of(vestiaire_type) and category_of(dt) in ('Accessoires', 'Chapeaux'):
+        base = (vestiaire_type or '').split(' ')[0].lower()
+        if base in ('cravate', 'chapeau') and base != dt.split(' ')[0].lower():
+            mat = re.search(r' en (laine|lin|soie|cuir|cachemire|coton|toile)\b', (vestiaire_type or '').lower())
+            return dt + (mat.group(0) if mat else '')
+        return vestiaire_type
     # Costume = ensemble (veste + pantalon) : la description nomme souvent une
     # seule des deux pièces, on garde « Costume »
     if not dt or category_of(dt) == category_of(vestiaire_type) or category_of(vestiaire_type) == 'Costumes':

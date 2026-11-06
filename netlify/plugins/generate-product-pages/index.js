@@ -181,7 +181,7 @@ function categoryOf(type) {
     ['Écharpes', /étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou/],
     ['Accessoires', /porte-clé|breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette/],
     ['Sacs', /porte-carte|\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie/],
-    ['Chapeaux', /\bbob\b|chapeau|bonnet|panama|casquette|\bcap\b|béret|beret/],
+    ['Chapeaux', /cagoule|\bbob\b|chapeau|bonnet|panama|casquette|\bcap\b|béret|beret/],
     ['Chaussures', /botte|boots|basket|trainer|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|sneaker|espadrille|\btongs?\b|\bmules?\b|lace.?ups?/],
     ['Costumes', /costume|tailleur/],
     ['Combinaisons', /combinaison|jumpsuit|salopette/],
