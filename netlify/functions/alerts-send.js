@@ -30,7 +30,9 @@ const catsOf = a => (Array.isArray(a.cats) ? a.cats : (a.cat ? [a.cat] : []));
 function matches(a, p) {
   const b = brandsOf(a), c = catsOf(a);
   if (b.length && !b.some(x => norm(x) === norm(p.brand))) return false;
-  if (c.length && !c.includes(categoryOf(p.type))) return false;
+  // Anciennes alertes « Bas » (avant nov. 2026) = pantalons et jupes
+  const pc = categoryOf(p.type);
+  if (c.length && !c.includes(pc) && !(c.includes('Bas') && (pc === 'Pantalons' || pc === 'Jupes'))) return false;
   // Pièce sans genre (accessoire) : envoyée aux alertes homme comme femme
   if (a.gender && genderOf(p) && genderOf(p) !== a.gender) return false;
   return true;

@@ -6,11 +6,12 @@ function categoryOf(type) {
   if (has('sac', 'banane', 'étole', 'foulard', 'echarpe', 'écharpe', 'cheche', 'chèche', 'chapeau', 'bonnet', 'ceinture', 'portefeuille', 'maroquinerie', 'cartable')) return 'Accessoires';
   if (has('bottes', 'basket', 'ballerine', 'escarpin', 'mocassin', 'derby', 'sandale')) return 'Chaussures';
   if (has('robe', 'tunique')) return 'Robes';
-  if (has('pantalon', 'jean', 'jupe', 'short', 'bermuda', 'legging')) return 'Bas';
+  if (has('jupe')) return 'Jupes';
+  if (has('pantalon', 'jean', 'short', 'bermuda', 'legging')) return 'Pantalons';
   if (has('veste', 'blouson', 'manteau', 'parka', 'blazer')) return 'Vestes';
   if (has('sweat', 'pull', 'cardigan', 'gilet')) return 'Maille';
   if (has('chemise', 'top', 'tee', 't-shirt', 'blouse', 'polo', 'débardeur', 'debardeur', 'haut')) return 'Hauts';
   return 'Autres';
 }
-const CAT_EN = { Accessoires: 'Accessories', Chaussures: 'Shoes', Robes: 'Dresses', Bas: 'Bottoms', Vestes: 'Jackets', Maille: 'Knitwear', Hauts: 'Tops', Autres: 'Other' };
+const CAT_EN = { Accessoires: 'Accessories', Chaussures: 'Shoes', Robes: 'Dresses', Pantalons: 'Trousers', Jupes: 'Skirts', Bas: 'Bottoms', Vestes: 'Jackets', Maille: 'Knitwear', Hauts: 'Tops', Autres: 'Other' };
 module.exports = { categoryOf, CAT_EN };

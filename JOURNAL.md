@@ -4,6 +4,12 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ---
 
+## 2026-11-06
+
+### Boutique : « Bas » remplacé par « Jupes » et « Pantalons » (Tom)
+- Filtre Catégorie : Jupes (72 en vente) et Pantalons (75, shorts et jeans compris) au lieu de « Bas ». Pareil dans le panneau des alertes et pour les articles similaires des fiches.
+- Les alertes déjà créées avec « Bas » reçoivent toujours jupes et pantalons.
+
 ## 2026-11-04
 
 ### Import Vestiaire : plus aucune pièce laissée sur Vestiaire (Tom)

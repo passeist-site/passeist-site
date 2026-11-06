@@ -16,7 +16,7 @@ const { getStore, connectLambda } = require('@netlify/blobs');
 const { notifyAdmin } = require('../lib/admin-push');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const CATS = ['Accessoires', 'Chaussures', 'Robes', 'Bas', 'Vestes', 'Maille', 'Hauts', 'Autres'];
+const CATS = ['Accessoires', 'Chaussures', 'Robes', 'Pantalons', 'Jupes', 'Vestes', 'Maille', 'Hauts', 'Autres'];
 const MAX_PER_EMAIL = 10;
 
 const HITS = new Map();

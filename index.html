@@ -6289,7 +6289,8 @@ function getCategory(type) {
   if (t.includes('sac') || t.includes('banane') || t.includes('étole') || t.includes('foulard') || t.includes('echarpe') || t.includes('écharpe') || t.includes('cheche') || t.includes('chèche') || t.includes('chapeau') || t.includes('bonnet') || t.includes('ceinture') || t.includes('portefeuille') || t.includes('maroquinerie') || t.includes('cartable')) return 'Accessoires';
   if (t.includes('bottes') || t.includes('basket') || t.includes('ballerine') || t.includes('escarpin') || t.includes('mocassin') || t.includes('derby') || t.includes('sandale')) return 'Chaussures';
   if (t.includes('robe') || t.includes('tunique')) return 'Robes';
-  if (t.includes('pantalon') || t.includes('jean') || t.includes('jupe') || t.includes('short') || t.includes('bermuda') || t.includes('legging')) return 'Bas';
+  if (t.includes('jupe')) return 'Jupes';
+  if (t.includes('pantalon') || t.includes('jean') || t.includes('short') || t.includes('bermuda') || t.includes('legging')) return 'Pantalons';
   if (t.includes('veste') || t.includes('blouson') || t.includes('manteau') || t.includes('parka') || t.includes('blazer')) return 'Vestes';
   if (t.includes('sweat') || t.includes('pull') || t.includes('cardigan') || t.includes('gilet')) return 'Maille';
   if (t.includes('chemise') || t.includes('top') || t.includes('tee') || t.includes('t-shirt') || t.includes('blouse') || t.includes('polo') || t.includes('débardeur') || t.includes('debardeur') || t.includes('haut')) return 'Hauts';
@@ -7313,7 +7314,7 @@ function renderGrid() {
   // Re-traduit les parts (genre, catégorie) selon la langue active
   parts = parts.map(part => {
     if (part === 'Femme' || part === 'Homme' || part === 'Accessoires') return _tx('gender.' + (part === 'Accessoires' ? '' : part), part);
-    if (['Hauts','Bas','Vestes','Maille','Robes','Chaussures','Accessoires'].includes(part)) return _tx('cat.' + part, part);
+    if (['Hauts','Pantalons','Jupes','Vestes','Maille','Robes','Chaussures','Accessoires'].includes(part)) return _tx('cat.' + part, part);
     return part;
   });
   const defaultTitle = activeView === 'archive'
@@ -7460,8 +7461,8 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
 // Panneau « Créez votre alerte » : le client choisit auteurs, pièces et
 // genre en touchant des étiquettes, puis donne son e-mail (alerts.js).
 (function(){
-  const CATS = ['Vestes', 'Maille', 'Hauts', 'Bas', 'Robes', 'Chaussures', 'Accessoires'];
-  const CAT_EN = { Accessoires: 'Accessories', Chaussures: 'Shoes', Robes: 'Dresses', Bas: 'Bottoms', Vestes: 'Jackets', Maille: 'Knitwear', Hauts: 'Tops', Autres: 'Other' };
+  const CATS = ['Vestes', 'Maille', 'Hauts', 'Pantalons', 'Jupes', 'Robes', 'Chaussures', 'Accessoires'];
+  const CAT_EN = { Accessoires: 'Accessories', Chaussures: 'Shoes', Robes: 'Dresses', Pantalons: 'Trousers', Jupes: 'Skirts', Bas: 'Bottoms', Vestes: 'Jackets', Maille: 'Knitwear', Hauts: 'Tops', Autres: 'Other' };
   const en = () => window.__lang === 'en';
   const titleCase = b => String(b || '').split(/(\s+)/).map(w => /\d/.test(w) ? w.toUpperCase()
     : /^(des|by|de|du)$/i.test(w) ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
@@ -10515,7 +10516,7 @@ window.subscribeNewsletter = function (e) {
       'sold': 'Vendu', 'vendu.badge': 'VENDU',
       // Termes filtre dynamiques (genre, catégorie), passés tels quels en FR
       'gender.Femme': 'Femme', 'gender.Homme': 'Homme', 'gender.': 'Accessoires',
-      'cat.Hauts': 'Hauts', 'cat.Bas': 'Bas', 'cat.Vestes': 'Vestes',
+      'cat.Hauts': 'Hauts', 'cat.Pantalons': 'Pantalons', 'cat.Jupes': 'Jupes', 'cat.Vestes': 'Vestes',
       'cat.Maille': 'Maille', 'cat.Robes': 'Robes', 'cat.Chaussures': 'Chaussures',
       'cat.Accessoires': 'Accessoires', 'cat.Autres': 'Autres',
       // Couleurs
@@ -10558,7 +10559,7 @@ window.subscribeNewsletter = function (e) {
       'detail.back': '← Back to shop',
       'sold': 'Sold', 'vendu.badge': 'SOLD',
       'gender.Femme': 'Women', 'gender.Homme': 'Men', 'gender.': 'Accessories',
-      'cat.Hauts': 'Tops', 'cat.Bas': 'Bottoms', 'cat.Vestes': 'Jackets',
+      'cat.Hauts': 'Tops', 'cat.Pantalons': 'Trousers', 'cat.Jupes': 'Skirts', 'cat.Vestes': 'Jackets',
       'cat.Maille': 'Knits', 'cat.Robes': 'Dresses', 'cat.Chaussures': 'Shoes',
       'cat.Accessoires': 'Accessories', 'cat.Autres': 'Other',
       'color.Noir': 'Black', 'color.Anthracite': 'Charcoal', 'color.Marine': 'Navy',
