@@ -6,6 +6,9 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Écharpe A.A.R. 73332525 : photo 1 remise dans le bon sens (Tom)
+- Vestiaire l'affichait couchée : remplacée par la photo fournie par Tom (verticale), préparée comme à l'import (carré fond blanc, xl/md/sm), fond gris très clair passé en blanc pur.
+
 ### Traduction anglaise automatique réparée
 - Cause : depuis mi-octobre 2026, Google Traduction refuse les serveurs GitHub (page « Sorry… »). deep-translator échouait sans rien dire : ~230 pièces importées sans anglais (traduites à la main les 6/11).
 - tools/translate.py : appel direct d'abord (gratuit), sinon même requête via ScrapingBee (adresse française, 1 crédit par appel), découpage en morceaux de 1 500 caractères, tout ou rien. Utilisé par l'import.
