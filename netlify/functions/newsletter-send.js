@@ -138,9 +138,17 @@ function editionHtml(lang, ed, total) {
       (L(sec.caption) ? `<tr><td align="center" style="padding:12px 16px 0;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '') +
       (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:30px;"></td></tr>');
     if (sec.hero) return head + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('') + focus;
-    const rows = [];
-    for (let i = 0; i < items.length; i += 2) rows.push(`<tr><td align="center"><table role="presentation" width="${items.length - i > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
-      items.slice(i, i + 2).map(it => `<td width="${items.length - i > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
+    // Rythme du site : des paires, et une pièce en grand (it.big) quand on veut
+    const groups = []; let buf = [];
+    items.forEach(it => {
+      if (it.big) { if (buf.length) { groups.push(buf); buf = []; } groups.push(Object.assign([it], { big: true })); }
+      else { buf.push(it); if (buf.length === 2) { groups.push(buf); buf = []; } }
+    });
+    if (buf.length) groups.push(buf);
+    const rows = groups.map(g => g.big
+      ? `<tr><td align="center" style="padding:0 0 52px;">${piece(g[0], true)}</td></tr>`
+      : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
+        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
     return head + rows.join('');
   }).join('');
 

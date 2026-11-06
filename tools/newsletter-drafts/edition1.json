@@ -185,7 +185,8 @@
      "name": {
       "fr": "Veste courte à brandebourgs",
       "en": "Short toggle jacket"
-     }
+     },
+     "big": true
     }
    ]
   },
@@ -299,6 +300,14 @@
      }
     },
     {
+     "id": "73332578",
+     "name": {
+      "fr": "Hoodie teddy en laine",
+      "en": "Wool teddy hoodie"
+     },
+     "big": true
+    },
+    {
      "id": "73342088",
      "name": {
       "fr": "Pull à col isolé",
@@ -310,13 +319,6 @@
      "name": {
       "fr": "Chemise vichy sashiko",
       "en": "Sashiko gingham shirt"
-     }
-    },
-    {
-     "id": "73332578",
-     "name": {
-      "fr": "Hoodie teddy en laine",
-      "en": "Wool teddy hoodie"
      }
     }
    ],
@@ -347,14 +349,8 @@
      "name": {
       "fr": "Écharpe ajourée",
       "en": "Openwork scarf"
-     }
-    },
-    {
-     "id": "72536669",
-     "name": {
-      "fr": "Écharpe ajourée marine",
-      "en": "Navy openwork scarf"
-     }
+     },
+     "big": true
     },
     {
      "id": "73331444",
@@ -369,6 +365,14 @@
       "fr": "Chaussettes grises",
       "en": "Grey socks"
      }
+    },
+    {
+     "id": "72536669",
+     "name": {
+      "fr": "Écharpe ajourée marine",
+      "en": "Navy openwork scarf"
+     },
+     "big": true
     },
     {
      "id": "73332525",
