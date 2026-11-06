@@ -12,7 +12,9 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 - 37 noms de pièces restés en anglais remis en français (Wool pull → Pull en laine, Harem → Sarouel, Satchel → Sac à dos…).
 - 74 pièces en vente dont le type Vestiaire contredisait la description (« Blouse » pour un top, « Sweat » pour un gilet, « Costume » pour une jupe, « Espadrilles » pour un short…) : type corrigé d'après la description.
 - 108 anciennes adresses de fiches redirigées (301) vers les nouvelles.
-- Import : type anglais traduit d'office, et le type écrit en tête de description (« Ravissant top en… ») l'emporte quand il n'est pas dans le même rayon que celui de Vestiaire.
+- Règle Tom : **la catégorie se base sur la description de Tom, pas sur Vestiaire.** tools/type_from_desc.py lit la pièce dans la description (« Ravissant top… », « Très belle paire de bottes… », ou une ligne qui commence par le vêtement : « Chemisette en coton… »), en ignorant les comparaisons (« type sweat », « comme un jean ») et les en-têtes (Collection, Marque, Matière…). Le type Vestiaire n'est gardé que s'il est dans le même rayon, ou si la description ne nomme pas la pièce (70 sur 1 460). Costumes gardés (ensembles).
+- Appliqué à tout le catalogue, pièces vendues comprises : 73 types de plus corrigés (ex. 7 paires de chaussettes rangées en « Pantalon », « Legging » ou « Écharpe & pochette »). 179 anciennes adresses redirigées au total.
+- L'import applique la même règle à chaque nouvelle pièce.
 - Alertes : les anciennes catégories (Bas, Hauts, Maille, Vestes, Accessoires, Robes) reçoivent les nouvelles correspondantes.
 
 ## 2026-11-04

@@ -179,7 +179,7 @@ function categoryOf(type) {
   const t = String(type || '').toLowerCase();
   const R = [
     ['Écharpes', /étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou/],
-    ['Accessoires', /breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette/],
+    ['Accessoires', /porte-clé|breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette/],
     ['Sacs', /\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie/],
     ['Chapeaux', /chapeau|bonnet|panama|casquette|\bcap\b|béret|beret/],
     ['Chaussures', /botte|boots|basket|trainer|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|sneaker|espadrille|\btongs?\b|\bmules?\b|lace.?ups?/],

@@ -27,7 +27,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_brand_extraction
-from type_from_desc import type_from_desc, category_of
+from type_from_desc import site_type
 
 # === Configuration ===
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -486,13 +486,12 @@ def main():
         if fr != ptype:
             print(f'  type anglais "{ptype}" → "{fr}"')
             ptype = fr
-    # Le type écrit par Tom en tête de description (« Ravissant top en… ») passe
-    # avant la catégorie Vestiaire quand ils ne sont pas dans le même rayon
-    # (Vestiaire range les tops en « Blouse », les gilets en « Sweat »…)
-    dtype = type_from_desc(desc)
-    if dtype and category_of(dtype) != category_of(ptype):
-        mat = re.search(r' en (laine|lin|soie|cuir|cachemire|coton)\b', (ptype or '').lower())
-        new = dtype + (mat.group(0) if mat else '')
+    # Règle Tom (nov. 2026) : la catégorie du site se base sur SA description,
+    # pas sur la catégorie Vestiaire (qui range les tops en « Blouse », les
+    # gilets en « Sweat »…). Le type Vestiaire n'est gardé que s'il est dans le
+    # même rayon que la pièce décrite, ou si la description ne la nomme pas.
+    new = site_type(ptype, desc)
+    if new != ptype:
         print(f'  type "{ptype}" → "{new}" (lu dans la description)')
         ptype = new
 
