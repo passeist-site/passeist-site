@@ -1,16 +1,16 @@
 {
  "date": "2026-11-08",
  "subject": {
-  "fr": "Nouveautés : mailles et accessoires d’hiver, Yohji Yamamoto, Issey Miyake, 45rpm",
-  "en": "New in: winter knits and accessories, Yohji Yamamoto, Issey Miyake, 45rpm"
+  "fr": "Nouveautés : mailles d’hiver, Yohji Yamamoto, Issey Miyake, 45rpm, et un nouvel auteur, Monitaly",
+  "en": "New in: winter knits, Yohji Yamamoto, Issey Miyake, 45rpm, and a new designer, Monitaly"
  },
  "preheader": {
   "fr": "Un cardigan marin 45rpm, un long pull en mohair Yohji Yamamoto, et de quoi finir l’hiver au chaud",
   "en": "A 45rpm sailor cardigan, a long Yohji Yamamoto mohair jumper, and everything to see winter through"
  },
  "intro": {
-  "fr": "Cette semaine, passéist vous propose trois mises en avant :",
-  "en": "This week, passéist presents three highlights:"
+  "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
+  "en": "This week, passéist presents four highlights:"
  },
  "introList": {
   "fr": [
@@ -21,6 +21,10 @@
    {
     "label": "Yohji Yamamoto",
     "text": "Un long pull en mohair, Pour Homme automne-hiver 2017"
+   },
+   {
+    "label": "Nouvel auteur",
+    "text": "Monitaly, le vestiaire militaire américain revu au Japon"
    },
    {
     "label": "Pour finir l’hiver",
@@ -35,6 +39,10 @@
    {
     "label": "Yohji Yamamoto",
     "text": "A long mohair jumper, Pour Homme autumn-winter 2017"
+   },
+   {
+    "label": "New designer",
+    "text": "Monitaly, the American military wardrobe reworked in Japan"
    },
    {
     "label": "To see winter through",
@@ -240,6 +248,70 @@
     "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
     "en": "Issey Miyake Men show, autumn-winter 2011."
    }
+  },
+  {
+   "title": {
+    "fr": "Nouvel auteur : Monitaly",
+    "en": "New designer: Monitaly"
+   },
+   "hero": true,
+   "items": [
+    {
+     "id": "73093011",
+     "name": {
+      "fr": "Veste club en nylon moiré",
+      "en": "Moiré nylon club jacket"
+     }
+    }
+   ],
+   "text": {
+    "fr": "Monitaly arrive chez passéist. La maison américano-japonaise est fondée en 1989 par le designer Yuki Matsuda : elle réinvente le vestiaire utilitaire et militaire américain, avec une confection exigeante et des tissus exclusifs, souvent chinés ou tissés à la main.\nCette veste club très légère, en nylon effet moiré marron, a une coupe ample et boxy et une taille élastiquée. Comme toujours chez Monitaly, la coupe est folle.",
+    "en": "Monitaly arrives at passéist. The American-Japanese label was founded in 1989 by designer Yuki Matsuda: it reinvents the American utility and military wardrobe, with demanding craftsmanship and exclusive fabrics, often sourced or hand-woven.\nThis very light club jacket in brown moiré nylon has a loose, boxy cut and an elasticated waist. As always with Monitaly, the cut is incredible."
+   }
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73092398",
+     "name": {
+      "fr": "Hoodie jacquard ikat",
+      "en": "Ikat jacquard hoodie"
+     }
+    },
+    {
+     "id": "73092530",
+     "name": {
+      "fr": "Chemise en flanelle",
+      "en": "Flannel shirt"
+     }
+    },
+    {
+     "id": "73342088",
+     "name": {
+      "fr": "Pull à col isolé",
+      "en": "Insulated mock-neck pullover"
+     }
+    },
+    {
+     "id": "73341539",
+     "name": {
+      "fr": "Chemise vichy sashiko",
+      "en": "Sashiko gingham shirt"
+     }
+    },
+    {
+     "id": "73332578",
+     "name": {
+      "fr": "Hoodie teddy en laine",
+      "en": "Wool teddy hoodie"
+     }
+    }
+   ],
+   "suite": true
   },
   {
    "title": {

@@ -125,7 +125,8 @@ function editionHtml(lang, ed, total) {
     const items = (sec.items || []).filter(it => PRODUCTS[it.id]);   // pièce vendue entre-temps : retirée
     if (!items.length) return '';
     // Point bleu entre les parties ; avant la première seulement s'il y a un sommaire au-dessus
-    const head = (first && !L(sec.title) && !toc.length) ? '' : heading(L(sec.title));
+    // sec.suite : suite de la partie précédente (ex. les autres pièces d'un nouvel auteur), sans point bleu
+    const head = (sec.suite || (first && !L(sec.title) && !toc.length)) ? '' : heading(L(sec.title));
     first = false;
     // Focus : la pièce en grand, un texte, des photos de détail puis du défilé (côte à côte,
     // menant à la pièce) et une légende
