@@ -110,26 +110,43 @@ def make_scraper():
 
 
 def picture_paths(meta):
-    """Chemins des photos tels que Vestiaire les donne dans la fiche
-    (« produit/<nom>-<n>.jpg »), dans l'ordre. Le nom des fichiers photo
-    est celui de la création de l'annonce : quand l'annonce a changé de nom
-    depuis (marque passée en « Non signé », titre modifié…), deviner le nom
-    à partir de l'adresse de la fiche ne trouve aucune photo (4 pièces
-    bloquées, nov. 2026)."""
+    """Chemins des photos tels que Vestiaire les donne dans la fiche, dans
+    l'ordre (« produit/73317570-1_2.jpg »). Depuis nov. 2026 les fichiers
+    photo portent le numéro de l'annonce (« 73317570-1_2.jpg ») et non plus
+    son nom : deviner « produit/<nom>-1.jpg » renvoie 403 pour TOUTES les
+    nouvelles pièces (32 imports bloqués le 6/11). Les annonces renommées
+    (« Non signé ») étaient déjà dans ce cas."""
     found = []
-    def walk(x):
-        if isinstance(x, dict):
-            for v in x.values(): walk(v)
-        elif isinstance(x, list):
-            for v in x: walk(v)
-        elif isinstance(x, str):
-            for m in re.finditer(r'(produit/[A-Za-z0-9_\-]+-\d+\.(?:jpe?g|png|webp))', x):
-                if m.group(1) not in found: found.append(m.group(1))
-    walk(meta.get('pictures') or meta.get('images') or meta)
-    # Les photos d'autres articles (recommandations) ne sont pas dans meta, qui
-    # est filtré sur l'article attendu ; on garde l'ordre -1, -2, -3…
+    def add(pth):
+        pth = re.sub(r'^https?://[^/]+/', '', str(pth)).split('?')[0]
+        pth = re.sub(r'^images/resized/[^/]*/', '', pth).lstrip('/')
+        if not re.search(r'\.(?:jpe?g|png|webp)$', pth, re.I):
+            return
+        if not pth.startswith('produit/'):
+            pth = 'produit/' + pth
+        if pth not in found:
+            found.append(pth)
+    pics = meta.get('pictures') or meta.get('images') or []
+    if isinstance(pics, list):
+        for x in pics:
+            if isinstance(x, dict):
+                v = x.get('path') or x.get('url') or x.get('src')
+                if v: add(v)
+            elif isinstance(x, str):
+                add(x)
+    if not found:  # secours : n'importe quel chemin « produit/… » dans la fiche
+        def walk(x):
+            if isinstance(x, dict):
+                for v in x.values(): walk(v)
+            elif isinstance(x, list):
+                for v in x: walk(v)
+            elif isinstance(x, str):
+                for m in re.finditer(r'(produit/[A-Za-z0-9_\-]+\.(?:jpe?g|png|webp))', x):
+                    add(m.group(1))
+        walk(meta)
     def num(pth):
-        m = re.search(r'-(\d+)\.\w+$', pth); return int(m.group(1)) if m else 999
+        m = re.search(r'-(\d+)(?:_\d+)?\.\w+$', pth)
+        return int(m.group(1)) if m else 999
     return sorted(found, key=num)
 
 
@@ -142,6 +159,17 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None):
            else f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/produit/{vestiaire_slug}-{photo_idx}.jpg')
     try:
         r = scraper.get(url, timeout=30)
+        if (r.status_code != 200 or len(r.content) < 10000) and os.environ.get('SCRAPINGBEE_API_KEY', '').strip():
+            # Secours : le CDN photo refuse parfois les serveurs GitHub (403) →
+            # même service que pour les fiches (1 crédit par photo)
+            try:
+                r2 = requests.get('https://app.scrapingbee.com/api/v1/', timeout=60, params={
+                    'api_key': os.environ['SCRAPINGBEE_API_KEY'].strip(), 'url': url,
+                    'render_js': 'false', 'country_code': 'fr'})
+                if r2.status_code == 200 and len(r2.content) >= 10000:
+                    r = r2
+            except Exception as e:
+                print(f'  photo {photo_idx} scrapingbee ERR: {e}', file=sys.stderr)
         if r.status_code != 200 or len(r.content) < 10000:
             if photo_idx == 1: print(f'  photo 1 : HTTP {r.status_code}, {len(r.content)} octets ({url})', file=sys.stderr)
             return False

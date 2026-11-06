@@ -6,6 +6,9 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Import bloqué pour toutes les nouvelles pièces : nom des photos Vestiaire changé
+- Synchro du 6/11 (lancée à la main) : 32 imports en échec, « photo 1 : HTTP 403 ». Vestiaire nomme désormais les photos avec le numéro de l'annonce (« produit/73317570-1_2.jpg ») et non plus avec son nom ; l'adresse devinée par l'import ne marche plus pour aucune pièce. Les chemins sont lus dans la fiche (pictures[].path), préfixe « produit/ » ajouté ; secours ScrapingBee si le CDN refuse les serveurs GitHub.
+
 ### Types précis pour chaque pièce (Tom : « pas de chapeau/bonnet »)
 - 56 types flous venus de Vestiaire remplacés par la pièce nommée dans la description : « Chapeau / bonnet » → Casquette, Chapeau, Bob, Bonnet ; « Pull / gilet / sweat » → Cardigan ; « Petite maroquinerie » → Portefeuille, Porte-cartes, Porte-clés ; « Pochette » → Sacoche, Sac bandoulière ; « Haut » → Top, T-shirt… (matière gardée : « Casquette en cuir »). L'import fait pareil (tools/type_from_desc.py, VAGUE). 237 anciennes adresses redirigées au total.
 - Sous les photos : le type seul, sans matière (choix de Tom) : window.cardType() retire « en laine », « en cuir »… (EN : wool, leather…) ; la fiche garde le nom complet. Marque et type toujours sur une ligne (points de suspension au besoin) : toutes les cartes ont la même hauteur, vérifié sur iPhone SE, iPhone 13 et ordinateur, FR et EN (0 nom coupé).
