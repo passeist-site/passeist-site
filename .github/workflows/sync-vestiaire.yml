@@ -10,6 +10,10 @@ on:
         description: 'Scan complet de tous les items actifs (ignore le mode ciblé)'
         type: boolean
         default: false
+      max_imports:
+        description: 'Nombre max de pièces à importer (0 = toutes ; 1 pour un essai)'
+        type: string
+        default: '0'
 
 # Empêche un push manuel de cancel un run cron en cours, et empêche 2 runs cron
 # parallèles (risque de double-bascule).
@@ -168,6 +172,7 @@ jobs:
         env:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+          MAX_IMPORTS: ${{ github.event.inputs.max_imports || '0' }}
         run: |
           python << 'PYEOF'
           import json, os, subprocess, sys
@@ -177,6 +182,11 @@ jobs:
           with open(rep_path) as f: r = json.load(f)
           # Concatène E + C — relistings traités comme nouvelles pièces (autre exemplaire vintage)
           E = (r.get('E', []) or []) + (r.get('C', []) or [])
+          # Essai sur quelques pièces seulement (lancement manuel, max_imports)
+          _max = int((os.environ.get('MAX_IMPORTS') or '0').strip() or 0)
+          if _max > 0:
+              print(f'Essai : {_max} pièce(s) importée(s) sur {len(E)}')
+              E = E[:_max]
           if not E:
               print("E + C vide, rien à importer")
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:

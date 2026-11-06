@@ -150,41 +150,56 @@ def picture_paths(meta):
     return sorted(found, key=num)
 
 
+CDN = 'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/'
+_DIRECT_BLOCKED = False  # le CDN refuse les serveurs GitHub (403) : on ne réessaie plus en direct
+
+
+def fetch_photo_bytes(scraper, url):
+    """Photo brute. Direct d'abord (gratuit), sinon ScrapingBee : 1 essai
+    normal + 1 essai premium, délais courts (synchro de 5 min, pas 20)."""
+    global _DIRECT_BLOCKED
+    if not _DIRECT_BLOCKED:
+        try:
+            r = scraper.get(url, timeout=15)
+            if r.status_code == 200 and len(r.content) >= 10000:
+                return r.content
+            if r.status_code == 403:
+                _DIRECT_BLOCKED = True
+        except Exception:
+            pass
+    key = os.environ.get('SCRAPINGBEE_API_KEY', '').strip()
+    if not key:
+        return None
+    for premium in (False, True):
+        try:
+            params = {'api_key': key, 'url': url, 'render_js': 'false', 'country_code': 'fr'}
+            if premium: params['premium_proxy'] = 'true'
+            r = requests.get('https://app.scrapingbee.com/api/v1/', timeout=30, params=params)
+            if r.status_code == 200 and len(r.content) >= 10000:
+                return r.content
+            print(f'  {url.rsplit("/", 1)[-1]} : scrapingbee{" premium" if premium else ""} HTTP {r.status_code}', file=sys.stderr)
+        except Exception as e:
+            print(f'  {url.rsplit("/", 1)[-1]} : scrapingbee ERR {e}', file=sys.stderr)
+    return None
+
+
+def save_photo(content, item_id, out_idx):
+    """Écrit les 3 versions webp (xl/md/sm) de la photo n° out_idx (0 = photo 1)."""
+    im = Image.open(io.BytesIO(content)).convert('RGB')
+    for sn, target, q in [('xl', 1600, 95), ('md', 800, 95), ('sm', 400, 92)]:
+        out = pad_square(im, target)
+        out.save(os.path.join(OUT_IMG, f'{item_id}-{out_idx}-{sn}.webp'), 'WEBP', quality=q, method=6)
+
+
 def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None, out_idx=None):
-    """Télécharge la photo {photo_idx} (1-indexed) depuis Vestiaire CDN
-    et écrit 3 versions webp pad square : item_id-{idx-1}-xl/md/sm.webp.
-    Le CDN images.vestiairecollective.com n'a pas Cloudflare → fetch direct.
+    """Télécharge la photo {photo_idx} (1-indexed) et écrit ses 3 versions.
     path : chemin donné par la fiche (prioritaire sur le nom deviné)."""
-    url = (f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/{path}' if path
-           else f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/produit/{vestiaire_slug}-{photo_idx}.jpg')
+    url = CDN + path if path else f'{CDN}produit/{vestiaire_slug}-{photo_idx}.jpg'
     try:
-        r = scraper.get(url, timeout=30)
-        if (r.status_code != 200 or len(r.content) < 10000) and os.environ.get('SCRAPINGBEE_API_KEY', '').strip():
-            # Secours : le CDN photo refuse parfois les serveurs GitHub (403) →
-            # même service que pour les fiches (1 crédit par photo)
-            # 3 essais (le service échoue de temps en temps : 1 à 3 photos sur
-            # 15 le 6/11), le dernier par proxy premium
-            for attempt in range(3):
-                try:
-                    params = {'api_key': os.environ['SCRAPINGBEE_API_KEY'].strip(), 'url': url,
-                              'render_js': 'false', 'country_code': 'fr'}
-                    if attempt == 2: params['premium_proxy'] = 'true'
-                    r2 = requests.get('https://app.scrapingbee.com/api/v1/', timeout=60, params=params)
-                    if r2.status_code == 200 and len(r2.content) >= 10000:
-                        r = r2
-                        break
-                    print(f'  photo {photo_idx} scrapingbee essai {attempt + 1} : HTTP {r2.status_code}', file=sys.stderr)
-                except Exception as e:
-                    print(f'  photo {photo_idx} scrapingbee essai {attempt + 1} ERR: {e}', file=sys.stderr)
-                time.sleep(1 + attempt)
-        if r.status_code != 200 or len(r.content) < 10000:
-            if photo_idx == 1: print(f'  photo 1 : HTTP {r.status_code}, {len(r.content)} octets ({url})', file=sys.stderr)
+        content = fetch_photo_bytes(scraper, url)
+        if not content:
             return False
-        im = Image.open(io.BytesIO(r.content)).convert('RGB')
-        for sn, target, q in [('xl', 1600, 95), ('md', 800, 95), ('sm', 400, 92)]:
-            out = pad_square(im, target)
-            out.save(os.path.join(OUT_IMG, f'{item_id}-{(photo_idx if out_idx is None else out_idx + 1)-1}-{sn}.webp'),
-                     'WEBP', quality=q, method=6)
+        save_photo(content, item_id, photo_idx - 1 if out_idx is None else out_idx)
         return True
     except Exception as e:
         print(f'  photo {photo_idx} ERR: {e}', file=sys.stderr)
@@ -544,22 +559,32 @@ def main():
     paths = picture_paths(meta)
     if paths:
         print(f'  {len(paths)} photos dans la fiche Vestiaire (ex. {paths[0]})')
-    for idx in range(1, 41):  # max 40 photos (règle définitive Tom 2026-05-04)
-        path = paths[idx - 1] if idx - 1 < len(paths) else None
-        if paths and path is None:
-            break
-        ok = process_photo(scraper, item_id, idx, vestiaire_slug, path, out_idx=good)
-        if not ok and not paths:
-            print(f'    photo {idx}: skip')
-            break
-        if ok:
-            good += 1
-            print(f'    photo {idx}: OK')
-        else:
-            # Photo ratée malgré les essais : on passe à la suivante (les
-            # photos du site restent numérotées sans trou)
-            print(f'    photo {idx}: ÉCHEC, photo suivante', file=sys.stderr)
-        time.sleep(0.3)
+    if paths:
+        # 5 photos téléchargées à la fois (via ScrapingBee depuis que le CDN
+        # refuse GitHub : une à une, une synchro durait 20 min et plus)
+        from concurrent.futures import ThreadPoolExecutor
+        paths = paths[:40]  # max 40 photos (règle définitive Tom 2026-05-04)
+        with ThreadPoolExecutor(max_workers=5) as ex:
+            contents = list(ex.map(lambda pth: fetch_photo_bytes(scraper, CDN + pth), paths))
+        for idx, content in enumerate(contents, 1):
+            if not content:
+                print(f'    photo {idx}: ÉCHEC, photo suivante', file=sys.stderr)
+                continue
+            try:
+                save_photo(content, item_id, good)  # numérotées sans trou
+                good += 1
+                print(f'    photo {idx}: OK')
+            except Exception as e:
+                print(f'    photo {idx}: ERR {e}', file=sys.stderr)
+    else:
+        for idx in range(1, 41):
+            if process_photo(scraper, item_id, idx, vestiaire_slug):
+                good += 1
+                print(f'    photo {idx}: OK')
+            else:
+                print(f'    photo {idx}: skip')
+                break
+            time.sleep(0.3)
     if paths and good < len(paths):
         print(f'  ⚠ {good} photos sur {len(paths)}', file=sys.stderr)
 
