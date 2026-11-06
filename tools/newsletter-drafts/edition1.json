@@ -1,0 +1,288 @@
+{
+ "date": "2026-11-08",
+ "subject": {
+  "fr": "Nouveautés : mailles et accessoires d’hiver, Yohji Yamamoto, Issey Miyake, 45rpm",
+  "en": "New in: winter knits and accessories, Yohji Yamamoto, Issey Miyake, 45rpm"
+ },
+ "preheader": {
+  "fr": "Un cardigan marin 45rpm, un long pull en mohair Yohji Yamamoto, et de quoi finir l’hiver au chaud",
+  "en": "A 45rpm sailor cardigan, a long Yohji Yamamoto mohair jumper, and everything to see winter through"
+ },
+ "intro": {
+  "fr": "Cette semaine, passéist vous propose trois mises en avant :",
+  "en": "This week, passéist presents three highlights:"
+ },
+ "introList": {
+  "fr": [
+   {
+    "label": "45rpm",
+    "text": "Un cardigan marin torsadé North Marine Drive, années 90"
+   },
+   {
+    "label": "Yohji Yamamoto",
+    "text": "Un long pull en mohair, Pour Homme automne-hiver 2017"
+   },
+   {
+    "label": "Pour finir l’hiver",
+    "text": "Écharpes, bonnet, cagoule et gants"
+   }
+  ],
+  "en": [
+   {
+    "label": "45rpm",
+    "text": "A cable-knit North Marine Drive sailor cardigan, the 90s"
+   },
+   {
+    "label": "Yohji Yamamoto",
+    "text": "A long mohair jumper, Pour Homme autumn-winter 2017"
+   },
+   {
+    "label": "To see winter through",
+    "text": "Scarves, beanie, balaclava and gloves"
+   }
+  ]
+ },
+ "cover": {
+  "cols": 6,
+  "photos": [
+   {
+    "img": "73092118-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092118"
+   },
+   {
+    "img": "73092488-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092488"
+   },
+   {
+    "img": "73332654-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73332654"
+   },
+   {
+    "img": "73079596-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73079596"
+   },
+   {
+    "img": "72637209-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "72637209"
+   },
+   {
+    "img": "72536778-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "72536778"
+   },
+   {
+    "img": "73092364-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092364"
+   },
+   {
+    "img": "72823446-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "72823446"
+   },
+   {
+    "img": "73332525-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73332525"
+   },
+   {
+    "img": "73079487-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73079487"
+   },
+   {
+    "img": "72823125-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "72823125"
+   },
+   {
+    "img": "73092452-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092452"
+   }
+  ]
+ },
+ "sections": [
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73092118",
+     "name": {
+      "fr": "Cardigan marin torsadé",
+      "en": "Cable-knit sailor cardigan"
+     }
+    },
+    {
+     "id": "73092488",
+     "name": {
+      "fr": "Long pull en mohair",
+      "en": "Long mohair jumper"
+     }
+    },
+    {
+     "id": "73332654",
+     "name": {
+      "fr": "Cardigan soie et lin",
+      "en": "Silk and linen cardigan"
+     }
+    },
+    {
+     "id": "72823446",
+     "name": {
+      "fr": "Pull long en crochet",
+      "en": "Long crochet jumper"
+     }
+    },
+    {
+     "id": "72823125",
+     "name": {
+      "fr": "Gros cardigan torsadé",
+      "en": "Chunky cable cardigan"
+     }
+    },
+    {
+     "id": "73092452",
+     "name": {
+      "fr": "Gilet oversized",
+      "en": "Oversized cardigan"
+     }
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "hero": true,
+   "items": [
+    {
+     "id": "73092364",
+     "name": {
+      "fr": "Doudoune sans manches",
+      "en": "Sleeveless down jacket"
+     }
+    }
+   ],
+   "text": {
+    "fr": "Issey Miyake Men, automne-hiver 2011. Une doudoune sans manches qui se porte des deux côtés : ses boutons pressions se dédoublent pour ajuster la taille, la capuche est fixe.\nPolyester, garniture 93 % duvet. Comme neuve, jamais portée. Taille 3, convient à un M.",
+    "en": "Issey Miyake Men, autumn-winter 2011. A sleeveless down jacket that can be worn either way: its press studs double up to adjust the size, and the hood is fixed.\nPolyester, 93% down filling. Like new, never worn. Size 3, fits an M."
+   },
+   "details": [
+    {
+     "img": "nl-issey-aw11-1.jpg",
+     "alt": {
+      "fr": "Défilé Issey Miyake Men, automne-hiver 2011",
+      "en": "Issey Miyake Men show, autumn-winter 2011"
+     }
+    },
+    {
+     "img": "73092364-1-md.webp",
+     "alt": {
+      "fr": "La doudoune, capuche",
+      "en": "The down jacket, hood"
+     }
+    }
+   ],
+   "caption": {
+    "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
+    "en": "Issey Miyake Men show, autumn-winter 2011."
+   }
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73079596",
+     "name": {
+      "fr": "Écharpe ajourée",
+      "en": "Openwork scarf"
+     }
+    },
+    {
+     "id": "73332525",
+     "name": {
+      "fr": "Écharpe côtelée A.A.R.",
+      "en": "A.A.R. ribbed scarf"
+     }
+    },
+    {
+     "id": "72536778",
+     "name": {
+      "fr": "Cagoule en laine",
+      "en": "Wool balaclava"
+     }
+    },
+    {
+     "id": "73079487",
+     "name": {
+      "fr": "Bonnet slouchy",
+      "en": "Slouchy beanie"
+     }
+    },
+    {
+     "id": "72637209",
+     "name": {
+      "fr": "Gants en cuir",
+      "en": "Leather gloves"
+     }
+    },
+    {
+     "id": "73331506",
+     "name": {
+      "fr": "Bonnet noir",
+      "en": "Black beanie"
+     }
+    }
+   ]
+  }
+ ]
+}

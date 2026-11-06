@@ -1,0 +1,292 @@
+{
+ "date": "2026-11-08",
+ "subject": {
+  "fr": "Nouveaux auteurs : Monitaly, Todo, Agnès b., Maison Mihara Yasuhiro",
+  "en": "New designers: Monitaly, Todo, Agnès b., Maison Mihara Yasuhiro"
+ },
+ "preheader": {
+  "fr": "Le vestiaire militaire américain revu au Japon, des plissés extensibles, un chapeau peint de défilé",
+  "en": "The American military wardrobe reworked in Japan, stretchy pleats, a painted runway hat"
+ },
+ "intro": {
+  "fr": "Cette semaine, de nouveaux auteurs arrivent chez passéist :",
+  "en": "This week, new designers arrive at passéist:"
+ },
+ "introList": {
+  "fr": [
+   {
+    "label": "Monitaly",
+    "text": "Le vestiaire militaire américain revu au Japon, depuis 1989"
+   },
+   {
+    "label": "Todo",
+    "text": "Les plissés extensibles de Kotoha Yokozawa"
+   },
+   {
+    "label": "Et aussi",
+    "text": "Un chapeau peint Agnès b., défilé automne-hiver 2014"
+   }
+  ],
+  "en": [
+   {
+    "label": "Monitaly",
+    "text": "The American military wardrobe reworked in Japan, since 1989"
+   },
+   {
+    "label": "Todo",
+    "text": "Kotoha Yokozawa’s stretchy pleats"
+   },
+   {
+    "label": "Also",
+    "text": "A painted Agnès b. hat, autumn-winter 2014 show"
+   }
+  ]
+ },
+ "cover": {
+  "cols": 6,
+  "photos": [
+   {
+    "img": "73093011-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73093011"
+   },
+   {
+    "img": "73092249-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092249"
+   },
+   {
+    "img": "73332578-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73332578"
+   },
+   {
+    "img": "73093105-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73093105"
+   },
+   {
+    "img": "73092398-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092398"
+   },
+   {
+    "img": "73317848-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73317848"
+   },
+   {
+    "img": "73342088-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73342088"
+   },
+   {
+    "img": "73093140-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73093140"
+   },
+   {
+    "img": "73341539-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73341539"
+   },
+   {
+    "img": "73342020-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73342020"
+   },
+   {
+    "img": "73092530-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092530"
+   },
+   {
+    "img": "73092210-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092210"
+   }
+  ]
+ },
+ "sections": [
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "hero": true,
+   "items": [
+    {
+     "id": "73093011",
+     "name": {
+      "fr": "Veste club en nylon moiré",
+      "en": "Moiré nylon club jacket"
+     }
+    }
+   ],
+   "text": {
+    "fr": "Monitaly est fondée en 1989 par Yuki Matsuda. La maison américano-japonaise réinvente le vestiaire utilitaire et militaire américain, avec une confection exigeante et des tissus souvent chinés ou tissés à la main.\nCette veste club très légère, en nylon effet moiré marron, a une coupe ample et boxy, taille élastiquée. Comme toujours chez Monitaly, la coupe est folle.",
+    "en": "Monitaly was founded in 1989 by Yuki Matsuda. The American-Japanese label reinvents the American utility and military wardrobe, with demanding craftsmanship and fabrics often sourced or hand-woven.\nThis very light club jacket in brown moiré nylon has a loose, boxy cut with an elasticated waist. As always with Monitaly, the cut is incredible."
+   },
+   "details": [
+    {
+     "img": "73093011-1-md.webp",
+     "alt": {
+      "fr": "Détail",
+      "en": "Detail"
+     }
+    },
+    {
+     "img": "73093011-2-md.webp",
+     "alt": {
+      "fr": "Détail",
+      "en": "Detail"
+     }
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73332578",
+     "name": {
+      "fr": "Hoodie teddy en laine",
+      "en": "Wool teddy hoodie"
+     }
+    },
+    {
+     "id": "73092398",
+     "name": {
+      "fr": "Hoodie jacquard ikat",
+      "en": "Ikat jacquard hoodie"
+     }
+    },
+    {
+     "id": "73342088",
+     "name": {
+      "fr": "Pull à col isolé",
+      "en": "Insulated mock-neck pullover"
+     }
+    },
+    {
+     "id": "73341539",
+     "name": {
+      "fr": "Chemise vichy sashiko",
+      "en": "Sashiko gingham shirt"
+     }
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73092249",
+     "name": {
+      "fr": "Top à volants",
+      "en": "Ruffled top"
+     }
+    },
+    {
+     "id": "73093105",
+     "name": {
+      "fr": "Top plissé transparent",
+      "en": "Sheer pleated top"
+     }
+    },
+    {
+     "id": "73093140",
+     "name": {
+      "fr": "Top plissé manches longues",
+      "en": "Long-sleeved pleated top"
+     }
+    },
+    {
+     "id": "73092210",
+     "name": {
+      "fr": "Top plissé",
+      "en": "Pleated top"
+     }
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73317848",
+     "name": {
+      "fr": "Chapeau peint, défilé 2014",
+      "en": "Painted hat, 2014 show"
+     }
+    },
+    {
+     "id": "73342020",
+     "name": {
+      "fr": "Robe à bretelles",
+      "en": "Strappy dress"
+     }
+    },
+    {
+     "id": "73331582",
+     "name": {
+      "fr": "Casquette fils d’argent",
+      "en": "Silver-thread cap"
+     }
+    },
+    {
+     "id": "73092610",
+     "name": {
+      "fr": "Casquette double visière",
+      "en": "Double-peak cap"
+     }
+    }
+   ]
+  }
+ ]
+}
