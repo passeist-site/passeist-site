@@ -19,6 +19,7 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ### Marques corrigées
 - 71640391 : « SÉRIE VINTAGE "LIEBE LECKEN" » → RIPVANWINKLE (tirettes gravées) ; GROUND Y → YOHJI YAMAMOTO ; MIHARA YASUHIRO → MAISON MIHARA YASUHIRO (et à l'import).
+- Import, photos : l'import devinait le nom des photos à partir de l'adresse de l'annonce ; pour les 4 pièces « Non signé » (annonces renommées depuis leur création) la photo 1 restait introuvable → EXIT 3. Les chemins des photos sont maintenant lus dans la fiche Vestiaire (le nom deviné reste en secours), avec un diagnostic dans le journal si ça échoue encore.
 - Import : « North Marine Drive », « 45R & », « umii908 » = 45RPM (2 des 4 pièces « Non signé »). Les 4 n'étaient pas entrées le 5/11 : ScrapingBee a expiré pendant le téléchargement des photos, ça se retente à chaque synchro.
 
 ### Catégories revues de fond en comble (Tom : « pas de jupe, pas de chemise, Bas ça veut rien dire »)

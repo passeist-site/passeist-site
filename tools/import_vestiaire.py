@@ -109,14 +109,42 @@ def make_scraper():
     return s
 
 
-def process_photo(scraper, item_id, photo_idx, vestiaire_slug):
+def picture_paths(meta):
+    """Chemins des photos tels que Vestiaire les donne dans la fiche
+    (« produit/<nom>-<n>.jpg »), dans l'ordre. Le nom des fichiers photo
+    est celui de la création de l'annonce : quand l'annonce a changé de nom
+    depuis (marque passée en « Non signé », titre modifié…), deviner le nom
+    à partir de l'adresse de la fiche ne trouve aucune photo (4 pièces
+    bloquées, nov. 2026)."""
+    found = []
+    def walk(x):
+        if isinstance(x, dict):
+            for v in x.values(): walk(v)
+        elif isinstance(x, list):
+            for v in x: walk(v)
+        elif isinstance(x, str):
+            for m in re.finditer(r'(produit/[A-Za-z0-9_\-]+-\d+\.(?:jpe?g|png|webp))', x):
+                if m.group(1) not in found: found.append(m.group(1))
+    walk(meta.get('pictures') or meta.get('images') or meta)
+    # Les photos d'autres articles (recommandations) ne sont pas dans meta, qui
+    # est filtré sur l'article attendu ; on garde l'ordre -1, -2, -3…
+    def num(pth):
+        m = re.search(r'-(\d+)\.\w+$', pth); return int(m.group(1)) if m else 999
+    return sorted(found, key=num)
+
+
+def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None):
     """Télécharge la photo {photo_idx} (1-indexed) depuis Vestiaire CDN
     et écrit 3 versions webp pad square : item_id-{idx-1}-xl/md/sm.webp.
-    Le CDN images.vestiairecollective.com n'a pas Cloudflare → fetch direct."""
-    url = f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/produit/{vestiaire_slug}-{photo_idx}.jpg'
+    Le CDN images.vestiairecollective.com n'a pas Cloudflare → fetch direct.
+    path : chemin donné par la fiche (prioritaire sur le nom deviné)."""
+    url = (f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/{path}' if path
+           else f'https://images.vestiairecollective.com/images/resized/w=1600,q=90,f=auto,/produit/{vestiaire_slug}-{photo_idx}.jpg')
     try:
         r = scraper.get(url, timeout=30)
-        if r.status_code != 200 or len(r.content) < 10000: return False
+        if r.status_code != 200 or len(r.content) < 10000:
+            if photo_idx == 1: print(f'  photo 1 : HTTP {r.status_code}, {len(r.content)} octets ({url})', file=sys.stderr)
+            return False
         im = Image.open(io.BytesIO(r.content)).convert('RGB')
         for sn, target, q in [('xl', 1600, 95), ('md', 800, 95), ('sm', 400, 92)]:
             out = pad_square(im, target)
@@ -468,8 +496,17 @@ def main():
     os.makedirs(OUT_IMG, exist_ok=True)
     scraper = make_scraper()
     good = 0
+    paths = picture_paths(meta)
+    if paths:
+        print(f'  {len(paths)} photos dans la fiche Vestiaire (ex. {paths[0]})')
     for idx in range(1, 41):  # max 40 photos (règle définitive Tom 2026-05-04)
-        if process_photo(scraper, item_id, idx, vestiaire_slug):
+        path = paths[idx - 1] if idx - 1 < len(paths) else None
+        if paths and path is None:
+            break
+        ok = process_photo(scraper, item_id, idx, vestiaire_slug, path)
+        if not ok and path:  # secours : nom deviné depuis l'adresse
+            ok = process_photo(scraper, item_id, idx, vestiaire_slug)
+        if ok:
             good += 1
             print(f'    photo {idx}: OK')
         else:
@@ -478,6 +515,9 @@ def main():
         time.sleep(0.3)
 
     if good == 0:
+        # Diagnostic : où la fiche range-t-elle ses photos ?
+        keys = [k for k in meta.keys() if re.search(r'pic|image|photo|media', k, re.I)]
+        print(f'  clés photo de la fiche : {keys} ; extrait : {str({k: meta[k] for k in keys})[:600]}', file=sys.stderr)
         print(f'{item_id}: aucune photo téléchargeable → EXIT 3', file=sys.stderr)
         sys.exit(3)
 
