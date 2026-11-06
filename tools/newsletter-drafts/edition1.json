@@ -1,12 +1,12 @@
 {
  "date": "2026-11-08",
  "subject": {
-  "fr": "Nouveautés : mailles d’hiver, Yohji Yamamoto, Issey Miyake, 45rpm, et un nouvel auteur, Monitaly",
-  "en": "New in: winter knits, Yohji Yamamoto, Issey Miyake, 45rpm, and a new designer, Monitaly"
+  "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro, et un nouvel auteur, Monitaly",
+  "en": "New in: Issey Miyake, Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro, and a new designer, Monitaly"
  },
  "preheader": {
-  "fr": "Un cardigan marin 45rpm, un long pull en mohair Yohji Yamamoto, et de quoi finir l’hiver au chaud",
-  "en": "A 45rpm sailor cardigan, a long Yohji Yamamoto mohair jumper, and everything to see winter through"
+  "fr": "Une doudoune réversible Issey Miyake, des silhouettes noires, et l’arrivée de Monitaly",
+  "en": "A reversible Issey Miyake down jacket, black silhouettes, and the arrival of Monitaly"
  },
  "intro": {
   "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
@@ -15,8 +15,8 @@
  "introList": {
   "fr": [
    {
-    "label": "Mailles d’hiver",
-    "text": "Une sélection homme et femme"
+    "label": "En noir",
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Issey Miyake"
    },
    {
     "label": "Issey Miyake",
@@ -27,14 +27,14 @@
     "text": "Monitaly, le vestiaire militaire américain revu au Japon"
    },
    {
-    "label": "Pour finir l’hiver",
-    "text": "Bonnets, écharpes et chaussettes"
+    "label": "Pour finir",
+    "text": "Une casquette Y-3 et deux écharpes"
    }
   ],
   "en": [
    {
-    "label": "Winter knits",
-    "text": "A selection for men and women"
+    "label": "In black",
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Issey Miyake"
    },
    {
     "label": "Issey Miyake",
@@ -45,8 +45,8 @@
     "text": "Monitaly, the American military wardrobe reworked in Japan"
    },
    {
-    "label": "To see winter through",
-    "text": "Beanies, scarves and socks"
+    "label": "To finish",
+    "text": "A Y-3 cap and two scarves"
    }
   ]
  },
@@ -54,20 +54,12 @@
   "cols": 6,
   "photos": [
    {
-    "img": "73092118-0-md.webp",
+    "img": "73341941-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73092118"
-   },
-   {
-    "img": "73092488-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092488"
+    "link": "73341941"
    },
    {
     "img": "73093011-0-md.webp",
@@ -78,28 +70,12 @@
     "link": "73093011"
    },
    {
-    "img": "73079596-0-md.webp",
+    "img": "73317335-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73079596"
-   },
-   {
-    "img": "73331444-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73331444"
-   },
-   {
-    "img": "72536669-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "72536669"
+    "link": "73317335"
    },
    {
     "img": "73092364-0-md.webp",
@@ -110,14 +86,6 @@
     "link": "73092364"
    },
    {
-    "img": "73092398-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092398"
-   },
-   {
     "img": "73332525-0-md.webp",
     "alt": {
      "fr": "",
@@ -126,28 +94,60 @@
     "link": "73332525"
    },
    {
-    "img": "73079487-0-md.webp",
+    "img": "73342020-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73079487"
+    "link": "73342020"
    },
    {
-    "img": "72823125-0-md.webp",
+    "img": "73331676-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "72823125"
+    "link": "73331676"
    },
    {
-    "img": "72822896-0-md.webp",
+    "img": "73092398-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "72822896"
+    "link": "73092398"
+   },
+   {
+    "img": "73317897-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73317897"
+   },
+   {
+    "img": "73341539-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73341539"
+   },
+   {
+    "img": "73332466-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73332466"
+   },
+   {
+    "img": "73092530-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092530"
    }
   ]
  },
@@ -159,31 +159,31 @@
    },
    "items": [
     {
-     "id": "73092118",
+     "id": "73341941",
      "name": {
-      "fr": "Cardigan marin torsadé",
-      "en": "Cable-knit sailor cardigan"
+      "fr": "Jupe peplum à rubans",
+      "en": "Ribboned peplum skirt"
      }
     },
     {
-     "id": "72822896",
+     "id": "73342020",
      "name": {
-      "fr": "Pull en laine kaki",
-      "en": "Khaki wool jumper"
+      "fr": "Robe à bretelles",
+      "en": "Strappy dress"
      }
     },
     {
-     "id": "73092488",
+     "id": "73331676",
      "name": {
-      "fr": "Long pull en mohair",
-      "en": "Long mohair jumper"
+      "fr": "Veste courte à brandebourgs",
+      "en": "Short toggle jacket"
      }
     },
     {
-     "id": "72823125",
+     "id": "73317335",
      "name": {
-      "fr": "Gros cardigan torsadé",
-      "en": "Chunky cable cardigan"
+      "fr": "Chemise vareuse",
+      "en": "Smock shirt"
      }
     }
    ]
@@ -306,47 +306,21 @@
    },
    "items": [
     {
-     "id": "73079487",
+     "id": "73317897",
      "name": {
-      "fr": "Bonnet slouchy",
-      "en": "Slouchy beanie"
+      "fr": "Casquette Y-3",
+      "en": "Y-3 cap"
      }
-    },
-    {
-     "id": "73331506",
-     "name": {
-      "fr": "Bonnet noir",
-      "en": "Black beanie"
-     }
-    },
-    {
-     "id": "73079596",
-     "name": {
-      "fr": "Écharpe ajourée",
-      "en": "Openwork scarf"
-     }
-    },
-    {
-     "id": "72536669",
-     "name": {
-      "fr": "Écharpe ajourée marine",
-      "en": "Navy openwork scarf"
-     }
-    },
-    {
-     "id": "73331444",
-     "name": {
-      "fr": "Chaussettes marine",
-      "en": "Navy socks"
-     }
-    },
-    {
-     "id": "73331372",
-     "name": {
-      "fr": "Chaussettes grises",
-      "en": "Grey socks"
-     }
-    },
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "suite": true,
+   "items": [
     {
      "id": "73332525",
      "name": {
