@@ -16,7 +16,7 @@
   "fr": [
    {
     "label": "En noir",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s, une casquette Y-3 et un bonnet"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro et Y’s"
    },
    {
     "label": "IM Issey Miyake",
@@ -31,14 +31,14 @@
     "text": "Monitaly, le vestiaire militaire américain revu au Japon"
    },
    {
-    "label": "Pour finir",
-    "text": "Deux écharpes, Yohji Yamamoto A.A.R. et 45rpm"
+    "label": "Pour finir l’hiver",
+    "text": "Casquette, bonnet, écharpes et chaussettes"
    }
   ],
   "en": [
    {
     "label": "In black",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s, a Y-3 cap and a beanie"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro and Y’s"
    },
    {
     "label": "IM Issey Miyake",
@@ -53,8 +53,8 @@
     "text": "Monitaly, the American military wardrobe reworked in Japan"
    },
    {
-    "label": "To finish",
-    "text": "Two scarves, Yohji Yamamoto A.A.R. and 45rpm"
+    "label": "To see winter through",
+    "text": "Cap, beanie, scarves and socks"
    }
   ]
  },
@@ -194,22 +194,7 @@
     "fr": "",
     "en": ""
    },
-   "suite": true,
    "items": [
-    {
-     "id": "73317897",
-     "name": {
-      "fr": "Casquette Y-3",
-      "en": "Y-3 cap"
-     }
-    },
-    {
-     "id": "73079487",
-     "name": {
-      "fr": "Bonnet slouchy noir",
-      "en": "Black slouchy beanie"
-     }
-    },
     {
      "id": "73317371",
      "name": {
@@ -343,6 +328,48 @@
     "en": ""
    },
    "items": [
+    {
+     "id": "73317897",
+     "name": {
+      "fr": "Casquette Y-3",
+      "en": "Y-3 cap"
+     }
+    },
+    {
+     "id": "73079487",
+     "name": {
+      "fr": "Bonnet slouchy noir",
+      "en": "Black slouchy beanie"
+     }
+    },
+    {
+     "id": "73079596",
+     "name": {
+      "fr": "Écharpe ajourée",
+      "en": "Openwork scarf"
+     }
+    },
+    {
+     "id": "72536669",
+     "name": {
+      "fr": "Écharpe ajourée marine",
+      "en": "Navy openwork scarf"
+     }
+    },
+    {
+     "id": "73331444",
+     "name": {
+      "fr": "Chaussettes marine",
+      "en": "Navy socks"
+     }
+    },
+    {
+     "id": "73331372",
+     "name": {
+      "fr": "Chaussettes grises",
+      "en": "Grey socks"
+     }
+    },
     {
      "id": "73332525",
      "name": {
