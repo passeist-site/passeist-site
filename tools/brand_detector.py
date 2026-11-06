@@ -31,7 +31,7 @@ KNOWN_BRANDS = [
     ('NEIGHBORHOOD',        ['neighborhood']),
     ('WHITE MOUNTAINEERING',['white mountaineering']),
     ('NE-NET',              ['ne-net', 'ne net']),
-    ('45RPM',               ['45rpm', '45 rpm']),
+    ('45RPM',               ['45rpm', '45 rpm', 'north marine drive', '45r &', 'umii908']),
     ('YOSHIKI HISHINUMA',   ['yoshiki hishinuma', 'hishinuma']),
     ('ZUCCA',               ['zucca']),
     ('TSUMORI CHISATO',     ['tsumori chisato', 'tsumori']),

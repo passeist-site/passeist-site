@@ -2827,8 +2827,8 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 <footer class="footer">
   <div><span class="lang-fr">© 2026 passéist · Mode d'auteur japonaise · Paris</span><span class="lang-en">© 2026 passéist · Japanese designer fashion · Paris</span></div>
   <nav class="footer-nav">
-    <a href="/cgv">CGV</a>
-    <a href="/privacy">Confidentialité</a>
+    <a href="/cgv"><span class="lang-fr">CGV</span><span class="lang-en">Terms</span></a>
+    <a href="/privacy"><span class="lang-fr">Confidentialité</span><span class="lang-en">Privacy</span></a>
     <a href="/?newsletter=1">Newsletter</a>
     <a href="/contact">Contact</a>
     <a href="mailto:info@passeist.com">info@passeist.com</a>
@@ -2836,5 +2836,17 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </footer>
 
 <script src="/assets/marques.js" defer></script>
+<script>
+// Libellés d'accessibilité et bulles en anglais quand la page est en anglais
+(function(){
+  var EN={'Accès rapides':'Quick access','Favoris':'Favourites','Ouvrir le chat':'Open chat','Panier':'Cart','Recherche':'Search',"Retour à l'accueil":'Back to home'};
+  function apply(){ var en=document.documentElement.getAttribute('lang')==='en';
+    ['aria-label','title'].forEach(function(a){ document.querySelectorAll('['+a+']').forEach(function(el){
+      var k='data-fr-'+a, fr=el.getAttribute(k); if(fr===null){ fr=el.getAttribute(a); if(!EN[fr]) return; el.setAttribute(k,fr); }
+      el.setAttribute(a, en?EN[fr]:fr); }); }); }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+</script>
 </body>
 </html>

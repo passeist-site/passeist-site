@@ -2846,7 +2846,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
-      <h2 class="carousel-title">Notre sélection 45RPM / 45R</h2>
+      <h2 class="carousel-title"><span class="lang-fr">Notre sélection 45RPM / 45R</span><span class="lang-en">Our selection: 45RPM / 45R</span></h2>
       <div class="carousel">
         
         <a class="carousel-card" href="/shop?brand=45RPM" onclick="try{sessionStorage.setItem('passeist_open_slug','haut-45rpm-en-coton-blanc-66123208');}catch(e){}">
@@ -2995,7 +2995,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
         </a>
       </div>
       <div class="cta-shop">
-        <a href="/shop?brand=45RPM">Voir toutes les pièces 45RPM / 45R</a>
+        <a href="/shop?brand=45RPM"><span class="lang-fr">Voir toutes les pièces 45RPM / 45R</span><span class="lang-en">See all 45RPM / 45R pieces</span></a>
       </div>
     </section>
 </div>
@@ -3003,8 +3003,8 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 <footer class="footer">
   <div><span class="lang-fr">© 2026 passéist · Mode d'auteur japonaise · Paris</span><span class="lang-en">© 2026 passéist · Japanese designer fashion · Paris</span></div>
   <nav class="footer-nav">
-    <a href="/cgv">CGV</a>
-    <a href="/privacy">Confidentialité</a>
+    <a href="/cgv"><span class="lang-fr">CGV</span><span class="lang-en">Terms</span></a>
+    <a href="/privacy"><span class="lang-fr">Confidentialité</span><span class="lang-en">Privacy</span></a>
     <a href="/?newsletter=1">Newsletter</a>
     <a href="/contact">Contact</a>
     <a href="mailto:info@passeist.com">info@passeist.com</a>
@@ -3012,5 +3012,17 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </footer>
 
 <script src="/assets/marques.js" defer></script>
+<script>
+// Libellés d'accessibilité et bulles en anglais quand la page est en anglais
+(function(){
+  var EN={'Accès rapides':'Quick access','Favoris':'Favourites','Ouvrir le chat':'Open chat','Panier':'Cart','Recherche':'Search',"Retour à l'accueil":'Back to home'};
+  function apply(){ var en=document.documentElement.getAttribute('lang')==='en';
+    ['aria-label','title'].forEach(function(a){ document.querySelectorAll('['+a+']').forEach(function(el){
+      var k='data-fr-'+a, fr=el.getAttribute(k); if(fr===null){ fr=el.getAttribute(a); if(!EN[fr]) return; el.setAttribute(k,fr); }
+      el.setAttribute(a, en?EN[fr]:fr); }); }); }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+</script>
 </body>
 </html>

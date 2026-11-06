@@ -2625,5 +2625,17 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </footer>
 
 <script src="/assets/marques.js" defer></script>
+<script>
+// Libellés d'accessibilité et bulles en anglais quand la page est en anglais
+(function(){
+  var EN={'Accès rapides':'Quick access','Favoris':'Favourites','Ouvrir le chat':'Open chat','Panier':'Cart','Recherche':'Search',"Retour à l'accueil":'Back to home'};
+  function apply(){ var en=document.documentElement.getAttribute('lang')==='en';
+    ['aria-label','title'].forEach(function(a){ document.querySelectorAll('['+a+']').forEach(function(el){
+      var k='data-fr-'+a, fr=el.getAttribute(k); if(fr===null){ fr=el.getAttribute(a); if(!EN[fr]) return; el.setAttribute(k,fr); }
+      el.setAttribute(a, en?EN[fr]:fr); }); }); }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+</script>
 </body>
 </html>

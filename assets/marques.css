@@ -11,10 +11,14 @@
 /* ---- Langue (FR/EN) pour le menu et les cartes ---- */
 html[lang="en"] .mobile-nav .lang-fr,
 html[lang="en"] .bc-card .lang-fr,
-html[lang="en"] .brand-all-title .lang-fr { display: none !important; }
+html[lang="en"] .brand-all-title .lang-fr,
+html[lang="en"] .carousel-title .lang-fr,
+html[lang="en"] .cta-shop .lang-fr { display: none !important; }
 html[lang="fr"] .mobile-nav .lang-en,
 html[lang="fr"] .bc-card .lang-en,
-html[lang="fr"] .brand-all-title .lang-en { display: none !important; }
+html[lang="fr"] .brand-all-title .lang-en,
+html[lang="fr"] .carousel-title .lang-en,
+html[lang="fr"] .cta-shop .lang-en { display: none !important; }
 html[lang] .mobile-nav .mobile-nav-lang .lang-fr,
 html[lang] .mobile-nav .mobile-nav-lang .lang-en { display: inline !important; }
 

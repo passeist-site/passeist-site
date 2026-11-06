@@ -2819,7 +2819,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
   <p class="accuracy-note"><span class="lang-fr">Les informations présentées sont issues de recherches publiques et peuvent comporter des imprécisions. Merci de nous signaler toute correction.</span><span class="lang-en">The information presented here comes from public research and may contain inaccuracies. Please let us know of any correction.</span></p>
   
     <section class="carousel-section">
-      <h2 class="carousel-title">Notre sélection PLANTATION</h2>
+      <h2 class="carousel-title"><span class="lang-fr">Notre sélection PLANTATION</span><span class="lang-en">Our selection: PLANTATION</span></h2>
       <div class="carousel">
         <a class="carousel-card" href="/shop?brand=PLANTATION" onclick="try{sessionStorage.setItem('passeist_open_slug','pullgilet-issey-miyake-en-coton-multicolore-73079010');}catch(e){}">
           <div class="cc-img"><img src="/img/73079010-0-md.webp" alt="" loading="lazy"></div>
@@ -2828,7 +2828,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
         </a>
       </div>
       <div class="cta-shop">
-        <a href="/shop?brand=PLANTATION">Voir toutes les pièces PLANTATION</a>
+        <a href="/shop?brand=PLANTATION"><span class="lang-fr">Voir toutes les pièces PLANTATION</span><span class="lang-en">See all PLANTATION pieces</span></a>
       </div>
     </section>
 </div>
@@ -2836,8 +2836,8 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 <footer class="footer">
   <div><span class="lang-fr">© 2026 passéist · Mode d'auteur japonaise · Paris</span><span class="lang-en">© 2026 passéist · Japanese designer fashion · Paris</span></div>
   <nav class="footer-nav">
-    <a href="/cgv">CGV</a>
-    <a href="/privacy">Confidentialité</a>
+    <a href="/cgv"><span class="lang-fr">CGV</span><span class="lang-en">Terms</span></a>
+    <a href="/privacy"><span class="lang-fr">Confidentialité</span><span class="lang-en">Privacy</span></a>
     <a href="/?newsletter=1">Newsletter</a>
     <a href="/contact">Contact</a>
     <a href="mailto:info@passeist.com">info@passeist.com</a>
@@ -2845,5 +2845,17 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
 </footer>
 
 <script src="/assets/marques.js" defer></script>
+<script>
+// Libellés d'accessibilité et bulles en anglais quand la page est en anglais
+(function(){
+  var EN={'Accès rapides':'Quick access','Favoris':'Favourites','Ouvrir le chat':'Open chat','Panier':'Cart','Recherche':'Search',"Retour à l'accueil":'Back to home'};
+  function apply(){ var en=document.documentElement.getAttribute('lang')==='en';
+    ['aria-label','title'].forEach(function(a){ document.querySelectorAll('['+a+']').forEach(function(el){
+      var k='data-fr-'+a, fr=el.getAttribute(k); if(fr===null){ fr=el.getAttribute(a); if(!EN[fr]) return; el.setAttribute(k,fr); }
+      el.setAttribute(a, en?EN[fr]:fr); }); }); }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+</script>
 </body>
 </html>

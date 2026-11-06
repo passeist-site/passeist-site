@@ -312,6 +312,12 @@ function shortSeason(sy, en) {
 function editionOf(p, en) {
   return [lineOf(p), shortSeason(seasonYear(p.desc || ''), en)].filter(Boolean).join(' · ');
 }
+// Sous les photos des cartes : la date seule (Tom, nov. 2026). La ligne
+// (Pleats Please, Homme Plus, Y's…) n'apparaît que sur la fiche, sauf les
+// noms qui se lisent comme un genre (« Men », « Pour Homme »…), source de
+// confusion et pas traduits.
+const GENDER_LINES = new Set(['Men', 'Man', 'Homme', 'Pour Homme']);
+function visibleLineOf(p) { const l = lineOf(p); return GENDER_LINES.has(l) ? '' : l; }
 
 // ── French → English translation tables ───────────────────────────────────
 
@@ -1046,7 +1052,12 @@ module.exports = {
 
     // ── Phrase unique par pièce (FR/EN), ajoutée au catalogue ─────────
     products.forEach(p => { const it = buildIntro(p); p.intro = it.fr; p.intro_en = it.en; });
-    products.forEach(p => { const e = editionOf(p, false); if (e) { p.edition = e; p.edition_en = editionOf(p, true); } });
+    products.forEach(p => {
+      const sy = seasonYear(p.desc || '');
+      const fr = shortSeason(sy, false), en = shortSeason(sy, true), line = visibleLineOf(p);
+      if (fr) { p.edition = fr; p.edition_en = en; }
+      if (line) p.line = line;
+    });
 
     // ── Catalogue externalisé : les 1 300 produits (1,6 Mo) sortent des
     //    pages HTML dans un fichier JS versionné, téléchargé une seule fois

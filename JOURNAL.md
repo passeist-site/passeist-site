@@ -6,6 +6,21 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Langues : plus de français sur les pages anglaises, ni l'inverse (Tom)
+- 197 descriptions sans version anglaise (155 en vente, 42 vendues) traduites (la traduction automatique de l'import échoue : Google bloque). 17 noms de pièces sans anglais complétés.
+- Bulles et libellés d'accessibilité (Panier, Recherche, Favoris, Retour à l'accueil, Photo suivante…) traduits sur le site et les pages Auteurs ; « Réf. » → « Ref. » ; pied de page CGV / Confidentialité → Terms / Privacy ; titres « Notre sélection » / « Voir toutes les pièces » des pages Auteurs traduits ; titre de l'onglet d'une fiche en anglais pour un visiteur anglophone (les robots gardent le français).
+- Page Yohji : « FW 2023-24 » → « automne-hiver 2023-24 », « mid 90s » → « milieu des années 90 », « pièces staple » → « pièces essentielles » (version française).
+- Laissés exprès : noms propres (Comme des Garçons, Y's for men…), descriptions Google (meta) en français.
+
+### Boutique : titre, filtre Auteur, date seule sous les photos (Tom)
+- Titre sans filtre : « 790 pièces de créateurs japonais » (EN « 790 Japanese designer pieces »), « 790 pièces » dans le bouton Filtres sur mobile ; Vendu : « 663 pièces vendues ».
+- Filtre « Marque » → « Auteur » (« Tous les auteurs » ; EN Designer).
+- Sous les photos : la date seule (« Automne-hiver 2017 »). La ligne (Pleats Please, Homme Plus, Y's…) reste sur la fiche, sauf les noms qui se lisent comme un genre (Men, Pour Homme, Homme, Man), retirés.
+
+### Marques corrigées
+- 71640391 : « SÉRIE VINTAGE "LIEBE LECKEN" » → RIPVANWINKLE (tirettes gravées) ; GROUND Y → YOHJI YAMAMOTO ; MIHARA YASUHIRO → MAISON MIHARA YASUHIRO (et à l'import).
+- Import : « North Marine Drive », « 45R & », « umii908 » = 45RPM (2 des 4 pièces « Non signé »). Les 4 n'étaient pas entrées le 5/11 : ScrapingBee a expiré pendant le téléchargement des photos, ça se retente à chaque synchro.
+
 ### Catégories revues de fond en comble (Tom : « pas de jupe, pas de chemise, Bas ça veut rien dire »)
 - 17 catégories au lieu de 8 : Vestes, Manteaux, Costumes, Chemises, T-shirts & tops, Pulls & gilets, Sweats, Pantalons, Jupes, Robes, Combinaisons, Chaussures, Sacs, Chapeaux, Écharpes, Accessoires (Autres seulement si rien ne colle : 0 pièce aujourd'hui, contre 49 avant). Dans cet ordre dans le filtre, noms anglais en EN.
 - Mêmes règles partout : getCategory() (index.html), categoryOf() (plugin, lib/category.js), tools/type_from_desc.py (import).

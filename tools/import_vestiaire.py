@@ -419,6 +419,9 @@ def main():
     # YOHJI YAMAMOTO sur le site (la ligne est lue dans la description)
     if final_brand.replace('’', "'") in ("Y'S", 'Y S', 'GROUND Y', "Y'S FOR MEN"):
         final_brand = 'YOHJI YAMAMOTO'
+    # Même maison sous deux noms chez Vestiaire : un seul nom sur le site
+    if final_brand == 'MIHARA YASUHIRO':
+        final_brand = 'MAISON MIHARA YASUHIRO'
     if is_unsigned(vc_brand):
         # Marques déjà présentes sur le site (« Marque … » en tête de desc)
         try:
