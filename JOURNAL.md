@@ -15,7 +15,7 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 ### Boutique : titre, filtre Auteur, date seule sous les photos (Tom)
 - Titre sans filtre : « 790 pièces de créateurs japonais » (EN « 790 Japanese designer pieces »), « 790 pièces » dans le bouton Filtres sur mobile ; Vendu : « 663 pièces vendues ».
 - Filtre « Marque » → « Auteur » (« Tous les auteurs » ; EN Designer).
-- Sous les photos : la date seule (« Automne-hiver 2017 »). La ligne (Pleats Please, Homme Plus, Y's…) reste sur la fiche, sauf les noms qui se lisent comme un genre (Men, Pour Homme, Homme, Man), retirés.
+- Plus de date sous les photos des cartes (Tom : seules 55 % des pièces en ont une, souvent « Années 90 », les cartes se décalaient). Date et ligne (Pleats Please, Homme Plus, Y's…) sur la fiche, sauf les lignes qui se lisent comme un genre (Men, Pour Homme, Homme, Man), retirées. La date reste cherchable.
 
 ### Marques corrigées
 - 71640391 : « SÉRIE VINTAGE "LIEBE LECKEN" » → RIPVANWINKLE (tirettes gravées) ; GROUND Y → YOHJI YAMAMOTO ; MIHARA YASUHIRO → MAISON MIHARA YASUHIRO (et à l'import).
