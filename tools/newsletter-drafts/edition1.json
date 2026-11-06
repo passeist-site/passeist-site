@@ -334,20 +334,6 @@
      }
     },
     {
-     "id": "73332525",
-     "name": {
-      "fr": "Écharpe côtelée A.A.R.",
-      "en": "A.A.R. ribbed scarf"
-     }
-    },
-    {
-     "id": "73332466",
-     "name": {
-      "fr": "Écharpe graphique",
-      "en": "Graphic scarf"
-     }
-    },
-    {
      "id": "73331444",
      "name": {
       "fr": "Chaussettes marine",
@@ -359,6 +345,20 @@
      "name": {
       "fr": "Chaussettes grises",
       "en": "Grey socks"
+     }
+    },
+    {
+     "id": "73332525",
+     "name": {
+      "fr": "Écharpe côtelée A.A.R.",
+      "en": "A.A.R. ribbed scarf"
+     }
+    },
+    {
+     "id": "73332466",
+     "name": {
+      "fr": "Écharpe graphique",
+      "en": "Graphic scarf"
      }
     }
    ]
