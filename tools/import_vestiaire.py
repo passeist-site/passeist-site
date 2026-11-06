@@ -27,6 +27,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brand_detector import is_unsigned, detect_brand_in_desc, clean_desc_after_brand_extraction
+from type_from_desc import type_from_desc, category_of
 
 # === Configuration ===
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -305,12 +306,16 @@ _EN_HINT_WORDS = {
     'vest', 'blouse', 'cardigan', 'jeans', 'shorts', 'scarf', 'hat', 'bag',
     'shoes', 'boots', 'sneakers', 'knit', 'wool', 'cotton', 'leather', 'denim',
     'trench', 'parka', 'hoodie', 'sweatshirt', 'tank', 'gloves', 'belt', 'tie',
-    'with', 'and', 'the', 'for',
+    'with', 'and', 'the', 'for', 'puffer', 'jumper', 'harem', 'tunic', 'mules', 'trainers',
+    'lace', 'ups', 'satchel', 'cap', 'jumpsuit', 'backpack', 'socks',
 }
 
 
 # Secours quand Google Translate échoue : types Vestiaire anglais courants.
 _TYPE_EN_FR = [
+    ('lace ups', 'Derbies'), ('trainers', 'Baskets'), ('boots', 'Bottes'), ('mules', 'Mules'),
+    ('gloves', 'Gants'), ('puffer', 'Doudoune'), ('jumpsuit', 'Combinaison'), ('tunic', 'Tunique'),
+    ('jumper', 'Pull'), ('backpack', 'Sac à dos'), ('socks', 'Chaussettes'), ('cap', 'Casquette'),
     ('mid-length skirt', 'Jupe mi-longue'), ('mid-length dress', 'Robe mi-longue'),
     ('maxi dress', 'Robe longue'), ('mini dress', 'Mini robe'), ('mini skirt', 'Mini jupe'),
     ('belt bag', 'Sac banane'), ('small bag', 'Petite maroquinerie'), ('short vest', 'Blouson'),
@@ -346,7 +351,7 @@ def _looks_already_english(text):
         return False
     fr_hits = sum(1 for w in tokens if w in _FR_HINT_WORDS)
     en_hits = sum(1 for w in tokens if w in _EN_HINT_WORDS)
-    return en_hits > 0 and fr_hits == 0
+    return en_hits > 0 and en_hits >= fr_hits
 
 
 def main():
@@ -472,6 +477,24 @@ def main():
     if good == 0:
         print(f'{item_id}: aucune photo téléchargeable → EXIT 3', file=sys.stderr)
         sys.exit(3)
+
+    # === Type de pièce ===
+    # Type anglais chez Vestiaire (« Wool pull », « Harem »…) → français tout de
+    # suite, même si Google Translate n'est pas là (37 pièces en anglais, nov. 2026)
+    if ptype and _looks_already_english(ptype):
+        fr = _type_en_to_fr(ptype)
+        if fr != ptype:
+            print(f'  type anglais "{ptype}" → "{fr}"')
+            ptype = fr
+    # Le type écrit par Tom en tête de description (« Ravissant top en… ») passe
+    # avant la catégorie Vestiaire quand ils ne sont pas dans le même rayon
+    # (Vestiaire range les tops en « Blouse », les gilets en « Sweat »…)
+    dtype = type_from_desc(desc)
+    if dtype and category_of(dtype) != category_of(ptype):
+        mat = re.search(r' en (laine|lin|soie|cuir|cachemire|coton)\b', (ptype or '').lower())
+        new = dtype + (mat.group(0) if mat else '')
+        print(f'  type "{ptype}" → "{new}" (lu dans la description)')
+        ptype = new
 
     # === Traduction FR → EN automatique (Google Translate via deep-translator) ===
     # Si deep-translator dispo, traduit type/desc/size en EN. Sinon laisse vide

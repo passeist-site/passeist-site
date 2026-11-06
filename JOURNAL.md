@@ -6,9 +6,14 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
-### Boutique : « Bas » remplacé par « Jupes » et « Pantalons » (Tom)
-- Filtre Catégorie : Jupes (72 en vente) et Pantalons (75, shorts et jeans compris) au lieu de « Bas ». Pareil dans le panneau des alertes et pour les articles similaires des fiches.
-- Les alertes déjà créées avec « Bas » reçoivent toujours jupes et pantalons.
+### Catégories revues de fond en comble (Tom : « pas de jupe, pas de chemise, Bas ça veut rien dire »)
+- 17 catégories au lieu de 8 : Vestes, Manteaux, Costumes, Chemises, T-shirts & tops, Pulls & gilets, Sweats, Pantalons, Jupes, Robes, Combinaisons, Chaussures, Sacs, Chapeaux, Écharpes, Accessoires (Autres seulement si rien ne colle : 0 pièce aujourd'hui, contre 49 avant). Dans cet ordre dans le filtre, noms anglais en EN.
+- Mêmes règles partout : getCategory() (index.html), categoryOf() (plugin, lib/category.js), tools/type_from_desc.py (import).
+- 37 noms de pièces restés en anglais remis en français (Wool pull → Pull en laine, Harem → Sarouel, Satchel → Sac à dos…).
+- 74 pièces en vente dont le type Vestiaire contredisait la description (« Blouse » pour un top, « Sweat » pour un gilet, « Costume » pour une jupe, « Espadrilles » pour un short…) : type corrigé d'après la description.
+- 108 anciennes adresses de fiches redirigées (301) vers les nouvelles.
+- Import : type anglais traduit d'office, et le type écrit en tête de description (« Ravissant top en… ») l'emporte quand il n'est pas dans le même rayon que celui de Vestiaire.
+- Alertes : les anciennes catégories (Bas, Hauts, Maille, Vestes, Accessoires, Robes) reçoivent les nouvelles correspondantes.
 
 ## 2026-11-04
 

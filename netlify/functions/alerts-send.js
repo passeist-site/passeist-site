@@ -26,13 +26,17 @@ const genderOf = p => { const g = String(p.gender || '').toLowerCase(); return g
 const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().trim();
 
 const brandsOf = a => (Array.isArray(a.brands) ? a.brands : (a.brand ? [a.brand] : []));
+const LEGACY = {
+  Bas: ['Pantalons', 'Jupes'], Hauts: ['Chemises', 'T-shirts & tops'], Maille: ['Pulls & gilets', 'Sweats'],
+  Vestes: ['Manteaux', 'Costumes'], Accessoires: ['Sacs', 'Chapeaux', 'Écharpes'], Robes: ['Combinaisons'],
+};
 const catsOf = a => (Array.isArray(a.cats) ? a.cats : (a.cat ? [a.cat] : []));
 function matches(a, p) {
   const b = brandsOf(a), c = catsOf(a);
   if (b.length && !b.some(x => norm(x) === norm(p.brand))) return false;
-  // Anciennes alertes « Bas » (avant nov. 2026) = pantalons et jupes
+  // Anciennes catégories (avant nov. 2026) : « Bas » = pantalons et jupes, etc.
   const pc = categoryOf(p.type);
-  if (c.length && !c.includes(pc) && !(c.includes('Bas') && (pc === 'Pantalons' || pc === 'Jupes'))) return false;
+  if (c.length && !c.includes(pc) && !c.some(x => (LEGACY[x] || []).includes(pc))) return false;
   // Pièce sans genre (accessoire) : envoyée aux alertes homme comme femme
   if (a.gender && genderOf(p) && genderOf(p) !== a.gender) return false;
   return true;

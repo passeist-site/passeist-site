@@ -177,15 +177,25 @@ let SIM_CTX = { products: [], soldIds: new Set() };
 
 function categoryOf(type) {
   const t = String(type || '').toLowerCase();
-  const has = (...w) => w.some(x => t.includes(x));
-  if (has('sac', 'banane', 'étole', 'foulard', 'echarpe', 'écharpe', 'cheche', 'chèche', 'chapeau', 'bonnet', 'ceinture', 'portefeuille', 'maroquinerie', 'cartable')) return 'Accessoires';
-  if (has('bottes', 'basket', 'ballerine', 'escarpin', 'mocassin', 'derby', 'sandale')) return 'Chaussures';
-  if (has('robe', 'tunique')) return 'Robes';
-  if (has('jupe')) return 'Jupes';
-  if (has('pantalon', 'jean', 'short', 'bermuda', 'legging')) return 'Pantalons';
-  if (has('veste', 'blouson', 'manteau', 'parka', 'blazer')) return 'Vestes';
-  if (has('sweat', 'pull', 'cardigan', 'gilet')) return 'Maille';
-  if (has('chemise', 'top', 'tee', 't-shirt', 'blouse', 'polo', 'débardeur', 'debardeur', 'haut')) return 'Hauts';
+  const R = [
+    ['Écharpes', /étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou/],
+    ['Accessoires', /breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette/],
+    ['Sacs', /\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie/],
+    ['Chapeaux', /chapeau|bonnet|panama|casquette|\bcap\b|béret|beret/],
+    ['Chaussures', /botte|boots|basket|trainer|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|sneaker|espadrille|\btongs?\b|\bmules?\b|lace.?ups?/],
+    ['Costumes', /costume|tailleur/],
+    ['Combinaisons', /combinaison|jumpsuit|salopette/],
+    ['Robes', /robe|tunique|tunic/],
+    ['Jupes', /jupe/],
+    ['Pantalons', /pantalon|\bjeans?\b|short|bermuda|legging|sarouel|harem/],
+    ['Manteaux', /manteau|parka|caban|duffle|trench|puffer|doudoune/],
+    ['Vestes', /veste|blouson|blazer/],
+    ['Chemises', /chemis|blouse/],
+    ['Pulls & gilets', /pull|gilet|cardigan|jumper|maille/],
+    ['Sweats', /sweat/],
+    ['T-shirts & tops', /t-shirt|\btee\b|débardeur|debardeur|polo|\bhaut\b|\btop\b|camisole/],
+  ];
+  for (const [c, re] of R) if (re.test(t)) return c;
   return 'Autres';
 }
 
