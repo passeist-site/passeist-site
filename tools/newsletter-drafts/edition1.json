@@ -15,12 +15,12 @@
  "introList": {
   "fr": [
    {
-    "label": "45rpm",
-    "text": "Un cardigan marin torsadé North Marine Drive, années 90"
+    "label": "Mailles d’hiver",
+    "text": "Une sélection homme et femme"
    },
    {
-    "label": "Yohji Yamamoto",
-    "text": "Un long pull en mohair, Pour Homme automne-hiver 2017"
+    "label": "Issey Miyake",
+    "text": "Une doudoune réversible, Men automne-hiver 2011"
    },
    {
     "label": "Nouvel auteur",
@@ -33,12 +33,12 @@
   ],
   "en": [
    {
-    "label": "45rpm",
-    "text": "A cable-knit North Marine Drive sailor cardigan, the 90s"
+    "label": "Winter knits",
+    "text": "A selection for men and women"
    },
    {
-    "label": "Yohji Yamamoto",
-    "text": "A long mohair jumper, Pour Homme autumn-winter 2017"
+    "label": "Issey Miyake",
+    "text": "A reversible down jacket, Men autumn-winter 2011"
    },
    {
     "label": "New designer",
@@ -70,12 +70,12 @@
     "link": "73092488"
    },
    {
-    "img": "73332654-0-md.webp",
+    "img": "73093011-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73332654"
+    "link": "73093011"
    },
    {
     "img": "73079596-0-md.webp",
@@ -110,12 +110,12 @@
     "link": "73092364"
    },
    {
-    "img": "72823446-0-md.webp",
+    "img": "73092398-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "72823446"
+    "link": "73092398"
    },
    {
     "img": "73332525-0-md.webp",
@@ -142,12 +142,12 @@
     "link": "72823125"
    },
    {
-    "img": "73092053-0-md.webp",
+    "img": "72822896-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73092053"
+    "link": "72822896"
    }
   ]
  },
@@ -166,24 +166,10 @@
      }
     },
     {
-     "id": "73092053",
+     "id": "72822896",
      "name": {
-      "fr": "Pull brodé Junmen",
-      "en": "Embroidered Junmen jumper"
-     }
-    },
-    {
-     "id": "73332654",
-     "name": {
-      "fr": "Cardigan soie et lin",
-      "en": "Silk and linen cardigan"
-     }
-    },
-    {
-     "id": "72823446",
-     "name": {
-      "fr": "Pull long en crochet",
-      "en": "Long crochet jumper"
+      "fr": "Pull en laine kaki",
+      "en": "Khaki wool jumper"
      }
     },
     {
