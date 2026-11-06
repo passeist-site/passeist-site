@@ -27,7 +27,7 @@ KNOWN_BRANDS = [
     ('VISVIM',              ['visvim']),
     ('UNDERCOVER',          ['undercover', 'undercoverism']),
     ('NUMBER (N)INE',       ['number nine', 'number (n)ine', 'numbernine']),
-    ('MIHARA YASUHIRO',     ['mihara yasuhiro', 'maison mihara']),
+    ('MAISON MIHARA YASUHIRO', ['mihara yasuhiro', 'maison mihara']),
     ('NEIGHBORHOOD',        ['neighborhood']),
     ('WHITE MOUNTAINEERING',['white mountaineering']),
     ('NE-NET',              ['ne-net', 'ne net']),

@@ -7,6 +7,8 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 ## 2026-11-06
 
 ### Import bloqué pour toutes les nouvelles pièces : nom des photos Vestiaire changé
+- 2e synchro : 28 pièces importées mais incomplètes (1 à 7 photos sur 15) : le CDN photo refuse GitHub (403), le secours ScrapingBee échoue par moments et l'import s'arrêtait à la 1re photo ratée. Accents abîmés sur 6 pièces (réponse ScrapingBee lue en latin-1), « T-shirt » devenu « Chemise » (double traduction). Corrigé : 3 essais par photo (le dernier en proxy premium), on continue à la photo suivante, encodage UTF-8 forcé, « T-shirt » reconnu comme français, « Tie » = Cravate, MIHARA YASUHIRO = MAISON MIHARA YASUHIRO. Les 28 pièces et leurs 381 photos retirées pour être réimportées proprement.
+- 68563799 : collaboration X-Large × Eames Office → marque X-LARGE (BRAND_OVERRIDES).
 - Synchro du 6/11 (lancée à la main) : 32 imports en échec, « photo 1 : HTTP 403 ». Vestiaire nomme désormais les photos avec le numéro de l'annonce (« produit/73317570-1_2.jpg ») et non plus avec son nom ; l'adresse devinée par l'import ne marche plus pour aucune pièce. Les chemins sont lus dans la fiche (pictures[].path), préfixe « produit/ » ajouté ; secours ScrapingBee si le CDN refuse les serveurs GitHub.
 
 ### Types précis pour chaque pièce (Tom : « pas de chapeau/bonnet »)

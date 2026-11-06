@@ -150,7 +150,7 @@ def picture_paths(meta):
     return sorted(found, key=num)
 
 
-def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None):
+def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None, out_idx=None):
     """Télécharge la photo {photo_idx} (1-indexed) depuis Vestiaire CDN
     et écrit 3 versions webp pad square : item_id-{idx-1}-xl/md/sm.webp.
     Le CDN images.vestiairecollective.com n'a pas Cloudflare → fetch direct.
@@ -162,21 +162,28 @@ def process_photo(scraper, item_id, photo_idx, vestiaire_slug, path=None):
         if (r.status_code != 200 or len(r.content) < 10000) and os.environ.get('SCRAPINGBEE_API_KEY', '').strip():
             # Secours : le CDN photo refuse parfois les serveurs GitHub (403) →
             # même service que pour les fiches (1 crédit par photo)
-            try:
-                r2 = requests.get('https://app.scrapingbee.com/api/v1/', timeout=60, params={
-                    'api_key': os.environ['SCRAPINGBEE_API_KEY'].strip(), 'url': url,
-                    'render_js': 'false', 'country_code': 'fr'})
-                if r2.status_code == 200 and len(r2.content) >= 10000:
-                    r = r2
-            except Exception as e:
-                print(f'  photo {photo_idx} scrapingbee ERR: {e}', file=sys.stderr)
+            # 3 essais (le service échoue de temps en temps : 1 à 3 photos sur
+            # 15 le 6/11), le dernier par proxy premium
+            for attempt in range(3):
+                try:
+                    params = {'api_key': os.environ['SCRAPINGBEE_API_KEY'].strip(), 'url': url,
+                              'render_js': 'false', 'country_code': 'fr'}
+                    if attempt == 2: params['premium_proxy'] = 'true'
+                    r2 = requests.get('https://app.scrapingbee.com/api/v1/', timeout=60, params=params)
+                    if r2.status_code == 200 and len(r2.content) >= 10000:
+                        r = r2
+                        break
+                    print(f'  photo {photo_idx} scrapingbee essai {attempt + 1} : HTTP {r2.status_code}', file=sys.stderr)
+                except Exception as e:
+                    print(f'  photo {photo_idx} scrapingbee essai {attempt + 1} ERR: {e}', file=sys.stderr)
+                time.sleep(1 + attempt)
         if r.status_code != 200 or len(r.content) < 10000:
             if photo_idx == 1: print(f'  photo 1 : HTTP {r.status_code}, {len(r.content)} octets ({url})', file=sys.stderr)
             return False
         im = Image.open(io.BytesIO(r.content)).convert('RGB')
         for sn, target, q in [('xl', 1600, 95), ('md', 800, 95), ('sm', 400, 92)]:
             out = pad_square(im, target)
-            out.save(os.path.join(OUT_IMG, f'{item_id}-{photo_idx-1}-{sn}.webp'),
+            out.save(os.path.join(OUT_IMG, f'{item_id}-{(photo_idx if out_idx is None else out_idx + 1)-1}-{sn}.webp'),
                      'WEBP', quality=q, method=6)
         return True
     except Exception as e:
@@ -253,6 +260,7 @@ def fetch_meta(url, expected_id=None):
                     params['premium_proxy'] = 'true'
                 r = requests.get('https://app.scrapingbee.com/api/v1/', params=params, timeout=60)
                 if r.status_code == 200:
+                    r.encoding = 'utf-8'  # sinon accents abîmés (« annÃ©es », 6/11)
                     result = _extract(r.text, label)
                     if result:
                         return result
@@ -375,7 +383,7 @@ _TYPE_EN_FR = [
     ('mid-length skirt', 'Jupe mi-longue'), ('mid-length dress', 'Robe mi-longue'),
     ('maxi dress', 'Robe longue'), ('mini dress', 'Mini robe'), ('mini skirt', 'Mini jupe'),
     ('belt bag', 'Sac banane'), ('small bag', 'Petite maroquinerie'), ('short vest', 'Blouson'),
-    ('cardi coat', 'Veste longue'), ('t-shirt', 'Tee shirt'), ('trousers', 'Pantalon'),
+    ('cardi coat', 'Veste longue'), ('t-shirt', 'T-shirt'), ('tie', 'Cravate'), ('trousers', 'Pantalon'),
     ('pants', 'Pantalon'), ('jeans', 'Jean'), ('jacket', 'Veste'), ('vest', 'Veste'),
     ('coat', 'Manteau'), ('sweater', 'Pull'), ('pull', 'Pull'), ('knitwear', 'Pull'),
     ('sweatshirt', 'Sweat'), ('hoodie', 'Sweat à capuche'), ('shirt', 'Chemise'),
@@ -398,6 +406,9 @@ def _type_en_to_fr(t):
 
 def _looks_already_english(text):
     t = (text or '').strip().lower()
+    # « T-shirt » / « tee shirt » se disent aussi en français : sinon « T-shirt »
+    # devenait « Tee shirt » puis « Chemise » (6/11)
+    t = re.sub(r't-shirts?|tee[- ]?shirts?', ' ', t).strip()
     if not t:
         return False
     if any(c in t for c in 'àâäéèêëîïôöùûüçœ'):
@@ -480,7 +491,7 @@ def main():
         final_brand = 'MAISON MIHARA YASUHIRO'
     # Marques données par Tom pour des annonces « Non signé » dont la
     # description ne dit pas la marque
-    BRAND_OVERRIDES = {'72606166': '45RPM'}
+    BRAND_OVERRIDES = {'72606166': '45RPM', '68563799': 'X-LARGE'}
     if str(item_id) in BRAND_OVERRIDES:
         final_brand = BRAND_OVERRIDES[str(item_id)]
         print(f'  marque donnée par Tom : {final_brand}')
@@ -537,16 +548,20 @@ def main():
         path = paths[idx - 1] if idx - 1 < len(paths) else None
         if paths and path is None:
             break
-        ok = process_photo(scraper, item_id, idx, vestiaire_slug, path)
-        if not ok and path:  # secours : nom deviné depuis l'adresse
-            ok = process_photo(scraper, item_id, idx, vestiaire_slug)
+        ok = process_photo(scraper, item_id, idx, vestiaire_slug, path, out_idx=good)
+        if not ok and not paths:
+            print(f'    photo {idx}: skip')
+            break
         if ok:
             good += 1
             print(f'    photo {idx}: OK')
         else:
-            print(f'    photo {idx}: skip')
-            break
+            # Photo ratée malgré les essais : on passe à la suivante (les
+            # photos du site restent numérotées sans trou)
+            print(f'    photo {idx}: ÉCHEC, photo suivante', file=sys.stderr)
         time.sleep(0.3)
+    if paths and good < len(paths):
+        print(f'  ⚠ {good} photos sur {len(paths)}', file=sys.stderr)
 
     if good == 0:
         # Diagnostic : où la fiche range-t-elle ses photos ?
