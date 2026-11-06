@@ -15,12 +15,8 @@
  "introList": {
   "fr": [
    {
-    "label": "En noir et en camel",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Kijima Takayuki"
-   },
-   {
-    "label": "IM Issey Miyake",
-    "text": "Deux chemises des années 80"
+    "label": "La sélection en noir",
+    "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
    },
    {
     "label": "Issey Miyake",
@@ -31,18 +27,18 @@
     "text": "Monitaly, le vestiaire militaire américain revu au Japon"
    },
    {
+    "label": "Et aussi",
+    "text": "Deux chemises IM Issey Miyake et un ensemble camel"
+   },
+   {
     "label": "Pour finir l’hiver",
     "text": "Casquette, bonnet, écharpes et chaussettes"
    }
   ],
   "en": [
    {
-    "label": "In black and camel",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Kijima Takayuki"
-   },
-   {
-    "label": "IM Issey Miyake",
-    "text": "Two shirts from the 80s"
+    "label": "The black selection",
+    "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
    },
    {
     "label": "Issey Miyake",
@@ -51,6 +47,10 @@
    {
     "label": "New designer",
     "text": "Monitaly, the American military wardrobe reworked in Japan"
+   },
+   {
+    "label": "Also",
+    "text": "Two IM Issey Miyake shirts and a camel set"
    },
    {
     "label": "To see winter through",
@@ -62,12 +62,12 @@
   "cols": 6,
   "photos": [
    {
-    "img": "73341941-0-md.webp",
+    "img": "73331676-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73341941"
+    "link": "73331676"
    },
    {
     "img": "73093011-0-md.webp",
@@ -78,12 +78,12 @@
     "link": "73093011"
    },
    {
-    "img": "73317335-0-md.webp",
+    "img": "73341848-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73317335"
+    "link": "73341848"
    },
    {
     "img": "73092364-0-md.webp",
@@ -94,44 +94,12 @@
     "link": "73092364"
    },
    {
-    "img": "73332525-0-md.webp",
+    "img": "73341941-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73332525"
-   },
-   {
-    "img": "73342020-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73342020"
-   },
-   {
-    "img": "73331676-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73331676"
-   },
-   {
-    "img": "73092398-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092398"
-   },
-   {
-    "img": "73317897-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73317897"
+    "link": "73341941"
    },
    {
     "img": "73092918-0-md.webp",
@@ -142,12 +110,28 @@
     "link": "73092918"
    },
    {
-    "img": "73332466-0-md.webp",
+    "img": "73341667-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73332466"
+    "link": "73341667"
+   },
+   {
+    "img": "73092398-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73092398"
+   },
+   {
+    "img": "73342020-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73342020"
    },
    {
     "img": "73317371-0-md.webp",
@@ -156,6 +140,22 @@
      "en": ""
     },
     "link": "73317371"
+   },
+   {
+    "img": "73079596-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73079596"
+   },
+   {
+    "img": "73341765-0-md.webp",
+    "alt": {
+     "fr": "",
+     "en": ""
+    },
+    "link": "73341765"
    }
   ]
  },
@@ -187,27 +187,27 @@
       "fr": "Robe à bretelles",
       "en": "Strappy dress"
      }
-    }
-   ]
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "items": [
+    },
     {
-     "id": "73317371",
+     "id": "73341848",
      "name": {
-      "fr": "Chemise jacquard vannerie",
-      "en": "Basketweave jacquard shirt"
+      "fr": "Pantalon en gaze de coton",
+      "en": "Cotton gauze trousers"
+     },
+     "big": true
+    },
+    {
+     "id": "73341765",
+     "name": {
+      "fr": "Veste légère en gaze",
+      "en": "Light gauze jacket"
      }
     },
     {
-     "id": "73317335",
+     "id": "73341667",
      "name": {
-      "fr": "Chemise vareuse",
-      "en": "Smock shirt"
+      "fr": "Maxi gilet Ground Y",
+      "en": "Ground Y maxi cardigan"
      }
     }
    ]
@@ -258,28 +258,6 @@
     "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
     "en": "Issey Miyake Men show, autumn-winter 2011."
    }
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "items": [
-    {
-     "id": "73092918",
-     "name": {
-      "fr": "Veste chemise camel",
-      "en": "Camel shirt jacket"
-     }
-    },
-    {
-     "id": "73092610",
-     "name": {
-      "fr": "Casquette double visière",
-      "en": "Double-peak cap"
-     }
-    }
-   ]
   },
   {
    "title": {
@@ -341,6 +319,51 @@
      "name": {
       "fr": "Chemise vichy sashiko",
       "en": "Sashiko gingham shirt"
+     }
+    }
+   ],
+   "suite": true
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73317371",
+     "name": {
+      "fr": "Chemise jacquard vannerie",
+      "en": "Basketweave jacquard shirt"
+     }
+    },
+    {
+     "id": "73317335",
+     "name": {
+      "fr": "Chemise vareuse",
+      "en": "Smock shirt"
+     }
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "items": [
+    {
+     "id": "73092918",
+     "name": {
+      "fr": "Veste chemise camel",
+      "en": "Camel shirt jacket"
+     }
+    },
+    {
+     "id": "73092610",
+     "name": {
+      "fr": "Casquette double visière",
+      "en": "Double-peak cap"
      }
     }
    ],
