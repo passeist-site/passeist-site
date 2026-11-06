@@ -167,6 +167,14 @@
    },
    "items": [
     {
+     "id": "73331676",
+     "name": {
+      "fr": "Veste courte à brandebourgs",
+      "en": "Short toggle jacket"
+     },
+     "big": true
+    },
+    {
      "id": "73341941",
      "name": {
       "fr": "Jupe peplum à rubans",
@@ -179,14 +187,6 @@
       "fr": "Robe à bretelles",
       "en": "Strappy dress"
      }
-    },
-    {
-     "id": "73331676",
-     "name": {
-      "fr": "Veste courte à brandebourgs",
-      "en": "Short toggle jacket"
-     },
-     "big": true
     }
    ]
   },
