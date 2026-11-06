@@ -37,16 +37,16 @@ GARMENTS = [
     (r"derbies|derby", 'Derbies'), (r"mocassins?", 'Mocassins'), (r"espadrilles?", 'Espadrilles'),
     (r"sandales?", 'Sandales'), (r"mules", 'Mules'), (r"ballerines?", 'Ballerines'), (r"tongs", 'Tongs'),
     (r"sacs? à dos", 'Sac à dos'), (r"sacs? banane|banane", 'Sac banane'), (r"cabas", 'Sac'),
-    (r"sacoches?", 'Sacoche'), (r"pochettes?", 'Pochette'), (r"portefeuilles?|porte-cartes?", 'Portefeuille'),
+    (r"sacoches?", 'Sacoche'), (r"pochettes?", 'Pochette'), (r"portefeuilles?", 'Portefeuille'), (r"porte[- ]cartes?", 'Porte-cartes'),
     (r"cartables?", 'Cartable'), (r"sacs?", 'Sac'),
     (r"écharpes?|echarpes?", 'Écharpe'), (r"étoles?|etoles?", 'Étole'), (r"foulards?", 'Foulard'),
     (r"chèches?|cheches?", 'Chèche'), (r"furoshikis?|bandanas?", 'Foulard'),
-    (r"chapeaux|chapeau|bobs?|panamas?", 'Chapeau'), (r"bonnets?", 'Bonnet'), (r"casquettes?", 'Casquette'),
+    (r"bobs?", 'Bob'), (r"panamas?", 'Panama'), (r"chapeaux|chapeau", 'Chapeau'), (r"bonnets?", 'Bonnet'), (r"casquettes?", 'Casquette'),
     (r"bérets?|berets?", 'Béret'),
     (r"ceintures?", 'Ceinture'), (r"cravates?", 'Cravate'), (r"gants", 'Gants'), (r"moufles", 'Moufles'),
     (r"bracelets?", 'Bracelet'), (r"boucles d.oreilles", "Boucles d'oreilles"), (r"colliers?", 'Collier'),
     (r"bagues?", 'Bague'), (r"chaussettes?", 'Chaussettes'), (r"clips? d.oreilles?", "Boucles d'oreilles"),
-    (r"porte[- ]clés?", 'Porte-clés'), (r"cagoules?", 'Bonnet'), (r"richelieus?", 'Derbies'),
+    (r"port[eé][- ]clés?", 'Porte-clés'), (r"cagoules?", 'Bonnet'), (r"richelieus?", 'Derbies'),
     (r"vareuses?", 'Chemise'), (r"mailles?", 'Pull'),
 ]
 _ALT = '|'.join(g for g, _ in GARMENTS)
@@ -107,8 +107,8 @@ def type_from_desc(desc):
 _CATS = [
     ('Écharpes', r"étole|etole|foulard|écharpe|echarpe|chèche|cheche|tour de cou"),
     ('Accessoires', r"porte-clé|breloque|ceinture|cravate|gants?\b|moufle|bracelet|boucles|bague|collier|broche|pendentif|bijou|chaussette"),
-    ('Sacs', r"\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie"),
-    ('Chapeaux', r"chapeau|bonnet|panama|casquette|\bcap\b|béret|beret"),
+    ('Sacs', r"porte-carte|\bsacs?\b|banane|satchel|cabas|pochette|portefeuille|cartable|sacoche|maroquinerie"),
+    ('Chapeaux', r"\bbob\b|chapeau|bonnet|panama|casquette|\bcap\b|béret|beret"),
     ('Chaussures', r"botte|boots|basket|trainer|ballerine|escarpin|mocassin|derbies|derby|sandale|chaussure|sneaker|espadrille|\btongs?\b|\bmules?\b|lace.?ups?"),
     ('Costumes', r"costume|tailleur"),
     ('Combinaisons', r"combinaison|jumpsuit|salopette"),
@@ -132,10 +132,19 @@ def category_of(t):
     return 'Autres'
 
 
+VAGUE = re.compile(r'/|&|petite maroquinerie|^haut$|^maille|^bijoux$', re.I)
+
+
 def site_type(vestiaire_type, desc):
     """Type à afficher : celui de la description s'il change de rayon, sinon
     celui de Vestiaire (souvent plus précis : « Jupe mi-longue en laine »)."""
     dt = type_from_desc(desc)
+    # Types flous de Vestiaire (« Chapeau / bonnet », « Pull / gilet / sweat »,
+    # « Petite maroquinerie », « Haut »…) : toujours remplacés par la pièce
+    # nommée dans la description (Tom : « précis pour chaque article »)
+    if dt and VAGUE.search(vestiaire_type or ''):
+        mat = re.search(r' en (laine|lin|soie|cuir|cachemire|coton|toile)\b', (vestiaire_type or '').lower())
+        return dt + (mat.group(0) if mat else '')
     # Costume = ensemble (veste + pantalon) : la description nomme souvent une
     # seule des deux pièces, on garde « Costume »
     if not dt or category_of(dt) == category_of(vestiaire_type) or category_of(vestiaire_type) == 'Costumes':

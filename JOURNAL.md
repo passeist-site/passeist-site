@@ -6,6 +6,10 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Types précis pour chaque pièce (Tom : « pas de chapeau/bonnet »)
+- 56 types flous venus de Vestiaire remplacés par la pièce nommée dans la description : « Chapeau / bonnet » → Casquette, Chapeau, Bob, Bonnet ; « Pull / gilet / sweat » → Cardigan ; « Petite maroquinerie » → Portefeuille, Porte-cartes, Porte-clés ; « Pochette » → Sacoche, Sac bandoulière ; « Haut » → Top, T-shirt… (matière gardée : « Casquette en cuir »). L'import fait pareil (tools/type_from_desc.py, VAGUE). 237 anciennes adresses redirigées au total.
+- Sous les photos : le type seul, sans matière (choix de Tom).
+
 ### Langues : plus de français sur les pages anglaises, ni l'inverse (Tom)
 - 197 descriptions sans version anglaise (155 en vente, 42 vendues) traduites (la traduction automatique de l'import échoue : Google bloque). 17 noms de pièces sans anglais complétés.
 - Bulles et libellés d'accessibilité (Panier, Recherche, Favoris, Retour à l'accueil, Photo suivante…) traduits sur le site et les pages Auteurs ; « Réf. » → « Ref. » ; pied de page CGV / Confidentialité → Terms / Privacy ; titres « Notre sélection » / « Voir toutes les pièces » des pages Auteurs traduits ; titre de l'onglet d'une fiche en anglais pour un visiteur anglophone (les robots gardent le français).
