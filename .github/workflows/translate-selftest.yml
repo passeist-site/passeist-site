@@ -1,0 +1,23 @@
+name: Essai traduction
+
+# Lancé à la main : vérifie que la traduction FR → EN marche depuis GitHub
+# (Google refuse les serveurs GitHub ; tools/translate.py passe par ScrapingBee).
+# Ne modifie rien sur le site.
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: tools
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Traduction d'une phrase
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: python tools/translate.py --selftest

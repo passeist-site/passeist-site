@@ -217,6 +217,12 @@ jobs:
           print(f'\nRésumé : {len(imported)} importés, {len(failed_unsigned)} NON SIGNÉ skip, {len(failed_other)} autres erreurs')
           PYEOF
 
+      - name: Rattrapage traductions anglaises manquantes
+        if: steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != ''
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: python tools/translate.py --fill 40 || true
+
       - name: Régénère products.json (source de vérité prix serveur)
         if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |

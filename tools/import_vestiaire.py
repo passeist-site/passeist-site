@@ -615,43 +615,35 @@ def main():
     # === Traduction FR → EN automatique (Google Translate via deep-translator) ===
     # Si deep-translator dispo, traduit type/desc/size en EN. Sinon laisse vide
     # (sera traduit en batch plus tard via translate_descs.py / translate_types_sizes.py).
+    # Google refuse les serveurs GitHub depuis mi-octobre 2026 : tools/translate.py
+    # passe par ScrapingBee quand l'appel direct est refusé.
+    from translate import translate as _tr
     type_en, desc_en, size_en = '', '', ''
-    try:
-        from deep_translator import GoogleTranslator
-        tr = GoogleTranslator(source='fr', target='en')
-        if ptype:
-            if _looks_already_english(ptype):
-                print(f'  ⚠ type déjà en anglais ("{ptype}") → EN→FR au lieu de FR→EN')
-                type_en = ptype
-                try:
-                    ptype = GoogleTranslator(source='en', target='fr').translate(ptype) or ptype
-                except: pass
-                if _looks_already_english(ptype):  # traduction en échec (vu le 28/09/2026)
-                    ptype = _type_en_to_fr(ptype)
-                    print(f'  traduction en échec → dictionnaire : "{ptype}"')
-            else:
-                try: type_en = tr.translate(ptype) or ''
-                except: pass
-        if desc:
-            if _looks_already_english(desc):
-                print('  ⚠ description déjà en anglais → EN→FR au lieu de FR→EN')
-                desc_en = desc
-                try:
-                    desc = GoogleTranslator(source='en', target='fr').translate(desc) or desc
-                except: pass
-            else:
-                try: desc_en = tr.translate(desc) or ''
-                except: pass
-        # Size : pas la peine de traduire les tokens courts (ils restent identiques en EN)
-        # Mais on remplace "Taille unique" → "One size"
-        if size:
-            if 'taille unique' in size.lower():
-                size_en = re.sub(r'taille unique', 'One size', size, flags=re.IGNORECASE)
-            else:
-                size_en = size  # XS/S/M/L/XL/XXL/numériques sont identiques EN
-        print(f'  traduction EN : type_en={type_en[:40]}... desc_en={desc_en[:40]}...')
-    except ImportError:
-        print('  ⚠ deep-translator pas installé, type_en/desc_en restent vides')
+    if ptype:
+        if _looks_already_english(ptype):
+            print(f'  ⚠ type déjà en anglais ("{ptype}") → dictionnaire')
+            type_en = ptype
+            ptype = _type_en_to_fr(ptype)
+        else:
+            type_en = _tr(ptype)
+            type_en = type_en[:1].upper() + type_en[1:]
+    if desc:
+        if _looks_already_english(desc):
+            print('  ⚠ description déjà en anglais → EN→FR')
+            desc_en = desc
+            desc = _tr(desc, 'en', 'fr') or desc
+        else:
+            desc_en = _tr(desc)
+    # Size : pas la peine de traduire les tokens courts (ils restent identiques en EN)
+    # Mais on remplace "Taille unique" → "One size"
+    if size:
+        if 'taille unique' in size.lower():
+            size_en = re.sub(r'taille unique', 'One size', size, flags=re.IGNORECASE)
+        else:
+            size_en = size  # XS/S/M/L/XL/XXL/numériques sont identiques EN
+    print(f'  traduction EN : type_en={type_en[:40]!r} desc_en={desc_en[:60]!r}')
+    if desc and not desc_en:
+        print('  ⚠ traduction EN échouée : rattrapée en fin de synchro (translate.py --fill)', file=sys.stderr)
 
     # === Build PRODUCTS entry ===
     new_entry = {

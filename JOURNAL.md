@@ -6,6 +6,12 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ## 2026-11-06
 
+### Traduction anglaise automatique réparée
+- Cause : depuis mi-octobre 2026, Google Traduction refuse les serveurs GitHub (page « Sorry… »). deep-translator échouait sans rien dire : ~230 pièces importées sans anglais (traduites à la main les 6/11).
+- tools/translate.py : appel direct d'abord (gratuit), sinon même requête via ScrapingBee (adresse française, 1 crédit par appel), découpage en morceaux de 1 500 caractères, tout ou rien. Utilisé par l'import.
+- Synchro : étape « Rattrapage traductions anglaises manquantes » (translate.py --fill 40) après les imports.
+- Workflow « Essai traduction » (lancement à la main) : traduit une phrase, ne modifie rien.
+
 ### Synchro complète du 6/11 : 32 pièces importées, toutes les photos
 - Import en 5 photos à la fois : 32 pièces (dont les 4 « Non signé » : 3 × 45RPM, 1 × X-LARGE), toutes leurs photos, accents corrects. 816 pièces en vente.
 - Types : quand Vestiaire donne un mot générique ou faux dans un même rayon (« Cravate » pour des chaussettes, « Chapeau » pour une casquette), la description l'emporte : 4 chaussettes, 3 casquettes, 1 bonnet, 1 cagoule (nouveau type, rayon Chapeaux). Panama, Cartable, Ballerines… restent tels quels. 9 adresses redirigées.
