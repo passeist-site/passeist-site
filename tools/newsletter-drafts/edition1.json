@@ -16,7 +16,7 @@
   "fr": [
    {
     "label": "En noir",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Y-3"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s, une casquette Y-3 et un bonnet"
    },
    {
     "label": "IM Issey Miyake",
@@ -38,7 +38,7 @@
   "en": [
    {
     "label": "In black",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Y-3"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s, a Y-3 cap and a beanie"
    },
    {
     "label": "IM Issey Miyake",
@@ -186,12 +186,28 @@
       "fr": "Veste courte à brandebourgs",
       "en": "Short toggle jacket"
      }
-    },
+    }
+   ]
+  },
+  {
+   "title": {
+    "fr": "",
+    "en": ""
+   },
+   "suite": true,
+   "items": [
     {
      "id": "73317897",
      "name": {
       "fr": "Casquette Y-3",
       "en": "Y-3 cap"
+     }
+    },
+    {
+     "id": "73079487",
+     "name": {
+      "fr": "Bonnet slouchy noir",
+      "en": "Black slouchy beanie"
      }
     },
     {
