@@ -28,7 +28,7 @@
    },
    {
     "label": "Pour finir l’hiver",
-    "text": "Écharpes, bonnet, cagoule et gants"
+    "text": "Bonnets, écharpes et chaussettes"
    }
   ],
   "en": [
@@ -46,7 +46,7 @@
    },
    {
     "label": "To see winter through",
-    "text": "Scarves, beanie, balaclava and gloves"
+    "text": "Beanies, scarves and socks"
    }
   ]
  },
@@ -86,20 +86,20 @@
     "link": "73079596"
    },
    {
-    "img": "72637209-0-md.webp",
+    "img": "73331444-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "72637209"
+    "link": "73331444"
    },
    {
-    "img": "72536778-0-md.webp",
+    "img": "72536669-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "72536778"
+    "link": "72536669"
    },
    {
     "img": "73092364-0-md.webp",
@@ -306,10 +306,31 @@
    },
    "items": [
     {
+     "id": "73079487",
+     "name": {
+      "fr": "Bonnet slouchy",
+      "en": "Slouchy beanie"
+     }
+    },
+    {
+     "id": "73331506",
+     "name": {
+      "fr": "Bonnet noir",
+      "en": "Black beanie"
+     }
+    },
+    {
      "id": "73079596",
      "name": {
       "fr": "Écharpe ajourée",
       "en": "Openwork scarf"
+     }
+    },
+    {
+     "id": "72536669",
+     "name": {
+      "fr": "Écharpe ajourée marine",
+      "en": "Navy openwork scarf"
      }
     },
     {
@@ -320,31 +341,24 @@
      }
     },
     {
-     "id": "72536778",
+     "id": "73332466",
      "name": {
-      "fr": "Cagoule en laine",
-      "en": "Wool balaclava"
+      "fr": "Écharpe graphique",
+      "en": "Graphic scarf"
      }
     },
     {
-     "id": "73079487",
+     "id": "73331444",
      "name": {
-      "fr": "Bonnet slouchy",
-      "en": "Slouchy beanie"
+      "fr": "Chaussettes marine",
+      "en": "Navy socks"
      }
     },
     {
-     "id": "72637209",
+     "id": "73331372",
      "name": {
-      "fr": "Gants en cuir",
-      "en": "Leather gloves"
-     }
-    },
-    {
-     "id": "73331506",
-     "name": {
-      "fr": "Bonnet noir",
-      "en": "Black beanie"
+      "fr": "Chaussettes grises",
+      "en": "Grey socks"
      }
     }
    ]
