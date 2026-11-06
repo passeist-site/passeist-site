@@ -450,7 +450,13 @@ def main():
     # Même maison sous deux noms chez Vestiaire : un seul nom sur le site
     if final_brand == 'MIHARA YASUHIRO':
         final_brand = 'MAISON MIHARA YASUHIRO'
-    if is_unsigned(vc_brand):
+    # Marques données par Tom pour des annonces « Non signé » dont la
+    # description ne dit pas la marque
+    BRAND_OVERRIDES = {'72606166': '45RPM'}
+    if str(item_id) in BRAND_OVERRIDES:
+        final_brand = BRAND_OVERRIDES[str(item_id)]
+        print(f'  marque donnée par Tom : {final_brand}')
+    elif is_unsigned(vc_brand):
         # Marques déjà présentes sur le site (« Marque … » en tête de desc)
         try:
             site_brands = set(re.findall(r'"brand":\s*"([^"]+)"', open(INDEX, encoding='utf-8').read()))
