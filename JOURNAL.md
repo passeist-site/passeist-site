@@ -8,7 +8,7 @@ Tout changement, fix, idée ou décision important est tracé ici. À chaque mod
 
 ### Types précis pour chaque pièce (Tom : « pas de chapeau/bonnet »)
 - 56 types flous venus de Vestiaire remplacés par la pièce nommée dans la description : « Chapeau / bonnet » → Casquette, Chapeau, Bob, Bonnet ; « Pull / gilet / sweat » → Cardigan ; « Petite maroquinerie » → Portefeuille, Porte-cartes, Porte-clés ; « Pochette » → Sacoche, Sac bandoulière ; « Haut » → Top, T-shirt… (matière gardée : « Casquette en cuir »). L'import fait pareil (tools/type_from_desc.py, VAGUE). 237 anciennes adresses redirigées au total.
-- Sous les photos : le type seul, sans matière (choix de Tom).
+- Sous les photos : le type seul, sans matière (choix de Tom) : window.cardType() retire « en laine », « en cuir »… (EN : wool, leather…) ; la fiche garde le nom complet. Marque et type toujours sur une ligne (points de suspension au besoin) : toutes les cartes ont la même hauteur, vérifié sur iPhone SE, iPhone 13 et ordinateur, FR et EN (0 nom coupé).
 
 ### Langues : plus de français sur les pages anglaises, ni l'inverse (Tom)
 - 197 descriptions sans version anglaise (155 en vente, 42 vendues) traduites (la traduction automatique de l'import échoue : Google bloque). 17 noms de pièces sans anglais complétés.
