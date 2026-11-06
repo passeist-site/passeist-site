@@ -134,12 +134,12 @@
     "link": "72823125"
    },
    {
-    "img": "73092452-0-md.webp",
+    "img": "73092053-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73092452"
+    "link": "73092053"
    }
   ]
  },
@@ -158,10 +158,10 @@
      }
     },
     {
-     "id": "73092488",
+     "id": "73092053",
      "name": {
-      "fr": "Long pull en mohair",
-      "en": "Long mohair jumper"
+      "fr": "Pull brodé Junmen",
+      "en": "Embroidered Junmen jumper"
      }
     },
     {
@@ -179,17 +179,17 @@
      }
     },
     {
+     "id": "73092488",
+     "name": {
+      "fr": "Long pull en mohair",
+      "en": "Long mohair jumper"
+     }
+    },
+    {
      "id": "72823125",
      "name": {
       "fr": "Gros cardigan torsadé",
       "en": "Chunky cable cardigan"
-     }
-    },
-    {
-     "id": "73092452",
-     "name": {
-      "fr": "Gilet oversized",
-      "en": "Oversized cardigan"
      }
     }
    ]
