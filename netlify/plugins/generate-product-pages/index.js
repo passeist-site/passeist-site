@@ -537,7 +537,11 @@ function xmlesc(str) {
     .replace(/>/g, '&gt;');
 }
 
-function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir) {
+// opts.extraImages = false → flux Pinterest (feed-pinterest.xml) : photo 1
+// seule. Avec les photos de détail, Pinterest créait une épingle par photo
+// (5 141 épingles de zooms, nov. 2026). Google garde ses 8 photos (feed.xml).
+function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir, opts = {}) {
+  const withExtra = opts.extraImages !== false;
   const items = products
     .filter(p => !soldIds.has(p.id) && p.sold !== true) // exclude sold
     .map(p => {
@@ -549,7 +553,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
     // nov. 2026 ; validé par Tom). Google et Pinterest téléchargent chaque
     // photo une fois (bande passante Netlify), puis la gardent en cache.
     const extraImgs = [];
-    for (let i = 1; i < Math.min(p.n || 1, 8); i++) {
+    for (let i = 1; withExtra && i < Math.min(p.n || 1, 8); i++) {
       const u = productImgUrl(p, i, 1600, imgReorder, imgSuffix, validatedLocal, publishDir);
       if (u) extraImgs.push(u.startsWith('/') ? 'https://passeist.com' + u : u);
     }
@@ -1158,6 +1162,9 @@ module.exports = {
     const feed = buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);
     fs.writeFileSync(path.join(publishDir, 'feed.xml'), feed, 'utf8');
     console.log('[generate-product-pages] Generated feed.xml (' + products.length + ' products)');
+    const feedPin = buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir, { extraImages: false });
+    fs.writeFileSync(path.join(publishDir, 'feed-pinterest.xml'), feedPin, 'utf8');
+    console.log('[generate-product-pages] Generated feed-pinterest.xml (photo 1 seule)');
 
     // ── Generate sitemap.xml (replaces the old static, never-updated file) ─
     const sitemap = buildSitemap(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);

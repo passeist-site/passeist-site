@@ -205,3 +205,9 @@ Le token PAT fourni par Tom a servi à plusieurs pushes dans cette session (au l
 - Sections groupées par thème dans la même date (UX, sync, fix, etc.)
 - Numéros de commits en référence pour retrouver le diff exact via `git show <hash>`
 - Si je foire et que je te dois une explication, c'est noté
+
+## 2026-11-06 — Pinterest : flux à part, photo 1 seule
+Pinterest lisait feed.xml (8 photos par pièce pour Google Merchant) et a créé
+une épingle par photo : 5 141 épingles, dont plein de zooms. Le build génère
+maintenant aussi `feed-pinterest.xml` (photo 1 seule, 1 pièce = 1 épingle).
+À faire côté Pinterest : source de données du catalogue → feed-pinterest.xml.
