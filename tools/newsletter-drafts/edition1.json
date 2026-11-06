@@ -9,14 +9,18 @@
   "en": "A reversible Issey Miyake down jacket, black silhouettes, and the arrival of Monitaly"
  },
  "intro": {
-  "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
-  "en": "This week, passéist presents four highlights:"
+  "fr": "Cette semaine, passéist vous propose cinq mises en avant :",
+  "en": "This week, passéist presents five highlights:"
  },
  "introList": {
   "fr": [
    {
     "label": "En noir",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Issey Miyake"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s et Y-3"
+   },
+   {
+    "label": "IM Issey Miyake",
+    "text": "Deux chemises des années 80"
    },
    {
     "label": "Issey Miyake",
@@ -28,13 +32,17 @@
    },
    {
     "label": "Pour finir",
-    "text": "Une casquette Y-3 et deux écharpes"
+    "text": "Deux écharpes, Yohji Yamamoto A.A.R. et 45rpm"
    }
   ],
   "en": [
    {
     "label": "In black",
-    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Issey Miyake"
+    "text": "Yoshiki Hishinuma, Mihara Yasuhiro, Y’s and Y-3"
+   },
+   {
+    "label": "IM Issey Miyake",
+    "text": "Two shirts from the 80s"
    },
    {
     "label": "Issey Miyake",
@@ -46,7 +54,7 @@
    },
    {
     "label": "To finish",
-    "text": "A Y-3 cap and two scarves"
+    "text": "Two scarves, Yohji Yamamoto A.A.R. and 45rpm"
    }
   ]
  },
@@ -142,12 +150,12 @@
     "link": "73332466"
    },
    {
-    "img": "73092530-0-md.webp",
+    "img": "73317371-0-md.webp",
     "alt": {
      "fr": "",
      "en": ""
     },
-    "link": "73092530"
+    "link": "73317371"
    }
   ]
  },
@@ -177,6 +185,20 @@
      "name": {
       "fr": "Veste courte à brandebourgs",
       "en": "Short toggle jacket"
+     }
+    },
+    {
+     "id": "73317897",
+     "name": {
+      "fr": "Casquette Y-3",
+      "en": "Y-3 cap"
+     }
+    },
+    {
+     "id": "73317371",
+     "name": {
+      "fr": "Chemise jacquard vannerie",
+      "en": "Basketweave jacquard shirt"
      }
     },
     {
@@ -304,22 +326,6 @@
     "fr": "",
     "en": ""
    },
-   "items": [
-    {
-     "id": "73317897",
-     "name": {
-      "fr": "Casquette Y-3",
-      "en": "Y-3 cap"
-     }
-    }
-   ]
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "suite": true,
    "items": [
     {
      "id": "73332525",
