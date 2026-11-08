@@ -28,7 +28,7 @@
       },
       {
         "label": "Les accessoires",
-        "text": "Casquettes, bonnet, écharpes et chaussettes"
+        "text": "Casquette, bonnet, écharpes et chaussettes"
       }
     ],
     "en": [
@@ -46,7 +46,7 @@
       },
       {
         "label": "Accessories",
-        "text": "Caps, beanie, scarves and socks"
+        "text": "Cap, beanie, scarves and socks"
       }
     ]
   },
@@ -343,14 +343,6 @@
             "fr": "Chaussettes grises",
             "en": "Grey socks"
           }
-        },
-        {
-          "id": "73092610",
-          "name": {
-            "fr": "Casquette double visière corduroy",
-            "en": "Double-brim corduroy cap"
-          },
-          "big": true
         }
       ]
     }
