@@ -617,7 +617,7 @@ def main():
     # (sera traduit en batch plus tard via translate_descs.py / translate_types_sizes.py).
     # Google refuse les serveurs GitHub depuis mi-octobre 2026 : tools/translate.py
     # passe par ScrapingBee quand l'appel direct est refusé.
-    from translate import translate as _tr
+    from translate import translate as _tr, translate_type as _tr_type
     type_en, desc_en, size_en = '', '', ''
     if ptype:
         if _looks_already_english(ptype):
@@ -625,8 +625,7 @@ def main():
             type_en = ptype
             ptype = _type_en_to_fr(ptype)
         else:
-            type_en = _tr(ptype)
-            type_en = type_en[:1].upper() + type_en[1:]
+            type_en = _tr_type(ptype)
     if desc:
         if _looks_already_english(desc):
             print('  ⚠ description déjà en anglais → EN→FR')

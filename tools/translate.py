@@ -97,6 +97,15 @@ def translate(text, src='fr', dst='en'):
     return '\n'.join(out)
 
 
+def translate_type(fr):
+    """Type de pièce FR → EN. Google traduit « bonnet » par cap (casquette)
+    ou hat : un bonnet est toujours un beanie (nov. 2026)."""
+    t = translate(fr)
+    if t and re.match(r'(?i)bonnet\b', (fr or '').strip()):
+        t = re.sub(r'(?i)\b(cap|hat|bonnet)\b', 'beanie', t, count=1)
+    return t[:1].upper() + t[1:] if t else ''
+
+
 def fill_missing(limit=60):
     """Complète desc_en / type_en manquants dans index.html (rattrapage)."""
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -122,9 +131,9 @@ def fill_missing(limit=60):
             if t:
                 obj['desc_en'] = t; changed = True
         if need_t:
-            t = translate(obj['type'])
+            t = translate_type(obj['type'])
             if t:
-                obj['type_en'] = t[:1].upper() + t[1:]; changed = True
+                obj['type_en'] = t; changed = True
         if changed:
             compact = '":"' in h[s:s + 30]
             h = h[:s] + json.dumps(obj, ensure_ascii=False, separators=(',', ':') if compact else (', ', ': ')) + h[end:]

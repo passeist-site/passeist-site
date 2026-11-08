@@ -211,3 +211,9 @@ Pinterest lisait feed.xml (8 photos par pièce pour Google Merchant) et a créé
 une épingle par photo : 5 141 épingles, dont plein de zooms. Le build génère
 maintenant aussi `feed-pinterest.xml` (photo 1 seule, 1 pièce = 1 épingle).
 À faire côté Pinterest : source de données du catalogue → feed-pinterest.xml.
+
+## 2026-11-08 — Bonnet CDG vendu, « bonnet » = beanie
+- 73405015 (bonnet Comme des Garçons) vendu sur Vinted, retiré de Vestiaire → SOLD.
+- Google traduisait « bonnet » par Cap ou Wool hat : 6 pièces renommées
+  Beanie / Wool beanie. `translate.translate_type()` force beanie pour les
+  types commençant par « Bonnet » (import + rattrapage).
