@@ -4,6 +4,7 @@
 // Messagerie de passéist (en-tête x-admin-key = CHAT_ADMIN_KEY) :
 //   GET  ?action=stats          → abonnés, pièces en attente d'annonce
 //   POST ?action=test {to}      → envoie l'e-mail de nouveautés à cette adresse
+//   POST ?action=sendto {to}    → envoie la sélection de la semaine à un inscrit (vraie campagne)
 //   POST ?action=feature {text} → pièces « À la une » du prochain envoi (liens ou références)
 //
 // Les adresses sont gardées dans Netlify Blobs (store « passeist-newsletter »,
@@ -95,6 +96,14 @@ async function admin(event, action) {
     try { await send._sendEditionNow(store); }
     catch (err) { console.error('envoi immédiat :', err.message); return json(400, { error: err.message.slice(0, 200) }); }
     return json(200, { ok: true });
+  }
+  if (action === 'sendto' && event.httpMethod === 'POST') {
+    let body = {};
+    try { body = JSON.parse(event.body || '{}'); } catch (e) {}
+    const to = String(body.to || '').trim().toLowerCase();
+    if (!EMAIL_RE.test(to)) return json(400, { error: 'adresse invalide' });
+    try { const lang = await send._sendEditionTo(to); return json(200, { ok: true, lang }); }
+    catch (err) { console.error('renvoi newsletter :', err.message); return json(400, { error: err.message.slice(0, 200) }); }
   }
   if (action === 'stats') {
     const { blobs } = await store.list({ prefix: 'sub/' });

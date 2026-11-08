@@ -214,6 +214,10 @@ async function showNewsletter() {
       <div class="nl-stat">Rien ne part automatiquement. Recevez d\'abord un e-mail de test (plus bas), puis envoyez.<br><br>
         ${[['fr', 'Version française'], ['en', 'Version anglaise']].map(([k, t]) => { const l = (d.lists || {})[k]; return t + ' → ' + (!l ? '<b>aucune liste configurée</b>' : l.error ? '<b>liste introuvable</b> (' + esc(l.error) + ')' : 'liste « ' + esc(l.name) + ' » : <b>' + l.count + '</b> contacts'); }).join('<br>')}</div>
       ${d.composed ? (d.editionSent ? '<div class="nl-stat"><b>Envoyée ✓</b> : votre sélection est partie.</div>' : '<div class="nl-test"><button type="button" id="nlsendnow">Envoyer maintenant</button></div><div class="nl-msg" id="nlsendmsg"></div>') : ''}</div>
+    ${d.composed ? `<div class="nl-box"><h3>Envoyer à une personne</h3>
+      <div class="nl-stat">Pour quelqu'un qui s'est inscrit après l'envoi : il reçoit la sélection de la semaine, avec le vrai objet, dans sa langue. Seulement pour une adresse inscrite à la newsletter.</div>
+      <form class="nl-test" id="nlone"><input type="email" id="nloneto" placeholder="Son e-mail" required><button type="submit">Envoyer</button></form>
+      <div class="nl-msg" id="nlonemsg"></div></div>` : ''}
     <div class="nl-box"><h3>Votre mot de la semaine</h3>
       <div class="nl-stat">Deux ou trois lignes, en tête de la newsletter, signées Tom. Facultatif ; repart à zéro après chaque envoi.</div>
       <textarea id="nlnote" rows="3" class="nl-area" placeholder="Cette semaine…">${esc(d.note || '')}</textarea>
@@ -272,6 +276,20 @@ async function showNewsletter() {
     const j = await res.json().catch(() => ({}));
     if (!res.ok) { $('nlsendmsg').textContent = 'Échec : ' + (j.error || res.status); $('nlsendnow').disabled = false; return; }
     showNewsletter();
+  };
+  if ($('nlone')) $('nlone').onsubmit = async (e) => {
+    e.preventDefault();
+    const to = $('nloneto').value.trim();
+    if (!confirm('Envoyer la newsletter de la semaine à ' + to + ' ?')) return;
+    const btn = $('nlone').querySelector('button'); btn.disabled = true;
+    $('nlonemsg').textContent = 'Envoi…';
+    const res = await fetch('/.netlify/functions/newsletter?action=sendto', {
+      method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) });
+    const j = await res.json().catch(() => ({}));
+    btn.disabled = false;
+    if (!res.ok) { $('nlonemsg').textContent = 'Échec : ' + (j.error || res.status); return; }
+    $('nlonemsg').textContent = 'Envoyée ✓ (' + (j.lang === 'en' ? 'version anglaise' : 'version française') + ')';
+    $('nloneto').value = '';
   };
   $('promobtn').onclick = async () => {
     $('promomsg').textContent = 'Création…';

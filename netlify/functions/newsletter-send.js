@@ -377,6 +377,17 @@ exports._edition = () => EDITION;
 exports._composed = composed;
 
 // Envoi immédiat de la semaine composée (bouton « Envoyer maintenant » de la messagerie)
+// Renvoi de la sélection de la semaine à une personne inscrite (messagerie)
+exports._sendEditionTo = async (email) => {
+  if (!composed()) throw new Error('aucune sélection pour cette semaine');
+  return brevo.sendCampaignTo({
+    email,
+    name: (lang) => `${lang === 'fr' ? 'Nouveautés' : 'New pieces'} ${EDITION.date} · renvoi ${email}`,
+    subject: (lang) => EDITION.subject[lang] || EDITION.subject.fr,
+    html: (lang) => editionHtml(lang, EDITION, 0),
+  });
+};
+
 exports._sendEditionNow = async (store) => {
   if (!composed()) throw new Error('aucune sélection pour cette semaine');
   // Envoi suivi langue par langue : si une version échoue, un nouveau clic n'envoie que celle qui manque

@@ -78,4 +78,42 @@ async function listInfo(id) {
   return { id, name: l.name, count: l.uniqueSubscribers ?? l.totalSubscribers ?? 0 };
 }
 
-module.exports = { enabled, listFor, listInfo, addToBrevo, sendCampaign, sendOne, ping };
+// Renvoie la newsletter à UNE personne déjà inscrite (inscrite après l'envoi, par ex.).
+// C'est une vraie campagne Brevo (objet normal, lien de désinscription, statistiques),
+// envoyée à une petite liste « passéist · envoi à une personne » vidée avant chaque
+// envoi. Refuse une adresse qui n'est dans aucune des deux listes de la newsletter :
+// jamais d'envoi à quelqu'un qui ne s'est pas inscrit.
+const SINGLE_LIST = 'passéist · envoi à une personne';
+async function sendCampaignTo({ email, subject, html, name }) {
+  if (!enabled()) throw new Error('clé Brevo absente');
+  let contact;
+  try { contact = await call(`/contacts/${encodeURIComponent(email)}`, 'GET'); }
+  catch (e) { throw new Error('adresse inconnue de Brevo : elle ne s\'est pas inscrite à la newsletter'); }
+  const ids = contact.listIds || [];
+  const fr = listFor('fr'), en = listFor('en');
+  const lang = ids.includes(fr) ? 'fr' : ids.includes(en) ? 'en' : null;
+  if (!lang) throw new Error('cette adresse n\'est pas inscrite à la newsletter');
+  if (contact.emailBlacklisted) throw new Error('cette adresse s\'est désabonnée');
+  // Petite liste réutilisée, dans le même dossier que la liste de la newsletter
+  const all = await call('/contacts/lists?limit=50&offset=0', 'GET');
+  let list = (all.lists || []).find(l => l.name === SINGLE_LIST);
+  if (!list) {
+    const main = await call(`/contacts/lists/${listFor(lang)}`, 'GET');
+    list = await call('/contacts/lists', 'POST', { name: SINGLE_LIST, folderId: main.folderId });
+  }
+  try { await call(`/contacts/lists/${list.id}/contacts/remove`, 'POST', { all: true }); } catch (e) { /* liste déjà vide */ }
+  await call(`/contacts/lists/${list.id}/contacts/add`, 'POST', { emails: [email] });
+  const from = process.env.NEWSLETTER_FROM || 'info@passeist.com';
+  const { id } = await call('/emailCampaigns', 'POST', {
+    name: name(lang), subject: subject(lang),
+    sender: { name: 'passéist', email: from },
+    replyTo: from,
+    htmlContent: html(lang),
+    recipients: { listIds: [list.id] },
+    ...(process.env['BREVO_UNSUB_' + lang.toUpperCase()] ? { unsubscriptionPageId: process.env['BREVO_UNSUB_' + lang.toUpperCase()] } : {}),
+  });
+  await call(`/emailCampaigns/${id}/sendNow`, 'POST');
+  return lang;
+}
+
+module.exports = { enabled, listFor, listInfo, addToBrevo, sendCampaign, sendCampaignTo, sendOne, ping };

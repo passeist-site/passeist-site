@@ -224,3 +224,9 @@ netlify/functions/newsletter-edition.json. Sommaire : Vestiaire noir, Pièce de
 défilé, Nouvel auteur, Les accessoires. Objet avec les marques. Envoi manuel
 par Tom (« Envoyer maintenant » dans la messagerie).
 - Version finale (16 pièces) : titres de partie numérotés comme le sommaire (`numbered`), photos des paires dans le même cadre (colonnes fixes, photos et textes sur deux lignes), lien « Voir les pièces Monitaly » (`sec.more`), textes doudoune et Monitaly réécrits avec Tom.
+
+## 2026-11-08 — Messagerie : « Envoyer à une personne » (en attente du push)
+Pour un inscrit arrivé après l'envoi : vraie campagne Brevo (objet normal,
+désinscription, statistiques) vers une petite liste « passéist · envoi à une
+personne » vidée avant chaque envoi. Langue prise dans la liste de la personne.
+Refuse toute adresse absente des listes FR/EN ou désabonnée.
