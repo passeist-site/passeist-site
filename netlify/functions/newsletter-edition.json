@@ -1,16 +1,155 @@
 {
-  "date": "2026-10-09",
+  "date": "2026-11-08",
   "subject": {
-    "fr": "Nouveautés : Yohji Yamamoto, Y’s, Comme des Garçons, Issey Miyake",
-    "en": "New in: Yohji Yamamoto, Y’s, Comme des Garçons, Issey Miyake"
+    "fr": "Nouveautés : Yohji Yamamoto, Issey Miyake, Monitaly, Mihara Yasuhiro, Yoshiki Hishinuma",
+    "en": "New in: Yohji Yamamoto, Issey Miyake, Monitaly, Mihara Yasuhiro, Yoshiki Hishinuma"
   },
   "preheader": {
-    "fr": "Un vestiaire parisien, des combat boots Yohji Yamamoto iconiques, deux pièces Pleats Please mouchetées",
-    "en": "A Parisian wardrobe, iconic Yohji Yamamoto combat boots, two speckled Pleats Please pieces"
+    "fr": "Une doudoune réversible Issey Miyake, des silhouettes noires, et l’arrivée de Monitaly",
+    "en": "A reversible Issey Miyake down jacket, black silhouettes, and the arrival of Monitaly"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose trois mises en avant :",
-    "en": "This week, passéist presents three highlights:"
+    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
+    "en": "This week, passéist presents four highlights:"
+  },
+  "introList": {
+    "fr": [
+      {
+        "label": "Vestiaire noir",
+        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+      },
+      {
+        "label": "Pièce de défilé",
+        "text": "Issey Miyake Men, une doudoune réversible, automne-hiver 2011"
+      },
+      {
+        "label": "Nouvel auteur",
+        "text": "Monitaly, le vestiaire militaire américain, fabriqué aux États-Unis"
+      },
+      {
+        "label": "Les accessoires",
+        "text": "Casquettes, bonnet, écharpes et chaussettes"
+      }
+    ],
+    "en": [
+      {
+        "label": "Black wardrobe",
+        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+      },
+      {
+        "label": "Runway piece",
+        "text": "Issey Miyake Men, a reversible down vest, autumn-winter 2011"
+      },
+      {
+        "label": "New designer",
+        "text": "Monitaly, the American military wardrobe, made in the USA"
+      },
+      {
+        "label": "Accessories",
+        "text": "Caps, beanie, scarves and socks"
+      }
+    ]
+  },
+  "cover": {
+    "cols": 6,
+    "photos": [
+      {
+        "img": "73331676-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73331676"
+      },
+      {
+        "img": "73093011-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73093011"
+      },
+      {
+        "img": "73341848-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341848"
+      },
+      {
+        "img": "73092364-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092364"
+      },
+      {
+        "img": "73341941-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341941"
+      },
+      {
+        "img": "73332578-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73332578"
+      },
+      {
+        "img": "73404845-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73404845"
+      },
+      {
+        "img": "73092398-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092398"
+      },
+      {
+        "img": "73342020-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73342020"
+      },
+      {
+        "img": "73092530-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092530"
+      },
+      {
+        "img": "73079596-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73079596"
+      },
+      {
+        "img": "73404876-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73404876"
+      }
+    ]
   },
   "sections": [
     {
@@ -20,84 +159,70 @@
       },
       "items": [
         {
-          "id": "72093528",
+          "id": "73404876",
           "name": {
-            "fr": "Pull fin coton-cachemire",
-            "en": "Fine cotton-cashmere knit"
+            "fr": "Pull à nœud tressé",
+            "en": "Braided knot jumper"
           },
-          "img": "nl-72093528-0.jpg"
+          "big": true
         },
         {
-          "id": "72062424",
+          "id": "73404845",
           "name": {
-            "fr": "Pantalon large à boucles",
-            "en": "Wide buckled trousers"
-          },
-          "img": "nl-72062424-0.jpg"
+            "fr": "Pull à mini col plié",
+            "en": "Folded mini-collar jumper"
+          }
         },
         {
-          "id": "72062810",
+          "id": "73092452",
           "name": {
-            "fr": "Robe combinaison",
-            "en": "Long jumpsuit dress"
-          },
-          "img": "nl-72062810-0.jpg"
+            "fr": "Gilet oversize en maille",
+            "en": "Oversized knit cardigan"
+          }
         },
         {
-          "id": "72063304",
+          "id": "73331676",
           "name": {
-            "fr": "Robe chemise longue grise",
-            "en": "Long grey shirt dress"
+            "fr": "Veste courte à brandebourgs",
+            "en": "Short toggle jacket"
           },
-          "img": "nl-72063304-0.jpg"
+          "big": true
         },
         {
-          "id": "72093577",
+          "id": "73341941",
           "name": {
-            "fr": "Pull fin à coudières",
-            "en": "Fine knit with elbow patches"
-          },
-          "img": "nl-72093577-0.jpg"
+            "fr": "Jupe peplum à rubans",
+            "en": "Ribboned peplum skirt"
+          }
         },
         {
-          "id": "72063183",
+          "id": "73342020",
           "name": {
-            "fr": "Top long asymétrique",
-            "en": "Long asymmetric top"
-          },
-          "img": "nl-72063183-0.jpg"
+            "fr": "Robe à bretelles",
+            "en": "Strappy dress"
+          }
         },
         {
-          "id": "72062579",
+          "id": "73341848",
           "name": {
-            "fr": "Veste boxy coton et lin",
-            "en": "Boxy cotton-linen jacket"
+            "fr": "Pantalon en gaze de coton",
+            "en": "Cotton gauze trousers"
           },
-          "img": "nl-72062579-0.jpg"
+          "big": true
         },
         {
-          "id": "72062300",
+          "id": "73341765",
           "name": {
-            "fr": "Pantalon à oreilles",
-            "en": "Jodhpur-style trousers"
-          },
-          "img": "nl-72062300-0.jpg"
+            "fr": "Veste légère en gaze",
+            "en": "Light gauze jacket"
+          }
         },
         {
-          "id": "72063584",
+          "id": "73341667",
           "name": {
-            "fr": "Pantalon coton et lin",
-            "en": "Cotton-linen trousers"
-          },
-          "img": "nl-72063584-0.jpg"
-        },
-        {
-          "id": "72063494",
-          "name": {
-            "fr": "Robe chemise en popeline",
-            "en": "Poplin shirt dress"
-          },
-          "img": "nl-72063494-0.jpg"
+            "fr": "Maxi gilet Ground Y",
+            "en": "Ground Y maxi cardigan"
+          }
         }
       ]
     },
@@ -109,53 +234,63 @@
       "hero": true,
       "items": [
         {
-          "id": "71919847",
+          "id": "73092364",
           "name": {
-            "fr": "Leather combat boots",
-            "en": "Leather combat boots"
-          },
-          "img": "nl-71919847-0.jpg"
+            "fr": "Doudoune sans manches",
+            "en": "Sleeveless down jacket"
+          }
         }
       ],
       "text": {
-        "fr": "Avec « The Gipsy Collection », automne-hiver 1999, Yohji Yamamoto Pour Homme fait défiler des formations musicales et des membres de communautés nomades : un hommage à la diversité et à la différence. Toutes les chaussures du défilé sont réalisées en collaboration avec le shoemaker italien Bruno Bordese.\nCes combat boots en cuir noir, entièrement doublées cuir, sont neuves d’ancien stock, avec leur boîte et leur dustbag d’origine. Talon massif, pourtour à points emboutis, lanières reliées aux œillets. Taille 42.",
-        "en": "With “The Gipsy Collection”, autumn-winter 1999, Yohji Yamamoto Pour Homme sent musical ensembles and members of nomadic communities down the runway, a tribute to diversity and difference. Every pair of shoes in the show was made in collaboration with Italian shoemaker Bruno Bordese.\nThese black leather combat boots, fully lined in leather, are new old stock, with their original box and dust bag. Solid heel, embossed welt, leather straps tied into the eyelets. Size 42."
+        "fr": "Issey Miyake Men, automne-hiver 2011. Une doudoune sans manches qui se porte des deux côtés : ses boutons pressions se dédoublent pour ajuster la taille, la capuche est fixe.\nPolyester, garniture 93 % duvet. Comme neuve, jamais portée. Taille 3, convient à un M.",
+        "en": "Issey Miyake Men, autumn-winter 2011. A sleeveless down jacket that can be worn either way: its press studs double up to adjust the size, and the hood is fixed.\nPolyester, 93% down filling. Like new, never worn. Size 3, fits an M."
       },
       "details": [
         {
-          "img": "nl-71919847-5.jpg",
+          "img": "nl-73092364-1.jpg",
           "alt": {
-            "fr": "Boots de profil, lanière à la cheville",
-            "en": "Side view, ankle strap"
+            "fr": "La doudoune, capuche",
+            "en": "The down jacket, hood"
           }
         },
         {
-          "img": "nl-yohji-aw99-2.jpg",
+          "img": "nl-issey-aw11-1.jpg",
           "alt": {
-            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-            "en": "Yohji Yamamoto show, autumn-winter 1999"
-          }
-        }
-      ],
-      "photos": [
-        {
-          "img": "nl-yohji-aw99-1.jpg",
-          "alt": {
-            "fr": "Défilé Yohji Yamamoto, automne-hiver 1999",
-            "en": "Yohji Yamamoto show, autumn-winter 1999"
+            "fr": "Défilé Issey Miyake Men, automne-hiver 2011",
+            "en": "Issey Miyake Men show, autumn-winter 2011"
           }
         },
         {
-          "img": "nl-71919847-4.jpg",
+          "img": "nl-73092364-13.jpg",
           "alt": {
-            "fr": "Bouts des boots et pourtour à points emboutis",
-            "en": "Toe caps and embossed welt"
+            "fr": "Portée de l’autre côté",
+            "en": "Worn the other way round"
           }
         }
       ],
       "caption": {
-        "fr": "Défilé Yohji Yamamoto Pour Homme, automne-hiver 1999.",
-        "en": "Yohji Yamamoto Pour Homme show, autumn-winter 1999."
+        "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
+        "en": "Issey Miyake Men show, autumn-winter 2011."
+      }
+    },
+    {
+      "title": {
+        "fr": "Nouvel auteur : Monitaly",
+        "en": "New designer: Monitaly"
+      },
+      "hero": true,
+      "items": [
+        {
+          "id": "73093011",
+          "name": {
+            "fr": "Veste club en nylon moiré",
+            "en": "Moiré nylon club jacket"
+          }
+        }
+      ],
+      "text": {
+        "fr": "Monitaly arrive chez passéist. Fondée en 1989 par le designer japonais Yuki Matsuda, la maison réinvente le vestiaire utilitaire et militaire américain, fabriqué aux États-Unis, avec une confection exigeante et des tissus exclusifs, souvent chinés ou tissés à la main.\nCette veste club très légère, en nylon effet moiré marron, a une coupe ample et boxy et une taille élastiquée. Comme toujours chez Monitaly, la coupe est folle.",
+        "en": "Monitaly arrives at passéist. Founded in 1989 by Japanese designer Yuki Matsuda, the label reinvents the American utility and military wardrobe, made in the USA, with demanding craftsmanship and exclusive fabrics, often sourced or hand-woven.\nThis very light club jacket in brown moiré nylon has a loose, boxy cut and an elasticated waist. As always with Monitaly, the cut is incredible."
       }
     },
     {
@@ -165,157 +300,117 @@
       },
       "items": [
         {
-          "id": "71919376",
+          "id": "73092398",
           "name": {
-            "fr": "Blouse plissée col montant",
-            "en": "High-neck pleated blouse"
-          },
-          "img": "nl-71919376-0.jpg",
-          "brand": "ISSEY MIYAKE",
-          "line": "Pleats Please"
+            "fr": "Hoodie jacquard ikat",
+            "en": "Ikat jacquard hoodie"
+          }
         },
         {
-          "id": "71919530",
+          "id": "73092530",
           "name": {
-            "fr": "Tunique plissée longue",
-            "en": "Long pleated tunic"
+            "fr": "Chemise en flanelle",
+            "en": "Flannel shirt"
+          }
+        },
+        {
+          "id": "73332578",
+          "name": {
+            "fr": "Hoodie teddy en laine",
+            "en": "Wool teddy hoodie"
           },
-          "img": "nl-71919530-0.jpg",
-          "brand": "ISSEY MIYAKE",
-          "line": "Pleats Please"
+          "big": true
+        },
+        {
+          "id": "73342088",
+          "name": {
+            "fr": "Pull matelassé à col montant",
+            "en": "Quilted mock-neck pullover"
+          }
+        },
+        {
+          "id": "73341539",
+          "name": {
+            "fr": "Chemise vichy sashiko",
+            "en": "Sashiko gingham shirt"
+          }
+        }
+      ],
+      "suite": true
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "items": [
+        {
+          "id": "73079596",
+          "name": {
+            "fr": "Écharpe ajourée",
+            "en": "Openwork scarf"
+          },
+          "big": true
+        },
+        {
+          "id": "73317897",
+          "name": {
+            "fr": "Casquette Y-3",
+            "en": "Y-3 cap"
+          }
+        },
+        {
+          "id": "73079487",
+          "name": {
+            "fr": "Bonnet slouchy noir",
+            "en": "Black slouchy beanie"
+          }
+        },
+        {
+          "id": "72536669",
+          "name": {
+            "fr": "Écharpe ajourée marine",
+            "en": "Navy openwork scarf"
+          },
+          "big": true
+        },
+        {
+          "id": "73331444",
+          "name": {
+            "fr": "Chaussettes marine",
+            "en": "Navy socks"
+          }
+        },
+        {
+          "id": "73331372",
+          "name": {
+            "fr": "Chaussettes grises",
+            "en": "Grey socks"
+          }
+        },
+        {
+          "id": "73092610",
+          "name": {
+            "fr": "Casquette double visière corduroy",
+            "en": "Double-brim corduroy cap"
+          },
+          "big": true
+        },
+        {
+          "id": "73332525",
+          "name": {
+            "fr": "Écharpe côtelée A.A.R.",
+            "en": "A.A.R. ribbed scarf"
+          }
+        },
+        {
+          "id": "73332466",
+          "name": {
+            "fr": "Écharpe graphique",
+            "en": "Graphic scarf"
+          }
         }
       ]
     }
-  ],
-  "introList": {
-    "fr": [
-      {
-        "label": "Collection privée parisienne",
-        "text": "Une sélection issue d’un même vestiaire, début des années 2000"
-      },
-      {
-        "label": "Yohji Yamamoto",
-        "text": "Une paire de combat boots iconique, automne-hiver 1999"
-      },
-      {
-        "label": "Issey Miyake",
-        "text": "Deux pièces Pleats Please mouchetées, années 90"
-      }
-    ],
-    "en": [
-      {
-        "label": "Private Parisian collection",
-        "text": "A selection from a single wardrobe, early 2000s"
-      },
-      {
-        "label": "Yohji Yamamoto",
-        "text": "An iconic pair of combat boots, autumn-winter 1999"
-      },
-      {
-        "label": "Issey Miyake",
-        "text": "Two speckled Pleats Please pieces, the 90s"
-      }
-    ]
-  },
-  "cover": {
-    "cols": 6,
-    "photos": [
-      {
-        "img": "nl-cover-72062810.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Robe combinaison",
-          "en": "Yohji Yamamoto, Long jumpsuit dress"
-        },
-        "link": "72062810"
-      },
-      {
-        "img": "nl-cover-71919376.jpg",
-        "alt": {
-          "fr": "Issey Miyake, Blouse plissée col montant",
-          "en": "Issey Miyake, High-neck pleated blouse"
-        },
-        "link": "71919376"
-      },
-      {
-        "img": "nl-cover-72062579.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Veste boxy coton et lin",
-          "en": "Yohji Yamamoto, Boxy cotton-linen jacket"
-        },
-        "link": "72062579"
-      },
-      {
-        "img": "nl-cover-71919847.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Leather combat boots",
-          "en": "Yohji Yamamoto, Leather combat boots"
-        },
-        "link": "71919847"
-      },
-      {
-        "img": "nl-cover-72093577.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pull fin à coudières",
-          "en": "Yohji Yamamoto, Fine knit with elbow patches"
-        },
-        "link": "72093577"
-      },
-      {
-        "img": "nl-cover-72063584.jpg",
-        "alt": {
-          "fr": "Comme Des Garçons, Pantalon coton et lin",
-          "en": "Comme Des Garçons, Cotton-linen trousers"
-        },
-        "link": "72063584"
-      },
-      {
-        "img": "nl-cover-72062424.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pantalon large à boucles",
-          "en": "Yohji Yamamoto, Wide buckled trousers"
-        },
-        "link": "72062424"
-      },
-      {
-        "img": "nl-cover-72063304.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Robe chemise longue grise",
-          "en": "Yohji Yamamoto, Long grey shirt dress"
-        },
-        "link": "72063304"
-      },
-      {
-        "img": "nl-cover-72063183.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Top long asymétrique",
-          "en": "Yohji Yamamoto, Long asymmetric top"
-        },
-        "link": "72063183"
-      },
-      {
-        "img": "nl-cover-72062300.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Pantalon à oreilles",
-          "en": "Yohji Yamamoto, Jodhpur-style trousers"
-        },
-        "link": "72062300"
-      },
-      {
-        "img": "nl-cover-71919530.jpg",
-        "alt": {
-          "fr": "Issey Miyake, Tunique plissée longue",
-          "en": "Issey Miyake, Long pleated tunic"
-        },
-        "link": "71919530"
-      },
-      {
-        "img": "nl-cover-72063494.jpg",
-        "alt": {
-          "fr": "Yohji Yamamoto, Robe chemise en popeline",
-          "en": "Yohji Yamamoto, Poplin shirt dress"
-        },
-        "link": "72063494"
-      }
-    ]
-  }
+  ]
 }

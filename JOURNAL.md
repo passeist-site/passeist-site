@@ -217,3 +217,9 @@ maintenant aussi `feed-pinterest.xml` (photo 1 seule, 1 pièce = 1 épingle).
 - Google traduisait « bonnet » par Cap ou Wool hat : 6 pièces renommées
   Beanie / Wool beanie. `translate.translate_type()` force beanie pour les
   types commençant par « Bonnet » (import + rattrapage).
+
+## 2026-11-08 — Newsletter du 8 novembre en ligne
+Édition copiée de tools/newsletter-drafts/edition1.json vers
+netlify/functions/newsletter-edition.json. Sommaire : Vestiaire noir, Pièce de
+défilé, Nouvel auteur, Les accessoires. Objet avec les marques. Envoi manuel
+par Tom (« Envoyer maintenant » dans la messagerie).
