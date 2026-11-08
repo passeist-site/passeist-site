@@ -1,8 +1,8 @@
 {
   "date": "2026-11-08",
   "subject": {
-    "fr": "Nouveautés : une sélection en noir, Issey Miyake, Yohji Yamamoto, et un nouvel auteur, Monitaly",
-    "en": "New in: a black selection, Issey Miyake, Yohji Yamamoto, and a new designer, Monitaly"
+    "fr": "Nouveautés : vestiaire noir, une pièce de défilé Issey Miyake et un nouvel auteur, Monitaly",
+    "en": "New in: black wardrobe, an Issey Miyake runway piece and a new designer, Monitaly"
   },
   "preheader": {
     "fr": "Une doudoune réversible Issey Miyake, des silhouettes noires, et l’arrivée de Monitaly",
@@ -102,12 +102,12 @@
         "link": "73332578"
       },
       {
-        "img": "73341667-0-md.webp",
+        "img": "73404845-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73341667"
+        "link": "73404845"
       },
       {
         "img": "73092398-0-md.webp",
@@ -142,12 +142,12 @@
         "link": "73079596"
       },
       {
-        "img": "73341765-0-md.webp",
+        "img": "73404876-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73341765"
+        "link": "73404876"
       }
     ]
   },
@@ -158,6 +158,28 @@
         "en": ""
       },
       "items": [
+        {
+          "id": "73404876",
+          "name": {
+            "fr": "Pull à nœud tressé",
+            "en": "Braided knot jumper"
+          },
+          "big": true
+        },
+        {
+          "id": "73404845",
+          "name": {
+            "fr": "Pull à mini col plié",
+            "en": "Folded mini-collar jumper"
+          }
+        },
+        {
+          "id": "73092452",
+          "name": {
+            "fr": "Gilet oversize en maille",
+            "en": "Oversized knit cardigan"
+          }
+        },
         {
           "id": "73331676",
           "name": {
@@ -302,8 +324,8 @@
         {
           "id": "73342088",
           "name": {
-            "fr": "Pull à col isolé",
-            "en": "Insulated mock-neck pullover"
+            "fr": "Pull matelassé à col montant",
+            "en": "Quilted mock-neck pullover"
           }
         },
         {
@@ -369,8 +391,8 @@
         {
           "id": "73092610",
           "name": {
-            "fr": "Casquette",
-            "en": "Cap"
+            "fr": "Casquette double visière corduroy",
+            "en": "Double-brim corduroy cap"
           },
           "big": true
         },
