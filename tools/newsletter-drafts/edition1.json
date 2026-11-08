@@ -19,7 +19,7 @@
         "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
-        "label": "Close-up",
+        "label": "Close-up sur Issey Miyake",
         "text": "Une doudoune réversible, Men automne-hiver 2011"
       },
       {
@@ -37,7 +37,7 @@
         "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
-        "label": "Close-up",
+        "label": "Close-up on Issey Miyake",
         "text": "A reversible down jacket, Men autumn-winter 2011"
       },
       {
@@ -206,8 +206,8 @@
     },
     {
       "title": {
-        "fr": "Close-up sur la doudoune Issey Miyake",
-        "en": "Close-up on the Issey Miyake down jacket"
+        "fr": "",
+        "en": ""
       },
       "hero": true,
       "items": [
