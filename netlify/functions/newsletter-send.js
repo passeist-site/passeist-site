@@ -159,7 +159,7 @@ function editionHtml(lang, ed, total) {
     if (buf.length) groups.push(buf);
     const rows = groups.map(g => g.big
       ? `<tr><td align="center" style="padding:0 0 52px;">${piece(g[0], true)}</td></tr>`
-      : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
+      : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>` +   // colonnes de même largeur (un nom long n'élargit plus sa photo) ; pièce seule (l'autre vendue) : centrée
         // Photos sur une ligne (calées en bas), textes sur la suivante : les noms restent
         // alignés même quand les deux photos n'ont pas la même hauteur
         g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="bottom" align="center" style="padding:0 4px;">${piece(it, false, 'img')}</td>`).join('') + `</tr><tr>` +
