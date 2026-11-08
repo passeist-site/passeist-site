@@ -112,7 +112,15 @@ function editionHtml(lang, ed, total) {
       <div class="nm" style="font-family:${FONT};font-size:${big ? 16 : 11.5}px;font-style:italic;font-weight:300;letter-spacing:-0.015em;${big ? '' : 'white-space:nowrap;'}line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
       <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
   };
+  let partNo = 0;
   const heading = (t) => {
+    // ed.numbered : chaque partie reprend le sommaire (point bleu, « 01 », titre en
+    // capitales espacées), pour qu'on voie où commence chaque partie
+    if (ed.numbered && t) {
+      partNo++;
+      return `<tr><td align="center" style="padding:28px 0 0;"><div style="width:13px;height:13px;border-radius:50%;background:#5a7593;font-size:0;line-height:0;">&nbsp;</div></td></tr>` +
+        `<tr><td align="center" style="padding:22px 16px 44px;font-family:${MONO};font-size:12px;letter-spacing:0.2em;text-transform:uppercase;line-height:1.5;color:${INK};"><span style="color:${MUTE};margin-right:14px;">${String(partNo).padStart(2, '0')}</span>${esc(t)}</td></tr>`;
+    }
     // Pas de titre : le point bleu du logo passéist sépare les groupes
     if (!t) return `<tr><td align="center" style="padding:24px 0 60px;"><div style="width:13px;height:13px;border-radius:50%;background:#5a7593;font-size:0;line-height:0;">&nbsp;</div></td></tr>`;
     const mm = t.match(/^(Le |Les |La |L’|L'|The )(.*)$/);

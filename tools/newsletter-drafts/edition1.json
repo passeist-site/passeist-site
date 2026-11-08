@@ -154,8 +154,8 @@
   "sections": [
     {
       "title": {
-        "fr": "",
-        "en": ""
+        "fr": "Vestiaire noir",
+        "en": "Black wardrobe"
       },
       "items": [
         {
@@ -206,8 +206,8 @@
     },
     {
       "title": {
-        "fr": "",
-        "en": ""
+        "fr": "Pièce de défilé",
+        "en": "Runway piece"
       },
       "hero": true,
       "items": [
@@ -303,8 +303,8 @@
     },
     {
       "title": {
-        "fr": "",
-        "en": ""
+        "fr": "Les accessoires",
+        "en": "Accessories"
       },
       "items": [
         {
@@ -353,5 +353,6 @@
         }
       ]
     }
-  ]
+  ],
+  "numbered": true
 }
