@@ -126,12 +126,12 @@
         "link": "73342020"
       },
       {
-        "img": "73092530-0-md.webp",
+        "img": "73092610-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73092530"
+        "link": "73092610"
       },
       {
         "img": "73079596-0-md.webp",
@@ -285,10 +285,10 @@
           }
         },
         {
-          "id": "73092530",
+          "id": "73342088",
           "name": {
-            "fr": "Chemise en flanelle",
-            "en": "Flannel shirt"
+            "fr": "Pull matelassé à col montant",
+            "en": "Quilted mock-neck pullover"
           }
         },
         {
@@ -298,20 +298,6 @@
             "en": "Wool teddy hoodie"
           },
           "big": true
-        },
-        {
-          "id": "73342088",
-          "name": {
-            "fr": "Pull matelassé à col montant",
-            "en": "Quilted mock-neck pullover"
-          }
-        },
-        {
-          "id": "73341539",
-          "name": {
-            "fr": "Chemise vichy sashiko",
-            "en": "Sashiko gingham shirt"
-          }
         }
       ],
       "suite": true
