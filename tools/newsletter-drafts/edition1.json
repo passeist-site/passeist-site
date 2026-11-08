@@ -295,8 +295,8 @@
       "suite": true,
       "more": {
         "label": {
-          "fr": "Voir les 6 pièces Monitaly",
-          "en": "See all 6 Monitaly pieces"
+          "fr": "Voir les pièces Monitaly",
+          "en": "See the Monitaly pieces"
         },
         "href": "/shop?brand=MONITALY"
       }
