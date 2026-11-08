@@ -1,386 +1,386 @@
 {
- "date": "2026-11-08",
- "subject": {
-  "fr": "Nouveautés : une sélection en noir, Issey Miyake, Yohji Yamamoto, et un nouvel auteur, Monitaly",
-  "en": "New in: a black selection, Issey Miyake, Yohji Yamamoto, and a new designer, Monitaly"
- },
- "preheader": {
-  "fr": "Une doudoune réversible Issey Miyake, des silhouettes noires, et l’arrivée de Monitaly",
-  "en": "A reversible Issey Miyake down jacket, black silhouettes, and the arrival of Monitaly"
- },
- "intro": {
-  "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
-  "en": "This week, passéist presents four highlights:"
- },
- "introList": {
-  "fr": [
-   {
-    "label": "La sélection en noir",
-    "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
-   },
-   {
-    "label": "Issey Miyake",
-    "text": "Une doudoune réversible, Men automne-hiver 2011"
-   },
-   {
-    "label": "Nouvel auteur",
-    "text": "Monitaly, le vestiaire militaire américain, fabriqué aux États-Unis"
-   },
-   {
-    "label": "Sélection accessoires",
-    "text": "Casquette, bonnet, écharpes et chaussettes"
-   }
-  ],
-  "en": [
-   {
-    "label": "The black selection",
-    "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
-   },
-   {
-    "label": "Issey Miyake",
-    "text": "A reversible down jacket, Men autumn-winter 2011"
-   },
-   {
-    "label": "New designer",
-    "text": "Monitaly, the American military wardrobe, made in the USA"
-   },
-   {
-    "label": "Accessories selection",
-    "text": "Cap, beanie, scarves and socks"
-   }
+  "date": "2026-11-08",
+  "subject": {
+    "fr": "Nouveautés : une sélection en noir, Issey Miyake, Yohji Yamamoto, et un nouvel auteur, Monitaly",
+    "en": "New in: a black selection, Issey Miyake, Yohji Yamamoto, and a new designer, Monitaly"
+  },
+  "preheader": {
+    "fr": "Une doudoune réversible Issey Miyake, des silhouettes noires, et l’arrivée de Monitaly",
+    "en": "A reversible Issey Miyake down jacket, black silhouettes, and the arrival of Monitaly"
+  },
+  "intro": {
+    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
+    "en": "This week, passéist presents four highlights:"
+  },
+  "introList": {
+    "fr": [
+      {
+        "label": "La sélection en noir",
+        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+      },
+      {
+        "label": "Close-up",
+        "text": "Une doudoune réversible, Men automne-hiver 2011"
+      },
+      {
+        "label": "Nouvel auteur",
+        "text": "Monitaly, le vestiaire militaire américain, fabriqué aux États-Unis"
+      },
+      {
+        "label": "Sélection accessoires",
+        "text": "Casquette, bonnet, écharpes et chaussettes"
+      }
+    ],
+    "en": [
+      {
+        "label": "The black selection",
+        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+      },
+      {
+        "label": "Close-up",
+        "text": "A reversible down jacket, Men autumn-winter 2011"
+      },
+      {
+        "label": "New designer",
+        "text": "Monitaly, the American military wardrobe, made in the USA"
+      },
+      {
+        "label": "Accessories selection",
+        "text": "Cap, beanie, scarves and socks"
+      }
+    ]
+  },
+  "cover": {
+    "cols": 6,
+    "photos": [
+      {
+        "img": "73331676-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73331676"
+      },
+      {
+        "img": "73093011-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73093011"
+      },
+      {
+        "img": "73341848-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341848"
+      },
+      {
+        "img": "73092364-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092364"
+      },
+      {
+        "img": "73341941-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341941"
+      },
+      {
+        "img": "73332578-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73332578"
+      },
+      {
+        "img": "73341667-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341667"
+      },
+      {
+        "img": "73092398-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092398"
+      },
+      {
+        "img": "73342020-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73342020"
+      },
+      {
+        "img": "73092530-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73092530"
+      },
+      {
+        "img": "73079596-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73079596"
+      },
+      {
+        "img": "73341765-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73341765"
+      }
+    ]
+  },
+  "sections": [
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "items": [
+        {
+          "id": "73331676",
+          "name": {
+            "fr": "Veste courte à brandebourgs",
+            "en": "Short toggle jacket"
+          },
+          "big": true
+        },
+        {
+          "id": "73341941",
+          "name": {
+            "fr": "Jupe peplum à rubans",
+            "en": "Ribboned peplum skirt"
+          }
+        },
+        {
+          "id": "73342020",
+          "name": {
+            "fr": "Robe à bretelles",
+            "en": "Strappy dress"
+          }
+        },
+        {
+          "id": "73341848",
+          "name": {
+            "fr": "Pantalon en gaze de coton",
+            "en": "Cotton gauze trousers"
+          },
+          "big": true
+        },
+        {
+          "id": "73341765",
+          "name": {
+            "fr": "Veste légère en gaze",
+            "en": "Light gauze jacket"
+          }
+        },
+        {
+          "id": "73341667",
+          "name": {
+            "fr": "Maxi gilet Ground Y",
+            "en": "Ground Y maxi cardigan"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Close-up sur la doudoune Issey Miyake",
+        "en": "Close-up on the Issey Miyake down jacket"
+      },
+      "hero": true,
+      "items": [
+        {
+          "id": "73092364",
+          "name": {
+            "fr": "Doudoune sans manches",
+            "en": "Sleeveless down jacket"
+          }
+        }
+      ],
+      "text": {
+        "fr": "Issey Miyake Men, automne-hiver 2011. Une doudoune sans manches qui se porte des deux côtés : ses boutons pressions se dédoublent pour ajuster la taille, la capuche est fixe.\nPolyester, garniture 93 % duvet. Comme neuve, jamais portée. Taille 3, convient à un M.",
+        "en": "Issey Miyake Men, autumn-winter 2011. A sleeveless down jacket that can be worn either way: its press studs double up to adjust the size, and the hood is fixed.\nPolyester, 93% down filling. Like new, never worn. Size 3, fits an M."
+      },
+      "details": [
+        {
+          "img": "nl-73092364-1.jpg",
+          "alt": {
+            "fr": "La doudoune, capuche",
+            "en": "The down jacket, hood"
+          }
+        },
+        {
+          "img": "nl-issey-aw11-1.jpg",
+          "alt": {
+            "fr": "Défilé Issey Miyake Men, automne-hiver 2011",
+            "en": "Issey Miyake Men show, autumn-winter 2011"
+          }
+        },
+        {
+          "img": "nl-73092364-13.jpg",
+          "alt": {
+            "fr": "Portée de l’autre côté",
+            "en": "Worn the other way round"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
+        "en": "Issey Miyake Men show, autumn-winter 2011."
+      }
+    },
+    {
+      "title": {
+        "fr": "Nouvel auteur : Monitaly",
+        "en": "New designer: Monitaly"
+      },
+      "hero": true,
+      "items": [
+        {
+          "id": "73093011",
+          "name": {
+            "fr": "Veste club en nylon moiré",
+            "en": "Moiré nylon club jacket"
+          }
+        }
+      ],
+      "text": {
+        "fr": "Monitaly arrive chez passéist. Fondée en 1989 par le designer japonais Yuki Matsuda, la maison réinvente le vestiaire utilitaire et militaire américain, fabriqué aux États-Unis, avec une confection exigeante et des tissus exclusifs, souvent chinés ou tissés à la main.\nCette veste club très légère, en nylon effet moiré marron, a une coupe ample et boxy et une taille élastiquée. Comme toujours chez Monitaly, la coupe est folle.",
+        "en": "Monitaly arrives at passéist. Founded in 1989 by Japanese designer Yuki Matsuda, the label reinvents the American utility and military wardrobe, made in the USA, with demanding craftsmanship and exclusive fabrics, often sourced or hand-woven.\nThis very light club jacket in brown moiré nylon has a loose, boxy cut and an elasticated waist. As always with Monitaly, the cut is incredible."
+      }
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "items": [
+        {
+          "id": "73092398",
+          "name": {
+            "fr": "Hoodie jacquard ikat",
+            "en": "Ikat jacquard hoodie"
+          }
+        },
+        {
+          "id": "73092530",
+          "name": {
+            "fr": "Chemise en flanelle",
+            "en": "Flannel shirt"
+          }
+        },
+        {
+          "id": "73332578",
+          "name": {
+            "fr": "Hoodie teddy en laine",
+            "en": "Wool teddy hoodie"
+          },
+          "big": true
+        },
+        {
+          "id": "73342088",
+          "name": {
+            "fr": "Pull à col isolé",
+            "en": "Insulated mock-neck pullover"
+          }
+        },
+        {
+          "id": "73341539",
+          "name": {
+            "fr": "Chemise vichy sashiko",
+            "en": "Sashiko gingham shirt"
+          }
+        }
+      ],
+      "suite": true
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "items": [
+        {
+          "id": "73317897",
+          "name": {
+            "fr": "Casquette Y-3",
+            "en": "Y-3 cap"
+          }
+        },
+        {
+          "id": "73079487",
+          "name": {
+            "fr": "Bonnet slouchy noir",
+            "en": "Black slouchy beanie"
+          }
+        },
+        {
+          "id": "73079596",
+          "name": {
+            "fr": "Écharpe ajourée",
+            "en": "Openwork scarf"
+          },
+          "big": true
+        },
+        {
+          "id": "73331444",
+          "name": {
+            "fr": "Chaussettes marine",
+            "en": "Navy socks"
+          }
+        },
+        {
+          "id": "73331372",
+          "name": {
+            "fr": "Chaussettes grises",
+            "en": "Grey socks"
+          }
+        },
+        {
+          "id": "72536669",
+          "name": {
+            "fr": "Écharpe ajourée marine",
+            "en": "Navy openwork scarf"
+          },
+          "big": true
+        },
+        {
+          "id": "73332525",
+          "name": {
+            "fr": "Écharpe côtelée A.A.R.",
+            "en": "A.A.R. ribbed scarf"
+          }
+        },
+        {
+          "id": "73332466",
+          "name": {
+            "fr": "Écharpe graphique",
+            "en": "Graphic scarf"
+          }
+        }
+      ]
+    }
   ]
- },
- "cover": {
-  "cols": 6,
-  "photos": [
-   {
-    "img": "73331676-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73331676"
-   },
-   {
-    "img": "73093011-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73093011"
-   },
-   {
-    "img": "73341848-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73341848"
-   },
-   {
-    "img": "73092364-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092364"
-   },
-   {
-    "img": "73341941-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73341941"
-   },
-   {
-    "img": "73332578-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73332578"
-   },
-   {
-    "img": "73341667-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73341667"
-   },
-   {
-    "img": "73092398-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092398"
-   },
-   {
-    "img": "73342020-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73342020"
-   },
-   {
-    "img": "73092530-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73092530"
-   },
-   {
-    "img": "73079596-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73079596"
-   },
-   {
-    "img": "73341765-0-md.webp",
-    "alt": {
-     "fr": "",
-     "en": ""
-    },
-    "link": "73341765"
-   }
-  ]
- },
- "sections": [
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "items": [
-    {
-     "id": "73331676",
-     "name": {
-      "fr": "Veste courte à brandebourgs",
-      "en": "Short toggle jacket"
-     },
-     "big": true
-    },
-    {
-     "id": "73341941",
-     "name": {
-      "fr": "Jupe peplum à rubans",
-      "en": "Ribboned peplum skirt"
-     }
-    },
-    {
-     "id": "73342020",
-     "name": {
-      "fr": "Robe à bretelles",
-      "en": "Strappy dress"
-     }
-    },
-    {
-     "id": "73341848",
-     "name": {
-      "fr": "Pantalon en gaze de coton",
-      "en": "Cotton gauze trousers"
-     },
-     "big": true
-    },
-    {
-     "id": "73341765",
-     "name": {
-      "fr": "Veste légère en gaze",
-      "en": "Light gauze jacket"
-     }
-    },
-    {
-     "id": "73341667",
-     "name": {
-      "fr": "Maxi gilet Ground Y",
-      "en": "Ground Y maxi cardigan"
-     }
-    }
-   ]
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "hero": true,
-   "items": [
-    {
-     "id": "73092364",
-     "name": {
-      "fr": "Doudoune sans manches",
-      "en": "Sleeveless down jacket"
-     }
-    }
-   ],
-   "text": {
-    "fr": "Issey Miyake Men, automne-hiver 2011. Une doudoune sans manches qui se porte des deux côtés : ses boutons pressions se dédoublent pour ajuster la taille, la capuche est fixe.\nPolyester, garniture 93 % duvet. Comme neuve, jamais portée. Taille 3, convient à un M.",
-    "en": "Issey Miyake Men, autumn-winter 2011. A sleeveless down jacket that can be worn either way: its press studs double up to adjust the size, and the hood is fixed.\nPolyester, 93% down filling. Like new, never worn. Size 3, fits an M."
-   },
-   "details": [
-    {
-     "img": "nl-73092364-1.jpg",
-     "alt": {
-      "fr": "La doudoune, capuche",
-      "en": "The down jacket, hood"
-     }
-    },
-    {
-     "img": "nl-issey-aw11-1.jpg",
-     "alt": {
-      "fr": "Défilé Issey Miyake Men, automne-hiver 2011",
-      "en": "Issey Miyake Men show, autumn-winter 2011"
-     }
-    },
-    {
-     "img": "nl-73092364-13.jpg",
-     "alt": {
-      "fr": "Portée de l’autre côté",
-      "en": "Worn the other way round"
-     }
-    }
-   ],
-   "caption": {
-    "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
-    "en": "Issey Miyake Men show, autumn-winter 2011."
-   }
-  },
-  {
-   "title": {
-    "fr": "Nouvel auteur : Monitaly",
-    "en": "New designer: Monitaly"
-   },
-   "hero": true,
-   "items": [
-    {
-     "id": "73093011",
-     "name": {
-      "fr": "Veste club en nylon moiré",
-      "en": "Moiré nylon club jacket"
-     }
-    }
-   ],
-   "text": {
-    "fr": "Monitaly arrive chez passéist. Fondée en 1989 par le designer japonais Yuki Matsuda, la maison réinvente le vestiaire utilitaire et militaire américain, fabriqué aux États-Unis, avec une confection exigeante et des tissus exclusifs, souvent chinés ou tissés à la main.\nCette veste club très légère, en nylon effet moiré marron, a une coupe ample et boxy et une taille élastiquée. Comme toujours chez Monitaly, la coupe est folle.",
-    "en": "Monitaly arrives at passéist. Founded in 1989 by Japanese designer Yuki Matsuda, the label reinvents the American utility and military wardrobe, made in the USA, with demanding craftsmanship and exclusive fabrics, often sourced or hand-woven.\nThis very light club jacket in brown moiré nylon has a loose, boxy cut and an elasticated waist. As always with Monitaly, the cut is incredible."
-   }
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "items": [
-    {
-     "id": "73092398",
-     "name": {
-      "fr": "Hoodie jacquard ikat",
-      "en": "Ikat jacquard hoodie"
-     }
-    },
-    {
-     "id": "73092530",
-     "name": {
-      "fr": "Chemise en flanelle",
-      "en": "Flannel shirt"
-     }
-    },
-    {
-     "id": "73332578",
-     "name": {
-      "fr": "Hoodie teddy en laine",
-      "en": "Wool teddy hoodie"
-     },
-     "big": true
-    },
-    {
-     "id": "73342088",
-     "name": {
-      "fr": "Pull à col isolé",
-      "en": "Insulated mock-neck pullover"
-     }
-    },
-    {
-     "id": "73341539",
-     "name": {
-      "fr": "Chemise vichy sashiko",
-      "en": "Sashiko gingham shirt"
-     }
-    }
-   ],
-   "suite": true
-  },
-  {
-   "title": {
-    "fr": "",
-    "en": ""
-   },
-   "items": [
-    {
-     "id": "73317897",
-     "name": {
-      "fr": "Casquette Y-3",
-      "en": "Y-3 cap"
-     }
-    },
-    {
-     "id": "73079487",
-     "name": {
-      "fr": "Bonnet slouchy noir",
-      "en": "Black slouchy beanie"
-     }
-    },
-    {
-     "id": "73079596",
-     "name": {
-      "fr": "Écharpe ajourée",
-      "en": "Openwork scarf"
-     },
-     "big": true
-    },
-    {
-     "id": "73331444",
-     "name": {
-      "fr": "Chaussettes marine",
-      "en": "Navy socks"
-     }
-    },
-    {
-     "id": "73331372",
-     "name": {
-      "fr": "Chaussettes grises",
-      "en": "Grey socks"
-     }
-    },
-    {
-     "id": "72536669",
-     "name": {
-      "fr": "Écharpe ajourée marine",
-      "en": "Navy openwork scarf"
-     },
-     "big": true
-    },
-    {
-     "id": "73332525",
-     "name": {
-      "fr": "Écharpe côtelée A.A.R.",
-      "en": "A.A.R. ribbed scarf"
-     }
-    },
-    {
-     "id": "73332466",
-     "name": {
-      "fr": "Écharpe graphique",
-      "en": "Graphic scarf"
-     }
-    }
-   ]
-  }
- ]
 }
