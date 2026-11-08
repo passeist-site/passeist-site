@@ -28,7 +28,7 @@
       },
       {
         "label": "Les accessoires",
-        "text": "Casquette, bonnet, écharpes et chaussettes"
+        "text": "Casquettes, bonnet, écharpes et chaussettes"
       }
     ],
     "en": [
@@ -46,7 +46,7 @@
       },
       {
         "label": "Accessories",
-        "text": "Cap, beanie, scarves and socks"
+        "text": "Caps, beanie, scarves and socks"
       }
     ]
   },
@@ -365,6 +365,14 @@
             "fr": "Chaussettes grises",
             "en": "Grey socks"
           }
+        },
+        {
+          "id": "73092610",
+          "name": {
+            "fr": "Casquette",
+            "en": "Cap"
+          },
+          "big": true
         },
         {
           "id": "73332525",
