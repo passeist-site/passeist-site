@@ -28,7 +28,7 @@
       },
       {
         "label": "Les accessoires",
-        "text": "Casquette, bonnet, écharpes et chaussettes"
+        "text": "Casquettes, bonnet, écharpes et chaussettes"
       }
     ],
     "en": [
@@ -46,7 +46,7 @@
       },
       {
         "label": "Accessories",
-        "text": "Cap, beanie, scarves and socks"
+        "text": "Caps, beanie, scarves and socks"
       }
     ]
   },
@@ -285,19 +285,11 @@
           }
         },
         {
-          "id": "73342088",
-          "name": {
-            "fr": "Pull matelassé à col montant",
-            "en": "Quilted mock-neck pullover"
-          }
-        },
-        {
           "id": "73332578",
           "name": {
             "fr": "Hoodie teddy en laine",
             "en": "Wool teddy hoodie"
-          },
-          "big": true
+          }
         }
       ],
       "suite": true
@@ -308,6 +300,14 @@
         "en": ""
       },
       "items": [
+        {
+          "id": "73079596",
+          "name": {
+            "fr": "Écharpe ajourée",
+            "en": "Openwork scarf"
+          },
+          "big": true
+        },
         {
           "id": "73317897",
           "name": {
@@ -323,10 +323,10 @@
           }
         },
         {
-          "id": "73079596",
+          "id": "72536669",
           "name": {
-            "fr": "Écharpe ajourée",
-            "en": "Openwork scarf"
+            "fr": "Écharpe ajourée marine",
+            "en": "Navy openwork scarf"
           },
           "big": true
         },
@@ -345,10 +345,10 @@
           }
         },
         {
-          "id": "72536669",
+          "id": "73092610",
           "name": {
-            "fr": "Écharpe ajourée marine",
-            "en": "Navy openwork scarf"
+            "fr": "Casquette double visière corduroy",
+            "en": "Double-brim corduroy cap"
           },
           "big": true
         }
