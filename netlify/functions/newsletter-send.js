@@ -102,12 +102,16 @@ function editionHtml(lang, ed, total) {
   const [y, m, d] = todayParis().split('-').map(Number);   // date du jour de l'envoi
   const dateTxt = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
   const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
-  const piece = (it, big) => {
+  // part : 'img' (photo seule) ou 'txt' (marque, nom, prix seuls) ; rien = les deux
+  const piece = (it, big, part) => {
     const p = PRODUCTS[it.id];
     const w = big ? 512 : 252;
     const src = it.img ? `${SITE}/img/${it.img}` : `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;   // it.img : photo préparée pour la newsletter
-    return `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">
-      <img src="${src}" width="${w}" alt="${esc(title(it.brand || p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">
+    const img = `<img src="${src}" width="${w}" alt="${esc(title(it.brand || p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`;
+    const open = `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">`;
+    if (part === 'img') return open + img + '</a>';
+    return `${open}
+      ${part === 'txt' ? '' : img}
       <div style="font-family:${FONT};font-size:${big ? 12 : 10.5}px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${INK};margin-top:${big ? 20 : 14}px;">${esc(it.brand || p.brand)}</div>${it.line ? `<div style="font-family:${FONT};font-size:${big ? 10 : 9}px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:${DIM};margin-top:3px;">${esc(it.line)}</div>` : ''}
       <div class="nm" style="font-family:${FONT};font-size:${big ? 16 : 11.5}px;font-style:italic;font-weight:300;letter-spacing:-0.015em;${big ? '' : 'white-space:nowrap;'}line-height:1.4;color:${DIM};margin-top:4px;">${esc(L(it.name) || p.label || p.type)}</div>
       <div style="font-family:${FONT};font-size:${big ? 12 : 11}px;font-weight:400;color:${MUTE};margin-top:6px;">${esc(p.price)}&nbsp;€</div></a>`;
@@ -156,7 +160,10 @@ function editionHtml(lang, ed, total) {
     const rows = groups.map(g => g.big
       ? `<tr><td align="center" style="padding:0 0 52px;">${piece(g[0], true)}</td></tr>`
       : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
-        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
+        // Photos sur une ligne (calées en bas), textes sur la suivante : les noms restent
+        // alignés même quand les deux photos n'ont pas la même hauteur
+        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="bottom" align="center" style="padding:0 4px;">${piece(it, false, 'img')}</td>`).join('') + `</tr><tr>` +
+        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false, 'txt')}</td>`).join('') + `</tr></table></td></tr>`);
     // sec.more : lien sous la partie (ex. « Voir les 6 pièces Monitaly » vers /shop?brand=…)
     const more = (sec.more && L(sec.more.label)) ? `<tr><td align="center" style="padding:0 0 52px;"><a href="${track(SITE + (sec.more.href || '/shop'))}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${esc(L(sec.more.label))}</a></td></tr>` : '';
     return head + rows.join('') + more;
