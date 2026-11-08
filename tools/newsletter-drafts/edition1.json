@@ -15,12 +15,12 @@
   "introList": {
     "fr": [
       {
-        "label": "La sélection en noir",
+        "label": "Sélection en noir",
         "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
-        "label": "Close-up sur Issey Miyake",
-        "text": "Une doudoune réversible, Men automne-hiver 2011"
+        "label": "Pièce de défilé",
+        "text": "Issey Miyake Men, une doudoune réversible vue au défilé automne-hiver 2011"
       },
       {
         "label": "Nouvel auteur",
@@ -33,12 +33,12 @@
     ],
     "en": [
       {
-        "label": "The black selection",
+        "label": "Black selection",
         "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
-        "label": "Close-up on Issey Miyake",
-        "text": "A reversible down jacket, Men autumn-winter 2011"
+        "label": "Runway piece",
+        "text": "Issey Miyake Men, a reversible down vest from the autumn-winter 2011 show"
       },
       {
         "label": "New designer",
