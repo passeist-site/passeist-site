@@ -292,7 +292,14 @@
           }
         }
       ],
-      "suite": true
+      "suite": true,
+      "more": {
+        "label": {
+          "fr": "Voir les 6 pièces Monitaly",
+          "en": "See all 6 Monitaly pieces"
+        },
+        "href": "/shop?brand=MONITALY"
+      }
     },
     {
       "title": {

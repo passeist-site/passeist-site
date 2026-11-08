@@ -149,7 +149,9 @@ function editionHtml(lang, ed, total) {
       ? `<tr><td align="center" style="padding:0 0 52px;">${piece(g[0], true)}</td></tr>`
       : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0"><tr>` +   // pièce seule (l'autre vendue) : centrée
         g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false)}</td>`).join('') + `</tr></table></td></tr>`);
-    return head + rows.join('');
+    // sec.more : lien sous la partie (ex. « Voir les 6 pièces Monitaly » vers /shop?brand=…)
+    const more = (sec.more && L(sec.more.label)) ? `<tr><td align="center" style="padding:0 0 52px;"><a href="${track(SITE + (sec.more.href || '/shop'))}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${esc(L(sec.more.label))}</a></td></tr>` : '';
+    return head + rows.join('') + more;
   }).join('');
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
