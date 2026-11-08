@@ -223,3 +223,4 @@ maintenant aussi `feed-pinterest.xml` (photo 1 seule, 1 pièce = 1 épingle).
 netlify/functions/newsletter-edition.json. Sommaire : Vestiaire noir, Pièce de
 défilé, Nouvel auteur, Les accessoires. Objet avec les marques. Envoi manuel
 par Tom (« Envoyer maintenant » dans la messagerie).
+- Version finale (16 pièces) : titres de partie numérotés comme le sommaire (`numbered`), photos des paires dans le même cadre (colonnes fixes, photos et textes sur deux lignes), lien « Voir les pièces Monitaly » (`sec.more`), textes doudoune et Monitaly réécrits avec Tom.
