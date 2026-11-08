@@ -28,7 +28,7 @@
       },
       {
         "label": "Les accessoires",
-        "text": "Casquettes, bonnet, écharpes et chaussettes"
+        "text": "Casquette, bonnet, écharpes et chaussettes"
       }
     ],
     "en": [
@@ -46,7 +46,7 @@
       },
       {
         "label": "Accessories",
-        "text": "Caps, beanie, scarves and socks"
+        "text": "Cap, beanie, scarves and socks"
       }
     ]
   },
@@ -126,12 +126,12 @@
         "link": "73342020"
       },
       {
-        "img": "73092610-0-md.webp",
+        "img": "73317897-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73092610"
+        "link": "73317897"
       },
       {
         "img": "73079596-0-md.webp",
@@ -309,14 +309,6 @@
       },
       "items": [
         {
-          "id": "73079596",
-          "name": {
-            "fr": "Écharpe ajourée",
-            "en": "Openwork scarf"
-          },
-          "big": true
-        },
-        {
           "id": "73317897",
           "name": {
             "fr": "Casquette Y-3",
@@ -331,10 +323,10 @@
           }
         },
         {
-          "id": "72536669",
+          "id": "73079596",
           "name": {
-            "fr": "Écharpe ajourée marine",
-            "en": "Navy openwork scarf"
+            "fr": "Écharpe ajourée",
+            "en": "Openwork scarf"
           },
           "big": true
         },
@@ -353,10 +345,10 @@
           }
         },
         {
-          "id": "73092610",
+          "id": "72536669",
           "name": {
-            "fr": "Casquette double visière corduroy",
-            "en": "Double-brim corduroy cap"
+            "fr": "Écharpe ajourée marine",
+            "en": "Navy openwork scarf"
           },
           "big": true
         }
