@@ -167,28 +167,6 @@
           "big": true
         },
         {
-          "id": "73404845",
-          "name": {
-            "fr": "Pull à mini col plié",
-            "en": "Folded mini-collar jumper"
-          }
-        },
-        {
-          "id": "73092278",
-          "name": {
-            "fr": "Chemise Ground Y × Yasuto Sasada",
-            "en": "Ground Y × Yasuto Sasada shirt"
-          }
-        },
-        {
-          "id": "73404876",
-          "name": {
-            "fr": "Pull à nœud tressé",
-            "en": "Braided knot jumper"
-          },
-          "big": true
-        },
-        {
           "id": "73341941",
           "name": {
             "fr": "Jupe peplum à rubans",
@@ -200,6 +178,28 @@
           "name": {
             "fr": "Robe à bretelles",
             "en": "Strappy dress"
+          }
+        },
+        {
+          "id": "73404876",
+          "name": {
+            "fr": "Pull à nœud tressé",
+            "en": "Braided knot jumper"
+          },
+          "big": true
+        },
+        {
+          "id": "73404845",
+          "name": {
+            "fr": "Pull à mini col plié",
+            "en": "Folded mini-collar jumper"
+          }
+        },
+        {
+          "id": "73092278",
+          "name": {
+            "fr": "Chemise Ground Y × Yasuto Sasada",
+            "en": "Ground Y × Yasuto Sasada shirt"
           }
         },
         {
