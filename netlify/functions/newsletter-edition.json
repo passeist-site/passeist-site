@@ -16,7 +16,7 @@
     "fr": [
       {
         "label": "Vestiaire noir",
-        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+        "text": "Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
         "label": "Pièce de défilé",
@@ -34,7 +34,7 @@
     "en": [
       {
         "label": "Black wardrobe",
-        "text": "Yohji Yamamoto, Issey Miyake, Yoshiki Hishinuma, Mihara Yasuhiro"
+        "text": "Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro"
       },
       {
         "label": "Runway piece",
@@ -70,12 +70,12 @@
         "link": "73093011"
       },
       {
-        "img": "73341848-0-md.webp",
+        "img": "73092278-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73341848"
+        "link": "73092278"
       },
       {
         "img": "73092364-0-md.webp",
@@ -200,28 +200,6 @@
           "name": {
             "fr": "Chemise Ground Y × Yasuto Sasada",
             "en": "Ground Y × Yasuto Sasada shirt"
-          }
-        },
-        {
-          "id": "73341848",
-          "name": {
-            "fr": "Pantalon en gaze de coton",
-            "en": "Cotton gauze trousers"
-          },
-          "big": true
-        },
-        {
-          "id": "73341765",
-          "name": {
-            "fr": "Veste légère en gaze",
-            "en": "Light gauze jacket"
-          }
-        },
-        {
-          "id": "73341667",
-          "name": {
-            "fr": "Maxi gilet Ground Y",
-            "en": "Ground Y maxi cardigan"
           }
         }
       ]
@@ -395,20 +373,6 @@
             "en": "Double-brim corduroy cap"
           },
           "big": true
-        },
-        {
-          "id": "73332525",
-          "name": {
-            "fr": "Écharpe côtelée A.A.R.",
-            "en": "A.A.R. ribbed scarf"
-          }
-        },
-        {
-          "id": "73332466",
-          "name": {
-            "fr": "Écharpe graphique",
-            "en": "Graphic scarf"
-          }
         }
       ]
     }
