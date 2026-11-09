@@ -251,4 +251,4 @@ script « Version blanche en essai » dans index.html.
 - Barre « Ajouter au panier » des fiches (mobile) un peu moins haute : boutons 36 px, marges 6 px.
 - Boutons Explorer / Tout voir en bleu nuit (#1C2230, l'ancien fond) et non plus le bleu du point.
 - Ruban photos : largeur exacte du cadre (décimales) et voisines cachées au repos, plus de filet sur les bords.
-- Thème blanc : photo 1 des 65 pièces à fond gris détourée (modèle isnet) et posée sur blanc pur, pour ne plus voir de rectangle gris en boutique. Tee et sac 45rpm blancs : fond éclairci seulement. Photo défilé Issey, illustration CDG et portefeuille Y's : photo d'origine gardée.
+- Thème blanc : photo 1 des 65 pièces à fond gris détourée et posée sur blanc pur, pour ne plus voir de rectangle gris en boutique. Détourage hybride (modèle isnet, plus comparaison au fond réel pour garder le crème et le blanc : manches crème, tee et sac 45rpm blancs). Photo défilé Issey, illustration CDG et portefeuille Y's : photo d'origine gardée.
