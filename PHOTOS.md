@@ -35,6 +35,10 @@ et vignettes, photo 1 comprise), comme les cartes : demandé par Tom le
 2026-09-28. Seul le cadre est arrondi, le cadrage et le contain ne changent
 pas.
 
+Exception **téléphone (≤ 900 px)**, validée par Tom le 2026-11-09 : grande
+photo bord à bord et vignettes à **angles droits** (voir § 4 ter). Sur
+ordinateur, les coins 6 px restent.
+
 ## 3. Cartes des grilles = photo 1 de la fiche
 
 Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
@@ -106,6 +110,23 @@ desktop :
   (mesure au pixel à 390 et 1400 px ; sans agrandissement le liseré est
   visible). On utilise la propriété CSS `scale` et non `transform`, car le
   pinch-zoom écrit un `transform` inline sur la grande photo.
+
+## 4 ter. Fiche produit sur téléphone : le ruban (validé par Tom le 2026-11-09)
+
+Inspiré de Wright (maison de ventes) : les photos se suivent comme une seule
+bande qu'on fait glisser du doigt.
+
+- **Grande photo bord à bord** : toute la largeur de l'écran, sans marge ni
+  carte, **angles droits**, 16 px sous l'en-tête. Fond du cadre blanc.
+- **Ruban** : la photo précédente et la suivante (`.ribbon-ghost`) attendent
+  collées de chaque côté de la grande photo, hors écran ; pendant le glissé
+  elles suivent le doigt avec elle, puis toute la bande avance d'une photo.
+- **Cadrage inchangé** : photo 1 entière (`contain`), photos 2+ en `cover`
+  3:4 avec `scale: 1.01` (§ 4). Au milieu du ruban, le liseré du bord de bande
+  des photos 2+ est coupé par `clip-path: inset(0 0.5%)` (même rendu que le
+  cadre en `overflow: hidden`).
+- **Vignettes** : 54 px de large (6 visibles), angles droits, écart 5 px.
+- Ordinateur (> 900 px) : rien ne change (pas de ruban, coins 6 px).
 
 ## 5. Interdictions
 

@@ -3775,6 +3775,38 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   .mobile-nav-backdrop { transition: opacity 0.5s ease, visibility 0s linear 0.5s; }
   .mobile-nav-backdrop.open { transition: opacity 0.5s ease, visibility 0s; }
 }
+
+/* ===== Fiche produit, Tom 2026-11-09 (inspiration Wright) ===== */
+/* Prix : même typo et même taille que la marque, sans l'étiquette (l'étiquette
+   reste sur les cartes des grilles). */
+#detail .detail-price-wrap { background: none; clip-path: none; padding: 0; height: auto; border-radius: 0; }
+#detail .detail-price { color: var(--ink); font-family: var(--font-sans); font-size: 34px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.02; font-variant-numeric: normal; }
+/* Description repliée sous « Lire la description complète + » */
+#detail .detail-desc:not(.is-open) { display: none; }
+.desc-toggle { display: block; margin: 4px 0 28px; padding: 0 0 5px; background: none; border: 0; border-bottom: 1px solid rgba(244,241,236,.5); color: var(--ink); font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; text-align: left; }
+#detail .ribbon-ghost { display: none; }
+@media (max-width: 900px) {
+  #detail .detail-price { font-size: 28px; }
+  #detail .detail-info > .detail-price-row { margin: 0 !important; }
+  /* REGLE FIGEE par Tom, voir PHOTOS.md § 4 ter (ruban) */
+  /* Grande photo bord à bord, angles droits ; les voisines (.ribbon-ghost)
+     attendent collées de chaque côté et glissent avec elle. Cadrage inchangé :
+     photo 1 entière (contain), photos 2+ en cover 3:4 avec scale 1.01. */
+  #detail .detail-gallery .main-photo-wrap { width: 100%; margin: 16px 0 0; clip-path: inset(0); border-radius: 0; background: #fff; }
+  #detail .detail-gallery .main-photo { margin: 0; border-radius: 0; }
+  #detail .detail-gallery .ribbon-ghost { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; margin: 0; border-radius: 0; background: #fff; pointer-events: none; object-position: center; }
+  #detail .detail-gallery .ribbon-ghost[data-idx="0"] { object-fit: contain; }
+  #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { object-fit: cover; scale: 1.01; }
+  /* Photos 2+ : le scale 1.01 cache le liseré du bord de bande quand la photo
+     touche le bord du cadre ; au milieu du ruban, le même liseré est coupé
+     par un clip de 0,5 % sur les côtés (même rendu, cf. § 4). */
+  #detail .detail-gallery .main-photo:not([data-idx="0"]),
+  #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { clip-path: inset(0 0.5%); }
+  /* Vignettes plus petites (6 visibles), angles droits comme la grande photo */
+  #detail .detail-gallery .thumbs-row { gap: 5px; margin-top: 10px; }
+  #detail .detail-gallery .thumb { flex: 0 0 54px !important; width: 54px !important; border-radius: 0; }
+  #detail .detail-gallery .thumb img { border-radius: 0; }
+}
 </style>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
@@ -4179,6 +4211,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </div>
       <p class="detail-intro" id="d-intro"></p>
       <div class="detail-desc" id="d-desc"></div>
+      <button class="desc-toggle" id="d-desc-toggle" type="button" aria-expanded="false">Lire la description complète +</button>
       <div class="detail-actions" id="d-actions">
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
         <button class="btn btn-secondary" id="d-contact">Demander un renseignement</button>
@@ -7826,6 +7859,7 @@ function openDetail(id) {
   const refEl = document.getElementById('d-ref');
   if (refEl) { refEl.textContent = (window.__lang === 'en' ? 'Ref. ' : 'Réf. ') + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
+  if (window.foldDesc) window.foldDesc(true);
   // Phrase unique passéist (générée au build, cf plugin generate-product-pages)
   // Phrase automatique passéist : plus affichée sur la fiche (Tom). Elle
   // reste dans la description Google et les données produit (cf plugin).
@@ -7948,6 +7982,39 @@ function openDetail(id) {
     }
   } catch (e) { console.warn('Similar products err:', e); }
   const mainEl = gal.querySelector('.main-photo');
+  // Ruban (téléphone, Tom 2026-11-09) : les photos voisines attendent collées
+  // de part et d'autre de la grande photo ; pendant le glissé elles suivent le
+  // doigt avec elle, comme une seule bande (voir PHOTOS.md § 4 ter).
+  const ribbon = [];
+  if (photos.length > 1 && mainEl) {
+    const wrapEl = mainEl.parentElement;
+    [-1, 1].forEach(side => {
+      const g = document.createElement('img');
+      g.className = 'ribbon-ghost'; g.alt = ''; g.decoding = 'async'; g.draggable = false;
+      g.setAttribute('aria-hidden', 'true');
+      g.dataset.side = side;
+      wrapEl.appendChild(g);
+      ribbon.push(g);
+    });
+  }
+  function ribbonSync() {
+    if (!ribbon.length) return;
+    const cur = parseInt(mainEl.dataset.idx || '0', 10) || 0;
+    ribbon.forEach(g => {
+      const j = (cur + Number(g.dataset.side) + photos.length) % photos.length;
+      if (g.dataset.idx !== String(j)) { g.dataset.idx = j; g.src = photos[j]; }
+    });
+  }
+  function ribbonMove(x, transition) {
+    ribbon.forEach(g => {
+      g.style.transition = transition || 'none';
+      g.style.transform = 'translateX(calc(' + (Number(g.dataset.side) * 100) + '% + ' + x + 'px))';
+    });
+  }
+  if (ribbon.length) {
+    ribbonSync(); ribbonMove(0);
+    new MutationObserver(() => ribbonSync()).observe(mainEl, { attributes: true, attributeFilter: ['src', 'data-idx'] });
+  }
   const thumbs = gal.querySelectorAll('.thumb');
   let curIdx = 0;
   // Pinch zoom direct sur la photo principale (pas de lightbox).
@@ -8008,6 +8075,25 @@ function openDetail(id) {
   // Glissé réussi : la photo sort du côté du doigt, la suivante entre de l'autre
   function slideToPhoto(direction) {
     const w = mainEl.getBoundingClientRect().width || window.innerWidth;
+    if (ribbon.length) {
+      // Ruban : toute la bande avance d'une photo, puis on remet la grande
+      // photo au centre avec la nouvelle image (la voisine la cachait déjà).
+      const ease = 'transform 0.22s cubic-bezier(.2,.8,.25,1)';
+      const to = direction > 0 ? -w : w;
+      mainEl.style.transition = ease;
+      mainEl.style.transform = 'translateX(' + to + 'px)';
+      ribbonMove(to, ease);
+      setTimeout(() => {
+        navigateMainPhoto(direction);
+        const done = () => {
+          mainEl.style.transition = 'none'; mainEl.style.transform = '';
+          ribbonMove(0);
+        };
+        const dec = mainEl.decode ? mainEl.decode().catch(() => {}) : Promise.resolve();
+        Promise.race([dec, new Promise(r => setTimeout(r, 300))]).then(done);
+      }, 230);
+      return;
+    }
     mainEl.style.transition = 'transform 0.16s cubic-bezier(.4,0,.6,1)';
     mainEl.style.transform = 'translateX(' + (direction > 0 ? -w : w) + 'px)';
     setTimeout(() => {
@@ -8070,6 +8156,7 @@ function openDetail(id) {
         e.preventDefault();
         mainEl.style.transition = 'none';
         mainEl.style.transform = 'translateX(' + dx + 'px)';
+        ribbonMove(dx);
         mDidSwipe = true;
       }
     }
@@ -8096,6 +8183,7 @@ function openDetail(id) {
         // Pas assez tiré : la photo revient en place
         mainEl.style.transition = 'transform 0.22s cubic-bezier(.2,.8,.25,1)';
         mainEl.style.transform = '';
+        ribbonMove(0, 'transform 0.22s cubic-bezier(.2,.8,.25,1)');
         setTimeout(() => { mainEl.style.transition = 'none'; }, 240);
       }
     }
@@ -10765,6 +10853,7 @@ window.subscribeNewsletter = function (e) {
   };
   function applyI18n(lang) {
     window.__lang = lang;
+    setTimeout(() => { if (window.foldDesc) window.foldDesc(null); }, 0);
     document.documentElement.lang = lang;
     try { localStorage.setItem('passeist_lang', lang); } catch(e){}
     // Meta
@@ -10945,6 +11034,24 @@ window.subscribeNewsletter = function (e) {
     });
   }
   window.applyI18n = applyI18n;
+  // Description repliée sous « Lire la description complète + » (Tom, 2026-11-09).
+  // fold : true = replier, false = déplier, null = garder l'état (changement de langue).
+  window.foldDesc = function (fold) {
+    const d = document.getElementById('d-desc'), b = document.getElementById('d-desc-toggle');
+    if (!d || !b) return;
+    const open = fold === null ? d.classList.contains('is-open') : !fold;
+    d.classList.toggle('is-open', open);
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const en = window.__lang === 'en';
+    b.textContent = open ? (en ? 'Hide the description −' : 'Masquer la description −')
+                         : (en ? 'Read the full description +' : 'Lire la description complète +');
+  };
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('#d-desc-toggle');
+    if (!b) return;
+    const d = document.getElementById('d-desc');
+    window.foldDesc(d && d.classList.contains('is-open'));
+  });
 })();
 </script>
 </body>
