@@ -3804,11 +3804,12 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   #detail .detail-gallery .ribbon-ghost { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; margin: 0; border-radius: 0; background: #fff; pointer-events: none; object-position: center; }
   #detail .detail-gallery .ribbon-ghost[data-idx="0"] { object-fit: contain; }
   #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { object-fit: cover; scale: 1.01; }
-  /* Photos 2+ : le scale 1.01 cache le liseré du bord de bande quand la photo
-     touche le bord du cadre ; au milieu du ruban, le même liseré est coupé
-     par un clip de 0,5 % sur les côtés (même rendu, cf. § 4). */
-  #detail .detail-gallery .main-photo:not([data-idx="0"]),
-  #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { clip-path: inset(0 0.5%); }
+  /* Photos 2+ dans le ruban : au lieu de scale 1.01 (qui agrandissait aussi le
+     déplacement et laissait une bande de 4 px entre deux photos), la photo fait
+     101 % de large, centrée, et le liseré du bord de bande est coupé pile au bord
+     du cadre (0,495 % de chaque côté) : même cadrage qu'avec scale 1.01 (§ 4). */
+  #detail .detail-gallery .main-photo:not([data-idx="0"]) { scale: none; width: 101%; max-width: none; margin-left: -0.5%; clip-path: inset(0 0.495%); }
+  #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { scale: none; width: 101%; left: -0.5%; clip-path: inset(0 0.495%); }
   /* Vignettes plus petites (6 visibles), angles droits comme la grande photo */
   #detail .detail-gallery .thumbs-row { gap: 5px; margin-top: 10px; }
   #detail .detail-gallery .thumb { flex: 0 0 54px !important; width: 54px !important; border-radius: 0; }
@@ -8047,7 +8048,8 @@ function openDetail(id) {
   function ribbonMove(x, transition) {
     ribbon.forEach(g => {
       g.style.transition = transition || 'none';
-      g.style.transform = 'translateX(calc(' + (Number(g.dataset.side) * 100) + '% + ' + x + 'px))';
+      const w = mainEl.parentElement.clientWidth || window.innerWidth;   // largeur du cadre (pas de la photo, qui peut faire 101 %)
+      g.style.transform = 'translateX(' + (Number(g.dataset.side) * w + x) + 'px)';
     });
   }
   if (ribbon.length) {
