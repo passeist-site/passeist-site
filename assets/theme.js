@@ -61,6 +61,8 @@
     '.footer a,.footer span{color:rgba(244,241,236,.8)!important}' +
     /* Bandes gris très clair pour donner du relief aux sections secondaires */
     '.similar-section,.recent-section{background:#e6e6e6!important}' +
+    /* Carrousels sous les fiches : les pièces flottent aussi sur la bande grise */
+    '.similar-section .product-img,.recent-section .product-img,.similar-section .product-img::before,.recent-section .product-img::before{background:#e6e6e6!important;box-shadow:none!important}.similar-section .product-img img,.recent-section .product-img img{background:transparent!important;mix-blend-mode:multiply}' +
     /* Boutons (Explorer, Tout voir) : bleu nuit d'avant, pas le bleu du point (Tom) */
     '.hero-cta,.hbs-cta{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
     '.hero-cta *,.hbs-cta *{color:' + C + '!important}' +
