@@ -123,7 +123,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
   <div class="detail-main">
     <div class="detail-gallery" id="detail-gallery">${galleryHtml}</div>
     <div class="detail-info">
-      <h1 class="detail-title"><span class="detail-brand" id="d-brand">${esc(p.brand)}</span> <span class="detail-name" id="d-name">${esc(p.type)}</span></h1>
+      <h1 class="detail-title"><span class="detail-brand" id="d-brand">${esc(p.brand)}</span> <span class="detail-name" id="d-name">${esc(p.type)}${[p.line, p.edition].filter(Boolean).length ? '<span class="d-season"> · ' + esc([p.line, p.edition].filter(Boolean).join(' · ')) + '</span>' : ''}</span></h1>
       <div class="detail-price-row" id="d-price-row">
         <div class="detail-price-wrap" id="d-price-wrap"${sold ? ' style="display:none"' : ''}>
           <svg class="nav-ink nav-ink--price-detail" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="68" filter="url(#ink-rough-h)"/></svg>

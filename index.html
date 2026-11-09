@@ -3784,6 +3784,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 #detail .detail-price { color: var(--ink); font-family: var(--font-sans); font-size: 34px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.02; font-variant-numeric: normal; }
 /* Description repliée sous « Lire la description complète + » */
 #detail .detail-desc:not(.is-open) { display: none; }
+/* Saison à côté du nom (window.setSeason) : la ligne séparée disparaît */
+#detail .detail-edition { display: none !important; }
+#detail .d-season { color: var(--text-mute); }
 .desc-toggle { display: block; margin: 4px 0 28px; padding: 0 0 5px; background: none; border: 0; border-bottom: 1px solid rgba(244,241,236,.5); color: var(--ink); font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; text-align: left; }
 #detail .ribbon-ghost { display: none; }
 @media (max-width: 900px) {
@@ -7850,6 +7853,7 @@ function openDetail(id) {
   // Ligne + saison lues dans la description (« Homme Plus · Automne-hiver 2003 »), cf. plugin
   const edEl = document.getElementById('d-edition');
   if (edEl) edEl.textContent = [p.line, (window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition)].filter(Boolean).join(' · ');
+  if (window.setSeason) window.setSeason(p);
   const priceEl = document.getElementById('d-price');
   priceEl.textContent = sold ? '' : (p.price + ' €');
   document.getElementById('d-price-wrap').style.display = sold ? 'none' : '';
@@ -11002,6 +11006,7 @@ window.subscribeNewsletter = function (e) {
       const dg = document.getElementById('d-gender');
       const dd = document.getElementById('d-desc');
       if (dn) dn.textContent = window.tType ? window.tType(p) : p.type;
+      if (window.setSeason) window.setSeason(p);
       if (dg) dg.textContent = window.tGender ? window.tGender(p) : (p.gender || '');
       if (dd) dd.textContent = (lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
     }
@@ -11034,6 +11039,15 @@ window.subscribeNewsletter = function (e) {
     });
   }
   window.applyI18n = applyI18n;
+  // Saison (et ligne) sur la même ligne que le nom de la pièce, en gris :
+  // « Pull en lin · Printemps-été 2013 » (Tom, 2026-11-09).
+  window.setSeason = function (p) {
+    const dn = document.getElementById('d-name');
+    if (!dn || !p) return;
+    dn.querySelectorAll('.d-season').forEach(e => e.remove());
+    const t = [p.line, (window.__lang === 'en' ? (p.edition_en || p.edition) : p.edition)].filter(Boolean).join(' · ');
+    if (t) { const sp = document.createElement('span'); sp.className = 'd-season'; sp.textContent = ' · ' + t; dn.appendChild(sp); }
+  };
   // Description repliée sous « Lire la description complète + » (Tom, 2026-11-09).
   // fold : true = replier, false = déplier, null = garder l'état (changement de langue).
   window.foldDesc = function (fold) {
