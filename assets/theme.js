@@ -34,6 +34,8 @@
     'html,body{background:#eeeeee!important;color:' + N + '}' +
     /* Pièces qui flottent : le fond blanc des photos prend le gris de la page */
     '.product-img,.product-img::before{background:#eeeeee!important}.product-img img{mix-blend-mode:multiply}' +
+    /* Points photo 1 / photo 2 des cartes : gris foncé (sinon clair sur clair) */
+    '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:rgba(28,34,48,.7)!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     '.hero-marquee-card{background:#eeeeee!important}.hero-marquee-card img{mix-blend-mode:multiply}' +
     '#detail .detail-gallery .main-photo-wrap{background:#eeeeee!important}' +
     '#detail .detail-gallery .main-photo,#detail .detail-gallery .ribbon-ghost{background:transparent!important;mix-blend-mode:multiply}' +
