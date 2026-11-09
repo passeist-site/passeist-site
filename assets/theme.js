@@ -70,6 +70,9 @@
     '.product-img img{mix-blend-mode:multiply}' +
     '#detail .detail-gallery .main-photo-wrap{background:#f4f4f2!important}' +
     '#detail .detail-gallery .main-photo,#detail .detail-gallery .ribbon-ghost{background:transparent!important;mix-blend-mode:multiply}' +
+    /* Fiche mobile : la case se prolonge en bande gris très clair jusqu'aux bords de
+       l'écran (Tom) ; la photo garde exactement sa taille (52svh, cadrage inchangé). */
+    '@media (max-width:900px){#detail .detail-gallery::before{content:"";position:absolute;left:0;right:0;top:16px;height:min(133.333vw,52svh);background:#f4f4f2;z-index:0;pointer-events:none}#detail .detail-gallery .main-photo-wrap{position:relative;z-index:1}}' +
     '#detail .detail-gallery .thumb{background:#f4f4f2!important}#detail .detail-gallery .thumb img{mix-blend-mode:multiply}' +
     /* Barre panier en bas des fiches : ombre légère sur fond blanc */
     '.buy-bar{box-shadow:0 -6px 18px -10px rgba(28,34,48,.25)!important}' +
