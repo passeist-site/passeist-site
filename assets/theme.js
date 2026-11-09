@@ -37,9 +37,13 @@
     /* Barre de filtres (mobile) : barre transparente, on voit défiler les pièces
        autour ; seuls les boutons sont opaques (Tom). */
     '@media (max-width:900px){.filter-bar{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}' +
-    '.filter-mobile-toggle,.filter-search-btn,.filter-bar.searching .filter-search-inline{background:#f7f7f7!important;opacity:1!important}}' +
-    /* Points photo 1 / photo 2 des cartes : gris foncé (sinon clair sur clair) */
-    '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:rgba(28,34,48,.7)!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
+    '.filter-bar.searching .filter-search-inline{background:#f7f7f7!important}' +
+    /* Liquid Glass (Tom) : boutons de filtres et barre panier en verre dépoli, les pièces passent floues derrière */
+    '.filter-mobile-toggle,.filter-search-btn{background:rgba(250,250,250,.86)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;backdrop-filter:blur(20px) saturate(160%)!important;border:1px solid rgba(255,255,255,.7)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(28,34,48,.06),0 8px 22px -8px rgba(28,34,48,.28)!important}' +
+    '.buy-bar{background:rgba(238,238,238,.55)!important;-webkit-backdrop-filter:blur(18px) saturate(160%)!important;backdrop-filter:blur(18px) saturate(160%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 -8px 24px -12px rgba(28,34,48,.3)!important}.buy-bar::before{display:none!important}' +
+    '.buy-bar-icon,.buy-bar .buy-bar-icon.fav-btn{background:rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 #fff,0 4px 10px -4px rgba(28,34,48,.25)!important}}' +
+    /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
+    '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     '.hero-marquee-card{background:#eeeeee!important}.hero-marquee-card img{mix-blend-mode:multiply}' +
     '#detail .detail-gallery .main-photo-wrap{background:#eeeeee!important}' +
     '#detail .detail-gallery .main-photo,#detail .detail-gallery .ribbon-ghost{background:transparent!important;mix-blend-mode:multiply}' +

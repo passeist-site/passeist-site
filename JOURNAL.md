@@ -258,3 +258,4 @@ script « Version blanche en essai » dans index.html.
 - Une seule version (Tom) : assets/theme.js et la version blanche retirés du site (récupérables dans l'historique git, commit daff99d4d).
 - Fiche mobile : coins arrondis 6 px (vignettes 4 px) et grande photo réduite à 46svh (Tom). PHOTOS.md mis à jour.
 - Version claire retenue pour l'essai (Tom, soir) : fond #eeeeee, pièces qui flottent (multiply, sans détourage) en boutique, carrousel d'accueil et fiche. Retour au bleu nuit si ça ne va pas : retirer le script theme.js.
+- Version claire : boutons de filtres et barre panier en verre dépoli (Liquid Glass), point actif sous les photos en bleu du logo, cœur gardé en bleu nuit (Tom). À faire plus tard : détourer les 2e photos à fond gris (Tom accepte les vues coupées net).
