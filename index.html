@@ -3815,6 +3815,36 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   #detail .detail-gallery .thumb img { border-radius: 0; }
 }
 </style>
+<script>
+/* Version blanche en essai (Tom, 2026-11-09) : visible seulement avec ?theme=blanc
+   (gardée ensuite dans ce navigateur) ; ?theme=sombre pour revenir. Les clients
+   ne la voient pas. Le fond de page prend le blanc exact des photos Vestiaire,
+   les vêtements semblent détourés. On inverse les couleurs du thème dans la
+   feuille de style : bleu nuit ↔ blanc, crème ↔ bleu nuit. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    if (q === 'blanc') localStorage.setItem('passeist_theme', 'blanc');
+    if (q === 'sombre') localStorage.removeItem('passeist_theme');
+    if (localStorage.getItem('passeist_theme') !== 'blanc') return;
+  } catch (e) { return; }
+  var st = document.querySelector('head style');
+  if (!st) return;
+  var t = st.textContent
+    .replace(/#f4f1ec/gi, '@@C@@').replace(/244,\s*241,\s*236/g, '@@CR@@')
+    .replace(/#1c2230/gi, '#ffffff').replace(/28,\s*34,\s*48/g, '255,255,255')
+    .replace(/#131826|#262d3c|#313847/gi, '#f3f3f1')
+    .replace(/#f2eee8/gi, '#3b4152').replace(/#d4d1cb/gi, '#7a7e88').replace(/#d6d2cc/gi, '#3b4152').replace(/#a8a6a1/gi, '#7a7e88')
+    .replace(/@@C@@/g, '#1C2230').replace(/@@CR@@/g, '28,34,48');
+  st.textContent = t + '\n:root{--bg:#ffffff;--bg-deep:#f4f4f2;--bg-soft:#f6f6f4;--bg-highlight:#ececea;--ink:#1C2230;--text:#1C2230;--text-dim:#3b4152;--text-mute:#7a7e88;--text-ghost:#b4b6bb;--line:rgba(28,34,48,.14);--line-strong:rgba(28,34,48,.35);--line-ghost:rgba(28,34,48,.06)}' +
+    'html,body{background:#fff!important;color:#1C2230}' +
+    '.product-brand .brand-name,.hbs-headliners a,.product-price,#detail .detail-price{color:#1C2230!important}' +
+    '.product-img,.hero-marquee-card{box-shadow:none!important}' +
+    '#detail .detail-gallery .thumb.is-active{border-color:#1C2230!important}';
+  document.documentElement.classList.add('theme-blanc');
+  var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff');
+})();
+</script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
