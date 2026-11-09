@@ -42,7 +42,13 @@
     '.product-img,.hero-marquee-card{box-shadow:none!important}' +
     '#detail .detail-gallery .thumb.is-active{border-color:' + N + '!important}' +
     /* En-tête : un trait fin au lieu de l'ombre, qui salissait le haut des photos */
-    '.topbar{box-shadow:none!important;border-bottom:1px solid rgba(28,34,48,.08)!important}' +
+    /* En-tête gardé en bleu nuit (Tom) : la page claire est tenue en haut et en bas
+       par notre bleu (en-tête / newsletter + pied de page). */
+    '.topbar{background:' + N + '!important;box-shadow:0 10px 24px -14px rgba(0,0,0,.45)!important;border-bottom:0!important}' +
+    '.topbar::after{background:linear-gradient(90deg,transparent 10%,rgba(244,241,236,.12) 28%,rgba(244,241,236,.55) 50%,rgba(244,241,236,.12) 72%,transparent 90%)!important}' +
+    '.topbar .logo,.topbar-icon,.nav-toggle{color:' + C + '!important}.topbar-icon svg{stroke:' + C + '!important}' +
+    '.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{background:' + C + '!important}' +
+    '.topbar-icon .cart-count{color:' + N + '!important}' +
     /* Notre bleu en bas de page : newsletter et pied de page en bleu nuit (relief, Tom) */
     '.nl{background:' + N + '!important;margin:0!important;padding-top:56px!important;padding-bottom:56px!important}' +
     '.nl .nl-card{background:transparent!important;box-shadow:none!important;border:0!important}' +
@@ -71,5 +77,5 @@
     '.cookie-banner-actions button:last-child,.cookie-banner-actions button:last-child *{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}';
   document.head.appendChild(extra);
   document.documentElement.classList.add('theme-blanc');
-  var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#eeeeee');
+  var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', N);
 })();
