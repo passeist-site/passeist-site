@@ -8035,7 +8035,10 @@ function openDetail(id) {
   let mSwipeStart = null, mDidSwipe = false;
   mainEl.style.transformOrigin = 'center center';
   mainEl.style.willChange = 'transform';
-  mainEl.style.touchAction = 'none';
+  // Défilement vertical de la page laissé au navigateur quand la photo n'est pas
+  // zoomée (photo bord à bord : sinon on ne pouvait plus descendre, Tom 2026-11-09) ;
+  // zoomée, tout le geste revient à la photo.
+  mainEl.style.touchAction = 'pan-y';
   mainEl.draggable = false;
   mainEl.addEventListener('contextmenu', e => e.preventDefault());
   mainEl.addEventListener('dragstart', e => e.preventDefault());
@@ -8050,6 +8053,7 @@ function openDetail(id) {
     }
     mainEl.style.transition = animate ? 'transform 0.28s cubic-bezier(.2,.8,.25,1)' : 'none';
     mainEl.style.transform = 'translate3d(' + mTx + 'px,' + mTy + 'px,0) scale(' + mScale + ')';
+    mainEl.style.touchAction = mScale > 1 ? 'none' : 'pan-y';
   }
   function resetMainZoom(animate) {
     mScale = 1; mTx = 0; mTy = 0;
