@@ -3816,18 +3816,19 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 }
 </style>
 <script>
-/* Version blanche en essai (Tom, 2026-11-09) : visible seulement avec ?theme=blanc
-   (gardée ensuite dans ce navigateur) ; ?theme=sombre pour revenir. Les clients
-   ne la voient pas. Le fond de page prend le blanc exact des photos Vestiaire,
+/* Version blanche (Tom, 2026-11-09), pour tous les visiteurs ; ?theme=sombre pour
+   revoir l'ancien bleu nuit. Le fond de page prend le blanc exact des photos Vestiaire,
    les vêtements semblent détourés. On inverse les couleurs du thème dans la
    feuille de style : bleu nuit ↔ blanc, crème ↔ bleu nuit. */
 (function () {
   try {
+    // Blanc pour tout le monde (Tom, 2026-11-09) ; ?theme=sombre garde l'ancien bleu nuit
+    // dans ce navigateur, ?theme=blanc le remet.
     var q = new URLSearchParams(location.search).get('theme');
-    if (q === 'blanc') localStorage.setItem('passeist_theme', 'blanc');
-    if (q === 'sombre') localStorage.removeItem('passeist_theme');
-    if (localStorage.getItem('passeist_theme') !== 'blanc') return;
-  } catch (e) { return; }
+    if (q === 'sombre') localStorage.setItem('passeist_theme', 'sombre');
+    if (q === 'blanc') localStorage.removeItem('passeist_theme');
+    if (localStorage.getItem('passeist_theme') === 'sombre') return;
+  } catch (e) { /* stockage indisponible : blanc */ }
   var st = document.querySelector('head style');
   if (!st) return;
   var t = st.textContent

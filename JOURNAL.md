@@ -239,9 +239,10 @@ Refuse toute adresse absente des listes FR/EN ou désabonnée.
 - Abandonné : compteur de photos, bloc de faits, ligne matière (déjà dans le titre).
 - Retour arrière : `git revert` du commit « Fiche produit façon Wright ».
 
-## 2026-11-09 — Version blanche en essai caché
+## 2026-11-09 — Version blanche (essai caché, puis pour tous le soir même)
 `?theme=blanc` (gardé dans le navigateur, `?theme=sombre` pour revenir) : la feuille
 de style est inversée à la volée (bleu nuit ↔ blanc, crème ↔ bleu nuit). Fond de page
 = blanc exact des photos Vestiaire (90 % du stock en #FFFFFF) : vêtements comme
 détourés, ombres gardées. Les clients ne voient rien. Retour arrière : supprimer le
 script « Version blanche en essai » dans index.html.
+- Passée par défaut pour tous (Tom : « personne sur le site »). `?theme=sombre` = ancien bleu nuit.
