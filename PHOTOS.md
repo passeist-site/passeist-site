@@ -148,6 +148,8 @@ bande qu'on fait glisser du doigt.
 - **Espacements** :
   - écart vertical entre rangées : **48 px** desktop, **32 px** mobile ; écart
     horizontal inchangé (36 px desktop, 14 px ≤ 900 px, 10 px ≤ 480 px) ;
+    **thème blanc** (assets/theme.js) : écart horizontal mobile porté à **24 px**
+    (Tom, 2026-11-09 : sans cadre, les textes des deux colonnes se touchaient) ;
   - bloc texte compact sous la photo : `.product-body` padding-top 12 px
     (8 px mobile), marque → nom 6 px (4 px), nom → trait 8 px (4 px), trait →
     ligne taille 6 px (4 px), sans `min-height` : la ligne taille · genre est

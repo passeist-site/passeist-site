@@ -58,6 +58,9 @@
     '.hero-cta,.hbs-cta{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
     '.hero-cta *,.hbs-cta *{color:' + C + '!important}' +
     '.hero-cta:hover,.hbs-cta:hover{background:#2c3446!important}' +
+    /* Grille boutique mobile : sans cadre autour des photos, 10 px entre colonnes
+       collait les textes (prix de gauche contre la marque de droite). 24 px (Tom, 2026-11-09) */
+    '@media (max-width:900px){.grid{column-gap:24px!important}}' +
     /* Barre panier en bas des fiches : ombre légère sur fond blanc */
     '.buy-bar{box-shadow:0 -6px 18px -10px rgba(28,34,48,.25)!important}' +
     /* Bandeau cookies en bleu nuit, comme le pied de page */
