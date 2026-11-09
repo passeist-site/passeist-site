@@ -34,6 +34,10 @@
     'html,body{background:#eeeeee!important;color:' + N + '}' +
     /* Pièces qui flottent : le fond blanc des photos prend le gris de la page */
     '.product-img,.product-img::before{background:#eeeeee!important}.product-img img{mix-blend-mode:multiply}' +
+    /* Barre de filtres (mobile) : barre transparente, on voit défiler les pièces
+       autour ; seuls les boutons sont opaques (Tom). */
+    '@media (max-width:900px){.filter-bar{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}' +
+    '.filter-mobile-toggle,.filter-search-btn,.filter-bar.searching .filter-search-inline{background:#f7f7f7!important;opacity:1!important}}' +
     /* Points photo 1 / photo 2 des cartes : gris foncé (sinon clair sur clair) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:rgba(28,34,48,.7)!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     '.hero-marquee-card{background:#eeeeee!important}.hero-marquee-card img{mix-blend-mode:multiply}' +
