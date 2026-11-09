@@ -145,7 +145,6 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
       </div>
       <p class="detail-intro" id="d-intro" style="display:none"></p>
       <div class="detail-desc" id="d-desc" data-pid="${esc(p.id)}">${esc(p.desc || '')}</div>
-      <button class="desc-toggle" id="d-desc-toggle" type="button" aria-expanded="false">Lire la description complète +</button>
       <div class="detail-actions" id="d-actions"${hideIfSold}>
         <button class="btn btn-primary" id="d-cart">Ajouter au panier</button>
         <button class="btn btn-secondary" id="d-contact">Demander un renseignement</button>
