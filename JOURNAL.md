@@ -256,3 +256,4 @@ script « Version blanche en essai » dans index.html.
 - Fiche : description de nouveau affichée en entier, le bouton « Lire la description complète + » est retiré (Tom).
 - Retour au bleu nuit pour tous (Tom, soir du 2026-11-09). Version blanche gardée sur demande : ?theme=blanc (?theme=sombre pour revenir). Conservés : ruban photos sans espace, photo de fiche limitée en hauteur, barre panier réduite, description en entier, photos 1 détourées, colonnes de la version blanche non appliquées au bleu.
 - Une seule version (Tom) : assets/theme.js et la version blanche retirés du site (récupérables dans l'historique git, commit daff99d4d).
+- Fiche mobile : coins arrondis 6 px (vignettes 4 px) et grande photo réduite à 46svh (Tom). PHOTOS.md mis à jour.

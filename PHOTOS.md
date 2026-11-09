@@ -35,9 +35,9 @@ et vignettes, photo 1 comprise), comme les cartes : demandé par Tom le
 2026-09-28. Seul le cadre est arrondi, le cadrage et le contain ne changent
 pas.
 
-Exception **téléphone (≤ 900 px)**, validée par Tom le 2026-11-09 : grande
-photo bord à bord et vignettes à **angles droits** (voir § 4 ter). Sur
-ordinateur, les coins 6 px restent.
+Téléphone (≤ 900 px) : grande photo de la fiche à coins **6 px** et vignettes
+à coins **4 px** (Tom, 2026-11-09 au soir, après un essai à angles droits).
+Sur ordinateur, les coins 6 px restent.
 
 ## 3. Cartes des grilles = photo 1 de la fiche
 
@@ -50,8 +50,7 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
   1600 px), jamais une autre variante Vestiaire ni une image recadrée ;
 - **même rendu** que `.main-photo[data-idx="0"]` sur mobile : cadre 3:4, fond
   #fff, `object-fit: contain`, aucun `cover`, aucun `scale`, aucun zoom ;
-- coins arrondis **6 px** (`.product-img`). Gardés par Tom le 2026-11-09,
-  même si la fiche est à angles droits sur téléphone (§ 4 ter).
+- coins arrondis **6 px** (`.product-img`), comme la grande photo de la fiche.
 - ombre douce sous les photos (`box-shadow`, choix de Tom, 2026-09-28) :
   elle ne change ni le cadrage ni le rendu de l'image.
 
@@ -117,8 +116,9 @@ desktop :
 Inspiré de Wright (maison de ventes) : les photos se suivent comme une seule
 bande qu'on fait glisser du doigt.
 
-- **Grande photo bord à bord** : toute la largeur de l'écran, sans marge ni
-  carte, **angles droits**, 16 px sous l'en-tête. Fond du cadre blanc.
+- **Grande photo** : hauteur limitée à **46svh** (largeur 46svh × 3/4, arrondie
+  au pixel pair), centrée, coins **6 px**, 16 px sous l'en-tête. Fond du cadre
+  blanc (Tom, 2026-11-09 au soir).
 - **Ruban** : la photo précédente et la suivante (`.ribbon-ghost`) attendent
   collées de chaque côté de la grande photo, hors écran ; pendant le glissé
   elles suivent le doigt avec elle, puis toute la bande avance d'une photo.
@@ -126,7 +126,7 @@ bande qu'on fait glisser du doigt.
   3:4 avec `scale: 1.01` (§ 4). Au milieu du ruban, le liseré du bord de bande
   des photos 2+ est coupé par `clip-path: inset(0 0.5%)` (même rendu que le
   cadre en `overflow: hidden`).
-- **Vignettes** : 54 px de large (6 visibles), angles droits, écart 5 px.
+- **Vignettes** : 54 px de large (6 visibles), coins 4 px, écart 5 px.
 - Ordinateur (> 900 px) : rien ne change (pas de ruban, coins 6 px).
 
 ## 5. Interdictions
