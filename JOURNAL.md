@@ -261,3 +261,4 @@ script « Version blanche en essai » dans index.html.
 - Version claire : boutons de filtres et barre panier en verre dépoli (Liquid Glass), point actif sous les photos en bleu du logo, cœur gardé en bleu nuit (Tom). À faire plus tard : détourer les 2e photos à fond gris (Tom accepte les vues coupées net).
 - Version claire : filtres et panier en bleu nuit vitré, Explorer en verre, photo de fiche à 56svh (Tom).
 - Explorer reste bleu nuit (Tom), pas de verre.
+- Détourage des 2e photos abandonné (Tom).
