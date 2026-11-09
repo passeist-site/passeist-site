@@ -67,7 +67,9 @@
     '.hero-cta:hover,.hbs-cta:hover{background:#2c3446!important}' +
     /* Grille boutique mobile : sans cadre autour des photos, 10 px entre colonnes
        collait les textes (prix de gauche contre la marque de droite). 24 px (Tom, 2026-11-09) */
-    '@media (max-width:900px){.grid{column-gap:24px!important}}' +
+    '@media (max-width:900px){.grid{column-gap:24px!important;row-gap:72px!important;margin-top:0!important}.grid .product-body{padding-top:2px!important}}' +
+    /* Sans cadre, le texte doit coller à SA photo : texte à 2 px sous la photo, 72 px
+       entre deux rangées ; et moins de vide entre « Créer votre alerte » et la grille (Tom). */
     /* Barre panier en bas des fiches : ombre légère sur fond blanc */
     '.buy-bar{box-shadow:0 -6px 18px -10px rgba(28,34,48,.25)!important}' +
     /* Bandeau cookies en bleu nuit, comme le pied de page */
