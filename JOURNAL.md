@@ -234,7 +234,7 @@ Refuse toute adresse absente des listes FR/EN ou désabonnée.
 ## 2026-11-09 — Fiche produit inspirée de Wright (ESSAI, branche seulement)
 - Téléphone : grande photo bord à bord en « ruban » (photos voisines collées
   qui glissent avec le doigt), vignettes 54 px à angles droits (PHOTOS.md § 4 ter).
-- Prix dans la typo et la taille de la marque, sans l'étiquette (fiche seulement).
+- Prix dans la typo et la taille de la marque, sans l’étiquette (fiche, puis cartes de la boutique, de l’accueil et des articles similaires).
 - Description repliée sous « Lire la description complète + » (EN : Read the full description +).
 - Abandonné : compteur de photos, bloc de faits, ligne matière (déjà dans le titre).
 - Retour arrière : `git revert` du commit « Fiche produit façon Wright ».
