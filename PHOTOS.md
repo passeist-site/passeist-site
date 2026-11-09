@@ -116,7 +116,7 @@ desktop :
 Inspiré de Wright (maison de ventes) : les photos se suivent comme une seule
 bande qu'on fait glisser du doigt.
 
-- **Grande photo** : hauteur limitée à **46svh** (largeur 46svh × 3/4, arrondie
+- **Grande photo** : hauteur limitée à **56svh** (largeur 56svh × 3/4, arrondie
   au pixel pair), centrée, coins **6 px**, 16 px sous l'en-tête. Fond du cadre
   blanc (Tom, 2026-11-09 au soir).
 - **Ruban** : la photo précédente et la suivante (`.ribbon-ghost`) attendent
