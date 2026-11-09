@@ -3780,6 +3780,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 /* Prix : même typo et même taille que la marque, sans l'étiquette (l'étiquette
    reste sur les cartes des grilles). */
 #detail .detail-price-wrap { background: none; clip-path: none; padding: 0; height: auto; border-radius: 0; }
+#detail .detail-info > .detail-price-row { margin: 0 !important; }
 #detail .detail-price { color: var(--ink); font-family: var(--font-sans); font-size: 34px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.02; font-variant-numeric: normal; }
 /* Description repliée sous « Lire la description complète + » */
 #detail .detail-desc:not(.is-open) { display: none; }
@@ -3787,7 +3788,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 #detail .ribbon-ghost { display: none; }
 @media (max-width: 900px) {
   #detail .detail-price { font-size: 28px; }
-  #detail .detail-info > .detail-price-row { margin: 0 !important; }
   /* REGLE FIGEE par Tom, voir PHOTOS.md § 4 ter (ruban) */
   /* Grande photo bord à bord, angles droits ; les voisines (.ribbon-ghost)
      attendent collées de chaque côté et glissent avec elle. Cadrage inchangé :
