@@ -1,16 +1,16 @@
-/* Version blanche (Tom, 2026-11-09), pour tous les visiteurs ; ?theme=sombre garde
-   l'ancien bleu nuit dans ce navigateur, ?theme=blanc le remet.
-   Fond de page = blanc exact des photos Vestiaire : les vêtements semblent
-   détourés. On inverse les couleurs dans les feuilles de style de la page
-   (bleu nuit ↔ blanc, crème ↔ bleu nuit), puis on ajoute les réglages propres
-   au blanc. À charger dans <head>, APRÈS les feuilles de style. */
+/* Version blanche (essai Tom, 2026-11-09). Retour au bleu nuit pour tous le soir
+   même (Tom) : la version blanche n'est plus active que sur demande, avec
+   ?theme=blanc (mémorisé dans ce navigateur) ; ?theme=sombre revient au bleu nuit.
+   Fond de page = blanc exact des photos Vestiaire. On inverse les couleurs dans
+   les feuilles de style (bleu nuit ↔ blanc, crème ↔ bleu nuit), puis on ajoute
+   les réglages propres au blanc. À charger dans <head>, APRÈS les feuilles de style. */
 (function () {
   try {
     var q = new URLSearchParams(location.search).get('theme');
-    if (q === 'sombre') localStorage.setItem('passeist_theme', 'sombre');
-    if (q === 'blanc') localStorage.removeItem('passeist_theme');
-    if (localStorage.getItem('passeist_theme') === 'sombre') return;
-  } catch (e) { /* stockage indisponible : blanc */ }
+    if (q === 'blanc') localStorage.setItem('passeist_theme', 'blanc');
+    if (q === 'sombre') localStorage.removeItem('passeist_theme');
+    if (localStorage.getItem('passeist_theme') !== 'blanc') return;
+  } catch (e) { return; /* stockage indisponible : bleu nuit */ }
   function swap(t) {
     return t
       .replace(/#f4f1ec/gi, '@@C@@').replace(/244,\s*241,\s*236/g, '@@CR@@')
