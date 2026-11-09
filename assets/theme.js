@@ -61,12 +61,6 @@
     /* Grille boutique mobile : sans cadre autour des photos, 10 px entre colonnes
        collait les textes (prix de gauche contre la marque de droite). 24 px (Tom, 2026-11-09) */
     '@media (max-width:900px){.grid{column-gap:24px!important}}' +
-    /* Cases gris très clair (Tom, 2026-11-09) : chaque photo a son compartiment.
-       multiply : le blanc des photos prend exactement le gris de la case (aucun
-       rectangle visible), les couleurs du vêtement ne bougent quasiment pas.
-       Boutique : cartes (coins 6 px). Fiche : pas encore (Tom cherche une autre solution). */
-    '.product-img{background:#f4f4f2!important;border-radius:6px}' +
-    '.product-img img{mix-blend-mode:multiply}' +
     /* Barre panier en bas des fiches : ombre légère sur fond blanc */
     '.buy-bar{box-shadow:0 -6px 18px -10px rgba(28,34,48,.25)!important}' +
     /* Bandeau cookies en bleu nuit, comme le pied de page */
