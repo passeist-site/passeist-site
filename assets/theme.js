@@ -58,9 +58,6 @@
     '.filter-sheet select,.filter-sheet input,.filter-sheet .filter-select{background:rgba(244,241,236,.07)!important}.filter-sheet option{color:' + N + '!important}' +
     '.filter-sheet .filter-sheet-apply,.cart-panel .btn-primary,.cart-panel .cart-checkout{background:' + C + '!important;color:' + N + '!important}.filter-sheet .filter-sheet-apply *,.cart-panel .btn-primary *{color:' + N + '!important}' +
     '.cart-panel .cart-close,.cart-panel [class*=close]{background:rgba(244,241,236,.1)!important}' +
-    /* Explorer en verre (Liquid Glass) sur le fond clair (Tom) */
-    'html body .hero-cta{background:rgba(255,255,255,.55)!important;color:' + N + '!important;-webkit-backdrop-filter:blur(16px) saturate(160%)!important;backdrop-filter:blur(16px) saturate(160%)!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(28,34,48,.08),0 12px 28px -10px rgba(28,34,48,.35)!important}' +
-    'html body .hero-cta *{color:' + N + '!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     '.hero-marquee-card{background:#eeeeee!important}.hero-marquee-card img{mix-blend-mode:multiply}' +
