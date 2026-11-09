@@ -246,3 +246,8 @@ de style est inversée à la volée (bleu nuit ↔ blanc, crème ↔ bleu nuit).
 détourés, ombres gardées. Les clients ne voient rien. Retour arrière : supprimer le
 script « Version blanche en essai » dans index.html.
 - Passée par défaut pour tous (Tom : « personne sur le site »). `?theme=sombre` = ancien bleu nuit.
+
+## 2026-11-09 : thème blanc, retouches (Tom)
+- Barre « Ajouter au panier » des fiches (mobile) un peu moins haute : boutons 36 px, marges 6 px.
+- Boutons Explorer / Tout voir en bleu nuit (#1C2230, l'ancien fond) et non plus le bleu du point.
+- Ruban photos : largeur exacte du cadre (décimales) et voisines cachées au repos, plus de filet sur les bords.

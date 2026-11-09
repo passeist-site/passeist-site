@@ -54,6 +54,12 @@
     '.footer a,.footer span{color:rgba(244,241,236,.8)!important}' +
     /* Bandes gris très clair pour donner du relief aux sections secondaires */
     '.similar-section,.recent-section{background:#f5f5f3!important}' +
+    /* Boutons (Explorer, Tout voir) : bleu nuit d'avant, pas le bleu du point (Tom) */
+    '.hero-cta,.hbs-cta{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
+    '.hero-cta *,.hbs-cta *{color:' + C + '!important}' +
+    '.hero-cta:hover,.hbs-cta:hover{background:#2c3446!important}' +
+    /* Barre panier en bas des fiches : ombre légère sur fond blanc */
+    '.buy-bar{box-shadow:0 -6px 18px -10px rgba(28,34,48,.25)!important}' +
     /* Bandeau cookies en bleu nuit, comme le pied de page */
     '.cookie-banner-card{background:' + N + '!important;color:' + C + '!important;border:0!important;box-shadow:0 12px 30px rgba(28,34,48,.25)!important}' +
     '.cookie-banner-card *{color:' + C + '!important}' +
