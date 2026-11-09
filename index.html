@@ -3799,7 +3799,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   /* Grande photo bord à bord, angles droits ; les voisines (.ribbon-ghost)
      attendent collées de chaque côté et glissent avec elle. Cadrage inchangé :
      photo 1 entière (contain), photos 2+ en cover 3:4 avec scale 1.01. */
-  #detail .detail-gallery .main-photo-wrap { width: 100%; margin: 16px 0 0; clip-path: inset(0); border-radius: 0; background: #fff; }
+  /* Hauteur limitée (Tom, 2026-11-09) : la photo ne mange plus tout le premier
+     écran ; la marque et le prix restent visibles au-dessus de la barre d'achat. */
+  #detail .detail-gallery .main-photo-wrap { width: min(100%, calc(52svh * 3 / 4)); margin: 16px auto 0; clip-path: inset(0); border-radius: 0; background: #fff; }
   #detail .detail-gallery .main-photo { margin: 0; border-radius: 0; }
   #detail .detail-gallery .ribbon-ghost { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; margin: 0; border-radius: 0; background: #fff; pointer-events: none; object-position: center; }
   #detail .detail-gallery .ribbon-ghost[data-idx="0"] { object-fit: contain; }
@@ -3842,7 +3844,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     'html,body{background:#fff!important;color:#1C2230}' +
     '.product-brand .brand-name,.hbs-headliners a,.product-price,#detail .detail-price{color:#1C2230!important}' +
     '.product-img,.hero-marquee-card{box-shadow:none!important}' +
-    '#detail .detail-gallery .thumb.is-active{border-color:#1C2230!important}';
+    '#detail .detail-gallery .thumb.is-active{border-color:#1C2230!important}' +
+    /* En-tête : un trait fin au lieu de l'ombre, qui salissait le haut des photos */
+    '.topbar{box-shadow:none!important;border-bottom:1px solid rgba(28,34,48,.08)!important}';
   document.documentElement.classList.add('theme-blanc');
   var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff');
 })();
