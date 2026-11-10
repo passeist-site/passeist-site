@@ -275,3 +275,4 @@ script « Version blanche en essai » dans index.html.
 - Pastille du panier : crème avec le chiffre bleu nuit (le chiffre était invisible, il ne restait qu'un grand cercle).
 - Pied de page de la même hauteur que l'en-tête (64 px ordinateur, ~54 px téléphone ; e-mail retiré du pied sur téléphone, il reste sur Contact) (Tom).
 - Bandeau VENDU en bleu nuit, texte crème (Tom).
+- Page Vendu : 85 photos 1 de pièces vendues détourées (fond gris), comme en boutique (Tom). Illustration 70328124 laissée telle quelle.
