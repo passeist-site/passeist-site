@@ -109,7 +109,7 @@
     '.topbar::after{background:linear-gradient(90deg,transparent 10%,rgba(244,241,236,.12) 28%,rgba(244,241,236,.55) 50%,rgba(244,241,236,.12) 72%,transparent 90%)!important}' +
     '.topbar .logo,.topbar-icon,.nav-toggle{color:' + C + '!important}.topbar-icon svg{stroke:' + C + '!important}' +
     '.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{background:' + C + '!important}' +
-    '.topbar-icon .cart-count{color:' + N + '!important}' +
+    '.topbar-icon .cart-count{color:' + N + '!important;background:' + C + '!important;box-shadow:0 0 0 2px ' + N + '!important}' +
     /* Menu ordinateur (Accueil, Boutique, Auteurs…) : crème sur l'en-tête bleu nuit, sinon invisible */
     '.topbar .lang-toggle{border-color:rgba(244,241,236,.35)!important}' +
     '.top-nav a,.top-nav a > span,.top-nav a.active > span,.topbar .lang-switch,.topbar .lang-switch *,.topbar .lang-toggle,.topbar .lang-toggle *{color:' + C + '!important}' +

@@ -272,3 +272,4 @@ script « Version blanche en essai » dans index.html.
 - Portefeuille Y's 65393849 : 3e photo (portefeuille seul) passée en photo 1 et détourée (Tom).
 - Fenêtre « Ajouté au panier » en bleu nuit, texte crème (Tom).
 - Page Contact : encart « Discuter avec nous » en bleu nuit (tour d'homogénéité du site).
+- Pastille du panier : crème avec le chiffre bleu nuit (le chiffre était invisible, il ne restait qu'un grand cercle).
