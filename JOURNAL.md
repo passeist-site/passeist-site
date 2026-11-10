@@ -291,3 +291,4 @@ script « Version blanche en essai » dans index.html.
 - Photos : numéro de version IMG_V ajouté aux adresses des photos (index + build) pour forcer le rechargement après retouche. À vérifier avant mise en ligne.
 - Carrousel d'accueil : tirage au hasard parmi toutes les pièces en vente (avant : les 120 plus chères seulement) (Tom).
 - Cartes vendues : étiquette « VENDU » droite (bleu nuit, coins 3 px) en haut à droite au lieu du bandeau en biais (Tom, choix B). Fiche vendue : bandeau inchangé.
+- Fiche vendue : même étiquette VENDU droite en haut à droite que sur les cartes (le bandeau en biais était resté).
