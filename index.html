@@ -1582,6 +1582,8 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* Archive / sold, on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
 .detail.detail-sold .detail-note { display: none; }
+/* Pièce vendue : pas de panier ni de favori à côté du prix, seul le partage reste (Tom) */
+#detail.detail-sold #d-price-add, #detail.detail-sold #d-price-fav { display: none !important; }
 
 /* Tag VENDU/SOLD : full black avec coin biseauté, identique à l'encart prix
    des cartes archive. Caché par défaut, affiché quand .detail.detail-sold.

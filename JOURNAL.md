@@ -277,3 +277,4 @@ script « Version blanche en essai » dans index.html.
 - Bandeau VENDU en bleu nuit, texte crème (Tom).
 - Page Vendu : 85 photos 1 de pièces vendues détourées (fond gris), comme en boutique (Tom). Illustration 70328124 laissée telle quelle.
 - Boutique / Vendu téléphone : barre de filtres collée sous l'en-tête dès l'arrivée (même écart qu'en défilant), tout remonte de 28 px (Tom).
+- Fiches vendues : plus d'icônes panier ni favori à côté du prix (Tom).
