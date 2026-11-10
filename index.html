@@ -7584,7 +7584,9 @@ function renderGrid() {
       <div class="product-img loading">
         ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="(max-width: 900px) 50vw, 25vw" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
-        ${(!sold && p.n > 1) ? `<img class="product-img-secondary" src="${imgUrl(p, 1, {size: 'md', exactSize: true})}" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" onerror="this.remove()"><span class="card-dots" aria-hidden="true"><i></i><i></i></span>` : ''}
+        ${''/* Plus de photo 2 sur les cartes, ni au survol ni au glissé (Tom, 2026-11-10) : une seule photo
+             par carte, toutes les photos dans la fiche. Le script « glisser pour la 2e photo » ne fait
+             plus rien sans elle. */}
       </div>
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
