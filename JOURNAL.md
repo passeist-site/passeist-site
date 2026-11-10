@@ -286,3 +286,4 @@ script « Version blanche en essai » dans index.html.
 - Page Vendu téléphone : 32 px entre les rangées (cartes sans ligne taille) (Tom).
 - Grande carte : cadre carré validé par Tom sur aperçu (rien n'est coupé).
 - Pages Auteurs : le panier ouvre le panier (/?cart=1) au lieu de l'accueil, avec la pastille du nombre d'articles (Tom).
+- Carrousels (pages auteurs, sous les fiches) : barre de défilement masquée (Tom). Le glissé au doigt reste.

@@ -112,6 +112,9 @@
     '@media (max-width:900px){body[data-page="archive"] .grid{row-gap:32px!important}}' +
     /* Pastille du panier au même endroit sur les pages Auteurs que sur le reste du site */
     '@media (max-width:900px){.topbar .topbar-icon .cart-count{top:4px!important;right:1px!important}}' +
+    /* Carrousels (pages auteurs, sous les fiches) : pas de barre de défilement visible (Tom) */
+    '.carousel,.recent-track,.similar-section,.similar-section *{scrollbar-width:none!important}' +
+    '.carousel::-webkit-scrollbar,.recent-track::-webkit-scrollbar,.similar-section ::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
