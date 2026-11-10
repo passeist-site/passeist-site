@@ -115,6 +115,8 @@
     /* Carrousels (pages auteurs, sous les fiches) : pas de barre de défilement visible (Tom) */
     '.carousel,.recent-track,.similar-section,.similar-section *{scrollbar-width:none!important}' +
     '.carousel::-webkit-scrollbar,.recent-track::-webkit-scrollbar,.similar-section ::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important}' +
+    /* Ordinateur : logo remonté de 4 px, il paraissait trop bas dans l'en-tête (Tom) */
+    '@media (min-width:901px){.topbar .logo{position:relative;top:-4px}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
