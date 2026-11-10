@@ -10579,6 +10579,21 @@ window.sharePiece = function () {
   };
 })();
 </script>
+<!-- ============ CARROUSELS DES FICHES : PHOTOS PRÉCHARGÉES ============ -->
+<script>
+// En lazy, les photos des carrousels de la fiche (Notre sélection, Vus récemment)
+// n'arrivaient qu'en défilant, avec du blanc avant (Tom, 2026-11-10) : une fois la
+// fiche affichée, on les charge toutes.
+(function () {
+  const eager = () => document.querySelectorAll('#detail .similar-card img[loading="lazy"]').forEach(img => { img.loading = 'eager'; });
+  const later = () => setTimeout(eager, 350);
+  if (typeof window.openDetail === 'function') {
+    const _open = window.openDetail;
+    window.openDetail = function () { const r = _open.apply(this, arguments); later(); return r; };
+  }
+  if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
+})();
+</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
