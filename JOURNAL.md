@@ -269,3 +269,4 @@ script « Version blanche en essai » dans index.html.
 - Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom).
 - 34 photos 1 de plus détourées (fond gris au bas/au bord non vu par le premier tri, ex. jeans 45rpm et Yohji). Sweat blanc 64206614 et chemise 55692186 laissés tels quels (halo).
 - Gilet Issey Miyake PE 2010 (66122852) : photo du gilet passée en photo 1 et détourée, la photo défilé passe en 2e (Tom).
+- Portefeuille Y's 65393849 : 3e photo (portefeuille seul) passée en photo 1 et détourée (Tom).
