@@ -120,6 +120,8 @@
     /* Cartes vendues : étiquette « VENDU » droite en haut à droite au lieu du bandeau en biais,
        qui n'avait plus de coin où s'accrocher depuis que les pièces flottent (Tom, choix B) */
     '.product-img .sold-stamp,#detail .detail-gallery .sold-stamp{transform:none!important;top:10px!important;right:10px!important;left:auto!important;padding:3px 6px!important;border-radius:3px!important;font-size:7.5px!important;font-weight:600!important;letter-spacing:.18em!important;line-height:1.2!important;width:auto!important}' +
+    /* Accueil, « les auteurs » : grandes marques plus serrées, moins de vide avant les autres (Tom) */
+    '.hbs-headliners a{padding:4px 8px!important}.hbs-headliners{margin-bottom:16px!important}.hbs-eyebrow{margin-bottom:28px!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
