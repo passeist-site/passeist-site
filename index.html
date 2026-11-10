@@ -9333,9 +9333,9 @@ function renderHeroMarquee() {
   }
   const target = 40;
   const order = pool.slice(0, target);
-  const cards = order.map(p => `
+  const cards = order.map((p, i) => `
     <div class="hero-marquee-card" data-id="${p.id}" title="${p.brand}, ${(window.__lang === 'en' && p.type_en) || p.type}">
-      <img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="200px" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" fetchpriority="low" draggable="false">
+      <img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="200px" alt="${p.brand} ${p.type}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" fetchpriority="low" draggable="false">
     </div>
   `).join('');
   const track = document.getElementById('hero-marquee-track');
@@ -9350,6 +9350,11 @@ function renderHeroMarquee() {
   );
   // Start the RAF-driven loop once the images are laid out
   requestAnimationFrame(() => startMarqueeLoop(track));
+  // Préchargement de toutes les photos du carrousel une fois la page chargée : en
+  // lazy, celles qui arrivaient en défilant apparaissaient après un blanc (Tom, 2026-11-10).
+  const preloadMarquee = () => track.querySelectorAll('img[loading="lazy"]').forEach(img => { img.loading = 'eager'; });
+  if (document.readyState === 'complete') setTimeout(preloadMarquee, 300);
+  else window.addEventListener('load', () => setTimeout(preloadMarquee, 300), { once: true });
 }
 
 // ============ HERO MARQUEE, auto-drift + click-and-drag scrubbing ============
