@@ -8373,7 +8373,22 @@ function closeDetail() {
   window.openViewer = function (i) {
     const photos = (typeof lbPhotos !== 'undefined' && lbPhotos.length) ? lbPhotos : [];
     if (!photos.length) return;
-    T.innerHTML = photos.map(u => '<div class="pv-slide"><img src="' + u + '" alt="" draggable="false"></div>').join('');
+    // Affichage immédiat en taille moyenne (déjà en cache depuis la fiche), puis la grande
+    // taille remplace chaque photo une fois chargée : la photo courante d'abord, puis ses
+    // voisines, une à une (avant : 15 photos XL d'un coup, le glissé attendait, Tom).
+    const md = u => u.replace(/-xl\.webp/, '-md.webp');
+    T.innerHTML = photos.map(u => '<div class="pv-slide"><img src="' + md(u) + '" alt="" draggable="false" decoding="async"></div>').join('');
+    const start = i || 0, order = [start];
+    for (let d = 1; d < photos.length; d++) { if (start + d < photos.length) order.push(start + d); if (start - d >= 0) order.push(start - d); }
+    const token = (V._tok = (V._tok || 0) + 1);
+    (function next(k) {
+      if (k >= order.length || V._tok !== token) return;
+      const j = order[k], u = photos[j];
+      if (md(u) === u) return next(k + 1);
+      const pre = new Image();
+      pre.onload = pre.onerror = () => { const im = img(j); if (V._tok === token && im && pre.naturalWidth) im.src = u; next(k + 1); };
+      pre.src = u;
+    })(0);
     D.innerHTML = photos.length > 1 ? photos.map(() => '<i></i>').join('') : '';
     V.classList.add('open'); V.setAttribute('aria-hidden', 'false'); document.body.classList.add('pv-open');
     cur = i || 0; z = null;
@@ -8383,7 +8398,7 @@ function closeDetail() {
   window.closeViewer = function (fromPop) {
     if (!V.classList.contains('open')) return;
     V.classList.remove('open'); V.setAttribute('aria-hidden', 'true'); document.body.classList.remove('pv-open');
-    reset(); T.innerHTML = '';
+    reset(); T.innerHTML = ''; V._tok = (V._tok || 0) + 1;   // arrête le chargement des grandes photos
     if (!fromPop && history.state && history.state.overlay === 'viewer') { window.__skipPop = true; history.back(); }
   };
   window.addEventListener('popstate', () => { if (V.classList.contains('open')) window.closeViewer(true); });
