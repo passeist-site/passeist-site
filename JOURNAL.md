@@ -281,3 +281,4 @@ script « Version blanche en essai » dans index.html.
 - Paiement : si Stripe refuse un moyen de paiement, on retire seulement celui-là au lieu de repasser à la carte seule (Tom ne voyait que carte + Apple Pay).
 - Boutique téléphone : « Créer votre alerte » à égale distance des filtres et des pièces (~19 px à l'œil) (Tom).
 - Accueil : titre « les auteurs » remis au-dessus des marques (Tom). Cœur des favoris vides laissé vide.
+- Boutique téléphone : grande carte en cadre carré et 52 px entre les rangées (Tom).

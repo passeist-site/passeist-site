@@ -150,6 +150,8 @@ bande qu'on fait glisser du doigt.
     horizontal inchangé (36 px desktop, 14 px ≤ 900 px, 10 px ≤ 480 px) ;
     **thème blanc** (assets/theme.js) : écart horizontal mobile porté à **24 px**
     (Tom, 2026-11-09 : sans cadre, les textes des deux colonnes se touchaient) ;
+    écart vertical mobile **52 px**, et la grande carte pleine largeur (5n) en
+    cadre **carré** (photo 1 toujours entière, contain) au lieu de 3:4 (Tom, 2026-11-10) ;
   - bloc texte compact sous la photo : `.product-body` padding-top 12 px
     (8 px mobile), marque → nom 6 px (4 px), nom → trait 8 px (4 px), trait →
     ligne taille 6 px (4 px), sans `min-height` : la ligne taille · genre est
