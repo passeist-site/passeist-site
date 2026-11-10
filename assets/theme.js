@@ -140,6 +140,10 @@
     '@media (hover:none){.product-img{clip-path:inset(0);isolation:isolate}.product-img:not(.show-2) .product-img-secondary{visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s linear .42s}.product-img.show-2 .product-img-secondary{visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}}' +
     /* Barre de filtres (téléphone) : même espace au-dessus (sous le bandeau) qu'entre elle et « Créer votre alerte » (Tom) */
     '@media (max-width:900px){.filter-bar{padding-top:14px!important;padding-bottom:8px!important;margin-bottom:0!important}.alert-cta{margin-top:0!important}}' +
+    /* Page affichée d'un bloc (Tom, 2026-11-10 : « je vois plein de trucs arriver au fur et à
+       mesure ») : plus d'apparitions en fondu décalées (titre, logo, slogan, bouton, cartes,
+       changement de page, cartes au défilement). */
+    '.hero-ink{animation:none!important}.hero-eyebrow,.hero-logo,.hero-sub,.hero-tagline,.hero-cta,.product-card,.grid .product-card,.page-enter{animation:none!important;opacity:1!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
