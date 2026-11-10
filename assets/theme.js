@@ -95,6 +95,8 @@
     '@media (max-width:900px){.footer,body[data-page="home"] .footer{font-size:10.5px!important;gap:3px!important;padding:11px 16px calc(11px + env(safe-area-inset-bottom))!important;line-height:1.35}.footer-nav{gap:14px!important;justify-content:center}.footer-nav a[href^="mailto"]{display:none!important}}' +
     /* Bandeau « VENDU » en bleu nuit, texte crème (Tom) */
     '.sold-stamp,.sold-badge{background:' + N + '!important;color:' + C + '!important;border-color:' + N + '!important;mix-blend-mode:normal!important}' +
+    /* Recherche du panneau des filtres : un seul fond sur toute la bande (Tom) */
+    '.filter-sheet .filter-search-box{background:rgba(244,241,236,.07)!important}.filter-sheet .filter-search-box input,.filter-sheet .filter-search-box .filter-input{background:transparent!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
