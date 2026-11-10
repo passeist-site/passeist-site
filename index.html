@@ -8274,11 +8274,11 @@ function openDetail(id) {
     if (wrap) {
       const prevBtn = document.createElement('button');
       prevBtn.className = 'main-arrow prev';
-      prevBtn.innerHTML = '‹';
+      prevBtn.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
       prevBtn.setAttribute('aria-label', window.__lang === 'en' ? 'Previous photo' : 'Photo précédente');
       const nextBtn = document.createElement('button');
       nextBtn.className = 'main-arrow next';
-      nextBtn.innerHTML = '›';
+      nextBtn.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
       nextBtn.setAttribute('aria-label', window.__lang === 'en' ? 'Next photo' : 'Photo suivante');
       prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateMainPhoto(-1); });
       nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigateMainPhoto(1); });

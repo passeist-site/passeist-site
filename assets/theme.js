@@ -127,6 +127,8 @@
     /* Ouverture d'une fiche sans fondu : le fondu laissait voir la photo de la grille sous la
        fiche, d'où l'impression que la photo bouge (Tom, 2026-11-10). Pas de surbrillance au tap. */
     '.detail.open{animation:none!important}.product-card,.product-card *{-webkit-tap-highlight-color:transparent}' +
+    /* Flèches des fiches (ordinateur) : chevron fin bleu nuit, sans fond (Tom, 2026-11-10, choix 2) */
+    '.detail-gallery .main-arrow{width:44px!important;height:44px!important;background:none!important;border:0!important;box-shadow:none!important;color:' + N + '!important;mix-blend-mode:normal!important}.detail-gallery .main-arrow:hover{background:none!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
