@@ -102,6 +102,9 @@
     '@media (max-width:900px){.shop .main,.archive .main{padding-top:0!important;margin-top:var(--topbar-h-mobile,54px)!important}}' +
     /* Favoris vides : cœur en bleu nuit au lieu du gris délavé (Tom) */
     '.empty-state .empty-icon{color:' + N + '!important;opacity:1!important}.empty-state .empty-icon svg{stroke:' + N + '!important}' +
+    /* Recherche du panneau des filtres : texte d'invite plus clair, loupe plus grande et plus épaisse (Tom) */
+    '.filter-sheet .filter-search-box input::placeholder,.filter-sheet .filter-input::placeholder{color:rgba(244,241,236,.85)!important;opacity:1!important}' +
+    '.filter-sheet .filter-search-box svg{width:21px!important;height:21px!important;stroke-width:2.2!important;opacity:1!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
