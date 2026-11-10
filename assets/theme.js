@@ -131,6 +131,8 @@
     '.detail-gallery .main-arrow{width:44px!important;height:44px!important;background:none!important;border:0!important;box-shadow:none!important;color:' + N + '!important;mix-blend-mode:normal!important}.detail-gallery .main-arrow:hover{background:none!important}' +
     /* Nom de l'auteur cliquable sur la fiche : même aspect, souligné au survol */
     '.d-brand-link{color:inherit!important;text-decoration:none!important}.d-brand-link:hover{text-decoration:underline!important;text-underline-offset:4px;text-decoration-thickness:1px}' +
+    /* Mes favoris : titre centré, aligné sur le bloc du dessous (Tom, 2026-11-10) */
+    'body[data-page="favorites"] .shop-header{text-align:center!important;justify-content:center!important;align-items:center!important}body[data-page="favorites"] .shop-header *{margin-left:auto;margin-right:auto}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
