@@ -279,3 +279,4 @@ script « Version blanche en essai » dans index.html.
 - Boutique / Vendu téléphone : barre de filtres collée sous l'en-tête dès l'arrivée (même écart qu'en défilant), tout remonte de 28 px (Tom).
 - Fiches vendues : plus d'icônes panier ni favori à côté du prix (Tom).
 - Paiement : si Stripe refuse un moyen de paiement, on retire seulement celui-là au lieu de repasser à la carte seule (Tom ne voyait que carte + Apple Pay).
+- Boutique téléphone : « Créer votre alerte » à égale distance des filtres et des pièces (~19 px à l'œil) (Tom).
