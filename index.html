@@ -1651,7 +1651,8 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* ============ VISIONNEUSE PLEIN ÉCRAN (téléphone) ============ */
 .pv-viewer { display: none; position: fixed; inset: 0; z-index: 600; background: #141518; }
 .pv-viewer.open { display: block; animation: fadeIn .25s ease; }
-.pv-close { position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 14px; z-index: 3; width: 44px; height: 44px; border: 0; background: none; padding: 10px; cursor: pointer; }
+/* Croix en bas, au niveau du pouce (Tom) ; les points passent juste au-dessus */
+.pv-close { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 3; width: 52px; height: 52px; border: 0; border-radius: 50%; background: rgba(245,242,237,.12); padding: 14px; cursor: pointer; }
 .pv-close svg { width: 24px; height: 24px; stroke: #f5f2ed; stroke-width: 1.6; fill: none; }
 .pv-track { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .pv-track::-webkit-scrollbar { display: none; }
@@ -1661,7 +1662,7 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* Bord à bord (Tom) : photos 2+ en cover 3:4 comme sur la fiche (sources Vestiaire à
    bandes blanches) ; photo 1 entière, jamais recadrée (contain sur fond blanc). */
 .pv-slide:first-child img { object-fit: contain; scale: none; background: rgb(255,255,255); }
-.pv-dots { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
+.pv-dots { position: absolute; left: 0; right: 0; bottom: calc(88px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
 .pv-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(245,242,237,.35); }
 .pv-dots i.on { background: #f5f2ed; }
 body.pv-open { overflow: hidden; }
