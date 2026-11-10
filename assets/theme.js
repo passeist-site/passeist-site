@@ -77,8 +77,8 @@
     '.bc-brand,.bc-brand-name{color:' + N + '!important;font-weight:800!important}' +
     '.bc-price{background:none!important;clip-path:none!important;padding:0!important;color:' + N + '!important;font-size:12px!important;font-weight:800!important}' +
     '.bc-name{color:#3b4152!important}.bc-meta{color:#7a7e88!important;border-top-color:rgba(28,34,48,.14)!important}' +
-    '.cta-shop a{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
-    '.cta-shop a *,.cta-shop a::after{color:' + C + '!important}.cta-shop a:hover{background:#2c3446!important}' +
+    '.cta-shop a,#auteur-page .cta-shop a{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
+    '.cta-shop a *,.cta-shop a::after,#auteur-page .cta-shop a *{color:' + C + '!important}.cta-shop a:hover,#auteur-page .cta-shop a:hover{background:#2c3446!important}' +
     /* Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom) */
     '@media (min-width:901px){.hero{padding-bottom:calc(var(--hero-card-h,393px)*1.25 + 110px)!important}.hero-marquee{height:calc(var(--hero-card-h,393px)*1.25 + 12px)!important;bottom:60px!important}}' +
     /* Petite fenêtre « Ajouté au panier » : bleu nuit vitré comme le panier ; bouton « Ajouté » texte crème (Tom) */

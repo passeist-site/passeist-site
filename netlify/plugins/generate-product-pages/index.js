@@ -675,7 +675,9 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
     const brand = normBrand(decodeURIComponent(brandParam[1]));
     const all = products
       .filter(p => normBrand(p.brand) === brand && !soldIds.has(p.id) && p.sold !== true);
-    const items = all.slice(0, 24);
+    // Toutes les pièces disponibles dans le carrousel (Tom, 2026-11-10 : plus de grille
+    // « Les autres pièces disponibles » en dessous) ; chaque fiche garde son lien.
+    const items = all;
     const cards = items.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('');
     const open = items.length ? '<div class="carousel">' : '<div class="carousel" style="display:none">';
     // Remplacement par fonction : aucun motif "$" des textes produits n'est interprété
@@ -683,7 +685,7 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
     // Au-delà des 24 du carrousel : toutes les autres pièces disponibles en
     // grille, chacune avec son lien (Google atteint ainsi chaque fiche depuis
     // la page de sa marque ; avant, 183 pièces Yohji n'y avaient aucun lien).
-    const rest = all.slice(24);
+    const rest = [];
     if (rest.length) {
       const grid = '<h3 class="brand-all-title"><span class="lang-fr">Les autres pièces disponibles</span><span class="lang-en">More available pieces</span></h3>\n'
         + '      <div class="brand-all">' + rest.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('') + '\n      </div>\n      ';
