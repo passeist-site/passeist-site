@@ -109,7 +109,7 @@
        ont déjà ~20 px de blanc en haut, donc pas de marge sous le lien (Tom) */
     '@media (max-width:900px){.alert-cta{margin-bottom:0!important;position:relative;z-index:2}.shop .grid{margin-top:-18px!important}}' +
     /* Page Vendu (téléphone) : cartes sans ligne taille, donc écart réduit pour garder le même rythme que la boutique (Tom) */
-    '@media (max-width:900px){body[data-page="archive"] .grid{row-gap:32px!important}}' +
+    '@media (max-width:900px){body[data-page="archive"] .grid{row-gap:30px!important}}' +
     /* Pastille du panier au même endroit sur les pages Auteurs que sur le reste du site */
     '@media (max-width:900px){.topbar .topbar-icon .cart-count{top:4px!important;right:1px!important}}' +
     /* Carrousels (pages auteurs, sous les fiches) : pas de barre de défilement visible (Tom) */
