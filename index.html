@@ -10594,6 +10594,40 @@ window.sharePiece = function () {
   if (document.readyState === 'complete') later(); else window.addEventListener('load', later, { once: true });
 })();
 </script>
+<!-- ============ PHOTOS CHARGÉES EN AVANCE, PARTOUT ============ -->
+<script>
+// Le lazy natif ne charge une photo qu'au ras de l'écran (surtout Safari) : du blanc
+// apparaissait en défilant (Tom, 2026-11-10). On charge chaque photo dès qu'elle est
+// à ~1 600 px de l'écran : vers le bas pour les grilles, sur le côté pour les
+// carrousels (pages auteurs, miniatures des fiches…).
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  const go = (es, io) => es.forEach(e => { if (e.isIntersecting) { e.target.loading = 'eager'; io.unobserve(e.target); } });
+  const vio = new IntersectionObserver(go, { rootMargin: '1600px 0px' });
+  const hio = new Map();
+  const scroller = el => {
+    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+      const o = getComputedStyle(n).overflowX;
+      if ((o === 'auto' || o === 'scroll') && n.scrollWidth > n.clientWidth + 4) return n;
+    }
+    return null;
+  };
+  const scan = () => {
+    document.querySelectorAll('img[loading="lazy"]:not([data-pre])').forEach(img => {
+      img.dataset.pre = '1';
+      const sc = scroller(img);
+      if (!sc) { vio.observe(img); return; }
+      let io = hio.get(sc);
+      if (!io) { io = new IntersectionObserver(go, { root: sc, rootMargin: '0px 1600px' }); hio.set(sc, io); }
+      io.observe(img);
+    });
+  };
+  let t = 0;
+  const later = () => { clearTimeout(t); t = setTimeout(scan, 120); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', later); else later();
+  new MutationObserver(later).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 <!-- ============ BANDEAU COOKIES (RGPD) ============ -->
 <script>
 (function(){
