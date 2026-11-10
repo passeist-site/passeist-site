@@ -39,7 +39,7 @@
     '@media (max-width:900px){.filter-bar{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}' +
     '.filter-bar.searching .filter-search-inline{background:#f7f7f7!important}' +
     /* Liquid Glass (Tom) : boutons de filtres et barre panier en verre dépoli, les pièces passent floues derrière */
-    '.filter-mobile-toggle,.filter-search-btn{background:rgba(250,250,250,.86)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;backdrop-filter:blur(20px) saturate(160%)!important;border:1px solid rgba(255,255,255,.7)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(28,34,48,.06),0 8px 22px -8px rgba(28,34,48,.28)!important}' +
+    '.filter-mobile-toggle,.filter-search-btn{background:rgba(250,250,250,.86)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;backdrop-filter:blur(20px) saturate(160%)!important;border:0!important;box-shadow:0 6px 18px -10px rgba(28,34,48,.3)!important}' +
     '.buy-bar{background:rgba(238,238,238,.55)!important;-webkit-backdrop-filter:blur(18px) saturate(160%)!important;backdrop-filter:blur(18px) saturate(160%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 -8px 24px -12px rgba(28,34,48,.3)!important}.buy-bar::before{display:none!important}' +
     '.buy-bar-icon,.buy-bar .buy-bar-icon.fav-btn{background:rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 #fff,0 4px 10px -4px rgba(28,34,48,.25)!important}}' +
     /* Menu mobile en bleu nuit vitré, comme l'en-tête (Tom) */
