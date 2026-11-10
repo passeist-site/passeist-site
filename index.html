@@ -3994,6 +3994,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <button class="filter-search-btn" id="filter-search-btn" type="button" aria-label="Rechercher">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
+      <!-- Cloche : l'alerte reste à portée quand on défile (barre fixe en haut, téléphone ; Tom, 2026-11-10) -->
+      <button class="filter-search-btn filter-alert-btn" id="filter-alert-btn" type="button" aria-label="Créer une alerte" hidden onclick="var a=document.getElementById('alert-cta');if(a&&a.onclick)a.onclick();">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
+      </button>
       <div class="filter-field filter-search-inline">
         <label class="filter-label" for="search-input" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
@@ -7791,6 +7795,8 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     if (!b) return;
     const show = typeof activeView !== 'undefined' && activeView === 'shop';
     b.hidden = !show;
+    const bell = $('filter-alert-btn');
+    if (bell) { bell.hidden = !show; bell.setAttribute('aria-label', en() ? 'Create an alert' : 'Créer une alerte'); }
     if (!show) return;
     $('alert-cta-txt').textContent = en() ? 'Create your personalised alert' : 'Créer votre alerte personnalisée';
     b.onclick = () => window.openAlert({

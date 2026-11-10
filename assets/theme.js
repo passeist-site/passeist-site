@@ -39,7 +39,7 @@
     '@media (max-width:900px){.filter-bar{background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}' +
     '.filter-bar.searching .filter-search-inline{background:#f7f7f7!important}' +
     /* Liquid Glass (Tom) : boutons de filtres et barre panier en verre dépoli, les pièces passent floues derrière */
-    '.filter-mobile-toggle,.filter-search-btn{background:rgba(250,250,250,.86)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;backdrop-filter:blur(20px) saturate(160%)!important;border:0!important;box-shadow:0 6px 18px -10px rgba(28,34,48,.3)!important}' +
+    '.filter-mobile-toggle,.filter-search-btn{background:rgba(250,250,250,.96)!important;-webkit-backdrop-filter:blur(20px) saturate(160%)!important;backdrop-filter:blur(20px) saturate(160%)!important;border:0!important;box-shadow:0 6px 18px -10px rgba(28,34,48,.3)!important}' +
     '.buy-bar{background:rgba(238,238,238,.55)!important;-webkit-backdrop-filter:blur(18px) saturate(160%)!important;backdrop-filter:blur(18px) saturate(160%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 -8px 24px -12px rgba(28,34,48,.3)!important}.buy-bar::before{display:none!important}' +
     '.buy-bar-icon,.buy-bar .buy-bar-icon.fav-btn{background:rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 #fff,0 4px 10px -4px rgba(28,34,48,.25)!important}}' +
     /* Menu mobile en bleu nuit vitré, comme l'en-tête (Tom) */
@@ -144,6 +144,16 @@
        mesure ») : plus d'apparitions en fondu décalées (titre, logo, slogan, bouton, cartes,
        changement de page, cartes au défilement). */
     '.hero-ink{animation:none!important}.hero-eyebrow,.hero-logo,.hero-sub,.hero-tagline,.hero-cta,.product-card,.grid .product-card,.page-enter{animation:none!important;opacity:1!important}' +
+    /* Cloche d'alerte dans la barre de filtres : téléphone seulement */
+    '.filter-alert-btn[hidden]{display:none!important}@media (min-width:901px){.filter-alert-btn{display:none!important}}@media (max-width:900px){.filter-bar{gap:8px!important}}' +
+    /* Fenêtre « Créez votre alerte » en bleu nuit comme les autres panneaux : le haut du dégradé
+       était bleu nuit avec un texte bleu nuit, illisible (2026-11-10) */
+    '.alert-card{background:' + N + '!important}' +
+    '.alert-card .alert-title,.alert-card .alert-x,.alert-card .alert-summary,.alert-card .alert-done,.alert-card .alert-chip,.alert-card .alert-form input[type=email]{color:' + C + '!important}' +
+    '.alert-card .alert-sub{color:rgba(244,241,236,.72)!important}.alert-card .alert-group-label,.alert-card .alert-legal,.alert-card .alert-chip.more{color:rgba(244,241,236,.55)!important}' +
+    '.alert-card .alert-chip{border-color:rgba(244,241,236,.25)!important;background:rgba(244,241,236,.04)!important}.alert-card .alert-chip.on{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}' +
+    '.alert-card .alert-summary{background:rgba(244,241,236,.07)!important}.alert-card .alert-form input[type=email]{border-color:rgba(244,241,236,.25)!important;background:rgba(244,241,236,.06)!important}.alert-card .alert-form input::placeholder{color:rgba(244,241,236,.45)!important}' +
+    '.alert-card .alert-form button{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
