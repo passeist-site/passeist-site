@@ -284,3 +284,4 @@ script « Version blanche en essai » dans index.html.
 - Boutique téléphone : grande carte en cadre carré et 52 px entre les rangées (Tom).
 - Grande carte : retour au cadre 3:4 (Tom ne veut pas risquer de couper l'objet).
 - Page Vendu téléphone : 32 px entre les rangées (cartes sans ligne taille) (Tom).
+- Grande carte : cadre carré validé par Tom sur aperçu (rien n'est coupé).
