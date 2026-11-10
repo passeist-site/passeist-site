@@ -71,6 +71,14 @@
     /* Boutons « Ajouter au panier » : pas de reflet blanc en haut (trop marqué sur le bleu nuit), survol bleu nuit plus clair (Tom) */
     '.detail-actions .btn-primary,.buy-bar-cta{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 24px -10px rgba(28,34,48,.45)!important}' +
     '.detail-actions .btn-primary:hover{background:#2c3446!important;border-color:#2c3446!important;color:' + C + '!important}' +
+    /* Pages auteurs : rouleau « Notre sélection » comme les rouleaux des fiches
+       (pièces qui flottent sur le gris, prix sans étiquette), bouton bleu nuit (Tom) */
+    '.bc-img{background:#eeeeee!important;box-shadow:none!important}.bc-img img{mix-blend-mode:multiply}' +
+    '.bc-brand,.bc-brand-name{color:' + N + '!important;font-weight:800!important}' +
+    '.bc-price{background:none!important;clip-path:none!important;padding:0!important;color:' + N + '!important;font-size:12px!important;font-weight:800!important}' +
+    '.bc-name{color:#3b4152!important}.bc-meta{color:#7a7e88!important;border-top-color:rgba(28,34,48,.14)!important}' +
+    '.cta-shop a{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
+    '.cta-shop a *,.cta-shop a::after{color:' + C + '!important}.cta-shop a:hover{background:#2c3446!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
