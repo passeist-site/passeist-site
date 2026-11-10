@@ -3840,6 +3840,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
      haut/bas (en % de la largeur du cadre) : même hauteur que la photo 1, même cadrage. */
   #detail .detail-gallery .main-photo:not([data-idx="0"]) { margin-top: -0.6667%; margin-bottom: -0.6667%; }
   #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { scale: none; width: 101%; left: -0.5%; clip-path: inset(0 0.495%); }
+  /* Voisines du ruban : même géométrie exacte que la grande photo 2+ (101 % x 101 %,
+     centrée), sinon micro-zoom quand la voisine devient la grande photo (Tom, 2026-11-10) */
+  #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { height: 101%; top: -0.5%; }
   /* Vignettes plus petites (6 visibles), angles droits comme la grande photo */
   #detail .detail-gallery .thumbs-row { gap: 5px; margin-top: 10px; }
   #detail .detail-gallery .thumb { flex: 0 0 54px !important; width: 54px !important; border-radius: 4px; }
