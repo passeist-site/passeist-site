@@ -92,7 +92,7 @@
     '.contact-chat-btn{background:' + C + '!important;color:' + N + '!important}.contact-chat-btn *{color:' + N + '!important;stroke:' + N + '!important}.contact-chat-btn:hover{background:#fff!important}' +
     /* Pied de page de la même hauteur que l'en-tête (64 px ordinateur, ~54 px téléphone, Tom) */
     '@media (min-width:901px){.footer{padding:0 40px!important;min-height:64px;box-sizing:border-box}}' +
-    '@media (max-width:900px){.footer,body[data-page="home"] .footer{font-size:10.5px!important;gap:3px!important;padding:11px 16px calc(11px + env(safe-area-inset-bottom))!important;line-height:1.35}.footer-nav{gap:14px!important;justify-content:center}.footer-nav a[href^="mailto"]{display:none!important}}' +
+    '@media (max-width:900px){.footer,body[data-page="home"] .footer{font-size:9.5px!important;gap:3px!important;padding:11px 12px calc(11px + env(safe-area-inset-bottom))!important;line-height:1.35}.footer-nav{gap:10px!important;justify-content:center;flex-wrap:nowrap!important;white-space:nowrap}}' +
     /* Bandeau « VENDU » en bleu nuit, texte crème (Tom) */
     '.sold-stamp,.sold-badge{background:' + N + '!important;color:' + C + '!important;border-color:' + N + '!important;mix-blend-mode:normal!important}' +
     /* Recherche du panneau des filtres : un seul fond sur toute la bande (Tom) */
