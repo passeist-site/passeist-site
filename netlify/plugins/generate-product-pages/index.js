@@ -1177,6 +1177,9 @@ module.exports = {
     if (scriptOpen !== -1) {
       slimHtml = baseHtml.slice(0, scriptOpen) + '<script src="/' + catRel + '"></script>\n' + baseHtml.slice(scriptOpen);
       slimHtml = slimHtml.replace(prodMatch[0], () => 'const PRODUCTS = window.__PRODUCTS__ || [];\n');
+      // Téléchargement du catalogue lancé dès l'en-tête, sans attendre que le navigateur
+      // arrive au script en bas de page : les photos de l'accueil arrivent plus tôt (Tom)
+      slimHtml = slimHtml.replace('</head>', () => '<link rel="preload" href="/' + catRel + '" as="script">\n</head>');
     }
     // Accueil : versions FR/EN déclarées (uniquement sur l'accueil ; les
     // fiches produits ont les leurs, cf applyProductSEO)

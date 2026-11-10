@@ -9386,6 +9386,19 @@ function renderHeroMarquee() {
   const track = document.getElementById('hero-marquee-track');
   // Duplicate the list for seamless infinite scroll
   track.innerHTML = cards + cards;
+  // Les photos visibles apparaissent toutes ensemble, pas au compte-gouttes (Tom,
+  // 2026-11-10) : bande masquée jusqu'à ce que les 6 premières soient chargées (2,5 s max).
+  {
+    const first = [...track.querySelectorAll('img')].slice(0, 6);
+    const pending = first.filter(im => !(im.complete && im.naturalWidth));
+    if (pending.length) {
+      track.style.visibility = 'hidden';
+      let left = pending.length, shown = false;
+      const show = () => { if (!shown) { shown = true; track.style.visibility = ''; } };
+      pending.forEach(im => { const d = () => { if (--left <= 0) show(); }; im.addEventListener('load', d, { once: true }); im.addEventListener('error', d, { once: true }); });
+      setTimeout(show, 2500);
+    }
+  }
   document.querySelectorAll('.hero-marquee-card').forEach(c =>
     c.addEventListener('click', (e) => {
       // Don't open the detail if the user actually dragged
