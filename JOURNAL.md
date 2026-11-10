@@ -292,3 +292,4 @@ script « Version blanche en essai » dans index.html.
 - Carrousel d'accueil : tirage au hasard parmi toutes les pièces en vente (avant : les 120 plus chères seulement) (Tom).
 - Cartes vendues : étiquette « VENDU » droite (bleu nuit, coins 3 px) en haut à droite au lieu du bandeau en biais (Tom, choix B). Fiche vendue : bandeau inchangé.
 - Fiche vendue : même étiquette VENDU droite en haut à droite que sur les cartes (le bandeau en biais était resté).
+- Pull CDG PE 1996 (65021255) : photo du pull en photo 1, détourée ; photo défilé en 2e (Tom). IMG_V passe à 3.
