@@ -158,7 +158,8 @@
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
        Avec multiply, la photo 2 se mélangeait à la photo 1 (superposition, Tom). */
-    '@media (hover:hover) and (pointer:fine){.product-img .product-img-primary{transition:opacity .6s cubic-bezier(.22,1,.36,1)}.product-card:hover .product-img:has(.product-img-secondary) .product-img-primary{opacity:0!important}}' +
+    /* Ordinateur : plus de photo 2 au survol des cartes, ça cassait la page (Tom, 2026-11-10) */
+    '@media (hover:hover) and (pointer:fine){.product-card .product-img-secondary,.product-card:hover .product-img-secondary{opacity:0!important;visibility:hidden!important}.product-card:hover .product-img .product-img-primary{opacity:1!important}}' +
     '.hero-marquee-card{background:#eeeeee!important}.hero-marquee-card img{mix-blend-mode:multiply}' +
     '#detail .detail-gallery .main-photo-wrap{background:#eeeeee!important}' +
     '#detail .detail-gallery .main-photo,#detail .detail-gallery .ribbon-ghost{background:transparent!important;mix-blend-mode:multiply}' +
