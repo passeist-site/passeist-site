@@ -1658,10 +1658,12 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 .pv-track::-webkit-scrollbar { display: none; }
 .pv-track.locked { overflow-x: hidden; }
 .pv-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: pan-x; }
-.pv-slide img { width: 100%; height: auto; aspect-ratio: 3 / 4; max-height: 100%; object-fit: cover; scale: 1.01; transform-origin: 0 0; will-change: transform; user-select: none; -webkit-user-drag: none; }
+.pv-slide img { width: 100%; height: auto; aspect-ratio: 3 / 4; max-height: 100%; object-fit: cover; scale: 1.02; translate: -1% -1%; transform-origin: 0 0; will-change: transform; user-select: none; -webkit-user-drag: none; }
 /* Bord à bord (Tom) : photos 2+ en cover 3:4 comme sur la fiche (sources Vestiaire à
    bandes blanches) ; photo 1 entière, jamais recadrée (contain sur fond blanc). */
-.pv-slide:first-child img { object-fit: contain; scale: none; background: rgb(255,255,255); }
+.pv-slide:first-child img { object-fit: contain; scale: none; translate: none; background: rgb(255,255,255); }
+/* scale + translate : agrandi de 2 % depuis le centre (l'origine 0 0 sert au zoom), ce qui
+   masque le filet blanc des sources Vestiaire sur les bords (Tom : « très blanc à gauche »). */
 .pv-dots { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
 .pv-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(245,242,237,.35); }
 .pv-dots i.on { background: #f5f2ed; }
