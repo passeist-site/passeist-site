@@ -124,6 +124,9 @@
     '.hbs-headliners a{padding:4px 8px!important}.hbs-headliners{margin-bottom:16px!important}.hbs-eyebrow{margin-bottom:28px!important}' +
     /* Carrousel d'accueil mobile un peu plus grand (Tom, 2026-11-10) */
     '@media (max-width:900px){.hero-content{padding-top:35px!important}.hero-marquee{height:210px!important;margin:36px 0 26px!important}}' +
+    /* Ouverture d'une fiche sans fondu : le fondu laissait voir la photo de la grille sous la
+       fiche, d'où l'impression que la photo bouge (Tom, 2026-11-10). Pas de surbrillance au tap. */
+    '.detail.open{animation:none!important}.product-card,.product-card *{-webkit-tap-highlight-color:transparent}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

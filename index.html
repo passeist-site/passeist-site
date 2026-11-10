@@ -10535,6 +10535,7 @@ window.sharePiece = function () {
 // place dans la fiche (cadres 3:4 identiques des deux côtés, cf. PHOTOS.md :
 // rien n'est recadré, seule la position/taille du cadre s'anime).
 (function () {
+  return;   // Désactivé (Tom, 2026-11-10 : « la photo bouge pour ouvrir la page, c'est nul »)
   if (typeof window.openDetail !== 'function') return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let from = null;
