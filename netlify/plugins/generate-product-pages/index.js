@@ -18,6 +18,9 @@ const vm   = require('vm');
 // ── Replicate slugify() + productSlug() from the SPA ─────────────────────
 // Must stay in sync with the live SPA functions (grep: "productSlug = function")
 
+// Auteurs qui ont une page /marques/<slug> (nom cliquable sur les fiches)
+const BRAND_PAGE_SLUGS = ['45rpm','blue-blue-japan','comme-des-garcons','final-home','fumito-ganryu','issey-miyake','jun-men','junko-koshino','junya-watanabe','kansai-yamamoto','kijima-takayuki','limi-feu','maison-mihara-yasuhiro','noir-kei-ninomiya','plantation','tigre-brocante','tsumori-chisato','yohji-yamamoto','yoshiki-hishinuma','zucca'];
+
 function slugify(s) {
   return String(s || '')
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -125,7 +128,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
   <div class="detail-main">
     <div class="detail-gallery" id="detail-gallery">${galleryHtml}</div>
     <div class="detail-info">
-      <h1 class="detail-title"><span class="detail-brand" id="d-brand">${esc(p.brand)}</span> <span class="detail-name" id="d-name">${esc(p.type)}${[p.line, p.edition].filter(Boolean).length ? '<span class="d-season"> · ' + esc([p.line, p.edition].filter(Boolean).join(' · ')) + '</span>' : ''}</span></h1>
+      <h1 class="detail-title"><span class="detail-brand" id="d-brand">${BRAND_PAGE_SLUGS.includes(slugify(p.brand)) ? '<a class="d-brand-link" href="/marques/' + slugify(p.brand) + '">' + esc(p.brand) + '</a>' : esc(p.brand)}</span> <span class="detail-name" id="d-name">${esc(p.type)}${[p.line, p.edition].filter(Boolean).length ? '<span class="d-season"> · ' + esc([p.line, p.edition].filter(Boolean).join(' · ')) + '</span>' : ''}</span></h1>
       <div class="detail-price-row" id="d-price-row">
         <div class="detail-price-wrap" id="d-price-wrap"${sold ? ' style="display:none"' : ''}>
           <svg class="nav-ink nav-ink--price-detail" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="68" filter="url(#ink-rough-h)"/></svg>

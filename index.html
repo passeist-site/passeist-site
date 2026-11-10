@@ -7900,7 +7900,15 @@ function openDetail(id) {
   const _samePage = detailEl.classList.contains('open') && detailEl.dataset.pid === String(p.id);
   const _prevTop = detailEl.scrollTop;
   detailEl.classList.toggle('detail-sold', sold);
-  document.getElementById('d-brand').textContent = p.brand;
+  // Nom de l'auteur cliquable vers sa page, quand elle existe (Tom, 2026-11-10)
+  {
+    const bEl = document.getElementById('d-brand');
+    const bs = window.slugify ? window.slugify(p.brand) : '';
+    const BP = ['45rpm','blue-blue-japan','comme-des-garcons','final-home','fumito-ganryu','issey-miyake','jun-men','junko-koshino','junya-watanabe','kansai-yamamoto','kijima-takayuki','limi-feu','maison-mihara-yasuhiro','noir-kei-ninomiya','plantation','tigre-brocante','tsumori-chisato','yohji-yamamoto','yoshiki-hishinuma','zucca'];
+    bEl.textContent = '';
+    if (BP.includes(bs)) { const a = document.createElement('a'); a.href = '/marques/' + bs; a.className = 'd-brand-link'; a.textContent = p.brand; bEl.appendChild(a); }
+    else bEl.textContent = p.brand;
+  }
   document.getElementById('d-name').textContent = (window.tType ? window.tType(p) : p.type);
   // Ligne + saison lues dans la description (« Homme Plus · Automne-hiver 2003 »), cf. plugin
   const edEl = document.getElementById('d-edition');
