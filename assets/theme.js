@@ -128,7 +128,9 @@
        fiche, d'où l'impression que la photo bouge (Tom, 2026-11-10). Pas de surbrillance au tap. */
     '.detail.open{animation:none!important}.product-card,.product-card *{-webkit-tap-highlight-color:transparent}' +
     /* Flèches des fiches (ordinateur) : chevron fin bleu nuit, sans fond (Tom, 2026-11-10, choix 2) */
-    '.detail-gallery .main-arrow{width:44px!important;height:44px!important;background:none!important;border:0!important;box-shadow:none!important;color:' + N + '!important;mix-blend-mode:normal!important}.detail-gallery .main-arrow:hover{background:none!important}' +
+    '.detail-gallery .main-arrow{width:44px!important;height:44px!important;background:none!important;border:0!important;box-shadow:none!important;color:' + N + '!important;mix-blend-mode:normal!important;opacity:.75!important}.detail-gallery .main-arrow:hover{background:none!important;opacity:1!important}' +
+    /* Toujours visibles (pas seulement au survol), et aussi sur téléphone (Tom) */
+    '@media (max-width:920px){.detail-gallery .main-arrow{display:flex!important;width:36px!important;height:44px!important}.detail-gallery .main-arrow svg{width:24px;height:24px}.detail-gallery .main-arrow.prev{left:2px!important}.detail-gallery .main-arrow.next{right:2px!important}}' +
     /* Nom de l'auteur cliquable sur la fiche : même aspect, souligné au survol */
     '.d-brand-link{color:inherit!important;text-decoration:none!important}.d-brand-link:hover{text-decoration:underline!important;text-underline-offset:4px;text-decoration-thickness:1px}' +
     /* Mes favoris : titre centré, aligné sur le bloc du dessous (Tom, 2026-11-10) */
