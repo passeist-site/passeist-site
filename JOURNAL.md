@@ -282,3 +282,4 @@ script « Version blanche en essai » dans index.html.
 - Boutique téléphone : « Créer votre alerte » à égale distance des filtres et des pièces (~19 px à l'œil) (Tom).
 - Accueil : titre « les auteurs » remis au-dessus des marques (Tom). Cœur des favoris vides laissé vide.
 - Boutique téléphone : grande carte en cadre carré et 52 px entre les rangées (Tom).
+- Grande carte : retour au cadre 3:4 (Tom ne veut pas risquer de couper l'objet).
