@@ -94,7 +94,7 @@
     '@media (min-width:901px){.footer{padding:0 40px!important;min-height:64px;box-sizing:border-box}}' +
     '@media (max-width:900px){.footer,body[data-page="home"] .footer{font-size:9.5px!important;gap:3px!important;padding:11px 12px calc(11px + env(safe-area-inset-bottom))!important;line-height:1.35}.footer-nav{gap:10px!important;justify-content:center;flex-wrap:nowrap!important;white-space:nowrap}}' +
     /* Bandeau « VENDU » en bleu nuit, texte crème (Tom) */
-    '.sold-stamp,.sold-badge{background:' + N + '!important;color:' + C + '!important;border-color:' + N + '!important;mix-blend-mode:normal!important}' +
+    '.sold-stamp,.sold-badge{background:' + N + '!important;color:' + C + '!important;border:0!important;box-shadow:none!important;outline:0!important;mix-blend-mode:normal!important}' +
     /* Recherche du panneau des filtres : un seul fond sur toute la bande (Tom) */
     '.filter-sheet .filter-search-box{background:rgba(244,241,236,.07)!important}.filter-sheet .filter-search-box input,.filter-sheet .filter-search-box .filter-input{background:transparent!important}' +
     /* Boutique / Vendu (téléphone) : la barre de filtres colle à l'en-tête dès l'arrivée,
