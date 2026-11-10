@@ -79,6 +79,8 @@
     '.bc-name{color:#3b4152!important}.bc-meta{color:#7a7e88!important;border-top-color:rgba(28,34,48,.14)!important}' +
     '.cta-shop a{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
     '.cta-shop a *,.cta-shop a::after{color:' + C + '!important}.cta-shop a:hover{background:#2c3446!important}' +
+    /* Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom) */
+    '@media (min-width:901px){.hero{padding-bottom:calc(var(--hero-card-h,393px)*1.25 + 110px)!important}.hero-marquee{height:calc(var(--hero-card-h,393px)*1.25 + 12px)!important;bottom:60px!important}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

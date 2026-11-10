@@ -266,3 +266,4 @@ script « Version blanche en essai » dans index.html.
 - Fenêtre de discussion en bleu nuit vitré, comme le panier et les filtres (Tom).
 - Ordinateur : menu de l'en-tête (Accueil, Boutique, Auteurs…) et FR/EN en crème, ils étaient invisibles sur l'en-tête bleu nuit.
 - Pages auteurs : rouleau « Notre sélection » aligné sur les rouleaux des fiches (pièces qui flottent, prix sans étiquette), bouton « Voir toutes les pièces » bleu nuit (Tom).
+- Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom).
