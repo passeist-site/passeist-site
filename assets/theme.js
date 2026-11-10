@@ -81,6 +81,11 @@
     '.cta-shop a *,.cta-shop a::after{color:' + C + '!important}.cta-shop a:hover{background:#2c3446!important}' +
     /* Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom) */
     '@media (min-width:901px){.hero{padding-bottom:calc(var(--hero-card-h,393px)*1.25 + 110px)!important}.hero-marquee{height:calc(var(--hero-card-h,393px)*1.25 + 12px)!important;bottom:60px!important}}' +
+    /* Petite fenêtre « Ajouté au panier » : bleu nuit vitré comme le panier ; bouton « Ajouté » texte crème (Tom) */
+    '.cart-toast{background:linear-gradient(160deg,rgba(40,48,66,.96),rgba(28,34,48,.93))!important;box-shadow:inset 0 0 0 1px rgba(244,241,236,.08),0 18px 40px -12px rgba(28,34,48,.5)!important}' +
+    '.cart-toast-txt strong{color:' + C + '!important}.cart-toast-txt span{color:rgba(244,241,236,.7)!important}' +
+    '.cart-toast-btn{background:' + C + '!important;color:' + N + '!important}' +
+    '.btn.is-added,.buy-bar-cta.is-added{color:' + C + '!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
