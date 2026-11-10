@@ -7349,7 +7349,10 @@ function goPage(p) {
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('.top-nav a').forEach(a => {
-  a.addEventListener('click', () => goPage(a.dataset.page));
+  // Lien sans data-page (Auteurs = vraie page /marques) : on laisse le navigateur faire.
+  // Avant : goPage(undefined) ajoutait une étape « /undefined » dans l'historique,
+  // et le retour arrière depuis les Auteurs ramenait à l'accueil (Tom, 2026-11-10).
+  a.addEventListener('click', () => { if (a.dataset.page) goPage(a.dataset.page); });
 });
 
 // ============ FILTERS ============

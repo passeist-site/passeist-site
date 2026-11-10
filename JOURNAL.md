@@ -294,3 +294,4 @@ script « Version blanche en essai » dans index.html.
 - Fiche vendue : même étiquette VENDU droite en haut à droite que sur les cartes (le bandeau en biais était resté).
 - Pull CDG PE 1996 (65021255) : photo du pull en photo 1, détourée ; photo défilé en 2e (Tom). IMG_V passe à 3.
 - FAIT (Tom, 2026-11-10, pas encore en ligne) : fiche mobile, toucher une photo ouvre une visionneuse plein écran (fond sombre, photo bord à bord, bouton ✕, points en bas), zoom libre au pincement, passage à la photo suivante en glissant. Modèle : appli Drouot (captures du 10/11). Remplace la règle « pas de lightbox au tap sur mobile » (index.html, ~l. 8233).
+- Menu « Auteurs » : ne crée plus de fausse étape /undefined dans l'historique (le retour depuis les Auteurs ramenait à l'accueil) (Tom).
