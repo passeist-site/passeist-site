@@ -1651,8 +1651,8 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* ============ VISIONNEUSE PLEIN ÉCRAN (téléphone) ============ */
 .pv-viewer { display: none; position: fixed; inset: 0; z-index: 600; background: #141518; }
 .pv-viewer.open { display: block; animation: fadeIn .25s ease; }
-/* Croix en bas, au niveau du pouce (Tom) ; les points passent juste au-dessus */
-.pv-close { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 3; width: 52px; height: 52px; border: 0; border-radius: 50%; background: rgba(245,242,237,.12); padding: 14px; cursor: pointer; }
+/* Croix masquée (Tom) : on ferme en touchant en dehors de la photo ; le bouton reste pour les lecteurs d'écran */
+.pv-close { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; padding: 0; background: none; }
 .pv-close svg { width: 24px; height: 24px; stroke: #f5f2ed; stroke-width: 1.6; fill: none; }
 .pv-track { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .pv-track::-webkit-scrollbar { display: none; }
@@ -1662,7 +1662,7 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* Bord à bord (Tom) : photos 2+ en cover 3:4 comme sur la fiche (sources Vestiaire à
    bandes blanches) ; photo 1 entière, jamais recadrée (contain sur fond blanc). */
 .pv-slide:first-child img { object-fit: contain; scale: none; background: rgb(255,255,255); }
-.pv-dots { position: absolute; left: 0; right: 0; bottom: calc(88px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
+.pv-dots { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
 .pv-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(245,242,237,.35); }
 .pv-dots i.on { background: #f5f2ed; }
 body.pv-open { overflow: hidden; }
@@ -8377,6 +8377,8 @@ function closeDetail() {
     if (!fromPop && history.state && history.state.overlay === 'viewer') { window.__skipPop = true; history.back(); }
   };
   window.addEventListener('popstate', () => { if (V.classList.contains('open')) window.closeViewer(true); });
+  // Toucher en dehors de la photo (zone sombre) : ferme (Tom, 2026-11-10 ; plus de croix visible)
+  T.addEventListener('click', e => { if (e.target.tagName !== 'IMG' && !(z && z.s > 1.01)) window.closeViewer(); });
   T.addEventListener('scroll', () => { const i = Math.round(T.scrollLeft / T.clientWidth); if (i !== cur) { reset(); cur = i; dots(); } }, { passive: true });
   let p0 = null, pan = null, lastTap = 0;
   const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
