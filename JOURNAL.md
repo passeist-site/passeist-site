@@ -264,3 +264,4 @@ script « Version blanche en essai » dans index.html.
 - Détourage des 2e photos abandonné (Tom).
 - Ordinateur : au survol d'une carte, la photo 1 s'efface sous la photo 2 (elles se superposaient avec multiply).
 - Fenêtre de discussion en bleu nuit vitré, comme le panier et les filtres (Tom).
+- Ordinateur : menu de l'en-tête (Accueil, Boutique, Auteurs…) et FR/EN en crème, ils étaient invisibles sur l'en-tête bleu nuit.
