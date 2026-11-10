@@ -217,17 +217,24 @@ exports.handler = async (event) => {
         passeist_ids: items.map(i => i.id).join(','),
       },
     };
+    // Un moyen refusé par Stripe (pas activé dans le tableau de bord…) ne doit
+    // jamais empêcher de payer. Avant : au moindre refus on repassait à la carte
+    // seule, et tous les autres moyens disparaissaient (Tom, 2026-11-10). Maintenant
+    // on retire seulement le moyen refusé et on réessaie ; carte seule en dernier.
     let session;
-    try {
-      session = await stripe.checkout.sessions.create(sessionParams);
-    } catch (e) {
-      // Un moyen refusé par Stripe (désactivé dans le tableau de bord…) ne doit
-      // jamais empêcher de payer : on repasse à la carte seule (+ Apple/Google Pay).
-      if (e && e.type === 'StripeInvalidRequestError' && /payment_method/i.test(String(e.param || '') + ' ' + String(e.message || ''))) {
-        console.warn('Moyens de paiement refusés, retour à la carte seule :', e.message);
-        session = await stripe.checkout.sessions.create({ ...sessionParams, payment_method_types: ['card'] });
-      } else {
-        throw e;
+    let methods = PAYMENT_METHODS.slice();
+    for (let attempt = 0; ; attempt++) {
+      try {
+        session = await stripe.checkout.sessions.create({ ...sessionParams, payment_method_types: methods });
+        break;
+      } catch (e) {
+        const txt = String(e && e.param || '') + ' ' + String(e && e.message || '');
+        if (!(e && e.type === 'StripeInvalidRequestError' && /payment_method/i.test(txt))) throw e;
+        const bad = methods.filter(m => m !== 'card' && txt.includes(m));
+        console.warn('Moyen de paiement refusé par Stripe :', bad.join(',') || '?', '-', e.message);
+        if (!bad.length || attempt >= 5) { methods = ['card']; }
+        else { methods = methods.filter(m => !bad.includes(m)); }
+        if (attempt >= 6) throw e;
       }
     }
 

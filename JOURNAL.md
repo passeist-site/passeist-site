@@ -278,3 +278,4 @@ script « Version blanche en essai » dans index.html.
 - Page Vendu : 85 photos 1 de pièces vendues détourées (fond gris), comme en boutique (Tom). Illustration 70328124 laissée telle quelle.
 - Boutique / Vendu téléphone : barre de filtres collée sous l'en-tête dès l'arrivée (même écart qu'en défilant), tout remonte de 28 px (Tom).
 - Fiches vendues : plus d'icônes panier ni favori à côté du prix (Tom).
+- Paiement : si Stripe refuse un moyen de paiement, on retire seulement celui-là au lieu de repasser à la carte seule (Tom ne voyait que carte + Apple Pay).
