@@ -675,9 +675,9 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
     const brand = normBrand(decodeURIComponent(brandParam[1]));
     const all = products
       .filter(p => normBrand(p.brand) === brand && !soldIds.has(p.id) && p.sold !== true);
-    // Toutes les pièces disponibles dans le carrousel (Tom, 2026-11-10 : plus de grille
-    // « Les autres pièces disponibles » en dessous) ; chaque fiche garde son lien.
-    const items = all;
+    // 24 pièces dans le carrousel, sans grille « Les autres pièces disponibles » en
+    // dessous (Tom, 2026-11-10) ; le bouton « Voir toutes les pièces » mène au reste.
+    const items = all.slice(0, 24);
     const cards = items.map(p => buildBrandCard(p, imgReorder, imgSuffix, validatedLocal, publishDir)).join('');
     const open = items.length ? '<div class="carousel">' : '<div class="carousel" style="display:none">';
     // Remplacement par fonction : aucun motif "$" des textes produits n'est interprété
