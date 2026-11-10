@@ -262,3 +262,4 @@ script « Version blanche en essai » dans index.html.
 - Version claire : filtres et panier en bleu nuit vitré, Explorer en verre, photo de fiche à 56svh (Tom).
 - Explorer reste bleu nuit (Tom), pas de verre.
 - Détourage des 2e photos abandonné (Tom).
+- Ordinateur : au survol d'une carte, la photo 1 s'efface sous la photo 2 (elles se superposaient avec multiply).
