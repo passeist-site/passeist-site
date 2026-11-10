@@ -58,6 +58,16 @@
     '.filter-sheet select,.filter-sheet input,.filter-sheet .filter-select{background:rgba(244,241,236,.07)!important}.filter-sheet option{color:' + N + '!important}' +
     '.filter-sheet .filter-sheet-apply,.cart-panel .btn-primary,.cart-panel .cart-checkout{background:' + C + '!important;color:' + N + '!important}.filter-sheet .filter-sheet-apply *,.cart-panel .btn-primary *{color:' + N + '!important}' +
     '.cart-panel .cart-close,.cart-panel [class*=close]{background:rgba(244,241,236,.1)!important}' +
+    /* Fenêtre de discussion : bleu nuit vitré comme le panier et les filtres (Tom) */
+    '#chat-overlay .chat-box{background:linear-gradient(160deg,rgba(40,48,66,.96) 0%,rgba(28,34,48,.92) 100%)!important}' +
+    '#chat-overlay .chat-box,#chat-overlay .chat-title,#chat-overlay .chat-who,#chat-overlay .chat-start-txt,#chat-overlay .checkout-close,#chat-overlay .chat-msg.note{color:' + C + '!important}' +
+    '#chat-overlay .chat-who,#chat-overlay .chat-msg.note{opacity:.65}' +
+    '#chat-overlay .chat-msg.client{background:' + C + '!important;color:' + N + '!important}' +
+    '#chat-overlay .chat-msg.passeist{background:#5a7593!important;color:' + C + '!important}' +
+    '#chat-overlay input,#chat-overlay textarea{background:rgba(244,241,236,.08)!important;color:' + C + '!important;border-color:rgba(244,241,236,.25)!important}' +
+    '#chat-overlay input::placeholder,#chat-overlay textarea::placeholder{color:rgba(244,241,236,.5)!important}' +
+    '#chat-overlay button[type=submit]{background:' + C + '!important;color:' + N + '!important}#chat-overlay button[type=submit] svg{stroke:' + N + '!important;fill:' + N + '!important}' +
+    '#chat-overlay .checkout-close{background:rgba(244,241,236,.1)!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

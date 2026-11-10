@@ -263,3 +263,4 @@ script « Version blanche en essai » dans index.html.
 - Explorer reste bleu nuit (Tom), pas de verre.
 - Détourage des 2e photos abandonné (Tom).
 - Ordinateur : au survol d'une carte, la photo 1 s'efface sous la photo 2 (elles se superposaient avec multiply).
+- Fenêtre de discussion en bleu nuit vitré, comme le panier et les filtres (Tom).
