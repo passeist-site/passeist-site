@@ -126,6 +126,10 @@ bande qu'on fait glisser du doigt.
   3:4 avec `scale: 1.01` (§ 4). Au milieu du ruban, le liseré du bord de bande
   des photos 2+ est coupé par `clip-path: inset(0 0.5%)` (même rendu que le
   cadre en `overflow: hidden`).
+- **Même hauteur pour toutes les photos** (2026-11-10) : la grande photo 2+ fait
+  101 % de large, donc 1,33 % plus haute en 3:4 ; des marges négatives haut/bas
+  (`-0.6667%`) la ramènent à la hauteur de la photo 1, le cadre rogne le surplus.
+  Sans ça, le texte sous la photo descendait de 5 px en passant à la photo 2.
 - **Vignettes** : 54 px de large (6 visibles), coins 4 px, écart 5 px.
 - Ordinateur (> 900 px) : rien ne change (pas de ruban, coins 6 px).
 

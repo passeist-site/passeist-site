@@ -3835,6 +3835,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
      101 % de large, centrée, et le liseré du bord de bande est coupé pile au bord
      du cadre (0,495 % de chaque côté) : même cadrage qu'avec scale 1.01 (§ 4). */
   #detail .detail-gallery .main-photo:not([data-idx="0"]) { scale: none; width: 101%; max-width: none; margin-left: -0.5%; clip-path: inset(0 0.495%); }
+  /* 101 % de large en 3:4 = 1,33 % de cadre plus haut que la photo 1 : le texte
+     descendait de 5 px en passant à la photo 2 (Tom, 2026-11-10). Marges négatives
+     haut/bas (en % de la largeur du cadre) : même hauteur que la photo 1, même cadrage. */
+  #detail .detail-gallery .main-photo:not([data-idx="0"]) { margin-top: -0.6667%; margin-bottom: -0.6667%; }
   #detail .detail-gallery .ribbon-ghost:not([data-idx="0"]) { scale: none; width: 101%; left: -0.5%; clip-path: inset(0 0.495%); }
   /* Vignettes plus petites (6 visibles), angles droits comme la grande photo */
   #detail .detail-gallery .thumbs-row { gap: 5px; margin-top: 10px; }
