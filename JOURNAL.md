@@ -271,3 +271,4 @@ script « Version blanche en essai » dans index.html.
 - Gilet Issey Miyake PE 2010 (66122852) : photo du gilet passée en photo 1 et détourée, la photo défilé passe en 2e (Tom).
 - Portefeuille Y's 65393849 : 3e photo (portefeuille seul) passée en photo 1 et détourée (Tom).
 - Fenêtre « Ajouté au panier » en bleu nuit, texte crème (Tom).
+- Page Contact : encart « Discuter avec nous » en bleu nuit (tour d'homogénéité du site).

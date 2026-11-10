@@ -86,6 +86,10 @@
     '.cart-toast-txt strong{color:' + C + '!important}.cart-toast-txt span{color:rgba(244,241,236,.7)!important}' +
     '.cart-toast-btn{background:' + C + '!important;color:' + N + '!important}' +
     '.btn.is-added,.buy-bar-cta.is-added{color:' + C + '!important}' +
+    /* Page Contact : encart « Discuter avec nous » en bleu nuit comme les autres panneaux (Tom) */
+    '.contact-card{background:linear-gradient(160deg,rgba(40,48,66,.97),rgba(28,34,48,.94))!important;box-shadow:0 18px 40px -16px rgba(28,34,48,.45)!important}' +
+    '.contact-card,.contact-card *{color:' + C + '!important}.contact-card-lead{color:rgba(244,241,236,.8)!important}' +
+    '.contact-chat-btn{background:' + C + '!important;color:' + N + '!important}.contact-chat-btn *{color:' + N + '!important;stroke:' + N + '!important}.contact-chat-btn:hover{background:#fff!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
