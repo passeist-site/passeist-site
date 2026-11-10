@@ -276,3 +276,4 @@ script « Version blanche en essai » dans index.html.
 - Pied de page de la même hauteur que l'en-tête (64 px ordinateur, ~54 px téléphone ; e-mail retiré du pied sur téléphone, il reste sur Contact) (Tom).
 - Bandeau VENDU en bleu nuit, texte crème (Tom).
 - Page Vendu : 85 photos 1 de pièces vendues détourées (fond gris), comme en boutique (Tom). Illustration 70328124 laissée telle quelle.
+- Boutique / Vendu téléphone : barre de filtres collée sous l'en-tête dès l'arrivée (même écart qu'en défilant), tout remonte de 28 px (Tom).

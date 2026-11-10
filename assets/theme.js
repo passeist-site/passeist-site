@@ -97,6 +97,9 @@
     '.sold-stamp,.sold-badge{background:' + N + '!important;color:' + C + '!important;border-color:' + N + '!important;mix-blend-mode:normal!important}' +
     /* Recherche du panneau des filtres : un seul fond sur toute la bande (Tom) */
     '.filter-sheet .filter-search-box{background:rgba(244,241,236,.07)!important}.filter-sheet .filter-search-box input,.filter-sheet .filter-search-box .filter-input{background:transparent!important}' +
+    /* Boutique / Vendu (téléphone) : la barre de filtres colle à l'en-tête dès l'arrivée,
+       même écart qu'en défilant ; tout remonte un peu (Tom) */
+    '@media (max-width:900px){.shop .main,.archive .main{padding-top:0!important;margin-top:var(--topbar-h-mobile,54px)!important}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
