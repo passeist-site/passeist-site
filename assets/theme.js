@@ -90,6 +90,9 @@
     '.contact-card{background:linear-gradient(160deg,rgba(40,48,66,.97),rgba(28,34,48,.94))!important;box-shadow:0 18px 40px -16px rgba(28,34,48,.45)!important}' +
     '.contact-card,.contact-card *{color:' + C + '!important}.contact-card-lead{color:rgba(244,241,236,.8)!important}' +
     '.contact-chat-btn{background:' + C + '!important;color:' + N + '!important}.contact-chat-btn *{color:' + N + '!important;stroke:' + N + '!important}.contact-chat-btn:hover{background:#fff!important}' +
+    /* Pied de page de la même hauteur que l'en-tête (64 px ordinateur, ~54 px téléphone, Tom) */
+    '@media (min-width:901px){.footer{padding:0 40px!important;min-height:64px;box-sizing:border-box}}' +
+    '@media (max-width:900px){.footer,body[data-page="home"] .footer{font-size:10.5px!important;gap:3px!important;padding:11px 16px calc(11px + env(safe-area-inset-bottom))!important;line-height:1.35}.footer-nav{gap:14px!important;justify-content:center}.footer-nav a[href^="mailto"]{display:none!important}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

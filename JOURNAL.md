@@ -273,3 +273,4 @@ script « Version blanche en essai » dans index.html.
 - Fenêtre « Ajouté au panier » en bleu nuit, texte crème (Tom).
 - Page Contact : encart « Discuter avec nous » en bleu nuit (tour d'homogénéité du site).
 - Pastille du panier : crème avec le chiffre bleu nuit (le chiffre était invisible, il ne restait qu'un grand cercle).
+- Pied de page de la même hauteur que l'en-tête (64 px ordinateur, ~54 px téléphone ; e-mail retiré du pied sur téléphone, il reste sur Contact) (Tom).
