@@ -293,4 +293,4 @@ script « Version blanche en essai » dans index.html.
 - Cartes vendues : étiquette « VENDU » droite (bleu nuit, coins 3 px) en haut à droite au lieu du bandeau en biais (Tom, choix B). Fiche vendue : bandeau inchangé.
 - Fiche vendue : même étiquette VENDU droite en haut à droite que sur les cartes (le bandeau en biais était resté).
 - Pull CDG PE 1996 (65021255) : photo du pull en photo 1, détourée ; photo défilé en 2e (Tom). IMG_V passe à 3.
-- À FAIRE (Tom, 2026-11-10) : fiche mobile, toucher une photo ouvre une visionneuse plein écran (fond sombre, photo bord à bord, bouton ✕, points en bas), zoom libre au pincement, passage à la photo suivante en glissant. Modèle : appli Drouot (captures du 10/11). Remplace la règle « pas de lightbox au tap sur mobile » (index.html, ~l. 8233).
+- FAIT (Tom, 2026-11-10, pas encore en ligne) : fiche mobile, toucher une photo ouvre une visionneuse plein écran (fond sombre, photo bord à bord, bouton ✕, points en bas), zoom libre au pincement, passage à la photo suivante en glissant. Modèle : appli Drouot (captures du 10/11). Remplace la règle « pas de lightbox au tap sur mobile » (index.html, ~l. 8233).

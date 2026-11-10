@@ -1647,6 +1647,22 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 }
 .detail.detail-sold .vendu-badge { display: inline-flex; }
 
+/* couleurs claires en #f5f2ed (et non #f4f1ec) : la version claire inverse #f4f1ec */
+/* ============ VISIONNEUSE PLEIN ÉCRAN (téléphone) ============ */
+.pv-viewer { display: none; position: fixed; inset: 0; z-index: 600; background: #141518; }
+.pv-viewer.open { display: block; animation: fadeIn .25s ease; }
+.pv-close { position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 14px; z-index: 3; width: 44px; height: 44px; border: 0; background: none; padding: 10px; cursor: pointer; }
+.pv-close svg { width: 24px; height: 24px; stroke: #f5f2ed; stroke-width: 1.6; fill: none; }
+.pv-track { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.pv-track::-webkit-scrollbar { display: none; }
+.pv-track.locked { overflow-x: hidden; }
+.pv-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: pan-x; }
+.pv-slide img { width: 100%; max-height: 100%; object-fit: contain; transform-origin: 0 0; will-change: transform; user-select: none; -webkit-user-drag: none; }
+.pv-dots { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; pointer-events: none; }
+.pv-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(245,242,237,.35); }
+.pv-dots i.on { background: #f5f2ed; }
+body.pv-open { overflow: hidden; }
+
 /* ============ LIGHTBOX ============ */
 .lightbox {
   display: none; position: fixed; inset: 0;
@@ -4253,6 +4269,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <img id="lb-img" src="" alt="">
   <button class="lb-nav next" onclick="navLB(1)" aria-label="Photo suivante"><span>›</span></button>
   <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+<!-- VISIONNEUSE PLEIN ÉCRAN (téléphone) : toucher une photo de la fiche (Tom, 2026-11-10) -->
+<div class="pv-viewer" id="pv-viewer" aria-hidden="true">
+  <button class="pv-close" type="button" aria-label="Fermer" onclick="closeViewer()"><svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+  <div class="pv-track" id="pv-track"></div>
+  <div class="pv-dots" id="pv-dots"></div>
 </div>
 
 <!-- CART -->
@@ -8236,6 +8259,7 @@ function openDetail(id) {
     if (mScale > 1) { e.preventDefault(); return; }
     // Seulement desktop (>920px), mobile garde zoom direct via pinch
     if (window.innerWidth > 920) openLB(curIdx);
+    else if (window.openViewer) window.openViewer(curIdx);   // téléphone : visionneuse plein écran (Tom, 2026-11-10)
   });
   // Flèches navigation discrètes sur main photo (desktop only, mobile a swipe)
   if (photos.length > 1) {
@@ -8306,6 +8330,97 @@ function closeDetail() {
   // Restaure immédiatement, pas de rAF qui laisse iOS gagner la course
   window.scrollTo(0, savedY);
 }
+
+// ============ VISIONNEUSE PLEIN ÉCRAN (téléphone) ============
+// Photos bord à bord sur fond sombre ; glisser = photo suivante (défilement natif
+// aimanté) ; pincer = zoom libre (×1 à ×5), un doigt pour se déplacer une fois zoomé ;
+// double toucher = zoom ×2,5 / retour. ✕ ou retour navigateur pour fermer.
+(function () {
+  const V = document.getElementById('pv-viewer'), T = document.getElementById('pv-track'), D = document.getElementById('pv-dots');
+  if (!V) return;
+  let cur = 0, z = null;           // z : état du zoom de la photo courante
+  function img(i) { const s = T.children[i]; return s && s.querySelector('img'); }
+  function apply(im, st) { im.style.transform = 'translate(' + st.x + 'px,' + st.y + 'px) scale(' + st.s + ')'; }
+  function reset() { if (z && z.im) { z.im.style.transition = 'transform .25s ease'; z.s = 1; z.x = 0; z.y = 0; apply(z.im, z); } z = null; T.classList.remove('locked'); }
+  function dots() { [...D.children].forEach((d, i) => d.classList.toggle('on', i === cur)); }
+  function clamp(st) {
+    const r = st.im.getBoundingClientRect(), W = T.clientWidth, H = T.clientHeight;
+    const w = st.w * st.s, h = st.h * st.s;
+    st.x = w <= W ? (W - w) / 2 - st.ox : Math.min(-st.ox, Math.max(W - w - st.ox, st.x));
+    st.y = h <= H ? (H - h) / 2 - st.oy : Math.min(-st.oy, Math.max(H - h - st.oy, st.y));
+  }
+  function state(im) {
+    const r = im.getBoundingClientRect(), tr = T.getBoundingClientRect();
+    return { im, s: 1, x: 0, y: 0, w: r.width, h: r.height, ox: r.left - tr.left - (cur * 0), oy: r.top - tr.top };
+  }
+  window.openViewer = function (i) {
+    const photos = (typeof lbPhotos !== 'undefined' && lbPhotos.length) ? lbPhotos : [];
+    if (!photos.length) return;
+    T.innerHTML = photos.map(u => '<div class="pv-slide"><img src="' + u + '" alt="" draggable="false"></div>').join('');
+    D.innerHTML = photos.length > 1 ? photos.map(() => '<i></i>').join('') : '';
+    V.classList.add('open'); V.setAttribute('aria-hidden', 'false'); document.body.classList.add('pv-open');
+    cur = i || 0; z = null;
+    requestAnimationFrame(() => { T.scrollLeft = cur * T.clientWidth; dots(); });
+    try { history.pushState(Object.assign({}, history.state || {}, { overlay: 'viewer' }), '', location.href); } catch (e) {}
+  };
+  window.closeViewer = function (fromPop) {
+    if (!V.classList.contains('open')) return;
+    V.classList.remove('open'); V.setAttribute('aria-hidden', 'true'); document.body.classList.remove('pv-open');
+    reset(); T.innerHTML = '';
+    if (!fromPop && history.state && history.state.overlay === 'viewer') { window.__skipPop = true; history.back(); }
+  };
+  window.addEventListener('popstate', () => { if (V.classList.contains('open')) window.closeViewer(true); });
+  T.addEventListener('scroll', () => { const i = Math.round(T.scrollLeft / T.clientWidth); if (i !== cur) { reset(); cur = i; dots(); } }, { passive: true });
+  let p0 = null, pan = null, lastTap = 0;
+  const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  T.addEventListener('touchstart', e => {
+    const im = img(cur); if (!im) return;
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      if (!z) { z = state(im); im.style.transition = 'none'; }
+      T.classList.add('locked');
+      const a = e.touches[0], b = e.touches[1], tr = T.getBoundingClientRect();
+      p0 = { d: dist(a, b), s: z.s, x: z.x, y: z.y, cx: (a.clientX + b.clientX) / 2 - tr.left, cy: (a.clientY + b.clientY) / 2 - tr.top };
+    } else if (e.touches.length === 1 && z && z.s > 1.01) {
+      e.preventDefault();
+      pan = { x0: e.touches[0].clientX, y0: e.touches[0].clientY, x: z.x, y: z.y };
+    }
+  }, { passive: false });
+  T.addEventListener('touchmove', e => {
+    if (p0 && e.touches.length === 2) {
+      e.preventDefault();
+      const a = e.touches[0], b = e.touches[1];
+      const s = Math.min(5, Math.max(1, p0.s * dist(a, b) / p0.d));
+      const k = s / p0.s;
+      // le point sous les doigts reste fixe
+      z.x = p0.cx - z.ox - (p0.cx - z.ox - p0.x) * k; z.y = p0.cy - z.oy - (p0.cy - z.oy - p0.y) * k; z.s = s;
+      apply(z.im, z);
+    } else if (pan && e.touches.length === 1) {
+      e.preventDefault();
+      z.x = pan.x + e.touches[0].clientX - pan.x0; z.y = pan.y + e.touches[0].clientY - pan.y0;
+      clamp(z); apply(z.im, z);
+    }
+  }, { passive: false });
+  T.addEventListener('touchend', e => {
+    if (p0 && e.touches.length < 2) { p0 = null; if (z) { if (z.s <= 1.02) reset(); else { clamp(z); z.im.style.transition = 'transform .2s ease'; apply(z.im, z); setTimeout(() => z && (z.im.style.transition = 'none'), 220); } } }
+    if (pan && e.touches.length === 0) pan = null;
+    // double toucher
+    if (e.touches.length === 0 && e.changedTouches.length === 1 && !p0) {
+      const now = Date.now();
+      if (now - lastTap < 280) {
+        const im = img(cur);
+        if (z && z.s > 1.01) reset();
+        else if (im) {
+          z = state(im); const t = e.changedTouches[0], tr = T.getBoundingClientRect(), s = 2.5;
+          const cx = t.clientX - tr.left, cy = t.clientY - tr.top;
+          z.x = cx - z.ox - (cx - z.ox) * s; z.y = cy - z.oy - (cy - z.oy) * s; z.s = s; clamp(z);
+          im.style.transition = 'transform .25s ease'; apply(im, z); T.classList.add('locked');
+        }
+        lastTap = 0;
+      } else lastTap = now;
+    }
+  });
+})();
 
 // ============ LIGHTBOX ============
 function openLB(i) {
