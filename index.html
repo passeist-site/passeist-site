@@ -3853,6 +3853,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "760bd5eefd8943efa20c840107ff10c4"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
+<script>/* Accueil : mise en page finale dès le premier affichage, sans attendre le catalogue (Tom, 2026-11-10 : « l'accueil a encore ces animations ») */(function(){var p=location.pathname;if(p==='/'||p==='/index.html')document.body.dataset.page='home';})();</script>
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookies">
   <div class="cookie-banner-card">
     <div class="cookie-banner-text">
@@ -3918,11 +3919,11 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </button>
       <button class="topbar-icon topbar-icon-fav" onclick="openFavorites()" aria-label="Favoris" title="Favoris">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
-        <span class="cart-count fav-count" id="fav-count">0</span>
+        <span class="cart-count fav-count" id="fav-count" data-zero="true">0</span>
       </button>
       <button class="topbar-icon cart-btn" onclick="toggleCart()" aria-label="Panier" title="Panier">
         <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 12H6.5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <span class="cart-count" id="cart-count">0</span>
+        <span class="cart-count" id="cart-count" data-zero="true">0</span>
       </button>
       <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Changer la langue / Change language" title="FR / EN">
         <span class="lang-fr">FR</span><span class="lang-sep">/</span><span class="lang-en">EN</span>
