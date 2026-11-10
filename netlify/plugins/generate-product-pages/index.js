@@ -38,6 +38,8 @@ function vestiaireUrl(product, photoNum, w, suffix) {
          ',q=90,f=auto,/produit/' + product.slug + '-' + photoNum + suffix + '.jpg';
 }
 
+// Même version que IMG_V dans index.html (à augmenter ensemble quand des photos sont retouchées)
+const IMG_V = '2';
 function productImgUrl(product, i, w, imgReorder, imgSuffix, validatedLocal, publishDir) {
   if (!product.n || product.n === 0) return '';
   const reorder  = imgReorder[product.id];
@@ -46,7 +48,7 @@ function productImgUrl(product, i, w, imgReorder, imgSuffix, validatedLocal, pub
   if (validatedLocal.has(product.id)) {
     const size     = w >= 1200 ? 'xl' : 'md';
     const localRel = 'img/' + product.id + '-' + i + '-' + size + '.webp';
-    if (fs.existsSync(path.join(publishDir, localRel))) return '/' + localRel;
+    if (fs.existsSync(path.join(publishDir, localRel))) return '/' + localRel + '?v=' + IMG_V;
   }
   return vestiaireUrl(product, photoNum, w, suffix);
 }
@@ -96,9 +98,9 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) => {
     const sm = productImgUrl(p, i, 400, imgReorder, imgSuffix, validatedLocal, publishDir);
     const md = productImgUrl(p, i, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
-    const local = /-xl\.webp$/.test(src);
-    const small = local ? src.replace(/-xl\.webp$/, '-sm.webp') : sm;
-    const medium = local ? src.replace(/-xl\.webp$/, '-md.webp') : md;
+    const local = /-xl\.webp(\?|$)/.test(src);
+    const small = local ? src.replace(/-xl\.webp(\?|$)/, '-sm.webp$1') : sm;
+    const medium = local ? src.replace(/-xl\.webp(\?|$)/, '-md.webp$1') : md;
     return `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${small}" srcset="${small} 400w, ${medium} 800w" sizes="(max-width: 920px) 110px, 360px" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
   }).join('');
   const badges = sold ? '<span class="sold-stamp">VENDU</span><span class="sold-badge">VENDU</span>' : '';
@@ -630,7 +632,7 @@ function brandCardImg(p, imgReorder, imgSuffix, validatedLocal, publishDir) {
   if (validatedLocal.has(p.id) && fs.existsSync(path.join(publishDir, 'img', p.id + '-0-md.webp'))) {
     const base = '/img/' + p.id + '-0-';
     // sm/md seulement : la version xl est réservée à la fiche (Google Images, PHOTOS.md § 7)
-    return { src: base + 'md.webp', srcset: base + 'sm.webp 400w, ' + base + 'md.webp 800w' };
+    return { src: base + 'md.webp?v=' + IMG_V, srcset: base + 'sm.webp?v=' + IMG_V + ' 400w, ' + base + 'md.webp?v=' + IMG_V + ' 800w' };
   }
   const reorder = imgReorder[p.id];
   const photoNum = reorder ? reorder[0] : 1;

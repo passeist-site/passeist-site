@@ -6371,6 +6371,10 @@ function _vestiaireUrl(product, i, w) {
          ',q=90,f=auto,/produit/' + product.slug + '-' + photoNum + suffix + '.jpg';
 }
 
+// Version des photos hébergées sur passeist.com : à augmenter quand des photos sont
+// retouchées (détourage…), pour que les navigateurs rechargent la nouvelle version
+// au lieu de garder l'ancienne (cache d'un jour + revalidation, cf _headers). Tom, 2026-11-10.
+const IMG_V = '2';
 function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';
@@ -6386,7 +6390,7 @@ function imgUrl(product, i, opts) {
     // mêmes fichiers réduits) ; sinon xl comme la fiche produit.
     // REGLE FIGEE par Tom, voir PHOTOS.md : cartes = même fichier que la photo 1 de la fiche
     const localSize = (product.id.length < 10 && !(opts && opts.exactSize)) ? 'xl' : size;
-    return '/img/' + product.id + '-' + i + '-' + localSize + '.webp';
+    return '/img/' + product.id + '-' + i + '-' + localSize + '.webp?v=' + IMG_V;
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
@@ -6405,7 +6409,7 @@ function imgSrcset(product, i, opts) {
     // dans la fiche de la pièce, pour que Google Images rattache la photo à
     // sa fiche et pas à l'accueil ou à une autre fiche (cf. PHOTOS.md § 7).
     const base = '/img/' + product.id + '-' + i + '-';
-    return base + 'sm.webp 400w, ' + base + 'md.webp 800w';
+    return base + 'sm.webp?v=' + IMG_V + ' 400w, ' + base + 'md.webp?v=' + IMG_V + ' 800w';
   }
   return _vestiaireUrl(product, i, 400) + ' 400w, ' +
          _vestiaireUrl(product, i, 800) + ' 800w, ' +
