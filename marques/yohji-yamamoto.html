@@ -2761,7 +2761,7 @@ html[lang="fr"] .footer .lang-en { display: none !important; }
       <button class="topbar-icon topbar-icon-fav" onclick="window.location.href='/favorites'" aria-label="Favoris" title="Favoris">
         <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 12C19 16.5 12 21 12 21z"/></svg>
       </button>
-      <button class="topbar-icon cart-btn" onclick="window.location.href='/'" aria-label="Panier" title="Panier">
+      <button class="topbar-icon cart-btn" onclick="window.location.href='/?cart=1'" aria-label="Panier" title="Panier">
         <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 12H6.5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
       </button>
       <button class="lang-toggle" type="button" aria-label="Changer la langue / Change language" title="FR / EN" onclick="(function(){var c=document.documentElement.getAttribute('lang')||'fr';var n=c==='fr'?'en':'fr';document.documentElement.setAttribute('lang',n);try{localStorage.setItem('passeist_lang',n);}catch(e){}})()">

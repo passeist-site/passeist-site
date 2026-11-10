@@ -10353,6 +10353,15 @@ document.addEventListener('DOMContentLoaded', function(){
   try { history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch(e){}
   if (typeof openChat === 'function') openChat();
 });
+// Lien /?cart=1 (panier des pages Auteurs) : ouvre directement le panier (Tom).
+document.addEventListener('DOMContentLoaded', function(){
+  var u;
+  try { u = new URL(location.href); } catch(e){ return; }
+  if (u.searchParams.get('cart') !== '1' && !/[?&]cart=1\b/.test(window.__qs0 || '')) return;
+  u.searchParams.delete('cart');
+  try { history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch(e){}
+  setTimeout(function(){ var c = document.getElementById('cart-panel'); if (typeof toggleCart === 'function' && c && !c.classList.contains('open')) toggleCart(); }, 600);
+});
 </script>
 <!-- ============ PARTAGER + VUS RÉCEMMENT ============ -->
 <script>

@@ -53,3 +53,15 @@
     if (window.innerWidth > 900 && drawer.classList.contains('open')) setOpen(false);
   });
 })();
+
+// Pastille du nombre d'articles sur le panier, comme sur le reste du site (Tom, 2026-11-10).
+(function () {
+  var btn = document.querySelector('.topbar .cart-btn');
+  if (!btn) return;
+  var n = 0;
+  try { n = (JSON.parse(localStorage.getItem('passeist_cart') || '[]') || []).length; } catch (e) {}
+  var b = btn.querySelector('.cart-count');
+  if (!b) { b = document.createElement('span'); b.className = 'cart-count'; btn.style.position = 'relative'; btn.appendChild(b); }
+  b.textContent = n ? String(n) : '';
+  b.setAttribute('data-zero', n ? 'false' : 'true');
+})();

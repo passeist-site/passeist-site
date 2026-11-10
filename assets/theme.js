@@ -110,6 +110,8 @@
     '@media (max-width:900px){.alert-cta{margin-bottom:0!important;position:relative;z-index:2}.shop .grid{margin-top:-18px!important}}' +
     /* Page Vendu (téléphone) : cartes sans ligne taille, donc écart réduit pour garder le même rythme que la boutique (Tom) */
     '@media (max-width:900px){body[data-page="archive"] .grid{row-gap:32px!important}}' +
+    /* Pastille du panier au même endroit sur les pages Auteurs que sur le reste du site */
+    '@media (max-width:900px){.topbar .topbar-icon .cart-count{top:4px!important;right:1px!important}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

@@ -285,3 +285,4 @@ script « Version blanche en essai » dans index.html.
 - Grande carte : retour au cadre 3:4 (Tom ne veut pas risquer de couper l'objet).
 - Page Vendu téléphone : 32 px entre les rangées (cartes sans ligne taille) (Tom).
 - Grande carte : cadre carré validé par Tom sur aperçu (rien n'est coupé).
+- Pages Auteurs : le panier ouvre le panier (/?cart=1) au lieu de l'accueil, avec la pastille du nombre d'articles (Tom).
