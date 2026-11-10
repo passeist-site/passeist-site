@@ -4585,6 +4585,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
 </div>
 
 <!-- Newsletter « nouvelles pièces » (toutes les pages sauf l'accueil) -->
+<!-- PAGE AUTEUR / LISTE DES AUTEURS : remplie au build pour /marques et /marques/<slug>
+     (netlify/plugins/generate-product-pages, buildBrandSpaPages). Vide sur les autres pages. -->
+<section id="auteur-page" class="marques-spa" style="display:none"></section>
 <section class="nl" id="newsletter" aria-label="Newsletter">
   <div class="nl-card">
     <div class="nl-title"><span class="lang-fr">Nouvelles pièces</span><span class="lang-en">New pieces</span></div>
@@ -7257,6 +7260,9 @@ function goPage(p) {
   // carte sur cinq) puis les rétrécissait d'un coup (effet de zoom, page figée)
   document.body.dataset.page = p;
   document.getElementById('home-page').style.display = p === 'home' ? '' : 'none';
+  // Pages Auteurs intégrées au site (Tom, 2026-11-10)
+  { const mp = document.getElementById('auteur-page'); if (mp) mp.style.display = p === 'marques' ? '' : 'none';
+    const mb = document.getElementById('marques-boot'); if (mb && p !== 'marques') mb.remove(); }
   const showCatalog = (p === 'shop' || p === 'archive' || p === 'favorites');
   document.getElementById('shop-page').classList.toggle('open', showCatalog);
   // Pages institutionnelles : on toggle la version FR ET la version EN ensemble,
@@ -7272,6 +7278,7 @@ function goPage(p) {
     el.classList.toggle('open', matches);
   });
   document.querySelectorAll('.top-nav a').forEach(a => a.classList.toggle('active', a.dataset.page === p));
+  document.querySelectorAll('.top-nav a[href="/marques"], .mobile-nav a[href="/marques"]').forEach(a => a.classList.toggle('active', p === 'marques'));
   if (showCatalog) {
     const newView = (p === 'archive') ? 'archive' : (p === 'favorites') ? 'favorites' : 'shop';
     // Chaque vue conserve ses propres filtres indépendamment :
@@ -10042,6 +10049,10 @@ window.updateSEO = function(p) {
     sb.setAttribute('data-seo', 'product');
     sb.textContent = JSON.stringify(breadcrumb);
     head.appendChild(sb);
+  } else if (window.__marquesSEO && (window.currentPageName ? window.currentPageName() : document.body.dataset.page) === 'marques') {
+    const m = window.__marquesSEO;
+    document.title = m.title; setMeta('meta[name="description"]', 'content', m.desc); setLink('canonical', m.canon);
+    setMeta('meta[property="og:title"]', 'content', m.ogt); setMeta('meta[property="og:url"]', 'content', m.canon);
   } else {
     // Titre et canonique propres à chaque page (Boutique, Vendu, À propos…),
     // comme dans leur HTML généré : avant, toutes reprenaient ceux de l'accueil.
@@ -10222,7 +10233,7 @@ window.updateSEO = function(p) {
   } else if (route.name && route.name !== 'home') {
     _gp.call(window, route.name);
     document.body.dataset.page = route.name;
-    try { history.replaceState({ t:'page', p: route.name }, '', '/' + route.name); } catch(e){}
+    try { history.replaceState({ t:'page', p: route.name }, '', route.name === 'marques' ? location.pathname + location.search : '/' + route.name); } catch(e){}
   } else {
     document.body.dataset.page = 'home';
     try { history.replaceState({ t:'page', p: 'home' }, '', '/'); } catch(e){}
@@ -10882,6 +10893,7 @@ window.subscribeNewsletter = function (e) {
   };
   window.pageTitle = function(page) {
     const l = window.__lang === 'en' ? 'en' : 'fr';
+    if (page === 'marques' && window.__marquesSEO) return window.__marquesSEO.title;
     return (PAGE_TITLES[l] || {})[page] || t('title');
   };
   function applyI18n(lang) {

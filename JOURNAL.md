@@ -287,3 +287,4 @@ script « Version blanche en essai » dans index.html.
 - Grande carte : cadre carré validé par Tom sur aperçu (rien n'est coupé).
 - Pages Auteurs : le panier ouvre le panier (/?cart=1) au lieu de l'accueil, avec la pastille du nombre d'articles (Tom).
 - Carrousels (pages auteurs, sous les fiches) : barre de défilement masquée (Tom). Le glissé au doigt reste.
+- Pages Auteurs intégrées au site (Tom, 2026-11-10) : au build, marques.html et marques/*.html deviennent le site complet (index allégé) avec le contenu de la page Auteur dans #auteur-page (route SPA « marques »). Panier, discussion, favoris, menu et retour navigateur sont ceux du site ; titre, description, canonique et JSON-LD restent ceux de la page Auteur. Les fichiers du dépôt restent la source du contenu (plugin buildBrandSpaPages, CSS des pages Auteurs limitée à #auteur-page).

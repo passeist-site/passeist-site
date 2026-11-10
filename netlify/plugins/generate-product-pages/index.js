@@ -698,6 +698,95 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
 // "COMME DES GARÇONS" -> "Comme des Garçons", "PORTER BY YOSHIDA KABAN" ->
 // "Porter by Yoshida Kaban" ; les sigles avec chiffres restent en majuscules.
 const SMALL_WORDS = new Set(['des', 'de', 'du', 'by', 'la', 'le', 'les', 'et', 'of', 'the', 'pour']);
+// ── Pages Auteurs intégrées au site (Tom, 2026-11-10) ─────────────────────
+// Avant : marques.html et marques/*.html étaient des pages à part (leur propre
+// copie de l'en-tête, panier qui renvoyait vers l'accueil…). Maintenant chaque
+// page Auteur publiée = le site complet (index allégé) + le contenu de la page
+// Auteur dans #auteur-page. Panier, discussion, favoris, menu : ceux du site.
+// Les fichiers sources du dépôt ne changent pas (ils restent la source du contenu).
+const BRAND_DROP_RE = /(^|[\s>+~(])(\.topbar|\.top-nav|\.mobile-nav|\.nav-toggle|\.lang-toggle|\.footer|\.logo|\.cart-btn|\.topbar-icon|\.hero|\.shop\b|\.about\b|\.detail-overlay|\.checkout-overlay|\.cart-panel|\.nl\b|\.no-scroll)/;
+function scopeBrandCss(css, scope) {
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  let out = '', i = 0;
+  while (i < css.length) {
+    const open = css.indexOf('{', i);
+    if (open === -1) break;
+    const sel = css.slice(i, open).trim();
+    // fin du bloc (accolades imbriquées)
+    let depth = 1, j = open + 1;
+    while (j < css.length && depth) { if (css[j] === '{') depth++; else if (css[j] === '}') depth--; j++; }
+    const body = css.slice(open + 1, j - 1);
+    i = j;
+    if (!sel) continue;
+    if (/^@(media|supports)/i.test(sel)) { const inner = scopeBrandCss(body, scope); if (inner.trim()) out += sel + '{' + inner + '}\n'; continue; }
+    if (sel.startsWith('@')) { out += sel + '{' + body + '}\n'; continue; }
+    const parts = sel.split(',').map(x => x.trim()).filter(Boolean).map(x => {
+      if (BRAND_DROP_RE.test(x)) return null;
+      if (/^body\.marques-page/.test(x)) return scope + x.slice('body.marques-page'.length);
+      if (/^(html|body|:root|\*)\b/.test(x) && !/^html\[lang/.test(x)) return null;
+      const m = x.match(/^(html\[lang="?[a-z]+"?\])\s*(.*)$/);
+      if (m) return m[1] + ' ' + scope + (m[2] ? ' ' + m[2] : '');
+      return scope + ' ' + x;
+    }).filter(Boolean);
+    if (parts.length) out += parts.join(',') + '{' + body + '}\n';
+  }
+  return out;
+}
+function buildBrandSpaPages(slimHtml, publishDir) {
+  const files = [];
+  if (fs.existsSync(path.join(publishDir, 'marques.html'))) files.push(path.join(publishDir, 'marques.html'));
+  const dir = path.join(publishDir, 'marques');
+  if (fs.existsSync(dir)) fs.readdirSync(dir).filter(f => f.endsWith('.html')).forEach(f => files.push(path.join(dir, f)));
+  const sharedCssPath = path.join(publishDir, 'assets', 'marques.css');
+  const sharedCss = fs.existsSync(sharedCssPath) ? fs.readFileSync(sharedCssPath, 'utf8') : '';
+  const SCOPE = '#auteur-page';
+  let n = 0;
+  for (const file of files) {
+    const src = fs.readFileSync(file, 'utf8');
+    if (src.includes('id="auteur-page"')) continue;           // déjà intégrée
+    const cStart = src.indexOf('<div class="container">');
+    const cEnd = src.indexOf('<footer class="footer">');
+    if (cStart === -1 || cEnd === -1 || cEnd < cStart) { console.warn('[brand-spa] structure inattendue, page laissée telle quelle : ' + file); continue; }
+    const content = src.slice(cStart, cEnd);
+    // CSS propre aux pages Auteurs : bloc de fin du <style> + marques.css, limités à #auteur-page
+    const styleM = src.match(/<style>([\s\S]*?)<\/style>/);
+    const inline = styleM ? styleM[1] : '';
+    const k = inline.indexOf('=== Surcharges spécifiques pages marques ===');
+    const own = k === -1 ? '' : inline.slice(inline.lastIndexOf('/*', k));
+    const css = scopeBrandCss(own + '\n' + sharedCss, SCOPE) +
+      'html[lang="en"] ' + SCOPE + ' .lang-fr{display:none!important}html[lang="fr"] ' + SCOPE + ' .lang-en{display:none!important}\n' +
+      SCOPE + '{display:block!important;width:100%;padding-top:calc(var(--topbar-h) + 30px)}' + SCOPE + '[style*="none"]{display:none!important}' + SCOPE + ' .container{width:100%;box-sizing:border-box}@media (max-width:880px){' + SCOPE + '{padding-top:calc(var(--topbar-h-mobile) + 16px)!important}}\n';
+    // Balises de la page Auteur (titre, description, canonique, partage, JSON-LD)
+    const pick = (re) => { const m = src.match(re); return m ? m[0] : null; };
+    let html = slimHtml;
+    const swap = (re, val) => { if (val) html = html.replace(re, () => val); };
+    swap(/<title>[\s\S]*?<\/title>/, pick(/<title>[\s\S]*?<\/title>/));
+    swap(/<meta\s+name="description"[^>]*>/, pick(/<meta\s+name="description"[^>]*>/));
+    swap(/<link\s+rel="canonical"[^>]*>/, pick(/<link\s+rel="canonical"[^>]*>/));
+    ['og:type', 'og:title', 'og:description', 'og:url', 'og:image'].forEach(pr => {
+      const re = new RegExp('<meta\\s+property="' + pr + '"[^>]*>');
+      swap(re, pick(re));
+    });
+    html = html.replace(/<meta\s+name="robots"[^>]*>/, '<meta name="robots" content="index,follow">');
+    const lds = src.match(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g) || [];
+    if (lds.length) html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => lds.join('\n'));
+    // Pas de h1 « passéist » en double : seul le nom de la marque est le titre
+    html = html.replace(/<h1 class="hero-logo">([\s\S]*?)<\/h1>/, (m, inner) => '<div class="hero-logo">' + inner + '</div>');
+    // Contenu + style ; l'accueil reste caché jusqu'au démarrage du site (pas d'éclair)
+    const seoBoot = '<script>window.__marquesSEO={title:document.title,desc:(document.querySelector(\'meta[name="description"]\')||{}).content||"",canon:(document.querySelector(\'link[rel="canonical"]\')||{}).href||location.href,ogt:(document.querySelector(\'meta[property="og:title"]\')||{}).content||document.title};</script>';
+    // Style placé AVANT theme.js : la version claire l'adapte comme le reste du site
+    const styles = '<style id="marques-boot">#home-page,#shop-page{display:none!important}</style>\n<style id="marques-style">' + css + '</style>\n';
+    const tj = '<script src="/assets/theme.js"></script>';
+    html = html.includes(tj) ? html.replace(tj, () => styles + tj) : html.replace('</head>', () => styles + '</head>');
+    html = html.replace('</head>', () => seoBoot + '\n</head>');
+    html = html.replace('<section id="auteur-page" class="marques-spa" style="display:none"></section>',
+      () => '<section id="auteur-page" class="marques-spa">' + content + '</section>');
+    fs.writeFileSync(file, html, 'utf8');
+    n++;
+  }
+  return n;
+}
+
 function titleCaseBrand(b) {
   return String(b || '').toLowerCase().split(/(\s+)/).map((w, i) => {
     if (/^\s+$/.test(w) || !w) return w;
@@ -1175,6 +1264,8 @@ module.exports = {
     // ── Pages Auteurs : carrousel "Notre sélection" régénéré à chaque build ─
     const brandPages = buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validatedLocal, publishDir);
     console.log('[generate-product-pages] Updated brand carousels (' + brandPages + ' pages)');
+    const spaPages = buildBrandSpaPages(slimHtml, publishDir);
+    console.log('[generate-product-pages] Pages Auteurs intégrées au site : ' + spaPages);
 
     utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml + sitemap.xml' });
   }
