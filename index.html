@@ -6400,7 +6400,7 @@ function _vestiaireUrl(product, i, w) {
 // Version des photos hébergées sur passeist.com : à augmenter quand des photos sont
 // retouchées (détourage…), pour que les navigateurs rechargent la nouvelle version
 // au lieu de garder l'ancienne (cache d'un jour + revalidation, cf _headers). Tom, 2026-11-10.
-const IMG_V = '3';
+const IMG_V = '4';
 function imgUrl(product, i, opts) {
   if (!product.n || product.n === 0) return PLACEHOLDER_IMG;
   const size = (opts && opts.size) || 'md';

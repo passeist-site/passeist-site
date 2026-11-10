@@ -39,7 +39,7 @@ function vestiaireUrl(product, photoNum, w, suffix) {
 }
 
 // Même version que IMG_V dans index.html (à augmenter ensemble quand des photos sont retouchées)
-const IMG_V = '3';
+const IMG_V = '4';
 function productImgUrl(product, i, w, imgReorder, imgSuffix, validatedLocal, publishDir) {
   if (!product.n || product.n === 0) return '';
   const reorder  = imgReorder[product.id];
