@@ -68,6 +68,9 @@
     '#chat-overlay input::placeholder,#chat-overlay textarea::placeholder{color:rgba(244,241,236,.5)!important}' +
     '#chat-overlay button[type=submit]{background:' + C + '!important;color:' + N + '!important}#chat-overlay button[type=submit] svg{stroke:' + N + '!important;fill:' + N + '!important}' +
     '#chat-overlay .checkout-close{background:rgba(244,241,236,.1)!important}' +
+    /* Boutons « Ajouter au panier » : pas de reflet blanc en haut (trop marqué sur le bleu nuit), survol bleu nuit plus clair (Tom) */
+    '.detail-actions .btn-primary,.buy-bar-cta{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 24px -10px rgba(28,34,48,.45)!important}' +
+    '.detail-actions .btn-primary:hover{background:#2c3446!important;border-color:#2c3446!important;color:' + C + '!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
