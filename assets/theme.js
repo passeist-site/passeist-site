@@ -117,6 +117,9 @@
     '.carousel::-webkit-scrollbar,.recent-track::-webkit-scrollbar,.similar-section ::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important}' +
     /* Ordinateur : logo remonté de 4 px, il paraissait trop bas dans l'en-tête (Tom) */
     '@media (min-width:901px){.topbar .logo{position:relative;top:-4px}}' +
+    /* Cartes vendues : étiquette « VENDU » droite en haut à gauche au lieu du bandeau en biais,
+       qui n'avait plus de coin où s'accrocher depuis que les pièces flottent (Tom, choix B) */
+    '.product-img .sold-stamp{transform:none!important;top:10px!important;left:10px!important;right:auto!important;padding:5px 8px!important;border-radius:3px!important;font-size:9px!important;font-weight:600!important;letter-spacing:.18em!important;line-height:1.2!important;width:auto!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
