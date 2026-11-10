@@ -9206,9 +9206,9 @@ updateHeroCardSize();
 window.addEventListener('resize', updateHeroCardSize);
 function renderHeroMarquee() {
   const available = PRODUCTS.filter(p => !isSold(p));
-  const byPriceDesc = (a, b) => (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
-  // Pick from the pricier half so the carousel still feels premium, then shuffle randomly
-  const pool = available.slice().sort(byPriceDesc).slice(0, Math.max(80, Math.min(available.length, 120)));
+  // Tirage au hasard parmi TOUTES les pièces en vente avec photo, à chaque visite (Tom,
+  // 2026-11-10). Avant : seulement les 120 plus chères, d'où toujours les mêmes pièces.
+  const pool = available.filter(p => p.n > 0);
   for (let k = pool.length - 1; k > 0; k--) {
     const r = Math.floor(Math.random() * (k + 1));
     [pool[k], pool[r]] = [pool[r], pool[k]];
