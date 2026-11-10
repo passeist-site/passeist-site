@@ -160,7 +160,7 @@
     '.hero-cta:hover,.hbs-cta:hover{background:#2c3446!important}' +
     /* Grille boutique mobile : sans cadre autour des photos, 10 px entre colonnes
        collait les textes (prix de gauche contre la marque de droite). 24 px (Tom, 2026-11-09) */
-    '@media (max-width:900px){.grid{column-gap:24px!important;row-gap:52px!important;margin-top:0!important}.grid .product-card:nth-child(5n) .product-img{aspect-ratio:1/1!important}body[data-page="favorites"] .grid .product-card:nth-child(5n) .product-img,body[data-page="archive"] .grid .product-card:nth-child(5n) .product-img{aspect-ratio:3/4!important}.grid .product-body{padding-top:10px!important}}' +
+    '@media (max-width:900px){.grid{column-gap:24px!important;row-gap:52px!important;margin-top:0!important}.grid .product-card:nth-child(5n) .product-img{aspect-ratio:1/1!important}.grid .product-card:nth-child(5n) .product-img-primary{padding-bottom:22px!important;box-sizing:border-box!important;object-fit:contain!important}body[data-page="favorites"] .grid .product-card:nth-child(5n) .product-img,body[data-page="archive"] .grid .product-card:nth-child(5n) .product-img{aspect-ratio:3/4!important}.grid .product-body{padding-top:10px!important}}' +
     /* Sans cadre, le texte doit coller à SA photo : texte à 2 px sous la photo, 72 px
        entre deux rangées ; et moins de vide entre « Créer votre alerte » et la grille (Tom). */
     /* Barre panier en bas des fiches : ombre légère sur fond blanc */
