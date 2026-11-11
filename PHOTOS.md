@@ -63,7 +63,8 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
   fichier que la photo 1 : déjà chargée, même fond, même lumière.
 - **Téléphone** : on la fait venir en glissant du doigt (elle suit le doigt puis
   se cale). **Pas de petits points** (essayés sous la photo, retirés par Tom le
-  2026-11-11). Un toucher ouvre toujours la fiche.
+  2026-11-11). **Retour automatique à la photo 1 au bout de 5 s.** Un toucher ouvre
+  toujours la fiche.
 - **Ordinateur** : **rien au survol** (Tom, 2026-11-10 : ça cassait la page).
 - Pièces vendues : pas de 2e vue.
 
