@@ -7592,9 +7592,10 @@ function renderGrid() {
         ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="(max-width: 900px) 50vw, 25vw" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
         ${''/* Deuxième vue au glissé (téléphone) : la photo 1 elle-même, zoomée ×2,2 sur le centre de la
-             pièce (Tom, 2026-11-11). Même fichier que la photo 1 : déjà chargé, même fond. Pas de petits
-             points ; rien au survol sur ordinateur. */}${!sold ? `<span class="product-img-secondary pz" aria-hidden="true"><img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" alt="" decoding="async" draggable="false"></span>` : ''}
+             pièce (Tom, 2026-11-11). Même fichier que la photo 1 : déjà chargé, même fond. Deux petits
+             points SOUS la photo (.cd2) ; rien au survol sur ordinateur. */}${!sold ? `<span class="product-img-secondary pz" aria-hidden="true"><img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" alt="" decoding="async" draggable="false"></span>` : ''}
       </div>
+      ${!sold ? '<div class="cd2" aria-hidden="true"><i></i><i></i></div>' : ''}
       <div class="product-body">
         <div class="product-brand"><span class="brand-mark"></span><span class="brand-name">${p.brand}</span><div class="product-price-wrap"><svg class="nav-ink nav-ink--price" viewBox="0 0 120 50" preserveAspectRatio="none" aria-hidden="true"><rect x="4" y="4" width="112" height="42" filter="url(#ink-rough-h)"/></svg><span class="product-price">${sold ? (window.t ? window.t('sold') : 'Vendu') : `${p.price} €`}</span></div></div>
         <div class="product-name-row">
