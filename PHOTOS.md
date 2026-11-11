@@ -62,8 +62,8 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
   de la pièce (barycentre des pixels non blancs, calculé au premier glissé). Même
   fichier que la photo 1 : déjà chargée, même fond, même lumière.
 - **Téléphone** : on la fait venir en glissant du doigt (elle suit le doigt puis
-  se cale). **Deux petits points sous la photo** (jamais sur l'image), le point actif
-  en bleu nuit. Un toucher ouvre toujours la fiche.
+  se cale). **Pas de petits points** (essayés sous la photo, retirés par Tom le
+  2026-11-11). Un toucher ouvre toujours la fiche.
 - **Ordinateur** : **rien au survol** (Tom, 2026-11-10 : ça cassait la page).
 - Pièces vendues : pas de 2e vue.
 
