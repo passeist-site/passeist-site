@@ -10841,16 +10841,9 @@ window.sharePiece = function () {
       try {
         var cv = document.createElement('canvas'), cw = 80, ch = Math.round(80 * (a.naturalHeight || 1) / (a.naturalWidth || 1));
         cv.width = cw; cv.height = ch; var cx = cv.getContext('2d'); cx.drawImage(a, 0, 0, cw, ch);
-        var d = cx.getImageData(0, 0, cw, ch).data, sx = 0, n = 0, top = ch, bot = 0;
-        for (var y = 0; y < ch; y++) for (var x = 0; x < cw; x++) { var i = (y * cw + x) * 4; if (Math.min(d[i], d[i + 1], d[i + 2]) < 235) { sx += x; n++; if (y < top) top = y; if (y > bot) bot = y; } }
-        if (n > 20) {
-          // Zone montrée : le haut de la pièce (col d'un pull ou d'une chemise, taille et poches
-          // d'un pantalon ou d'une jupe), au quart de sa hauteur (Tom : « ce qui est bien c'est le col »).
-          // Point à montrer au centre (qx, qy) → origine du zoom o = (s·q − 50) / (s − 1), bornée au cadre.
-          var S = 2.2, qx = sx / n / cw * 100, qy = (top + (bot - top) * 0.25) / ch * 100;
-          var o = function (q) { return Math.max(0, Math.min(100, (S * q - 50) / (S - 1))); };
-          b.style.setProperty('--zx', o(qx).toFixed(1) + '%'); b.style.setProperty('--zy', o(qy).toFixed(1) + '%');
-        }
+        var d = cx.getImageData(0, 0, cw, ch).data, sx = 0, sy = 0, n = 0;
+        for (var y = 0; y < ch; y++) for (var x = 0; x < cw; x++) { var i = (y * cw + x) * 4; if (Math.min(d[i], d[i + 1], d[i + 2]) < 235) { sx += x; sy += y; n++; } }
+        if (n > 20) { b.style.setProperty('--zx', (sx / n / cw * 100).toFixed(1) + '%'); b.style.setProperty('--zy', (sy / n / ch * 100).toFixed(1) + '%'); }
       } catch (err) {}
     }
     card = box.closest('.product-card');

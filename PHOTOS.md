@@ -58,9 +58,8 @@ Boutique, Vendu, Favoris, résultats de recherche, filtre par marque :
 
 - **Au repos**, la carte montre toujours la photo 1 (règle § 3, inchangée).
 - La **2e vue** n'est plus la photo 2 Vestiaire (gros plan plein cadre qui cassait
-  la grille) : c'est **la photo 1 elle-même, zoomée ×2,2**, centrée sur **le haut
-  de la pièce** (col d'un pull ou d'une chemise, taille et poches d'un pantalon ou
-  d'une jupe : au quart de la hauteur de la pièce, calculé au premier glissé). Même
+  la grille) : c'est **la photo 1 elle-même, zoomée ×2,2**, centrée sur le milieu
+  de la pièce (barycentre des pixels non blancs, calculé au premier glissé). Même
   fichier que la photo 1 : déjà chargée, même fond, même lumière.
 - **Téléphone** : on la fait venir en glissant du doigt (elle suit le doigt puis
   se cale). **Pas de petits points.** Un toucher ouvre toujours la fiche.
