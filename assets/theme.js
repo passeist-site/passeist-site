@@ -137,7 +137,7 @@
     /* Téléphone : la photo 2 des cartes, préchargée, apparaissait sous la photo 1 (fond assombri)
        ou débordait de la carte : Safari iOS ne rognait pas toujours la photo décalée hors du cadre.
        Elle reste masquée tant qu'on n'a pas glissé, et le cadre rogne par clip-path (Tom, 2026-11-10). */
-    '@media (hover:none){.product-img{clip-path:inset(0);isolation:isolate}.product-img:not(.show-2) .product-img-secondary{visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s linear .42s}.product-img.show-2 .product-img-secondary{visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}}' +
+    '@media (hover:none){.product-img{clip-path:inset(0);isolation:isolate}.product-img:not(.show-2):not(.dragging) .product-img-secondary{visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s linear .42s}.product-img.show-2 .product-img-secondary,.product-img.dragging .product-img-secondary{visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}}' +
     /* Barre de filtres (téléphone) : même espace au-dessus (sous le bandeau) qu'entre elle et « Créer votre alerte » (Tom) */
     '@media (max-width:900px){.filter-bar{padding-top:14px!important;padding-bottom:8px!important;margin-bottom:0!important}.alert-cta{margin-top:0!important}}' +
     /* Page affichée d'un bloc (Tom, 2026-11-10 : « je vois plein de trucs arriver au fur et à
@@ -154,6 +154,8 @@
     '.alert-card .alert-chip{border-color:rgba(244,241,236,.25)!important;background:rgba(244,241,236,.04)!important}.alert-card .alert-chip.on{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}' +
     '.alert-card .alert-summary{background:rgba(244,241,236,.07)!important}.alert-card .alert-form input[type=email]{border-color:rgba(244,241,236,.25)!important;background:rgba(244,241,236,.06)!important}.alert-card .alert-form input::placeholder{color:rgba(244,241,236,.45)!important}' +
     '.alert-card .alert-form button{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}' +
+    /* 2e vue des cartes = photo 1 zoomée ×2,2 sur le centre de la pièce (Tom, 2026-11-11) */
+    '.product-img .pz{position:absolute;inset:0;display:block;overflow:hidden;background:#eeeeee}.product-img .pz img{display:block;width:100%;height:100%;object-fit:contain;scale:2.2;transform-origin:var(--zx,50%) var(--zy,48%);mix-blend-mode:multiply}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
