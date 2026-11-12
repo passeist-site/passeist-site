@@ -10838,6 +10838,10 @@ window.sharePiece = function () {
     // Zoom de la 2e vue centré sur la matière : barycentre des pixels non blancs de la photo 1
     if (b.classList.contains('pz') && !b.dataset.z) {
       b.dataset.z = '1';
+      // Zoom ×2,2 : la taille moyenne (800 px) devenait floue. Grande taille (1600 px) chargée au
+      // premier glissé seulement, en remplacement de la moyenne une fois prête (Tom, 2026-11-12).
+      var zi = b.querySelector('img');
+      if (zi && /-md\.webp/.test(zi.src)) { var hi = new Image(); hi.onload = function () { zi.src = hi.src; }; hi.src = zi.src.replace('-md.webp', '-xl.webp'); }
       try {
         var cv = document.createElement('canvas'), cw = 80, ch = Math.round(80 * (a.naturalHeight || 1) / (a.naturalWidth || 1));
         cv.width = cw; cv.height = ch; var cx = cv.getContext('2d'); cx.drawImage(a, 0, 0, cw, ch);
