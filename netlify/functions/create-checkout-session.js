@@ -179,8 +179,9 @@ exports.handler = async (event) => {
     if (mode === 'relay' && !(relay && /^[A-Za-z0-9_-]{2,40}$/.test(String(relay.code || '')) && /^(MONR|CHRP)$/.test(String(relay.network || '')))) {
       return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'relay' }) };
     }
-    if (mode === 'relay') ship.label = (lang === 'en' ? 'Pickup point — ' : 'Point relais — ') + clip(relay.name, 60);
-    else if (mode === 'home') ship.label = lang === 'en' ? 'Home delivery' : 'Livraison à domicile';
+    // Relais 1 € de moins, domicile 1 € de plus que le tarif France (Tom, 2026-11-12) : 14 € / 16 €
+    if (mode === 'relay') { ship.amount = 1400; ship.label = (lang === 'en' ? 'Pickup point — ' : 'Point relais — ') + clip(relay.name, 60); }
+    else if (mode === 'home') { ship.amount = 1600; ship.label = lang === 'en' ? 'Home delivery' : 'Livraison à domicile'; }
 
     // Construction des shipping_options (Stripe demande un format spécifique)
     const shippingOptions = [{

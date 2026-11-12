@@ -4311,8 +4311,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <!-- France : point relais (Mondial Relay / Chronopost) ou domicile, même prix (Tom, 2026-11-12) -->
     <div class="cart-ship-mode" id="cart-ship-mode" hidden>
       <div class="csm-opts" role="radiogroup">
-        <label><input type="radio" name="csm" value="relay" onchange="setShipMode('relay')"> <span data-fr="Point relais" data-en="Pickup point">Point relais</span></label>
-        <label><input type="radio" name="csm" value="home" onchange="setShipMode('home')"> <span data-fr="À domicile" data-en="Home delivery">À domicile</span></label>
+        <label><input type="radio" name="csm" value="relay" onchange="setShipMode('relay')"> <span data-fr="Point relais · 14 €" data-en="Pickup point · €14">Point relais · 14 €</span></label>
+        <label><input type="radio" name="csm" value="home" onchange="setShipMode('home')"> <span data-fr="À domicile · 16 €" data-en="Home · €16">À domicile · 16 €</span></label>
       </div>
       <div class="csm-relay" id="csm-relay" hidden>
         <div class="csm-chosen" id="csm-chosen" hidden></div>
@@ -8880,7 +8880,7 @@ function relayProbe() {
   relayAvailable = false;
   fetch('/.netlify/functions/relay-points?ping=1').then(r => { relayAvailable = r.ok; updateCartTotals(); }).catch(() => {});
 }
-window.setShipMode = function (m) { shipMode = m; try { localStorage.setItem('passeist_shipmode', m); } catch (e) {} renderShipMode(); };
+window.setShipMode = function (m) { shipMode = m; try { localStorage.setItem('passeist_shipmode', m); } catch (e) {} updateCartTotals(); };
 function relayLine(p) {
   return `<strong>${(p.name || '').replace(/</g, '&lt;')}</strong><span>${[p.street, p.postalCode, p.city].filter(Boolean).join(', ').replace(/</g, '&lt;')}</span><em>${p.networkLabel || ''}${p.distance != null ? ' · ' + (p.distance >= 1000 ? (p.distance / 1000).toFixed(1) + ' km' : Math.round(p.distance) + ' m') : ''}</em>`;
 }
@@ -8955,7 +8955,9 @@ function updateCartTotals() {
   renderShipMode();
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const country = getCartCountry();
-  const ship = cart.length > 0 ? passeistShippingFor(country) : { amount: 0, label: '' };
+  let ship = cart.length > 0 ? passeistShippingFor(country) : { amount: 0, label: '' };
+  // France avec Boxtal branché : point relais 14 €, domicile 16 € (Tom, 2026-11-12)
+  if (cart.length > 0 && relayAvailable === true && country === 'FR') ship = shipMode === 'relay' ? { amount: 14, label: window.__lang === 'en' ? 'Pickup point' : 'Point relais' } : { amount: 16, label: window.__lang === 'en' ? 'Home' : 'Domicile' };
   const total = subtotal + ship.amount;
   try { if (country) localStorage.setItem('passeist_country', country); } catch(e) {}
   const subEl = document.getElementById('cart-subtotal');
