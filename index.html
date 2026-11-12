@@ -8866,10 +8866,29 @@ function renderCart() {
           <button class="cart-item-remove" onclick="removeFromCart('${p.id}')">Retirer</button>
         </div>
       </div>
-    `).join('');
+    `).join('') + (function () {
+      // « Du même auteur : 3 autres pièces → » (Tom, 2026-11-12) : une ligne par auteur du panier,
+      // seulement s'il en reste en vente ; ouvre la boutique filtrée sur cet auteur
+      const inCart = new Set(cart.map(c => String(c.id)));
+      const en = window.__lang === 'en';
+      return [...new Set(cart.map(c => c.brand))].slice(0, 2).map(b => {
+        const n = PRODUCTS.filter(x => x.brand === b && !isSold(x) && !inCart.has(String(x.id))).length;
+        if (!n) return '';
+        const name = b.replace(/\b\w/g, c => c.toUpperCase()).replace(/\B\w/g, c => c.toLowerCase());
+        return `<button type="button" class="cart-more" onclick="cartMoreBrand(${JSON.stringify(b).replace(/"/g, '&quot;')})">${en ? 'More from ' + name + ': ' + n + (n > 1 ? ' pieces' : ' piece') : 'Du même auteur, ' + name + ' : ' + n + (n > 1 ? ' autres pièces' : ' autre pièce')} →</button>`;
+      }).join('');
+    })();
   }
   updateCartTotals();
 }
+window.cartMoreBrand = function (b) {
+  activeBrand = b; activeCat = 'all'; activeGender = 'all'; activeColor = 'all';
+  if (document.getElementById('cart-panel').classList.contains('open')) toggleCart();
+  goPage('shop');
+  if (typeof renderFilters === 'function') renderFilters();
+  if (typeof renderGrid === 'function') renderGrid();
+  window.scrollTo(0, 0);
+};
 
 // === SHIPPING & COUNTRY (mirror serveur) ===
 const PASSEIST_SHIPPING = {
