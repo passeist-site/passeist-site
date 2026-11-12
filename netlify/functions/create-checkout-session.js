@@ -79,7 +79,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { items, locale, country, cancelUrl } = JSON.parse(event.body || '{}');
+    const { items, locale, country, cancelUrl, shipMode, relay } = JSON.parse(event.body || '{}');
     if (!Array.isArray(items) || items.length === 0) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Items required' }) };
     }
@@ -102,7 +102,7 @@ exports.handler = async (event) => {
         }),
       };
     }
-    const ship = shippingForCountry(country);
+    const ship = { ...shippingForCountry(country) };
 
     // Validation cancelUrl : doit être une URL passeist.com (sécu : pas de redirection ouverte)
     let safeCancelUrl = `${baseUrl}/cancel.html`;
@@ -171,6 +171,17 @@ exports.handler = async (event) => {
       };
     }
 
+    // France : point relais (Mondial Relay / Chronopost) ou domicile, même prix (Tom, 2026-11-12).
+    // Le mode et le relais choisi voyagent dans les métadonnées → bordereau Boxtal après paiement.
+    const clip = (v, n) => String(v || '').replace(/[\r\n]/g, ' ').slice(0, n);
+    const isFR = (country || 'FR') === 'FR';
+    let mode = isFR && (shipMode === 'relay' || shipMode === 'home') ? shipMode : '';
+    if (mode === 'relay' && !(relay && /^[A-Za-z0-9_-]{2,40}$/.test(String(relay.code || '')) && /^(MONR|CHRP)$/.test(String(relay.network || '')))) {
+      return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'relay' }) };
+    }
+    if (mode === 'relay') ship.label = (lang === 'en' ? 'Pickup point — ' : 'Point relais — ') + clip(relay.name, 60);
+    else if (mode === 'home') ship.label = lang === 'en' ? 'Home delivery' : 'Livraison à domicile';
+
     // Construction des shipping_options (Stripe demande un format spécifique)
     const shippingOptions = [{
       shipping_rate_data: {
@@ -196,7 +207,7 @@ exports.handler = async (event) => {
       mode: 'payment',
       payment_method_types: PAYMENT_METHODS,
       line_items: lineItems,
-      shipping_address_collection: {
+      shipping_address_collection: mode ? { allowed_countries: ['FR'] } : {
         allowed_countries: [
           'FR','BE','LU','DE','IT','ES','NL','GB','CH','AT','PT','IE','GR',
           'SE','DK','NO','FI','PL','CZ','HU','HR','SI','SK','EE','LV','LT',
@@ -215,6 +226,11 @@ exports.handler = async (event) => {
       cancel_url: safeCancelUrl,
       metadata: {
         passeist_ids: items.map(i => i.id).join(','),
+        ...(mode ? { ship_mode: mode } : {}),
+        ...(mode === 'relay' ? {
+          relay_code: clip(relay.code, 40), relay_network: clip(relay.network, 4), relay_name: clip(relay.name, 120),
+          relay_address: clip([relay.street, relay.postalCode, relay.city].filter(Boolean).join(', '), 200),
+        } : {}),
       },
     };
     // Un moyen refusé par Stripe (pas activé dans le tableau de bord…) ne doit

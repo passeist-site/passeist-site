@@ -308,3 +308,9 @@ Décisions de Tom :
   - Plusieurs pièces : somme des poids (prévenu du risque de refacturation si le poids réel dépasse).
 - Aucun nom de transporteur dans les textes du site (« Point relais », « Domicile »).
 - Bordereau envoyé par e-mail à Tom, suivi envoyé au client.
+- 2026-11-12 : branchement construit (relais Mondial Relay + Chronopost dans une même liste, domicile Colissimo).
+  Fichiers : netlify/lib/boxtal.js, functions/relay-points.js, functions/boxtal-webhook.js,
+  create-checkout-session.js (shipMode, relay → métadonnées), stripe-webhook.js (commande Boxtal), panier (index.html).
+  Caché tant que BOXTAL_ACCESS_KEY / BOXTAL_SECRET_KEY ne sont pas dans Netlify ; mode à blanc tant que BOXTAL_LIVE≠1.
+  À VÉRIFIER au premier test avec les clés : codes d'offre (MONR-CpourToi, CHRP-Chrono2ShopDirect, POFR-ColissimoAccess),
+  catégorie de contenu (content:v1:40110 supposée « vêtements », lister /shipping/v3.1/content-category), dépôt relais de Tom.

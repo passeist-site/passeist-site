@@ -4308,6 +4308,21 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <label for="cart-country">Livraison vers</label>
       <select id="cart-country" onchange="updateCartTotals()"></select>
     </div>
+    <!-- France : point relais (Mondial Relay / Chronopost) ou domicile, même prix (Tom, 2026-11-12) -->
+    <div class="cart-ship-mode" id="cart-ship-mode" hidden>
+      <div class="csm-opts" role="radiogroup">
+        <label><input type="radio" name="csm" value="relay" onchange="setShipMode('relay')"> <span data-fr="Point relais" data-en="Pickup point">Point relais</span></label>
+        <label><input type="radio" name="csm" value="home" onchange="setShipMode('home')"> <span data-fr="À domicile" data-en="Home delivery">À domicile</span></label>
+      </div>
+      <div class="csm-relay" id="csm-relay" hidden>
+        <div class="csm-chosen" id="csm-chosen" hidden></div>
+        <form class="csm-search" id="csm-search" onsubmit="event.preventDefault();searchRelays()">
+          <input id="csm-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="Code postal" aria-label="Code postal">
+          <button type="submit" data-fr="Trouver" data-en="Search">Trouver</button>
+        </form>
+        <div class="csm-list" id="csm-list"></div>
+      </div>
+    </div>
     <div class="cart-line"><span class="cart-line-label">Sous-total</span><span id="cart-subtotal">0 €</span></div>
     <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">,</span></div>
     <div class="cart-total"><span>Total</span><span id="cart-total">0 €</span></div>
@@ -8855,6 +8870,56 @@ function passeistShippingFor(country) {
   if (PASSEIST_EU.has(country)) return PASSEIST_SHIPPING.EU;
   return PASSEIST_SHIPPING.WORLD;
 }
+// ============ LIVRAISON : POINT RELAIS OU DOMICILE (France, via Boxtal) ============
+// Tant que Boxtal n'est pas configuré dans Netlify (relay-points répond 503), le bloc reste caché
+// et la commande se passe comme avant.
+let relayAvailable = null, shipMode = 'relay', chosenRelay = null;
+try { shipMode = localStorage.getItem('passeist_shipmode') || 'relay'; chosenRelay = JSON.parse(localStorage.getItem('passeist_relay') || 'null'); } catch (e) {}
+function relayProbe() {
+  if (relayAvailable !== null) return;
+  relayAvailable = false;
+  fetch('/.netlify/functions/relay-points?ping=1').then(r => { relayAvailable = r.ok; updateCartTotals(); }).catch(() => {});
+}
+window.setShipMode = function (m) { shipMode = m; try { localStorage.setItem('passeist_shipmode', m); } catch (e) {} renderShipMode(); };
+function relayLine(p) {
+  return `<strong>${(p.name || '').replace(/</g, '&lt;')}</strong><span>${[p.street, p.postalCode, p.city].filter(Boolean).join(', ').replace(/</g, '&lt;')}</span><em>${p.networkLabel || ''}${p.distance != null ? ' · ' + (p.distance >= 1000 ? (p.distance / 1000).toFixed(1) + ' km' : Math.round(p.distance) + ' m') : ''}</em>`;
+}
+function renderShipMode() {
+  const box = document.getElementById('cart-ship-mode'); if (!box) return;
+  const show = relayAvailable === true && getCartCountry() === 'FR' && cart.length > 0;
+  box.hidden = !show; if (!show) return;
+  const en = window.__lang === 'en';
+  box.querySelectorAll('[data-fr]').forEach(el => { el.textContent = en ? el.dataset.en : el.dataset.fr; });
+  const cp = document.getElementById('csm-cp'); if (cp) cp.placeholder = en ? 'Postcode' : 'Code postal';
+  box.querySelectorAll('input[name=csm]').forEach(i => { i.checked = i.value === shipMode; });
+  document.getElementById('csm-relay').hidden = shipMode !== 'relay';
+  const ch = document.getElementById('csm-chosen');
+  ch.hidden = !chosenRelay;
+  if (chosenRelay) ch.innerHTML = relayLine(chosenRelay) + `<button type="button" onclick="changeRelay()">${en ? 'Change' : 'Changer'}</button>`;
+  document.getElementById('csm-search').hidden = !!chosenRelay;
+  if (chosenRelay) document.getElementById('csm-list').innerHTML = '';
+}
+window.changeRelay = function () { chosenRelay = null; try { localStorage.removeItem('passeist_relay'); } catch (e) {} renderShipMode(); const i = document.getElementById('csm-cp'); if (i) i.focus(); };
+window.searchRelays = async function () {
+  const cp = (document.getElementById('csm-cp').value || '').replace(/\s/g, '');
+  const list = document.getElementById('csm-list'); const en = window.__lang === 'en';
+  if (!/^\d{5}$/.test(cp)) { list.innerHTML = `<p class="csm-msg">${en ? 'Enter a 5-digit postcode.' : 'Entrez un code postal à 5 chiffres.'}</p>`; return; }
+  list.innerHTML = `<p class="csm-msg">${en ? 'Searching…' : 'Recherche…'}</p>`;
+  try {
+    const r = await fetch('/.netlify/functions/relay-points?cp=' + cp); const j = await r.json();
+    const pts = j.points || [];
+    if (!pts.length) { list.innerHTML = `<p class="csm-msg">${en ? 'No pickup point found.' : 'Aucun point relais trouvé.'}</p>`; return; }
+    window.__relays = pts;
+    list.innerHTML = pts.map((p, i) => `<button type="button" class="csm-pt" onclick="pickRelay(${i})">${relayLine(p)}</button>`).join('');
+  } catch (e) { list.innerHTML = `<p class="csm-msg">${en ? 'Search unavailable, please choose home delivery.' : 'Recherche indisponible, choisissez la livraison à domicile.'}</p>`; }
+};
+window.pickRelay = function (i) {
+  const p = (window.__relays || [])[i]; if (!p) return;
+  chosenRelay = { code: p.code, network: p.network, networkLabel: p.networkLabel, name: p.name, street: p.street, postalCode: p.postalCode, city: p.city };
+  try { localStorage.setItem('passeist_relay', JSON.stringify(chosenRelay)); } catch (e) {}
+  renderShipMode();
+};
+
 function getCartCountry() {
   const sel = document.getElementById('cart-country');
   return sel ? sel.value : 'FR';
@@ -8886,6 +8951,8 @@ function populateCartCountry() {
 }
 function updateCartTotals() {
   populateCartCountry();
+  relayProbe();
+  renderShipMode();
   const subtotal = cart.reduce((s, p) => s + parseInt(p.price), 0);
   const country = getCartCountry();
   const ship = cart.length > 0 ? passeistShippingFor(country) : { amount: 0, label: '' };
@@ -8962,10 +9029,21 @@ async function checkoutWithStripe() {
       return u.toString();
     })();
 
+    // Point relais / domicile (France, si Boxtal est branché)
+    let shipping = {};
+    if (relayAvailable === true && country === 'FR') {
+      if (shipMode === 'relay' && !chosenRelay) {
+        alert(lang === 'en' ? 'Please choose a pickup point, or select home delivery.' : 'Choisissez un point relais, ou la livraison à domicile.');
+        if (btn) { btn.disabled = false; btn.textContent = originalText; }
+        const i = document.getElementById('csm-cp'); if (i) i.focus();
+        return;
+      }
+      shipping = shipMode === 'relay' ? { shipMode: 'relay', relay: chosenRelay } : { shipMode: 'home' };
+    }
     const res = await fetch('/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, locale: lang, country, cancelUrl }),
+      body: JSON.stringify({ items, locale: lang, country, cancelUrl, ...shipping }),
     });
     if (res.status === 409) {
       // Pièce(s) vendue(s) entre-temps : on les retire du panier et on prévient
