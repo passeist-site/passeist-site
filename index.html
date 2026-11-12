@@ -7905,11 +7905,39 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     document.getElementById('ha-title').textContent = en ? 'new arrivals' : 'nouveautés';
     document.getElementById('ha-cta-txt').textContent = en ? 'See the shop' : 'Voir la boutique';
     const items = PRODUCTS.filter(p => !isSold(p) && p.n > 0).sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 12);
-    track.innerHTML = items.map(x => `<a class="ha-card" href="/product/${productSlug(x)}" data-id="${x.id}">
+    const html = items.map(x => `<a class="ha-card" href="/product/${productSlug(x)}" data-id="${x.id}" draggable="false">
       <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="160px" alt="${x.brand} ${x.type}" loading="eager" decoding="async" draggable="false"></div>
       <div class="ha-brand">${x.brand}</div></a>`).join('');
-    track.querySelectorAll('.ha-card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); openDetail(c.dataset.id); }));
+    // Téléphone : défilement automatique comme le carrousel du haut, le doigt peut le pousser (Tom, 2026-11-12).
+    // Ordinateur : grille fixe de 4 colonnes (CSS), pas d'animation.
+    const mobile = window.matchMedia && matchMedia('(max-width: 900px)').matches;
+    track.innerHTML = mobile ? '<div class="ha-belt">' + html + html + '</div>' : html;
+    let dragged = false;
+    track.querySelectorAll('.ha-card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); if (dragged) return; openDetail(c.dataset.id); }));
     track.dataset.done = '1';
+    if (!mobile) return;
+    const belt = track.firstElementChild;
+    let off = 0, last = 0, half = 0, touchX = null, startOff = 0, vel = 0, lastX = 0, lastT = 0;
+    const SPEED = -22; // px/s, un peu plus lent que le carrousel du haut
+    const step = (t) => {
+      if (!half) half = belt.scrollWidth / 2;
+      const dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t;
+      if (touchX === null && document.body.dataset.page === 'home') {
+        off += (SPEED + vel) * dt; vel *= 0.94;
+      }
+      if (half) { while (off <= -half) off += half; while (off > 0) off -= half; }
+      belt.style.transform = 'translate3d(' + off + 'px,0,0)';
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    track.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; startOff = off; dragged = false; vel = 0; lastX = touchX; lastT = performance.now(); }, { passive: true });
+    track.addEventListener('touchmove', e => {
+      if (touchX === null) return;
+      const x = e.touches[0].clientX; off = startOff + (x - touchX);
+      if (Math.abs(x - touchX) > 6) dragged = true;
+      const now = performance.now(); if (now > lastT) vel = (x - lastX) / ((now - lastT) / 1000); lastX = x; lastT = now;
+    }, { passive: true });
+    track.addEventListener('touchend', () => { touchX = null; vel = Math.max(-1500, Math.min(1500, vel)); setTimeout(() => { dragged = false; }, 60); });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => window.renderArrivals()); else setTimeout(() => window.renderArrivals(), 0);
 
