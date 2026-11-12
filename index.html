@@ -7906,7 +7906,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     document.getElementById('ha-cta-txt').textContent = en ? 'See the shop' : 'Voir la boutique';
     const items = PRODUCTS.filter(p => !isSold(p) && p.n > 0).sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 12);
     track.innerHTML = items.map(x => `<a class="ha-card" href="/product/${productSlug(x)}" data-id="${x.id}">
-      <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="160px" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="160px" alt="${x.brand} ${x.type}" loading="eager" decoding="async" draggable="false"></div>
       <div class="ha-brand">${x.brand}</div></a>`).join('');
     track.querySelectorAll('.ha-card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); openDetail(c.dataset.id); }));
     track.dataset.done = '1';
