@@ -10855,8 +10855,17 @@ window.sharePiece = function () {
       b.dataset.z = '1';
       // Zoom ×2,2 : la taille moyenne (800 px) devenait floue. Grande taille (1600 px) chargée au
       // premier glissé seulement, en remplacement de la moyenne une fois prête (Tom, 2026-11-12).
-      var zi = b.querySelector('img');
-      if (zi && /-md\.webp/.test(zi.src)) { var hi = new Image(); hi.onload = function () { zi.src = hi.src; }; hi.src = zi.src.replace('-md.webp', '-xl.webp'); }
+      // Jamais d'effet « mise au point » sous les yeux : si la grande photo arrive pendant que la vue
+      // zoomée est affichée, on attend qu'elle soit repartie pour l'échanger (Tom, 2026-11-12).
+      var zi = b.querySelector('img'), zbox = box;
+      if (zi && /-md\.webp/.test(zi.src)) {
+        var hi = new Image();
+        hi.onload = function () {
+          if (zbox.classList.contains('show-2') || zbox.classList.contains('dragging')) zi._pending = hi.src;
+          else zi.src = hi.src;
+        };
+        hi.src = zi.src.replace('-md.webp', '-xl.webp');
+      }
       try {
         var cv = document.createElement('canvas'), cw = 80, ch = Math.round(80 * (a.naturalHeight || 1) / (a.naturalWidth || 1));
         cv.width = cw; cv.height = ch; var cx = cv.getContext('2d'); cx.drawImage(a, 0, 0, cw, ch);
@@ -10898,7 +10907,10 @@ window.sharePiece = function () {
     box.classList.remove('dragging');
     // Retour automatique à la photo 1 au bout de 5 s : la grille reste toujours propre (Tom, 2026-11-11)
     clearTimeout(box._back);
-    if (show2) box._back = setTimeout(function (bx) { return function () { bx.classList.remove('show-2'); }; }(box), 5000);
+    // Échange en grande taille en attente : fait une fois la vue zoomée repartie (après l'animation)
+    var swapLater = function (bx) { setTimeout(function () { var im = bx.querySelector('.pz img'); if (im && im._pending && !bx.classList.contains('show-2')) { im.src = im._pending; im._pending = null; } }, 450); };
+    if (!show2) swapLater(box);
+    if (show2) box._back = setTimeout(function (bx) { return function () { bx.classList.remove('show-2'); swapLater(bx); }; }(box), 5000);
     if (card) { card._swiped = true; setTimeout(function (c) { return function () { c._swiped = false; }; }(card), 400); }
     box = null;
   });
