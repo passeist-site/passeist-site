@@ -10985,12 +10985,12 @@ window.sharePiece = function () {
     a.style.transform = b.style.transform = '';
     box.classList.toggle('show-2', show2);
     box.classList.remove('dragging');
-    // Retour automatique à la photo 1 au bout de 5 s : la grille reste toujours propre (Tom, 2026-11-11)
+    // Retour automatique à la photo 1 au bout de 7 s : la grille reste toujours propre (Tom, 2026-11-11, 7 s le 12)
     clearTimeout(box._back);
     // Échange en grande taille en attente : fait une fois la vue zoomée repartie (après l'animation)
     var swapLater = function (bx) { setTimeout(function () { var im = bx.querySelector('.pz img'); if (im && im._pending && !bx.classList.contains('show-2')) { im.src = im._pending; im._pending = null; } }, 450); };
     if (!show2) swapLater(box);
-    if (show2) box._back = setTimeout(function (bx) { return function () { bx.classList.remove('show-2'); swapLater(bx); }; }(box), 5000);
+    if (show2) box._back = setTimeout(function (bx) { return function () { bx.classList.remove('show-2'); swapLater(bx); }; }(box), 7000);
     if (card) { card._swiped = true; setTimeout(function (c) { return function () { c._swiped = false; }; }(card), 400); }
     box = null;
   });
