@@ -56,9 +56,9 @@ async function call(path, method = 'GET', body, query) {
 }
 
 // Points relais proches d'un code postal (France), Mondial Relay et Chronopost
-async function searchRelays({ postalCode, city, networks }) {
+async function searchRelays({ postalCode, city, street, number, networks }) {
   const nets = (networks && networks.length ? networks : Object.keys(NETWORKS)).filter(n => NETWORKS[n]);
-  const j = await call('/shipping/v3.1/parcel-point', 'GET', null, { countryIsoCode: 'FR', postalCode, city, searchNetworks: nets });
+  const j = await call('/shipping/v3.1/parcel-point', 'GET', null, { countryIsoCode: 'FR', postalCode, city, street, number, searchNetworks: nets });
   return (j.content || []).map(x => {
     const p = x.parcelPoint || x.parcelpoint || {}; const l = p.location || {};
     return {

@@ -4330,7 +4330,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <div class="csm-relay" id="csm-relay" hidden>
         <div class="csm-chosen" id="csm-chosen" hidden></div>
         <form class="csm-search" id="csm-search" onsubmit="event.preventDefault();searchRelays()">
-          <input id="csm-cp" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="Code postal" aria-label="Code postal">
+          <input id="csm-cp" autocomplete="street-address" placeholder="Votre adresse ou code postal" aria-label="Votre adresse ou code postal">
           <button type="submit" data-fr="Trouver" data-en="Search">Trouver</button>
         </form>
         <div class="csm-list" id="csm-list"></div>
@@ -8925,7 +8925,7 @@ function renderShipMode() {
   box.hidden = !show; if (!show) return;
   const en = window.__lang === 'en';
   box.querySelectorAll('[data-fr]').forEach(el => { el.textContent = en ? el.dataset.en : el.dataset.fr; });
-  const cp = document.getElementById('csm-cp'); if (cp) cp.placeholder = en ? 'Postcode' : 'Code postal';
+  const cp = document.getElementById('csm-cp'); if (cp) cp.placeholder = en ? 'Your address or postcode' : 'Votre adresse ou code postal';
   box.querySelectorAll('input[name=csm]').forEach(i => { i.checked = i.value === shipMode; });
   document.getElementById('csm-relay').hidden = shipMode !== 'relay';
   const ch = document.getElementById('csm-chosen');
@@ -8936,12 +8936,21 @@ function renderShipMode() {
 }
 window.changeRelay = function () { chosenRelay = null; try { localStorage.removeItem('passeist_relay'); } catch (e) {} renderShipMode(); const i = document.getElementById('csm-cp'); if (i) i.focus(); };
 window.searchRelays = async function () {
-  const cp = (document.getElementById('csm-cp').value || '').replace(/\s/g, '');
+  // Adresse complète (« 5 rue Jules Vallès, 75011 Paris ») ou code postal seul (Tom, 2026-11-12)
+  const raw = (document.getElementById('csm-cp').value || '').trim();
   const list = document.getElementById('csm-list'); const en = window.__lang === 'en';
-  if (!/^\d{5}$/.test(cp)) { list.innerHTML = `<p class="csm-msg">${en ? 'Enter a 5-digit postcode.' : 'Entrez un code postal à 5 chiffres.'}</p>`; return; }
+  const m = raw.match(/\b(\d{5})\b/);
+  if (!m) { list.innerHTML = `<p class="csm-msg">${en ? 'Add your postcode (5 digits).' : 'Ajoutez votre code postal (5 chiffres).'}</p>`; return; }
+  const cp = m[1];
+  const before = raw.slice(0, m.index).replace(/[,\s]+$/, '').trim();
+  const city = raw.slice(m.index + 5).replace(/^[,\s]+/, '').trim();
+  const nm = before.match(/^(\d+\s*(?:bis|ter)?)[,\s]+(.+)$/i);
+  const q = new URLSearchParams({ cp });
+  if (city) q.set('city', city);
+  if (nm) { q.set('number', nm[1].replace(/\s+/g, '')); q.set('street', nm[2]); } else if (before) q.set('street', before);
   list.innerHTML = `<p class="csm-msg">${en ? 'Searching…' : 'Recherche…'}</p>`;
   try {
-    const r = await fetch('/.netlify/functions/relay-points?cp=' + cp); const j = await r.json();
+    const r = await fetch('/.netlify/functions/relay-points?' + q.toString()); const j = await r.json();
     const pts = j.points || [];
     if (!pts.length) { list.innerHTML = `<p class="csm-msg">${en ? 'No pickup point found.' : 'Aucun point relais trouvé.'}</p>`; return; }
     window.__relays = pts;

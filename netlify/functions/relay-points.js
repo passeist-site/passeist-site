@@ -1,5 +1,5 @@
 // Points relais proches (Mondial Relay + Chronopost, via Boxtal) pour le panier (Tom, 2026-11-12)
-// GET /.netlify/functions/relay-points?cp=75011&city=Paris
+// GET /.netlify/functions/relay-points?cp=75011&city=Paris&number=5&street=rue%20Jules%20Vall%C3%A8s
 // 503 { error: 'not_configured' } tant que les clés Boxtal ne sont pas dans Netlify : le panier
 // masque alors le choix « Point relais » et garde la livraison à domicile.
 const boxtal = require('../lib/boxtal');
@@ -26,7 +26,8 @@ exports.handler = async (event) => {
   const cp = String(q.cp || '').replace(/\s/g, '');
   if (!/^\d{5}$/.test(cp)) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'cp' }) };
   try {
-    const points = await boxtal.searchRelays({ postalCode: cp, city: String(q.city || '').slice(0, 60) });
+    // Adresse complète si donnée (points les plus proches de chez soi), sinon le code postal seul
+    const points = await boxtal.searchRelays({ postalCode: cp, city: String(q.city || '').slice(0, 60), street: String(q.street || '').slice(0, 120), number: String(q.number || '').slice(0, 10) });
     return { statusCode: 200, headers: H, body: JSON.stringify({ points }) };
   } catch (e) {
     console.error('relay-points :', e.message);
