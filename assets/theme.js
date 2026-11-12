@@ -158,6 +158,8 @@
     '.product-img .pz{position:absolute;inset:0;display:block;overflow:hidden;background:#eeeeee}.product-img .pz img{display:block;width:100%;height:100%;object-fit:contain;scale:2.2;transform-origin:var(--zx,50%) var(--zy,48%);mix-blend-mode:multiply}' +
     /* Deux petits points SOUS la photo (téléphone), jamais sur l'image : lisibles même sur la vue zoomée (Tom, 2026-11-11) */
     '.cd2{display:none}@media (hover:none){.cd2{display:flex;justify-content:center;gap:5px;height:5px;margin:4px 0 0}.cd2 i{width:5px;height:5px;border-radius:50%;background:rgba(28,34,48,.2);transition:background .3s}.cd2 i:first-child,.product-img.show-2+.cd2 i:last-child{background:' + N + '}.product-img.show-2+.cd2 i:first-child{background:rgba(28,34,48,.2)}.grid .cd2+.product-body{padding-top:6px!important}}' +
+    /* VENDU de la fiche : même taille relative que sur les cartes (facteur --vk calculé en JS) */
+    '#detail .detail-gallery .sold-stamp{top:calc(10px * var(--vk,1))!important;right:calc(10px * var(--vk,1))!important;font-size:calc(7.5px * var(--vk,1))!important;padding:calc(3px * var(--vk,1)) calc(6px * var(--vk,1))!important;border-radius:calc(3px * var(--vk,1))!important}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.

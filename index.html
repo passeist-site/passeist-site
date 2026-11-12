@@ -7995,6 +7995,16 @@ function openDetail(id) {
   // Wrap main photo + badge dans un sous-conteneur positionné, pour que le badge
   // soit ancré sur la photo principale (et non sur l'ensemble de la galerie).
   gal.innerHTML = `<div class="main-photo-wrap">${mainHtml}${isSold(p) ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span><span class="sold-badge">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}</div><div class="thumbs-row">${thumbsHtml}</div>`;
+  // Étiquette VENDU de la fiche à la même taille RELATIVE que sur les cartes de la page Vendu :
+  // agrandie du rapport largeur de la photo de fiche / largeur d'une carte (Tom, 2026-11-12).
+  if (isSold(p)) requestAnimationFrame(() => {
+    const wrap = gal.querySelector('.main-photo-wrap'); if (!wrap) return;
+    const vw = document.documentElement.clientWidth;
+    const hc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hero-card-h')) || 0;
+    const cardW = vw <= 900 ? (vw - 64) / 2 : (hc ? hc * 0.75 : 300);
+    const k = Math.max(1, Math.min(4, wrap.getBoundingClientRect().width / cardW));
+    wrap.style.setProperty('--vk', k.toFixed(3));
+  });
 
   // ===== Articles similaires =====
   try {
