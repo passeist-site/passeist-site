@@ -4250,8 +4250,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <div class="detail-info">
       <div class="detail-title"><span class="detail-brand" id="d-brand"></span> <span class="detail-name" id="d-name"></span></div>
       <div class="detail-edition" id="d-edition"></div>
-      <!-- Livraison estimée (Tom, 2026-11-12) -->
-      <div class="detail-extra" id="d-extra"></div>
       <div class="detail-price-row" id="d-price-row">
         <div class="detail-price-wrap" id="d-price-wrap">
           <svg class="nav-ink nav-ink--price-detail" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><rect x="6" y="6" width="188" height="68" filter="url(#ink-rough-h)"/></svg>
@@ -8034,25 +8032,6 @@ function openDetail(id) {
   document.getElementById('d-cart').style.display = sold ? 'none' : '';
   document.getElementById('d-actions').style.display = sold ? 'none' : '';
   document.getElementById('d-availability').style.display = sold ? 'none' : '';
-  // « Livraison estimée : lun. 16 – mer. 18 nov. » (expédition sous 1 jour ouvré, puis
-  // 2-4 jours ouvrés en France, 3-7 en Europe, 5-10 ailleurs ; dimanches sautés)
-  {
-    const ex = document.getElementById('d-extra');
-    if (ex) {
-      if (sold) { ex.textContent = ''; ex.hidden = true; }
-      else {
-        const en = window.__lang === 'en';
-        const c = (typeof getCartCountry === 'function' ? getCartCountry() : 'FR') || 'FR';
-        const [lo, hi] = c === 'FR' ? [3, 5] : (typeof PASSEIST_EU !== 'undefined' && PASSEIST_EU.has(c)) ? [4, 8] : [6, 11];
-        const add = (n) => { const d = new Date(); let k = 0; while (k < n) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0) k++; } return d; };
-        const loc = en ? 'en-GB' : 'fr-FR';
-        const f = (d, withMonth) => d.toLocaleDateString(loc, withMonth ? { weekday: 'short', day: 'numeric', month: 'short' } : { weekday: 'short', day: 'numeric' });
-        const a = add(lo), b = add(hi), same = a.getMonth() === b.getMonth();
-        ex.textContent = (en ? 'Estimated delivery: ' : 'Livraison estimée : ') + f(a, !same) + ' – ' + f(b, true);
-        ex.hidden = false;
-      }
-    }
-  }
   if (window.updateDetailAlert) window.updateDetailAlert(p);
   // Synchronise le bouton Favori (à côté du prix) sur le produit courant
   const dFav = document.getElementById('d-price-fav');
