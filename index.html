@@ -4005,6 +4005,10 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <button class="filter-search-btn" id="filter-search-btn" type="button" aria-label="Rechercher">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
+      <!-- Réinitialiser d'un geste (téléphone), visible seulement quand un filtre ou un tri est actif (Tom, 2026-11-12) -->
+      <button class="filter-search-btn filter-reset-quick" id="filter-reset-quick" type="button" aria-label="Réinitialiser les filtres" hidden onclick="document.getElementById('filter-reset').click()">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
       <!-- Cloche : l'alerte reste à portée quand on défile (barre fixe en haut, téléphone ; Tom, 2026-11-10) -->
       <button class="filter-search-btn filter-alert-btn" id="filter-alert-btn" type="button" aria-label="Créer une alerte" hidden onclick="var a=document.getElementById('alert-cta');if(a&&a.onclick)a.onclick();">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
@@ -4036,6 +4040,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
         <label class="filter-label" for="sort-select">Trier par</label>
         <select class="filter-select" id="sort-select">
           <option value="newest">Nouveautés</option>
+          <option value="oldest">Plus anciennes</option>
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
           <option value="random">Aléatoire</option>
@@ -4080,6 +4085,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
         <label class="filter-label" for="m-sort-select">Trier par</label>
         <select class="filter-select" id="m-sort-select">
           <option value="newest">Nouveautés</option>
+          <option value="oldest">Plus anciennes</option>
           <option value="price-asc">Prix croissant</option>
           <option value="price-desc">Prix décroissant</option>
           <option value="random">Aléatoire</option>
@@ -7495,6 +7501,8 @@ function renderFilters() {
   const anyActive = (activeGender !== 'all' || activeBrand !== 'all' || activeCat !== 'all' || activeColor !== 'all' || activeSort !== 'newest' || (activeSearch || '').trim() !== '');
   const reset = document.getElementById('filter-reset');
   if (reset) reset.hidden = !anyActive;
+  const rq = document.getElementById('filter-reset-quick');
+  if (rq) rq.hidden = !anyActive;
 }
 
 // Recherche par référence (« 73092452 », « Réf. 73092452 ») : la pièce est
@@ -7532,7 +7540,7 @@ function renderGrid() {
   // Tri selon activeSort
   if (activeSort === 'random') {
     filtered = shuffle(filtered.slice());
-  } else if (activeView === 'archive' && activeSort === 'newest') {
+  } else if (activeView === 'archive' && (activeSort === 'newest' || activeSort === 'oldest')) {
     // Archive : tri par ordre d'arrivée dans SOLD_IDS (plus récemment basculés en haut).
     // Permet de voir rapidement les nouvelles ventes ajoutées au sync.
     const soldArr = Array.from(SOLD_IDS);  // Set itère dans l'ordre d'insertion (ES2015+)
@@ -7540,7 +7548,7 @@ function renderGrid() {
     filtered = filtered.slice().sort((a, b) => {
       const ai = soldIdx.has(a.id) ? soldIdx.get(a.id) : 999999;
       const bi = soldIdx.has(b.id) ? soldIdx.get(b.id) : 999999;
-      return ai - bi;  // index plus petit = ajouté en premier dans Set = plus récent (cf workflow qui prepend)
+      return activeSort === 'oldest' ? bi - ai : ai - bi;  // index plus petit = ajouté en premier dans Set = plus récent (cf workflow qui prepend)
     });
   } else {
     // Vinted (IDs à 10 chiffres) sont toujours relégués en fin de liste, peu importe le tri
@@ -7552,6 +7560,8 @@ function renderGrid() {
       // Même catégorie (tous Vestiaire ou tous Vinted), on applique le tri choisi
       if (activeSort === 'price-asc')  return (parseInt(a.price) || 0) - (parseInt(b.price) || 0);
       if (activeSort === 'price-desc') return (parseInt(b.price) || 0) - (parseInt(a.price) || 0);
+      // 'oldest' : de la plus ancienne à la plus récente (Tom, 2026-11-12)
+      if (activeSort === 'oldest') return (parseInt(a.id) || 0) - (parseInt(b.id) || 0);
       // 'newest' : id numérique décroissant (les IDs plus élevés = mis en ligne plus récemment)
       return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
     });
@@ -7890,7 +7900,8 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     const page = document.body.dataset.page;
     const items = read().map(id => PRODUCTS.find(p => p.id === id)).filter(p => p && !isSold(p));
     // Au moins 2 pièces, seulement sur l'accueil et la boutique
-    if ((page !== 'home' && page !== 'shop') || items.length < 2) { sec.hidden = true; track.innerHTML = ''; return; }
+    // Plus sur l'accueil (Tom, 2026-11-12 : trois rangées qui défilent, c'est trop) : boutique seulement
+    if (page !== 'shop' || items.length < 2) { sec.hidden = true; track.innerHTML = ''; return; }
     const en = window.__lang === 'en';
     // Accueil : en minuscules comme « les auteurs » et « nouveautés »
     document.getElementById('recent-title').textContent = page === 'home' ? (en ? 'recently viewed' : 'vus récemment') : (en ? 'Recently viewed' : 'Vus récemment');
@@ -11175,7 +11186,7 @@ window.subscribeNewsletter = function (e) {
       'filter.search_ph': 'Rechercher une pièce, une marque…',
       'filter.all_genders': 'Tous genres', 'filter.all_brands': 'Tous les auteurs',
       'filter.all_cats': 'Toutes catégories', 'filter.all_colors': 'Toutes couleurs',
-      'sort.newest': 'Nouveautés', 'sort.price_asc': 'Prix croissant',
+      'sort.newest': 'Nouveautés', 'sort.oldest': 'Plus anciennes', 'sort.price_asc': 'Prix croissant',
       'sort.price_desc': 'Prix décroissant', 'sort.random': 'Aléatoire',
       'cart.title': 'Panier', 'cart.total': 'Total',
       'detail.back': '← Retour à la boutique',
@@ -11219,7 +11230,7 @@ window.subscribeNewsletter = function (e) {
       'filter.search_ph': 'Search a piece, a brand…',
       'filter.all_genders': 'All genders', 'filter.all_brands': 'All designers',
       'filter.all_cats': 'All categories', 'filter.all_colors': 'All colors',
-      'sort.newest': 'Newest', 'sort.price_asc': 'Price low to high',
+      'sort.newest': 'Newest', 'sort.oldest': 'Oldest', 'sort.price_asc': 'Price low to high',
       'sort.price_desc': 'Price high to low', 'sort.random': 'Random',
       'cart.title': 'Cart', 'cart.total': 'Total',
       'detail.back': '← Back to shop',
@@ -11415,7 +11426,7 @@ window.subscribeNewsletter = function (e) {
     // Sort options
     document.querySelectorAll('#sort-select option, #m-sort-select option').forEach(opt => {
       const v = opt.value;
-      const map = { newest: 'sort.newest', 'price-asc': 'sort.price_asc',
+      const map = { newest: 'sort.newest', oldest: 'sort.oldest', 'price-asc': 'sort.price_asc',
                     'price-desc': 'sort.price_desc', random: 'sort.random' };
       if (map[v]) opt.textContent = t(map[v]);
     });

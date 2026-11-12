@@ -145,7 +145,7 @@
        changement de page, cartes au défilement). */
     '.hero-ink{animation:none!important}.hero-eyebrow,.hero-logo,.hero-sub,.hero-tagline,.hero-cta,.product-card,.grid .product-card,.page-enter{animation:none!important;opacity:1!important}' +
     /* Cloche d'alerte dans la barre de filtres : téléphone seulement */
-    '.filter-alert-btn[hidden]{display:none!important}@media (min-width:901px){.filter-alert-btn{display:none!important}}@media (max-width:900px){.filter-bar{gap:8px!important}}' +
+    '.filter-alert-btn[hidden],.filter-reset-quick[hidden]{display:none!important}@media (min-width:901px){.filter-reset-quick{display:none!important}}@media (min-width:901px){.filter-alert-btn{display:none!important}}@media (max-width:900px){.filter-bar{gap:8px!important}}' +
     /* Fenêtre « Créez votre alerte » en bleu nuit comme les autres panneaux : le haut du dégradé
        était bleu nuit avec un texte bleu nuit, illisible (2026-11-10) */
     '.alert-card{background:' + N + '!important}' +
@@ -181,6 +181,8 @@
     'body[data-page="home"] #recent .product-price-wrap,body[data-page="home"] #recent .product-name-row,body[data-page="home"] #recent .product-meta{display:none!important}body[data-page="home"] #recent .product-brand{justify-content:center!important;border:0!important}body[data-page="home"] #recent .product-body{padding-top:0!important}' +
     'body[data-page="home"] .nl{display:flex!important}' +
     '@media (min-width:901px){.ha-card{flex-basis:calc(var(--hero-card-h,347px)*.75)}.ha-img{width:100%;height:auto;aspect-ratio:3/4}.ha-track{justify-content:center;flex-wrap:nowrap}}' +
+    /* Retour tactile (téléphone) : la carte ou le bouton touché s'enfonce à peine (Tom, 2026-11-12) */
+    '@media (hover:none){.product-card,.ha-card,.btn,.hero-cta,.hbs-cta,.cart-checkout,.filter-mobile-toggle,.filter-search-btn{transition:transform .15s ease}.product-card:active,.ha-card:active{transform:scale(.98)}.btn:active,.hero-cta:active,.hbs-cta:active,.cart-checkout:active,.filter-mobile-toggle:active,.filter-search-btn:active{transform:scale(.96)}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
