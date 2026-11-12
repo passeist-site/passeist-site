@@ -180,7 +180,8 @@
     'body[data-page="home"] #recent{background:transparent!important;border:0!important;box-shadow:none!important;padding-top:4px!important;padding-bottom:28px!important}body[data-page="home"] #recent .recent-track{gap:10px!important}body[data-page="home"] #recent .product-img,body[data-page="home"] #recent .product-img::before{background:#eeeeee!important;box-shadow:none!important}' +
     'body[data-page="home"] #recent .product-price-wrap,body[data-page="home"] #recent .product-name-row,body[data-page="home"] #recent .product-meta{display:none!important}body[data-page="home"] #recent .product-brand{justify-content:center!important;border:0!important}body[data-page="home"] #recent .product-body{padding-top:0!important}' +
     'body[data-page="home"] .nl{display:flex!important}' +
-    '@media (min-width:901px){.ha-card{flex-basis:calc(var(--hero-card-h,347px)*.75)}.ha-img{width:100%;height:auto;aspect-ratio:3/4}.ha-track{justify-content:center;flex-wrap:nowrap}}' +
+    /* Ordinateur : grille de 4 colonnes (8 pièces), alignée sur la boutique, sans défilement */
+    '@media (min-width:901px){.ha-track{display:grid;grid-template-columns:repeat(4,1fr);gap:36px;max-width:1568px;margin:0 auto 32px;padding:0 56px;overflow:visible}.ha-card{flex:none}.ha-card:nth-child(n+9){display:none}.ha-img{width:100%;height:auto;aspect-ratio:3/4}}' +
     /* Retour tactile (téléphone) : la carte ou le bouton touché s'enfonce à peine (Tom, 2026-11-12) */
     '@media (hover:none){.product-card,.ha-card,.btn,.hero-cta,.hbs-cta,.cart-checkout,.filter-mobile-toggle,.filter-search-btn{transition:transform .15s ease}.product-card:active,.ha-card:active{transform:scale(.98)}.btn:active,.hero-cta:active,.hbs-cta:active,.cart-checkout:active,.filter-mobile-toggle:active,.filter-search-btn:active{transform:scale(.96)}}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
