@@ -186,7 +186,7 @@
     '@media (hover:none){.product-card,.ha-card,.btn,.hero-cta,.hbs-cta,.cart-checkout,.filter-mobile-toggle,.filter-search-btn{transition:transform .15s ease}.product-card:active,.ha-card:active{transform:scale(.98)}.btn:active,.hero-cta:active,.hbs-cta:active,.cart-checkout:active,.filter-mobile-toggle:active,.filter-search-btn:active{transform:scale(.96)}}' +
     /* Compteur sous le slogan et étiquette « nouveau » (Tom, 2026-11-12) */
     '.hero-tagline{margin-bottom:16px!important}.hero-count{margin:0 0 34px;min-height:14px;font-family:var(--font-mono),ui-monospace,monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#7a7e88;text-align:center}' +
-    '.product-img .new-stamp{position:absolute;top:10px;right:10px;z-index:3;padding:3px 6px;border-radius:3px;background:#5a7593;color:#f5f2ed;font-size:7.5px;font-weight:600;letter-spacing:.18em;line-height:1.2;pointer-events:none}' +
+    '.product-img.show-2 .new-stamp,.product-img.dragging .new-stamp{opacity:0}.product-img .new-stamp{transition:opacity .2s;position:absolute;top:10px;right:10px;z-index:3;padding:3px 6px;border-radius:3px;background:#5a7593;color:#f5f2ed;font-size:7.5px;font-weight:600;letter-spacing:.18em;line-height:1.2;pointer-events:none}' +
     /* Points photo 1 / photo 2 des cartes : point actif bleu du logo, l'autre gris (Tom) */
     '.card-dots i{background:rgba(28,34,48,.22)!important}.card-dots i:first-child,.product-img.show-2 .card-dots i:last-child{background:#5a7593!important}.product-img.show-2 .card-dots i:first-child{background:rgba(28,34,48,.22)!important}' +
     /* Ordinateur : au survol, la photo 1 s'efface pendant que la photo 2 apparaît.
