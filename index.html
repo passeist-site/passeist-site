@@ -3982,6 +3982,13 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   </div>
 </section>
 
+<!-- NOUVEAUTÉS (accueil) : les dernières pièces mises en ligne (Tom, 2026-11-12) -->
+<section class="home-arrivals" id="home-arrivals" aria-label="Nouveautés">
+  <div class="ha-title" id="ha-title">nouveautés</div>
+  <div class="ha-track" id="ha-track"></div>
+  <a href="/shop" class="hbs-cta ha-cta" onclick="event.preventDefault();goPage('shop')"><span id="ha-cta-txt">Voir la boutique</span><span class="arrow-symbol">→</span></a>
+</section>
+
 <!-- SHOP / ARCHIVE (shared layout) -->
 <section class="shop" id="shop-page">
   <main class="main">
@@ -7860,6 +7867,22 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     ids.unshift(id);
     try { localStorage.setItem(KEY, JSON.stringify(ids.slice(0, 12))); } catch (e) {}
   };
+  // Nouveautés de l'accueil : les 12 dernières pièces en vente (identifiant le plus récent d'abord)
+  window.renderArrivals = function () {
+    const track = document.getElementById('ha-track');
+    if (!track || typeof PRODUCTS === 'undefined' || track.dataset.done) return;
+    const en = window.__lang === 'en';
+    document.getElementById('ha-title').textContent = en ? 'new arrivals' : 'nouveautés';
+    document.getElementById('ha-cta-txt').textContent = en ? 'See the shop' : 'Voir la boutique';
+    const items = PRODUCTS.filter(p => !isSold(p) && p.n > 0).sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 12);
+    track.innerHTML = items.map(x => `<a class="ha-card" href="/product/${productSlug(x)}" data-id="${x.id}">
+      <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="160px" alt="${x.brand} ${x.type}" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="ha-brand">${x.brand}</div></a>`).join('');
+    track.querySelectorAll('.ha-card').forEach(c => c.addEventListener('click', e => { e.preventDefault(); openDetail(c.dataset.id); }));
+    track.dataset.done = '1';
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => window.renderArrivals()); else setTimeout(() => window.renderArrivals(), 0);
+
   window.renderRecent = function() {
     const sec = document.getElementById('recent');
     const track = document.getElementById('recent-track');
@@ -7869,7 +7892,8 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     // Au moins 2 pièces, seulement sur l'accueil et la boutique
     if ((page !== 'home' && page !== 'shop') || items.length < 2) { sec.hidden = true; track.innerHTML = ''; return; }
     const en = window.__lang === 'en';
-    document.getElementById('recent-title').textContent = en ? 'Recently viewed' : 'Vus récemment';
+    // Accueil : en minuscules comme « les auteurs » et « nouveautés »
+    document.getElementById('recent-title').textContent = page === 'home' ? (en ? 'recently viewed' : 'vus récemment') : (en ? 'Recently viewed' : 'Vus récemment');
     track.innerHTML = items.map(x => {
       const g = getGender(x) ? (window.tGender ? window.tGender(x) : getGender(x)) : '';
       const sz = (window.formatSize ? window.formatSize(x.size) : x.size) + (g ? ' · ' + g : '');
