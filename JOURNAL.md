@@ -296,3 +296,15 @@ script « Version blanche en essai » dans index.html.
 - FAIT (Tom, 2026-11-10, pas encore en ligne) : fiche mobile, toucher une photo ouvre une visionneuse plein écran (fond sombre, photo bord à bord, bouton ✕, points en bas), zoom libre au pincement, passage à la photo suivante en glissant. Modèle : appli Drouot (captures du 10/11). Remplace la règle « pas de lightbox au tap sur mobile » (index.html, ~l. 8233).
 - Menu « Auteurs » : ne crée plus de fausse étape /undefined dans l'historique (le retour depuis les Auteurs ramenait à l'accueil) (Tom).
 - Jupe Y's laine AH 2021 (66666827) : 4e photo (jupe entière) en photo 1, détourée ; ancienne photo 1 en 4e (Tom). IMG_V passe à 4.
+
+## 2026-11-12 — Livraison automatique (à faire quand Tom aura son compte Boxtal)
+
+Décisions de Tom :
+- Service : **Boxtal** (sans abonnement, carte des points relais + API v3 : commande d'envoi, étiquette et suivi automatiques après paiement Stripe ; prélèvement sur le compte Boxtal).
+- Prix client **inchangés** : France 15 €, Europe 25 €, monde 55 € (marge pour Tom sur le coût réel). Relais et domicile au même prix en France (à confirmer).
+- Poids déclarés automatiques, deux paliers seulement :
+  - **petite pièce : 499 g** (t-shirts, chemises, pantalons, jupes, robes, pulls légers, accessoires, foulards) ;
+  - **grosse pièce : 999 g** (manteaux, vestes épaisses, chaussures, sacs).
+  - Plusieurs pièces : somme des poids (prévenu du risque de refacturation si le poids réel dépasse).
+- Aucun nom de transporteur dans les textes du site (« Point relais », « Domicile »).
+- Bordereau envoyé par e-mail à Tom, suivi envoyé au client.
