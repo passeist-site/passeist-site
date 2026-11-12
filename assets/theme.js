@@ -137,7 +137,7 @@
     /* Téléphone : la photo 2 des cartes, préchargée, apparaissait sous la photo 1 (fond assombri)
        ou débordait de la carte : Safari iOS ne rognait pas toujours la photo décalée hors du cadre.
        Elle reste masquée tant qu'on n'a pas glissé, et le cadre rogne par clip-path (Tom, 2026-11-10). */
-    '@media (hover:none){.product-img{clip-path:inset(0);isolation:isolate}.product-img:not(.show-2):not(.dragging) .product-img-secondary{visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s linear .42s}.product-img.show-2 .product-img-secondary,.product-img.dragging .product-img-secondary{visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}}' +
+    '@media (hover:none){.product-img{clip-path:inset(0 round 6px);isolation:isolate}.product-img .pz{border-radius:6px;clip-path:inset(0 round 6px)}.product-img:not(.show-2):not(.dragging) .product-img-secondary{visibility:hidden;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s linear .42s}.product-img.show-2 .product-img-secondary,.product-img.dragging .product-img-secondary{visibility:visible;transition:transform .42s cubic-bezier(.22,1,.36,1),visibility 0s}}' +
     /* Barre de filtres (téléphone) : même espace au-dessus (sous le bandeau) qu'entre elle et « Créer votre alerte » (Tom) */
     '@media (max-width:900px){.filter-bar{padding-top:14px!important;padding-bottom:8px!important;margin-bottom:0!important}.alert-cta{margin-top:0!important}}' +
     /* Page affichée d'un bloc (Tom, 2026-11-10 : « je vois plein de trucs arriver au fur et à

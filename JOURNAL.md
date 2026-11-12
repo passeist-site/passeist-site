@@ -301,7 +301,7 @@ script « Version blanche en essai » dans index.html.
 
 Décisions de Tom :
 - Service : **Boxtal** (sans abonnement, carte des points relais + API v3 : commande d'envoi, étiquette et suivi automatiques après paiement Stripe ; prélèvement sur le compte Boxtal).
-- Prix client **inchangés** : France 15 €, Europe 25 €, monde 55 € (marge pour Tom sur le coût réel). France : point relais 14 €, domicile 16 € (Tom, 2026-11-12) ; 15 € inchangé tant que Boxtal n'est pas branché. CGV à mettre à jour à l'activation.
+- Prix client **inchangés** : France 15 €, Europe 25 €, monde 55 € (marge pour Tom sur le coût réel). France : point relais et domicile au même prix, 15 € (Tom, 2026-11-12, après un essai à 14 € / 16 €).
 - Poids déclarés automatiques, deux paliers seulement :
   - **petite pièce : 499 g** (t-shirts, chemises, pantalons, jupes, robes, pulls légers, accessoires, foulards) ;
   - **grosse pièce : 999 g** (manteaux, vestes épaisses, chaussures, sacs).
