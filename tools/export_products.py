@@ -65,6 +65,22 @@ for p in products:
     if season: lookup[str(pid)]['season'] = season
     if year: lookup[str(pid)]['year'] = year
 
+# Date de mise en ligne de chaque pièce (étiquette « nouveau » 7 jours, Tom 2026-11-12) :
+# data/first-seen.json garde la première date où l'identifiant est apparu ; les nouvelles
+# pièces reçoivent la date du jour (UTC). Jamais réécrit pour une pièce déjà connue.
+import datetime
+FS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'first-seen.json')
+try: seen = json.load(open(FS))
+except Exception: seen = {}
+today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+added = 0
+for p in products:
+    pid = str(p.get('id') or '')
+    if pid and pid not in seen: seen[pid] = today; added += 1
+os.makedirs(os.path.dirname(FS), exist_ok=True)
+with open(FS, 'w') as f: json.dump(dict(sorted(seen.items())), f, separators=(',', ':'))
+if added: print(f'first-seen : {added} nouvelle(s) pièce(s) datée(s) {today}')
+
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
     json.dump(lookup, f, ensure_ascii=False, separators=(',', ':'))

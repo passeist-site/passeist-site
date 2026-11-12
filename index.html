@@ -3958,6 +3958,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   <div class="hero-content">
     <h1 class="hero-logo">passéist<span class="dot">.</span></h1>
     <p class="hero-tagline"><em>mode d'auteur</em> japonaise</p>
+    <!-- Compteur : pièces en vente · auteurs (Tom, 2026-11-12) ; hauteur réservée, rempli au chargement -->
+    <p class="hero-count" id="hero-count" aria-live="off">&nbsp;</p>
     <button class="hero-cta" onclick="goPage('shop')"><span>Explorer</span><span class="arrow-symbol">→</span></button>
   </div>
   <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
@@ -7627,6 +7629,7 @@ function renderGrid() {
 
       <div class="product-img loading">
         ${sold ? `<span class="sold-stamp">${(window.t ? window.t('vendu.badge') : 'VENDU')}</span>` : ''}
+        ${!sold && window.isNewPiece && window.isNewPiece(p) ? `<span class="new-stamp">${window.__lang === 'en' ? 'NEW' : 'NOUVEAU'}</span>` : ''}
         <img class="product-img-primary" src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="(max-width: 900px) 50vw, 25vw" alt="${p.brand} ${p.type}" loading="lazy" decoding="async" width="800" height="800" onload="this.classList.add('loaded');this.parentElement.classList.remove('loading')" onerror="this.onerror=null;this.src=PLACEHOLDER_IMG;this.classList.add('loaded');this.parentElement.classList.remove('loading')">
         ${''/* Deuxième vue au glissé (téléphone) : la photo 1 elle-même, zoomée ×2,2 sur le centre de la
              pièce (Tom, 2026-11-11). Même fichier que la photo 1 : déjà chargé, même fond. Pas de petits
@@ -7877,6 +7880,23 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     ids.unshift(id);
     try { localStorage.setItem(KEY, JSON.stringify(ids.slice(0, 12))); } catch (e) {}
   };
+  // Étiquette « nouveau » : pièce mise en ligne il y a moins de 7 jours (date p.added, data/first-seen.json)
+  window.isNewPiece = function (p) {
+    if (!p || !p.added) return false;
+    const t = Date.parse(p.added + 'T00:00:00Z');
+    return isFinite(t) && Date.now() - t < 7 * 86400000;
+  };
+  // Compteur sous le slogan : pièces en vente · auteurs
+  window.renderHeroCount = function () {
+    const el = document.getElementById('hero-count');
+    if (!el || typeof PRODUCTS === 'undefined') return;
+    const live = PRODUCTS.filter(p => !isSold(p));
+    const brands = new Set(live.map(p => String(p.brand || '').trim().toUpperCase()).filter(b => b && !/^(DIVERS|TODO)$/.test(b)));
+    const en = window.__lang === 'en';
+    el.textContent = en ? `${live.length} pieces · ${brands.size} designers` : `${live.length} pièces · ${brands.size} auteurs`;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => window.renderHeroCount()); else setTimeout(() => window.renderHeroCount(), 0);
+
   // Nouveautés de l'accueil : les 12 dernières pièces en vente (identifiant le plus récent d'abord)
   window.renderArrivals = function () {
     const track = document.getElementById('ha-track');

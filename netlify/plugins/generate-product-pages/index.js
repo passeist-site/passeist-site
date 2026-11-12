@@ -1095,6 +1095,11 @@ module.exports = {
     let products;
     try { products = JSON.parse('[' + prodMatch[1] + ']'); }
     catch (e) { return utils.build.failBuild('PRODUCTS parse error: ' + e.message); }
+    // Date de mise en ligne (data/first-seen.json) → p.added, pour l'étiquette « nouveau » (7 jours)
+    try {
+      const seen = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'first-seen.json'), 'utf8'));
+      products.forEach(p => { if (seen[p.id]) p.added = seen[p.id]; });
+    } catch (e) { console.log('[generate-product-pages] first-seen.json absent : pas d\'étiquette « nouveau »'); }
 
     // ── Extract SOLD_IDS ──────────────────────────────────────────────
     const soldMatch = baseHtml.match(/const SOLD_IDS = new Set\(\[([\s\S]*?)\]\)/);

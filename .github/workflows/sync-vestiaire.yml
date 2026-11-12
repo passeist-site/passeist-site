@@ -235,6 +235,7 @@ jobs:
           git config user.email "bot@passeist.com"
           # Toujours add index.html + products.json (présents)
           git add --sparse index.html netlify/functions/products.json
+          [ -f data/first-seen.json ] && git add --sparse data/first-seen.json || true
           # img/ seulement s'il existe et contient des fichiers (imports faits)
           if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then
             git add --sparse img/
