@@ -7918,7 +7918,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     if (!mobile) return;
     const belt = track.firstElementChild;
     let off = 0, last = 0, half = 0, touchX = null, startOff = 0, vel = 0, lastX = 0, lastT = 0;
-    const SPEED = -22; // px/s, un peu plus lent que le carrousel du haut
+    const SPEED = 0; // immobile : on fait défiler au doigt, seul le carrousel du haut bouge seul (Tom, 2026-11-13)
     const step = (t) => {
       if (!half) half = belt.scrollWidth / 2;
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t;
