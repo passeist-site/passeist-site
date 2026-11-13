@@ -73,6 +73,11 @@ FS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'fir
 try: seen = json.load(open(FS))
 except Exception: seen = {}
 today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+# Registre absent ou vide (ex. checkout partiel de la synchro) : ne jamais dater tout le
+# catalogue du jour, sinon tout passe « nouveau ». On date tout en ancien.
+if len(seen) < 50:
+    print('first-seen : registre absent ou vide, toutes les pièces datées 2026-01-01')
+    today = '2026-01-01'
 added = 0
 for p in products:
     pid = str(p.get('id') or '')

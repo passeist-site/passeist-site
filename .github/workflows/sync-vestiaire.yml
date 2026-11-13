@@ -47,6 +47,7 @@ jobs:
             .github/
             netlify/
             index.html
+            data/first-seen.json
             requirements.txt
             JOURNAL.md
             RULES.md
