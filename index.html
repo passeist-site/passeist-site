@@ -10574,13 +10574,17 @@ window.updateSEO = function(p) {
       updateSEO(prod);
     } else {
       const detail = document.getElementById('detail');
-      if (detail && detail.classList.contains('open') && _cd) _cd.call(window);
+      const wasDetail = !!(detail && detail.classList.contains('open'));
+      if (wasDetail && _cd) _cd.call(window);
       document.body.classList.remove('detail-open');
       // Page courante = pathname (URL propre) avec fallback hash legacy
       const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
       const legacyHash = location.hash.replace(/^#/, '').split('/')[0];
       const p = (s && s.p) || (path && !path.startsWith('product/') ? path.split('/')[0] : null) || legacyHash || 'home';
       const changed = document.body.dataset.page !== p;
+      // Retour d'une fiche vers la page déjà affichée dessous : on ne reconstruit pas
+      // la grille (les photos se rechargeaient, flash sur Vendu, Tom 2026-11-13)
+      if (wasDetail && !changed && p !== 'favorites' && document.querySelector('#grid .product-card')) { updateSEO(null); if (s && s.scrollToId) scrollToShopCard(s.scrollToId); return; }
       _gp.call(window, p);
       if (changed) pageEnter(p);
       document.body.dataset.page = p;
