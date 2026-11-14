@@ -16,7 +16,7 @@
     "fr": [
       {
         "label": "Pour l’hiver",
-        "text": "Une doudoune Y’s for men et une veste matelassée 45RPM"
+        "text": "Une doudoune Y’s for men, une veste 45RPM et quatre pulls : Missoni, Issey Miyake, Junko Koshino"
       },
       {
         "label": "La jupe",
@@ -27,14 +27,14 @@
         "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
       },
       {
-        "label": "La maille",
-        "text": "Issey Miyake, Missoni, Junko Koshino, et le pied-de-poule de Yohji Yamamoto, hiver 2003"
+        "label": "Le pied-de-poule",
+        "text": "Yohji Yamamoto, hiver 2003 : deux bonnets et une écharpe"
       }
     ],
     "en": [
       {
         "label": "For winter",
-        "text": "A Y’s for men down jacket and a 45RPM quilted jacket"
+        "text": "A Y’s for men down jacket, a 45RPM jacket and four jumpers: Missoni, Issey Miyake, Junko Koshino"
       },
       {
         "label": "The skirt",
@@ -45,8 +45,8 @@
         "text": "Issey Miyake Men, a leather trouser, winter 1998"
       },
       {
-        "label": "Knitwear",
-        "text": "Issey Miyake, Missoni, Junko Koshino, and Yohji Yamamoto’s houndstooth, winter 2003"
+        "label": "Houndstooth",
+        "text": "Yohji Yamamoto, winter 2003: two beanies and a scarf"
       }
     ]
   },
@@ -123,6 +123,34 @@
           "name": {
             "fr": "Veste matelassée à capuche",
             "en": "Hooded quilted jacket"
+          }
+        },
+        {
+          "id": "73734541",
+          "name": {
+            "fr": "Pull hexagones en mohair",
+            "en": "Hexagon mohair jumper"
+          }
+        },
+        {
+          "id": "73734574",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734884",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734801",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
           }
         }
       ]
@@ -210,46 +238,9 @@
     },
     {
       "title": {
-        "fr": "La maille",
-        "en": "Knitwear"
+        "fr": "Le pied-de-poule",
+        "en": "Houndstooth"
       },
-      "items": [
-        {
-          "id": "73734541",
-          "name": {
-            "fr": "Pull hexagones en mohair",
-            "en": "Hexagon mohair jumper"
-          }
-        },
-        {
-          "id": "73734574",
-          "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
-          }
-        },
-        {
-          "id": "73734884",
-          "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
-          }
-        },
-        {
-          "id": "73734801",
-          "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
-          }
-        }
-      ]
-    },
-    {
-      "title": {
-        "fr": "",
-        "en": ""
-      },
-      "suite": true,
       "items": [
         {
           "id": "73734748",
