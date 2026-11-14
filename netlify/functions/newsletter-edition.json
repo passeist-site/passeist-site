@@ -15,12 +15,12 @@
   "introList": {
     "fr": [
       {
-        "label": "La jupe",
-        "text": "Yohji Yamamoto avec l’illustrateur Yasuto Sasada, hiver 2014"
-      },
-      {
         "label": "Pièce de défilé",
         "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
+      },
+      {
+        "label": "La jupe",
+        "text": "Yohji Yamamoto avec l’illustrateur Yasuto Sasada, hiver 2014"
       },
       {
         "label": "Le pied-de-poule",
@@ -29,12 +29,12 @@
     ],
     "en": [
       {
-        "label": "The skirt",
-        "text": "Yohji Yamamoto with illustrator Yasuto Sasada, winter 2014"
-      },
-      {
         "label": "Runway piece",
         "text": "Issey Miyake Men, a leather trouser, winter 1998"
+      },
+      {
+        "label": "The skirt",
+        "text": "Yohji Yamamoto with illustrator Yasuto Sasada, winter 2014"
       },
       {
         "label": "Houndstooth",
@@ -149,6 +149,46 @@
     },
     {
       "title": {
+        "fr": "Pièce de défilé",
+        "en": "Runway piece"
+      },
+      "hero": true,
+      "items": [
+        {
+          "id": "73735043",
+          "name": {
+            "fr": "Pantalon en cuir jaune paille",
+            "en": "Straw-yellow leather trouser"
+          }
+        }
+      ],
+      "photos": [
+        {
+          "img": "nl-73735043-defile-1.webp",
+          "alt": {
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
+          }
+        },
+        {
+          "img": "nl-73735043-defile-2.webp",
+          "alt": {
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Sur le défilé Issey Miyake Men, hiver 1998",
+        "en": "On the Issey Miyake Men runway, winter 1998"
+      },
+      "text": {
+        "fr": "Un pantalon en cuir de vache jaune paille, présenté sur le défilé avec la veste assortie. Le cuir a pris une belle patine, les chevilles se resserrent par des cordons.\nTaille indiquée L pour la longueur ; la taille est ajustée (41 cm), plutôt un S/M.",
+        "en": "A straw-yellow cowhide leather trouser, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, and the ankles tighten with drawcords.\nLabelled L for the length; the waist is fitted (41 cm), more of an S/M."
+      }
+    },
+    {
+      "title": {
         "fr": "La jupe",
         "en": "The skirt"
       },
@@ -186,46 +226,6 @@
       "caption": {
         "fr": "À gauche le dessin sur la jupe, à droite le look du défilé hiver 2014 qu’il reprend",
         "en": "Left, the drawing on the skirt; right, the winter 2014 runway look it reproduces"
-      }
-    },
-    {
-      "title": {
-        "fr": "Pièce de défilé",
-        "en": "Runway piece"
-      },
-      "hero": true,
-      "items": [
-        {
-          "id": "73735043",
-          "name": {
-            "fr": "Pantalon en cuir jaune paille",
-            "en": "Straw-yellow leather trouser"
-          }
-        }
-      ],
-      "photos": [
-        {
-          "img": "nl-73735043-defile-1.webp",
-          "alt": {
-            "fr": "Le pantalon sur le défilé Issey Miyake Men",
-            "en": "The trouser on the Issey Miyake Men runway"
-          }
-        },
-        {
-          "img": "nl-73735043-defile-2.webp",
-          "alt": {
-            "fr": "Le pantalon sur le défilé Issey Miyake Men",
-            "en": "The trouser on the Issey Miyake Men runway"
-          }
-        }
-      ],
-      "caption": {
-        "fr": "Sur le défilé Issey Miyake Men, hiver 1998",
-        "en": "On the Issey Miyake Men runway, winter 1998"
-      },
-      "text": {
-        "fr": "Un pantalon en cuir de vache jaune paille, présenté sur le défilé avec la veste assortie. Le cuir a pris une belle patine, les chevilles se resserrent par des cordons.\nTaille indiquée L pour la longueur ; la taille est ajustée (41 cm), plutôt un S/M.",
-        "en": "A straw-yellow cowhide leather trouser, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, and the ankles tighten with drawcords.\nLabelled L for the length; the waist is fitted (41 cm), more of an S/M."
       }
     },
     {
