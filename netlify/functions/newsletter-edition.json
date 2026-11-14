@@ -104,14 +104,6 @@
       },
       "items": [
         {
-          "id": "73734677",
-          "name": {
-            "fr": "Doudoune grise et orange",
-            "en": "Grey and orange down jacket"
-          },
-          "big": true
-        },
-        {
           "id": "73734541",
           "name": {
             "fr": "Pull hexagones en mohair",
@@ -124,6 +116,14 @@
             "fr": "Pull en laine",
             "en": "Wool jumper"
           }
+        },
+        {
+          "id": "73734677",
+          "name": {
+            "fr": "Doudoune grise et orange",
+            "en": "Grey and orange down jacket"
+          },
+          "big": true
         },
         {
           "id": "73734884",
