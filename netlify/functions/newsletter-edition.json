@@ -9,11 +9,15 @@
     "en": "An Issey Miyake leather trouser from the winter 1998 runway, a skirt drawn by Yasuto Sasada and Yohji Yamamoto’s houndstooth"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose trois mises en avant :",
-    "en": "This week, passéist presents three highlights:"
+    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
+    "en": "This week, passéist presents four highlights:"
   },
   "introList": {
     "fr": [
+      {
+        "label": "Pour l’hiver",
+        "text": "Une doudoune Y’s for men et quatre pulls : Missoni, Issey Miyake, Junko Koshino"
+      },
       {
         "label": "Pièce de défilé",
         "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
@@ -28,6 +32,10 @@
       }
     ],
     "en": [
+      {
+        "label": "For winter",
+        "text": "A Y’s for men down jacket and four jumpers: Missoni, Issey Miyake, Junko Koshino"
+      },
       {
         "label": "Runway piece",
         "text": "Issey Miyake Men, a leather trouser, winter 1998"
@@ -99,8 +107,8 @@
   "sections": [
     {
       "title": {
-        "fr": "",
-        "en": ""
+        "fr": "Pour l’hiver",
+        "en": "For winter"
       },
       "items": [
         {
