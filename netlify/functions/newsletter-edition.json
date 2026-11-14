@@ -16,7 +16,7 @@
     "fr": [
       {
         "label": "Pour l’hiver",
-        "text": "Une doudoune Y’s for men, un manteau tartan 45RPM, deux vestes"
+        "text": "Une doudoune Y’s for men et une veste matelassée 45RPM"
       },
       {
         "label": "Les jupes",
@@ -38,7 +38,7 @@
     "en": [
       {
         "label": "For winter",
-        "text": "A Y’s for men down jacket, a 45RPM tartan coat, two jackets"
+        "text": "A Y’s for men down jacket and a 45RPM quilted jacket"
       },
       {
         "label": "Skirts",
@@ -78,12 +78,12 @@
         "link": "73734677"
       },
       {
-        "img": "73734969-0-md.webp",
+        "img": "73734637-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73734969"
+        "link": "73734637"
       },
       {
         "img": "73735117-0-md.webp",
@@ -129,22 +129,8 @@
         {
           "id": "73734637",
           "name": {
-            "fr": "Veste",
-            "en": "Jacket"
-          }
-        },
-        {
-          "id": "73734969",
-          "name": {
-            "fr": "Manteau tartan à brandebourgs",
-            "en": "Tartan toggle coat"
-          }
-        },
-        {
-          "id": "73735002",
-          "name": {
-            "fr": "Veste rayée coton et lin",
-            "en": "Striped cotton-linen jacket"
+            "fr": "Veste matelassée à capuche",
+            "en": "Hooded quilted jacket"
           }
         }
       ]
