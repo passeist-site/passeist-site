@@ -1,52 +1,60 @@
 {
-  "date": "2026-11-08",
+  "date": "2026-11-15",
   "subject": {
-    "fr": "Nouveautés : Yohji Yamamoto, Issey Miyake, Monitaly, Mihara Yasuhiro, Yoshiki Hishinuma",
-    "en": "New in: Yohji Yamamoto, Issey Miyake, Monitaly, Mihara Yasuhiro, Yoshiki Hishinuma"
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni"
   },
   "preheader": {
-    "fr": "Une doudoune Issey Miyake de défilé, un vestiaire noir, et l’arrivée de Monitaly",
-    "en": "An Issey Miyake runway down jacket, a black wardrobe, and the arrival of Monitaly"
+    "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, des manteaux, de la maille et des bottes",
+    "en": "An Issey Miyake leather trouser from the winter 1998 runway, coats, knitwear and boots"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
-    "en": "This week, passéist presents four highlights:"
+    "fr": "Cette semaine, passéist vous propose cinq mises en avant :",
+    "en": "This week, passéist presents five highlights:"
   },
   "introList": {
     "fr": [
       {
-        "label": "Vestiaire noir",
-        "text": "Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro"
+        "label": "Pour l’hiver",
+        "text": "Une doudoune Y’s for men, un manteau tartan 45RPM, deux vestes"
+      },
+      {
+        "label": "Les jupes",
+        "text": "Yohji Yamamoto avec Yasuto Sasada, Comme des Garçons"
       },
       {
         "label": "Pièce de défilé",
-        "text": "Issey Miyake Men, une doudoune sans manches, automne-hiver 2011"
+        "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
       },
       {
-        "label": "Nouvel auteur",
-        "text": "Monitaly, le vestiaire militaire américain vu par un designer japonais"
+        "label": "La maille",
+        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
       },
       {
         "label": "Les accessoires",
-        "text": "Casquette, bonnet, écharpes et chaussettes"
+        "text": "Bottes, sac, bonnets et bob"
       }
     ],
     "en": [
       {
-        "label": "Black wardrobe",
-        "text": "Yohji Yamamoto, Yoshiki Hishinuma, Mihara Yasuhiro"
+        "label": "For winter",
+        "text": "A Y’s for men down jacket, a 45RPM tartan coat, two jackets"
+      },
+      {
+        "label": "Skirts",
+        "text": "Yohji Yamamoto with Yasuto Sasada, Comme des Garçons"
       },
       {
         "label": "Runway piece",
-        "text": "Issey Miyake Men, a sleeveless down jacket, autumn-winter 2011"
+        "text": "Issey Miyake Men, a leather trouser, winter 1998"
       },
       {
-        "label": "New designer",
-        "text": "Monitaly, the American military wardrobe seen by a Japanese designer"
+        "label": "Knitwear",
+        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
       },
       {
         "label": "Accessories",
-        "text": "Cap, beanie, scarves and socks"
+        "text": "Boots, bag, beanies and bucket hat"
       }
     ]
   },
@@ -54,152 +62,120 @@
     "cols": 6,
     "photos": [
       {
-        "img": "73331676-0-md.webp",
+        "img": "73735043-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73331676"
+        "link": "73735043"
       },
       {
-        "img": "73093011-0-md.webp",
+        "img": "73734677-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73093011"
+        "link": "73734677"
       },
       {
-        "img": "73092278-0-md.webp",
+        "img": "73734969-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73092278"
+        "link": "73734969"
       },
       {
-        "img": "73092364-0-md.webp",
+        "img": "73735117-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73092364"
+        "link": "73735117"
       },
       {
-        "img": "73341941-0-md.webp",
+        "img": "73734541-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73341941"
+        "link": "73734541"
       },
       {
-        "img": "73332578-0-md.webp",
+        "img": "73734504-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73332578"
-      },
-      {
-        "img": "73404845-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73404845"
-      },
-      {
-        "img": "73092398-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73092398"
-      },
-      {
-        "img": "73342020-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73342020"
-      },
-      {
-        "img": "73317897-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73317897"
-      },
-      {
-        "img": "73079596-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73079596"
-      },
-      {
-        "img": "73404876-0-md.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73404876"
+        "link": "73734504"
       }
     ]
   },
+  "numbered": true,
   "sections": [
     {
       "title": {
-        "fr": "Vestiaire noir",
-        "en": "Black wardrobe"
+        "fr": "Pour l’hiver",
+        "en": "For winter"
       },
       "items": [
         {
-          "id": "73331676",
+          "id": "73734677",
           "name": {
-            "fr": "Veste courte à brandebourgs",
-            "en": "Short toggle jacket"
+            "fr": "Doudoune grise et orange",
+            "en": "Grey and orange down jacket"
           },
           "big": true
         },
         {
-          "id": "73341941",
+          "id": "73734969",
           "name": {
-            "fr": "Jupe peplum à rubans",
-            "en": "Ribboned peplum skirt"
+            "fr": "Manteau tartan à brandebourgs",
+            "en": "Tartan toggle coat"
           }
         },
         {
-          "id": "73342020",
+          "id": "73735002",
           "name": {
-            "fr": "Robe à bretelles",
-            "en": "Strappy dress"
+            "fr": "Veste rayée coton et lin",
+            "en": "Striped cotton-linen jacket"
           }
         },
         {
-          "id": "73404876",
+          "id": "73734637",
           "name": {
-            "fr": "Pull à nœud tressé",
-            "en": "Braided knot jumper"
+            "fr": "Veste",
+            "en": "Jacket"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Les jupes",
+        "en": "Skirts"
+      },
+      "items": [
+        {
+          "id": "73735117",
+          "name": {
+            "fr": "Jupe dessinée par Yasuto Sasada",
+            "en": "Skirt drawn by Yasuto Sasada"
           },
           "big": true
         },
         {
-          "id": "73404845",
+          "id": "73734344",
           "name": {
-            "fr": "Pull à mini col plié",
-            "en": "Folded mini-collar jumper"
+            "fr": "Jupe pailletée bleue",
+            "en": "Blue glitter skirt"
           }
         },
         {
-          "id": "73092278",
+          "id": "73734832",
           "name": {
-            "fr": "Chemise Ground Y",
-            "en": "Ground Y shirt"
+            "fr": "Top",
+            "en": "Top"
           }
         }
       ]
@@ -212,94 +188,81 @@
       "hero": true,
       "items": [
         {
-          "id": "73092364",
+          "id": "73735043",
           "name": {
-            "fr": "Doudoune sans manches",
-            "en": "Sleeveless down jacket"
+            "fr": "Pantalon en cuir jaune paille",
+            "en": "Straw-yellow leather trouser"
           }
         }
       ],
-      "text": {
-        "fr": "Sortie tout droit du défilé automne-hiver 2011, cette doudoune Issey Miyake Men mêle carreaux et pied-de-poule dans un imprimé qui semble peint à la main. Une capuche enveloppante, un volume généreux : une pièce de caractère, à porter sur une grosse maille.\nJamais portée. Taille 3, convient à un M.",
-        "en": "Straight off the autumn-winter 2011 runway, this Issey Miyake Men down jacket blends checks and houndstooth in a print that looks hand-painted. An enveloping hood, a generous volume: a piece with character, to wear over a chunky knit.\nNever worn. Size 3, fits an M."
-      },
-      "details": [
+      "photos": [
         {
-          "img": "nl-73092364-1.jpg",
+          "img": "nl-73735043-defile-1.webp",
           "alt": {
-            "fr": "La doudoune, capuche",
-            "en": "The down jacket, hood"
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
           }
         },
         {
-          "img": "nl-issey-aw11-1.jpg",
+          "img": "nl-73735043-defile-2.webp",
           "alt": {
-            "fr": "Défilé Issey Miyake Men, automne-hiver 2011",
-            "en": "Issey Miyake Men show, autumn-winter 2011"
-          }
-        },
-        {
-          "img": "nl-73092364-13.jpg",
-          "alt": {
-            "fr": "La doudoune, côté kaki",
-            "en": "The down jacket, khaki side"
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
           }
         }
       ],
       "caption": {
-        "fr": "Défilé Issey Miyake Men, automne-hiver 2011.",
-        "en": "Issey Miyake Men show, autumn-winter 2011."
-      }
-    },
-    {
-      "title": {
-        "fr": "Nouvel auteur : Monitaly",
-        "en": "New designer: Monitaly"
+        "fr": "Sur le défilé Issey Miyake Men, hiver 1998",
+        "en": "On the Issey Miyake Men runway, winter 1998"
       },
-      "hero": true,
-      "items": [
-        {
-          "id": "73093011",
-          "name": {
-            "fr": "Veste club en nylon moiré",
-            "en": "Moiré nylon club jacket"
-          }
-        }
-      ],
       "text": {
-        "fr": "Fondée en 1989 par Yuki Matsuda, Monitaly pose un regard japonais sur le vestiaire militaire américain : des pièces fabriquées aux États-Unis, dans des tissus exclusifs, avec un soin du détail extrême.",
-        "en": "Founded in 1989 by Yuki Matsuda, Monitaly takes a Japanese look at the American military wardrobe: pieces made in the USA, in exclusive fabrics, with extreme attention to detail."
+        "fr": "Un pantalon en cuir de vache jaune paille, présenté sur le défilé avec la veste assortie. Le cuir a pris une belle patine, les chevilles se resserrent par des cordons.\nTaille indiquée L pour la longueur ; la taille est ajustée (41 cm), plutôt un S/M.",
+        "en": "A straw-yellow cowhide leather trouser, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, and the ankles tighten with drawcords.\nLabelled L for the length; the waist is fitted (41 cm), more of an S/M."
       }
     },
     {
       "title": {
-        "fr": "",
-        "en": ""
+        "fr": "La maille",
+        "en": "Knitwear"
       },
       "items": [
         {
-          "id": "73092398",
+          "id": "73734541",
           "name": {
-            "fr": "Hoodie jacquard ikat",
-            "en": "Ikat jacquard hoodie"
+            "fr": "Pull hexagones en mohair",
+            "en": "Hexagon mohair jumper"
+          },
+          "big": true
+        },
+        {
+          "id": "73734884",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
           }
         },
         {
-          "id": "73332578",
+          "id": "73734574",
           "name": {
-            "fr": "Hoodie teddy en laine",
-            "en": "Wool teddy hoodie"
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734801",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734206",
+          "name": {
+            "fr": "Cardigan",
+            "en": "Cardigan"
           }
         }
-      ],
-      "suite": true,
-      "more": {
-        "label": {
-          "fr": "Voir les pièces Monitaly",
-          "en": "See the Monitaly pieces"
-        },
-        "href": "/shop?brand=MONITALY"
-      }
+      ]
     },
     {
       "title": {
@@ -308,51 +271,42 @@
       },
       "items": [
         {
-          "id": "73079596",
+          "id": "73734504",
           "name": {
-            "fr": "Écharpe ajourée",
-            "en": "Openwork scarf"
+            "fr": "Rangers en daim noir",
+            "en": "Black suede combat boots"
           },
           "big": true
         },
         {
-          "id": "73317897",
+          "id": "73733976",
           "name": {
-            "fr": "Casquette Y-3",
-            "en": "Y-3 cap"
+            "fr": "Sac mallette à poignée en étain",
+            "en": "Briefcase bag with pewter handle"
           }
         },
         {
-          "id": "73079487",
+          "id": "73734748",
           "name": {
-            "fr": "Bonnet slouchy noir",
-            "en": "Black slouchy beanie"
+            "fr": "Bonnet",
+            "en": "Beanie"
           }
         },
         {
-          "id": "72536669",
+          "id": "73734426",
           "name": {
-            "fr": "Écharpe ajourée marine",
-            "en": "Navy openwork scarf"
-          },
-          "big": true
-        },
-        {
-          "id": "73331444",
-          "name": {
-            "fr": "Chaussettes marine",
-            "en": "Navy socks"
+            "fr": "Bob",
+            "en": "Bucket hat"
           }
         },
         {
-          "id": "73331372",
+          "id": "73734776",
           "name": {
-            "fr": "Chaussettes grises",
-            "en": "Grey socks"
+            "fr": "Écharpe en laine",
+            "en": "Wool scarf"
           }
         }
       ]
     }
-  ],
-  "numbered": true
+  ]
 }

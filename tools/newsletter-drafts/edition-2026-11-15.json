@@ -1,0 +1,312 @@
+{
+  "date": "2026-11-15",
+  "subject": {
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni"
+  },
+  "preheader": {
+    "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, des manteaux, de la maille et des bottes",
+    "en": "An Issey Miyake leather trouser from the winter 1998 runway, coats, knitwear and boots"
+  },
+  "intro": {
+    "fr": "Cette semaine, passéist vous propose cinq mises en avant :",
+    "en": "This week, passéist presents five highlights:"
+  },
+  "introList": {
+    "fr": [
+      {
+        "label": "Pour l’hiver",
+        "text": "Une doudoune Y’s for men, un manteau tartan 45RPM, deux vestes"
+      },
+      {
+        "label": "Les jupes",
+        "text": "Yohji Yamamoto avec Yasuto Sasada, Comme des Garçons"
+      },
+      {
+        "label": "Pièce de défilé",
+        "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
+      },
+      {
+        "label": "La maille",
+        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
+      },
+      {
+        "label": "Les accessoires",
+        "text": "Bottes, sac, bonnets et bob"
+      }
+    ],
+    "en": [
+      {
+        "label": "For winter",
+        "text": "A Y’s for men down jacket, a 45RPM tartan coat, two jackets"
+      },
+      {
+        "label": "Skirts",
+        "text": "Yohji Yamamoto with Yasuto Sasada, Comme des Garçons"
+      },
+      {
+        "label": "Runway piece",
+        "text": "Issey Miyake Men, a leather trouser, winter 1998"
+      },
+      {
+        "label": "Knitwear",
+        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
+      },
+      {
+        "label": "Accessories",
+        "text": "Boots, bag, beanies and bucket hat"
+      }
+    ]
+  },
+  "cover": {
+    "cols": 6,
+    "photos": [
+      {
+        "img": "73735043-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73735043"
+      },
+      {
+        "img": "73734677-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734677"
+      },
+      {
+        "img": "73734969-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734969"
+      },
+      {
+        "img": "73735117-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73735117"
+      },
+      {
+        "img": "73734541-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734541"
+      },
+      {
+        "img": "73734504-0-md.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734504"
+      }
+    ]
+  },
+  "numbered": true,
+  "sections": [
+    {
+      "title": {
+        "fr": "Pour l’hiver",
+        "en": "For winter"
+      },
+      "items": [
+        {
+          "id": "73734677",
+          "name": {
+            "fr": "Doudoune grise et orange",
+            "en": "Grey and orange down jacket"
+          },
+          "big": true
+        },
+        {
+          "id": "73734969",
+          "name": {
+            "fr": "Manteau tartan à brandebourgs",
+            "en": "Tartan toggle coat"
+          }
+        },
+        {
+          "id": "73735002",
+          "name": {
+            "fr": "Veste rayée coton et lin",
+            "en": "Striped cotton-linen jacket"
+          }
+        },
+        {
+          "id": "73734637",
+          "name": {
+            "fr": "Veste",
+            "en": "Jacket"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Les jupes",
+        "en": "Skirts"
+      },
+      "items": [
+        {
+          "id": "73735117",
+          "name": {
+            "fr": "Jupe dessinée par Yasuto Sasada",
+            "en": "Skirt drawn by Yasuto Sasada"
+          },
+          "big": true
+        },
+        {
+          "id": "73734344",
+          "name": {
+            "fr": "Jupe pailletée bleue",
+            "en": "Blue glitter skirt"
+          }
+        },
+        {
+          "id": "73734832",
+          "name": {
+            "fr": "Top",
+            "en": "Top"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Pièce de défilé",
+        "en": "Runway piece"
+      },
+      "hero": true,
+      "items": [
+        {
+          "id": "73735043",
+          "name": {
+            "fr": "Pantalon en cuir jaune paille",
+            "en": "Straw-yellow leather trouser"
+          }
+        }
+      ],
+      "photos": [
+        {
+          "img": "nl-73735043-defile-1.webp",
+          "alt": {
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
+          }
+        },
+        {
+          "img": "nl-73735043-defile-2.webp",
+          "alt": {
+            "fr": "Le pantalon sur le défilé Issey Miyake Men",
+            "en": "The trouser on the Issey Miyake Men runway"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Sur le défilé Issey Miyake Men, hiver 1998",
+        "en": "On the Issey Miyake Men runway, winter 1998"
+      },
+      "text": {
+        "fr": "Un pantalon en cuir de vache jaune paille, présenté sur le défilé avec la veste assortie. Le cuir a pris une belle patine, les chevilles se resserrent par des cordons.\nTaille indiquée L pour la longueur ; la taille est ajustée (41 cm), plutôt un S/M.",
+        "en": "A straw-yellow cowhide leather trouser, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, and the ankles tighten with drawcords.\nLabelled L for the length; the waist is fitted (41 cm), more of an S/M."
+      }
+    },
+    {
+      "title": {
+        "fr": "La maille",
+        "en": "Knitwear"
+      },
+      "items": [
+        {
+          "id": "73734541",
+          "name": {
+            "fr": "Pull hexagones en mohair",
+            "en": "Hexagon mohair jumper"
+          },
+          "big": true
+        },
+        {
+          "id": "73734884",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734574",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734801",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734206",
+          "name": {
+            "fr": "Cardigan",
+            "en": "Cardigan"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Les accessoires",
+        "en": "Accessories"
+      },
+      "items": [
+        {
+          "id": "73734504",
+          "name": {
+            "fr": "Rangers en daim noir",
+            "en": "Black suede combat boots"
+          },
+          "big": true
+        },
+        {
+          "id": "73733976",
+          "name": {
+            "fr": "Sac mallette à poignée en étain",
+            "en": "Briefcase bag with pewter handle"
+          }
+        },
+        {
+          "id": "73734748",
+          "name": {
+            "fr": "Bonnet",
+            "en": "Beanie"
+          }
+        },
+        {
+          "id": "73734426",
+          "name": {
+            "fr": "Bob",
+            "en": "Bucket hat"
+          }
+        },
+        {
+          "id": "73734776",
+          "name": {
+            "fr": "Écharpe en laine",
+            "en": "Wool scarf"
+          }
+        }
+      ]
+    }
+  ]
+}
