@@ -124,8 +124,14 @@
           "name": {
             "fr": "Doudoune grise et orange",
             "en": "Grey and orange down jacket"
-          },
-          "big": true
+          }
+        },
+        {
+          "id": "73734637",
+          "name": {
+            "fr": "Veste",
+            "en": "Jacket"
+          }
         },
         {
           "id": "73734969",
@@ -139,13 +145,6 @@
           "name": {
             "fr": "Veste rayée coton et lin",
             "en": "Striped cotton-linen jacket"
-          }
-        },
-        {
-          "id": "73734637",
-          "name": {
-            "fr": "Veste",
-            "en": "Jacket"
           }
         }
       ]
@@ -255,8 +254,14 @@
           "name": {
             "fr": "Pull hexagones en mohair",
             "en": "Hexagon mohair jumper"
-          },
-          "big": true
+          }
+        },
+        {
+          "id": "73734574",
+          "name": {
+            "fr": "Pull en laine",
+            "en": "Wool jumper"
+          }
         },
         {
           "id": "73734884",
@@ -267,13 +272,6 @@
         },
         {
           "id": "73734801",
-          "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
-          }
-        },
-        {
-          "id": "73734574",
           "name": {
             "fr": "Pull en laine",
             "en": "Wool jumper"
