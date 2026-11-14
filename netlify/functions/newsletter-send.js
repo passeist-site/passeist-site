@@ -143,7 +143,9 @@ function editionHtml(lang, ed, total) {
     // Focus : la pièce en grand, un texte, des photos de détail puis du défilé (côte à côte,
     // menant à la pièce) et une légende
     const row = (list) => (list || []).length ? `<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>` +
-      list.map(ph => `<td width="${Math.floor(100 / list.length)}%" valign="top" align="center" style="padding:0 4px;"><a href="${track(urlOf(items[0].id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${ph.img}" width="${list.length > 2 ? 166 : list.length > 1 ? 252 : 512}" alt="${esc(L(ph.alt))}" style="display:block;width:100%;max-width:${list.length > 2 ? 166 : list.length > 1 ? 252 : 512}px;height:auto;margin:0 auto;border:0;"></a></td>`).join('') +
+      // ph.w : largeur maximale (photo de défilé de petite taille, pour qu'elle ne soit pas floue)
+      // ph.link : pièce vers laquelle mène la photo (sinon la première de la partie)
+      list.map(ph => { const pw = ph.w || (list.length > 2 ? 166 : list.length > 1 ? 252 : 512); return `<td width="${Math.floor(100 / list.length)}%" valign="top" align="center" style="padding:0 4px;"><a href="${track(urlOf(ph.link && PRODUCTS[ph.link] ? ph.link : items[0].id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${ph.img}" width="${pw}" alt="${esc(L(ph.alt))}" style="display:block;width:100%;max-width:${pw}px;height:auto;margin:0 auto;border:0;"></a></td>`; }).join('') +
       `</tr></table></td></tr>` : '';
     const focus = row(sec.details) + ((sec.details || []).length && (sec.photos || []).length ? '<tr><td style="height:8px;font-size:0;line-height:0;">&nbsp;</td></tr>' : '') +
       row(sec.photos) +
@@ -166,7 +168,11 @@ function editionHtml(lang, ed, total) {
         g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false, 'txt')}</td>`).join('') + `</tr></table></td></tr>`);
     // sec.more : lien sous la partie (ex. « Voir les 6 pièces Monitaly » vers /shop?brand=…)
     const more = (sec.more && L(sec.more.label)) ? `<tr><td align="center" style="padding:0 0 52px;"><a href="${track(SITE + (sec.more.href || '/shop'))}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${esc(L(sec.more.label))}</a></td></tr>` : '';
-    return head + rows.join('') + more;
+    // Partie ordinaire avec photos de défilé (sec.photos) : photos, légende et texte sous les pièces
+    const after = ((sec.photos || []).length || L(sec.text)) ? row(sec.photos) +
+      (L(sec.caption) ? `<tr><td align="center" style="padding:12px 16px 0;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '') +
+      (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:52px;"></td></tr>') : '';
+    return head + rows.join('') + after + more;
   }).join('');
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

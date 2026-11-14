@@ -28,11 +28,11 @@
       },
       {
         "label": "La maille",
-        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
+        "text": "Issey Miyake, Missoni, Junko Koshino, et le pied-de-poule de Yohji Yamamoto, hiver 2003"
       },
       {
         "label": "Les accessoires",
-        "text": "Bottes, sac, bonnets et bob"
+        "text": "Bottes, sac, bob et écharpe"
       }
     ],
     "en": [
@@ -50,11 +50,11 @@
       },
       {
         "label": "Knitwear",
-        "text": "Issey Miyake, Missoni, Junko Koshino, Mihara Yasuhiro"
+        "text": "Issey Miyake, Missoni, Junko Koshino, and Yohji Yamamoto’s houndstooth, winter 2003"
       },
       {
         "label": "Accessories",
-        "text": "Boots, bag, beanies and bucket hat"
+        "text": "Boots, bag, bucket hat and scarf"
       }
     ]
   },
@@ -266,6 +266,56 @@
     },
     {
       "title": {
+        "fr": "",
+        "en": ""
+      },
+      "suite": true,
+      "items": [
+        {
+          "id": "73734748",
+          "name": {
+            "fr": "Bonnet pied-de-poule",
+            "en": "Houndstooth beanie"
+          }
+        },
+        {
+          "id": "73734705",
+          "name": {
+            "fr": "Bonnet pied-de-poule en spirale",
+            "en": "Spiral houndstooth beanie"
+          }
+        },
+        {
+          "id": "66437502",
+          "name": {
+            "fr": "Grande écharpe pied-de-poule",
+            "en": "Large houndstooth scarf"
+          },
+          "big": true
+        }
+      ],
+      "photos": [
+        {
+          "img": "nl-yohji-aw2003-defile.webp",
+          "w": 240,
+          "link": "66437502",
+          "alt": {
+            "fr": "Défilé Yohji Yamamoto automne-hiver 2003",
+            "en": "Yohji Yamamoto autumn-winter 2003 runway"
+          }
+        }
+      ],
+      "caption": {
+        "fr": "Défilé Yohji Yamamoto femme, automne-hiver 2003",
+        "en": "Yohji Yamamoto women’s runway, autumn-winter 2003"
+      },
+      "text": {
+        "fr": "Le célèbre défilé automne-hiver 2003 de Yohji Yamamoto, presque entièrement en pied-de-poule. Deux bonnets en laine de la ligne principale femme, et une grande écharpe de 2,60 m.",
+        "en": "Yohji Yamamoto’s famous autumn-winter 2003 show, almost entirely in houndstooth. Two wool beanies from the women’s main line, and a large 2.60 m scarf."
+      }
+    },
+    {
+      "title": {
         "fr": "Les accessoires",
         "en": "Accessories"
       },
@@ -283,13 +333,6 @@
           "name": {
             "fr": "Sac mallette à poignée en étain",
             "en": "Briefcase bag with pewter handle"
-          }
-        },
-        {
-          "id": "73734748",
-          "name": {
-            "fr": "Bonnet",
-            "en": "Beanie"
           }
         },
         {
