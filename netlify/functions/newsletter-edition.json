@@ -5,12 +5,12 @@
     "en": "New in: Issey Miyake, Yohji Yamamoto, Missoni, Junko Koshino"
   },
   "preheader": {
-    "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une jupe dessinée par Yasuto Sasada et le pied-de-poule de Yohji Yamamoto",
-    "en": "An Issey Miyake leather trouser from the winter 1998 runway, a skirt drawn by Yasuto Sasada and Yohji Yamamoto’s houndstooth"
+    "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
+    "en": "An Issey Miyake leather trouser from the winter 1998 runway, a Y’s for men down jacket and Yohji Yamamoto’s houndstooth"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
-    "en": "This week, passéist presents four highlights:"
+    "fr": "Cette semaine, passéist vous propose trois mises en avant :",
+    "en": "This week, passéist presents three highlights:"
   },
   "introList": {
     "fr": [
@@ -21,10 +21,6 @@
       {
         "label": "Pièce de défilé",
         "text": "Issey Miyake Men, un pantalon en cuir, hiver 1998"
-      },
-      {
-        "label": "La jupe",
-        "text": "Yohji Yamamoto avec l’illustrateur Yasuto Sasada, hiver 2014"
       },
       {
         "label": "Le pied-de-poule",
@@ -39,10 +35,6 @@
       {
         "label": "Runway piece",
         "text": "Issey Miyake Men, a leather trouser, winter 1998"
-      },
-      {
-        "label": "The skirt",
-        "text": "Yohji Yamamoto with illustrator Yasuto Sasada, winter 2014"
       },
       {
         "label": "Houndstooth",
@@ -78,12 +70,12 @@
         "link": "73734884"
       },
       {
-        "img": "73735117-0-md.webp",
+        "img": "73734748-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73735117"
+        "link": "73734748"
       },
       {
         "img": "73734541-0-md.webp",
@@ -191,47 +183,6 @@
     },
     {
       "title": {
-        "fr": "La jupe",
-        "en": "The skirt"
-      },
-      "hero": true,
-      "items": [
-        {
-          "id": "73735117",
-          "name": {
-            "fr": "Jupe dessinée par Yasuto Sasada",
-            "en": "Skirt drawn by Yasuto Sasada"
-          },
-          "img": "nl-73735117-1.webp"
-        }
-      ],
-      "photos": [
-        {
-          "img": "nl-73735117-2.webp",
-          "alt": {
-            "fr": "Le dessin de Yasuto Sasada sur la jupe",
-            "en": "Yasuto Sasada’s drawing on the skirt"
-          }
-        },
-        {
-          "img": "nl-73735117-defile.webp",
-          "alt": {
-            "fr": "Le look du défilé Yohji Yamamoto hiver 2014",
-            "en": "The look from the Yohji Yamamoto winter 2014 show"
-          }
-        }
-      ],
-      "text": {
-        "fr": "Yohji Yamamoto, hiver 2014, avec l’illustrateur Yasuto Sasada. Le dessin sur la jupe reprend le look n° 9 du défilé : la jupe a été pensée après le défilé.\nCoton hickory blanc et bleu, taille haute doublée. Taille 1.",
-        "en": "Yohji Yamamoto, winter 2014, with illustrator Yasuto Sasada. The drawing on the skirt reproduces look no. 9 from the show: the skirt was designed after the show.\nWhite and blue hickory cotton, lined high waist. Size 1."
-      },
-      "caption": {
-        "fr": "À gauche le dessin sur la jupe, à droite le look du défilé hiver 2014 qu’il reprend",
-        "en": "Left, the drawing on the skirt; right, the winter 2014 runway look it reproduces"
-      }
-    },
-    {
-      "title": {
         "fr": "Le pied-de-poule",
         "en": "Houndstooth"
       },
@@ -249,14 +200,6 @@
             "fr": "Bonnet pied-de-poule en spirale",
             "en": "Spiral houndstooth beanie"
           }
-        },
-        {
-          "id": "66437502",
-          "name": {
-            "fr": "Grande écharpe pied-de-poule",
-            "en": "Large houndstooth scarf"
-          },
-          "big": true
         }
       ],
       "photos": [
@@ -273,7 +216,24 @@
       "caption": {
         "fr": "Défilé Yohji Yamamoto femme, automne-hiver 2003",
         "en": "Yohji Yamamoto women’s runway, autumn-winter 2003"
+      }
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
       },
+      "suite": true,
+      "items": [
+        {
+          "id": "66437502",
+          "name": {
+            "fr": "Grande écharpe pied-de-poule",
+            "en": "Large houndstooth scarf"
+          },
+          "big": true
+        }
+      ],
       "text": {
         "fr": "Le célèbre défilé automne-hiver 2003 de Yohji Yamamoto, presque entièrement en pied-de-poule. Deux bonnets en laine de la ligne principale femme, et une grande écharpe de 2,60 m.",
         "en": "Yohji Yamamoto’s famous autumn-winter 2003 show, almost entirely in houndstooth. Two wool beanies from the women’s main line, and a large 2.60 m scarf."
