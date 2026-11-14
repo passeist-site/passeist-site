@@ -168,16 +168,26 @@
       "photos": [
         {
           "img": "nl-73735117-2.webp",
-          "w": 512,
           "alt": {
-            "fr": "Le dessin de Yasuto Sasada",
-            "en": "Yasuto Sasada’s drawing"
+            "fr": "Le dessin de Yasuto Sasada sur la jupe",
+            "en": "Yasuto Sasada’s drawing on the skirt"
+          }
+        },
+        {
+          "img": "nl-73735117-defile.webp",
+          "alt": {
+            "fr": "Le look du défilé Yohji Yamamoto hiver 2014",
+            "en": "The look from the Yohji Yamamoto winter 2014 show"
           }
         }
       ],
       "text": {
         "fr": "Yohji Yamamoto, hiver 2014, avec l’illustrateur Yasuto Sasada. Le dessin sur la jupe reprend le look n° 9 du défilé : la jupe a été pensée après le défilé.\nCoton hickory blanc et bleu, taille haute doublée. Taille 1.",
         "en": "Yohji Yamamoto, winter 2014, with illustrator Yasuto Sasada. The drawing on the skirt reproduces look no. 9 from the show: the skirt was designed after the show.\nWhite and blue hickory cotton, lined high waist. Size 1."
+      },
+      "caption": {
+        "fr": "À gauche le dessin sur la jupe, à droite le look du défilé hiver 2014 qu’il reprend",
+        "en": "Left, the drawing on the skirt; right, the winter 2014 runway look it reproduces"
       }
     },
     {
