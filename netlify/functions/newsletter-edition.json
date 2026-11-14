@@ -155,6 +155,7 @@
         "fr": "Les jupes",
         "en": "Skirts"
       },
+      "hero": true,
       "items": [
         {
           "id": "73735117",
@@ -162,8 +163,31 @@
             "fr": "Jupe dessinée par Yasuto Sasada",
             "en": "Skirt drawn by Yasuto Sasada"
           },
-          "big": true
-        },
+          "img": "nl-73735117-1.webp"
+        }
+      ],
+      "photos": [
+        {
+          "img": "nl-73735117-2.webp",
+          "w": 512,
+          "alt": {
+            "fr": "Le dessin de Yasuto Sasada",
+            "en": "Yasuto Sasada’s drawing"
+          }
+        }
+      ],
+      "text": {
+        "fr": "Yohji Yamamoto, hiver 2014, avec l’illustrateur Yasuto Sasada. Le dessin sur la jupe reprend le look n° 9 du défilé : la jupe a été pensée après le défilé.\nCoton hickory blanc et bleu, taille haute doublée. Taille 1.",
+        "en": "Yohji Yamamoto, winter 2014, with illustrator Yasuto Sasada. The drawing on the skirt reproduces look no. 9 from the show: the skirt was designed after the show.\nWhite and blue hickory cotton, lined high waist. Size 1."
+      }
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "suite": true,
+      "items": [
         {
           "id": "73734344",
           "name": {
