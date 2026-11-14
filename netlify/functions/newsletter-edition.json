@@ -62,12 +62,12 @@
         "link": "73734677"
       },
       {
-        "img": "73734637-0-md.webp",
+        "img": "73734884-0-md.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73734637"
+        "link": "73734884"
       },
       {
         "img": "73735117-0-md.webp",
@@ -108,14 +108,8 @@
           "name": {
             "fr": "Doudoune grise et orange",
             "en": "Grey and orange down jacket"
-          }
-        },
-        {
-          "id": "73734637",
-          "name": {
-            "fr": "Veste matelassée à capuche",
-            "en": "Hooded quilted jacket"
-          }
+          },
+          "big": true
         },
         {
           "id": "73734541",
