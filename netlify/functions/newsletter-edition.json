@@ -28,7 +28,7 @@
       },
       {
         "label": "Collatio",
-        "text": "Trois pièces de la semaine"
+        "text": "45RPM, Comme des Garçons, Yohji Yamamoto"
       }
     ],
     "en": [
@@ -46,7 +46,7 @@
       },
       {
         "label": "Collatio",
-        "text": "Three pieces from this week"
+        "text": "45RPM, Comme des Garçons, Yohji Yamamoto"
       }
     ]
   },
@@ -325,11 +325,7 @@
         }
       ],
       "img": "nl-look-2026-11-15.webp",
-      "w": 480,
-      "lead": {
-        "fr": "Trois pièces de la semaine.",
-        "en": "Three pieces from this week."
-      }
+      "w": 480
     }
   ]
 }
