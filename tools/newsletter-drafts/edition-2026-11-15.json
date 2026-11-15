@@ -6,7 +6,7 @@
   },
   "preheader": {
     "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
-    "en": "An Issey Miyake leather trouser from the winter 1998 runway, a Y’s for men down jacket and Yohji Yamamoto’s houndstooth"
+    "en": "Issey Miyake leather trousers from the winter 1998 runway, a Y’s for men down jacket and Yohji Yamamoto’s houndstooth"
   },
   "intro": {
     "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
@@ -148,7 +148,7 @@
           "id": "73735043",
           "name": {
             "fr": "Pantalon en cuir jaune paille",
-            "en": "Straw-yellow leather trouser"
+            "en": "Straw-yellow leather trousers"
           }
         }
       ],
@@ -156,25 +156,25 @@
         {
           "img": "nl-73735043-defile-1.webp",
           "alt": {
-            "fr": "Le pantalon sur le défilé Issey Miyake Men",
-            "en": "The trouser on the Issey Miyake Men runway"
+            "fr": "Le pantalon lors du défilé Issey Miyake Men",
+            "en": "The trousers on the Issey Miyake Men runway"
           }
         },
         {
           "img": "nl-73735043-defile-2.webp",
           "alt": {
-            "fr": "Le pantalon sur le défilé Issey Miyake Men",
-            "en": "The trouser on the Issey Miyake Men runway"
+            "fr": "Le pantalon lors du défilé Issey Miyake Men",
+            "en": "The trousers on the Issey Miyake Men runway"
           }
         }
       ],
       "caption": {
-        "fr": "Sur le défilé Issey Miyake Men, hiver 1998",
-        "en": "On the Issey Miyake Men runway, winter 1998"
+        "fr": "Défilé Issey Miyake Men, hiver 1998",
+        "en": "Issey Miyake Men runway, winter 1998"
       },
       "text": {
-        "fr": "Un pantalon en cuir de vache jaune paille, présenté sur le défilé avec la veste assortie. Le cuir a pris une belle patine, les chevilles se resserrent par des cordons.",
-        "en": "A straw-yellow cowhide leather trouser, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, and the ankles tighten with drawcords."
+        "fr": "Un pantalon en cuir de vache jaune paille, présenté lors du défilé avec la veste assortie. Le cuir a pris une belle patine ; des cordons resserrent les chevilles.",
+        "en": "Straw-yellow cowhide leather trousers, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, with drawcords at the ankles."
       }
     },
     {
@@ -186,14 +186,14 @@
         {
           "id": "73734574",
           "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
+            "fr": "Pull chiné",
+            "en": "Marled jumper"
           }
         },
         {
           "id": "73734541",
           "name": {
-            "fr": "Pull hexagones en mohair",
+            "fr": "Pull en mohair à hexagones",
             "en": "Hexagon mohair jumper"
           },
           "scale": 0.97
@@ -209,16 +209,16 @@
         {
           "id": "73734801",
           "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
+            "fr": "Pull jacquard",
+            "en": "Jacquard jumper"
           },
           "scale": 0.97
         },
         {
           "id": "73734884",
           "name": {
-            "fr": "Pull en laine",
-            "en": "Wool jumper"
+            "fr": "Pull marine à côtes",
+            "en": "Ribbed navy jumper"
           }
         },
         {
@@ -268,8 +268,8 @@
         "en": "Yohji Yamamoto women’s runway, autumn-winter 2003"
       },
       "lead": {
-        "fr": "Le célèbre défilé automne-hiver 2003 de Yohji Yamamoto, presque entièrement en pied-de-poule. Deux bonnets en laine de la ligne principale femme, et une grande écharpe de 2,60 m.",
-        "en": "Yohji Yamamoto’s famous autumn-winter 2003 show, almost entirely in houndstooth. Two wool beanies from the women’s main line, and a large 2.60 m scarf."
+        "fr": "Pour l’automne-hiver 2003, Yohji Yamamoto consacre presque tout son défilé au pied-de-poule. Deux bonnets en laine de la ligne principale femme et une grande écharpe de 2,60 m en sont issus.",
+        "en": "For autumn-winter 2003, Yohji Yamamoto devoted almost his entire show to houndstooth. Two wool beanies from the women’s main line and a large 2.60 m scarf come from it."
       }
     },
     {
@@ -310,7 +310,7 @@
           "id": "73734344",
           "name": {
             "fr": "Jupe pailletée",
-            "en": "Glitter-thread skirt"
+            "en": "Shimmer-thread skirt"
           },
           "w": 250,
           "gap": 0
