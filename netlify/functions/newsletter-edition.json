@@ -144,17 +144,17 @@
       },
       "items": [
         {
-          "id": "73734541",
-          "name": {
-            "fr": "Pull hexagones en mohair",
-            "en": "Hexagon mohair jumper"
-          }
-        },
-        {
           "id": "73734574",
           "name": {
             "fr": "Pull en laine",
             "en": "Wool jumper"
+          }
+        },
+        {
+          "id": "73734541",
+          "name": {
+            "fr": "Pull hexagones en mohair",
+            "en": "Hexagon mohair jumper"
           }
         },
         {
@@ -166,14 +166,14 @@
           "big": true
         },
         {
-          "id": "73734884",
+          "id": "73734801",
           "name": {
             "fr": "Pull en laine",
             "en": "Wool jumper"
           }
         },
         {
-          "id": "73734801",
+          "id": "73734884",
           "name": {
             "fr": "Pull en laine",
             "en": "Wool jumper"
