@@ -23,7 +23,7 @@
         "text": "Une doudoune Y’s for men, un manteau tartan 45RPM et quatre pulls : Missoni, Issey Miyake, Junko Koshino"
       },
       {
-        "label": "Le pied-de-poule",
+        "label": "Collection pied-de-poule",
         "text": "Yohji Yamamoto, hiver 2003 : deux bonnets et une écharpe"
       }
     ],
@@ -37,7 +37,7 @@
         "text": "A Y’s for men down jacket, a 45RPM tartan coat and four jumpers: Missoni, Issey Miyake, Junko Koshino"
       },
       {
-        "label": "Houndstooth",
+        "label": "Houndstooth collection",
         "text": "Yohji Yamamoto, winter 2003: two beanies and a scarf"
       }
     ]
@@ -191,8 +191,8 @@
     },
     {
       "title": {
-        "fr": "Le pied-de-poule",
-        "en": "Houndstooth"
+        "fr": "Collection pied-de-poule",
+        "en": "Houndstooth collection"
       },
       "items": [
         {
