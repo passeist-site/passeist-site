@@ -1,8 +1,8 @@
 {
   "date": "2026-11-15",
   "subject": {
-    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, Missoni, Junko Koshino",
-    "en": "New in: Issey Miyake, Yohji Yamamoto, Missoni, Junko Koshino"
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino"
   },
   "preheader": {
     "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
@@ -16,7 +16,7 @@
     "fr": [
       {
         "label": "Pour l’hiver",
-        "text": "Une doudoune Y’s for men et quatre pulls : Missoni, Issey Miyake, Junko Koshino"
+        "text": "Une doudoune Y’s for men, un manteau tartan 45RPM et quatre pulls : Missoni, Issey Miyake, Junko Koshino"
       },
       {
         "label": "Pièce de défilé",
@@ -30,7 +30,7 @@
     "en": [
       {
         "label": "For winter",
-        "text": "A Y’s for men down jacket and four jumpers: Missoni, Issey Miyake, Junko Koshino"
+        "text": "A Y’s for men down jacket, a 45RPM tartan coat and four jumpers: Missoni, Issey Miyake, Junko Koshino"
       },
       {
         "label": "Runway piece",
@@ -138,6 +138,14 @@
             "fr": "Pull en laine",
             "en": "Wool jumper"
           }
+        },
+        {
+          "id": "73734969",
+          "name": {
+            "fr": "Manteau tartan à brandebourgs",
+            "en": "Tartan toggle coat"
+          },
+          "big": true
         }
       ]
     },
