@@ -339,8 +339,28 @@
         "fr": "Trois pièces rapprochées.",
         "en": "Three pieces brought together."
       },
-      "img": "nl-look-2026-11-15.webp",
-      "w": 480
+      "w": 480,
+      "parts": [
+        [
+          {
+            "img": "nl-look-a.webp",
+            "w": 480,
+            "link": "73734078"
+          }
+        ],
+        [
+          {
+            "img": "nl-look-b.webp",
+            "w": 305,
+            "link": "73734344"
+          },
+          {
+            "img": "nl-look-c.webp",
+            "w": 175,
+            "link": "73734504"
+          }
+        ]
+      ]
     }
   ]
 }
