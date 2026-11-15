@@ -211,9 +211,10 @@ exports.handler = async (event) => {
     // stripe-webhook) : un prélèvement SEPA, un virement ou un paiement en
     // espèces, confirmés des jours plus tard, la bloqueraient sans être payée.
     // card = carte + Apple Pay + Google Pay ; link = Link (Stripe) ;
-    // klarna = paiement en 3 ou 4 fois. Stripe n'affiche que ceux qui
-    // conviennent au pays et à la devise du client.
-    const PAYMENT_METHODS = ['card', 'link', 'klarna', 'bancontact', 'ideal', 'revolut_pay'];
+    // klarna = paiement en 3 ou 4 fois ; paypal (Tom, 2026-11-16 : à activer dans
+    // Stripe, Paramètres → Moyens de paiement ; sinon il est retiré tout seul, cf. plus bas).
+    // Stripe n'affiche que ceux qui conviennent au pays et à la devise du client.
+    const PAYMENT_METHODS = ['card', 'link', 'paypal', 'klarna', 'bancontact', 'ideal', 'revolut_pay'];
     const sessionParams = {
       mode: 'payment',
       payment_method_types: PAYMENT_METHODS,

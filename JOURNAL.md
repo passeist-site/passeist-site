@@ -314,3 +314,28 @@ Décisions de Tom :
   Caché tant que BOXTAL_ACCESS_KEY / BOXTAL_SECRET_KEY ne sont pas dans Netlify ; mode à blanc tant que BOXTAL_LIVE≠1.
   À VÉRIFIER au premier test avec les clés : codes d'offre (MONR-CpourToi, CHRP-Chrono2ShopDirect, POFR-ColissimoAccess),
   catégorie de contenu (content:v1:40110 supposée « vêtements », lister /shipping/v3.1/content-category), dépôt relais de Tom.
+
+
+## 2026-11-15 — Newsletter du 15 novembre, Boxtal en service, suivi des colis
+- Newsletter : 4 parties (Pièce de défilé, Pour l'hiver, Motif pied-de-poule, Collatio).
+  Nouveaux réglages d'édition : `it.scale` (pièce réduite dans sa paire), `sec.lead`
+  (texte sous le titre), `sec.look` + `sec.parts` (collage découpé en morceaux cliquables),
+  photos de défilé dans une partie ordinaire. Pièce vendue dans la vitrine : retirée
+  (ne fait plus échouer l'envoi). Date anglaise « November 15, 2026 ».
+  Contrôle avant chaque envoi : 2 langues × 3 largeurs, chevauchements, images, liens.
+- Boxtal : BOXTAL_LIVE=1 (Netlify). À chaque vente relais / domicile, Tom reçoit un e-mail
+  et une notification « Créer le bordereau » (page signée, rien n'est commandé avant son
+  appui : la pièce peut être partie sur Vestiaire / Vinted). Premier bordereau créé le 15/11
+  (commande relais) : le code de dépôt FR-02477 est accepté par Boxtal.
+- Messagerie : « Bordereau Boxtal » et « Envoyer un suivi » (colis expédié à la main),
+  commande retrouvée par e-mail du client, pi_…, P-XXXXXXXX ou cs_live_….
+- E-mail « Votre commande est en route » (lib/ship-email.js) : texte du modèle Pennylane
+  de Tom, photo, numéro, bouton de suivi. Numéro de suivi aussi enregistré sur le paiement
+  Stripe. Nom anglais des pièces (type_en) pour les clients anglophones.
+- Stripe : photo en JPEG (service d'images Netlify, Stripe ne lit pas le WebP), description
+  du paiement = pièces + relais, liens vers les fiches en métadonnées.
+- Accueil : carrousels à la même vitesse (20 px/s) et même toucher (×1,9), nouveautés en
+  bandeau aussi sur ordinateur (même taille que le haut, pavé tactile), « Toutes les
+  nouveautés » sous le bandeau. Boutique : titre « 824 pièces ».
+- Étiquette « nouveau » : registre data/first-seen.json restauré (la synchro l'avait
+  redaté) ; la synchro récupère maintenant ce fichier.
