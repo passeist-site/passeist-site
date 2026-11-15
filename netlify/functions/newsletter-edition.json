@@ -189,8 +189,8 @@
         "en": "Issey Miyake Men runway, winter 1998"
       },
       "text": {
-        "fr": "Un pantalon en cuir de vache jaune paille, présenté lors du défilé avec la veste assortie. Le cuir a pris une belle patine ; des cordons resserrent les chevilles.",
-        "en": "Straw-yellow cowhide leather trousers, shown on the runway with the matching jacket. The leather has taken on a beautiful patina, with drawcords at the ankles."
+        "fr": "Un pantalon en cuir de vache jaune paille, présenté lors du défilé avec la veste assortie. Le cuir a pris une belle patine.",
+        "en": "Straw-yellow cowhide leather trousers, shown on the runway with the matching jacket. The leather has taken on a beautiful patina."
       }
     },
     {
@@ -209,8 +209,8 @@
         {
           "id": "73734541",
           "name": {
-            "fr": "Pull en mohair à hexagones",
-            "en": "Hexagon mohair jumper"
+            "fr": "Pull à hexagones",
+            "en": "Hexagon jumper"
           },
           "scale": 0.97
         },
@@ -225,8 +225,8 @@
         {
           "id": "73734801",
           "name": {
-            "fr": "Pull jacquard",
-            "en": "Jacquard jumper"
+            "fr": "Pull en maille 3D",
+            "en": "3D-knit jumper"
           },
           "scale": 0.97
         },
