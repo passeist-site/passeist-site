@@ -1,8 +1,8 @@
 {
   "date": "2026-11-15",
   "subject": {
-    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino",
-    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino"
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni, Junko Koshino",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Comme des Garçons, Missoni, Junko Koshino"
   },
   "preheader": {
     "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
@@ -118,6 +118,14 @@
         "link": "66437502"
       },
       {
+        "img": "nl-cover-73734078.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734078"
+      },
+      {
         "img": "nl-cover-73734574.webp",
         "alt": {
           "fr": "",
@@ -126,12 +134,28 @@
         "link": "73734574"
       },
       {
+        "img": "nl-cover-73734344.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734344"
+      },
+      {
         "img": "nl-cover-73734705.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
         "link": "73734705"
+      },
+      {
+        "img": "nl-cover-73734504.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734504"
       }
     ]
   },
@@ -302,42 +326,29 @@
           "name": {
             "fr": "Sweat écru et bleu ciel",
             "en": "Ecru and sky-blue hoodie"
-          },
-          "w": 260,
-          "img": "nl-look-sweat.webp"
+          }
         },
         {
           "id": "73734344",
           "name": {
             "fr": "Jupe pailletée",
             "en": "Shimmer-thread skirt"
-          },
-          "w": 300,
-          "img": "nl-look-jupe.webp"
+          }
         },
         {
           "id": "73734504",
           "name": {
             "fr": "Rangers à revers",
             "en": "Cuffed combat boots"
-          },
-          "w": 176,
-          "img": "nl-look-rangers.webp"
+          }
         }
       ],
       "lead": {
         "fr": "Trois pièces rapprochées.",
         "en": "Three pieces brought together."
       },
-      "rows": [
-        [
-          0
-        ],
-        [
-          1,
-          2
-        ]
-      ]
+      "img": "nl-look-2026-11-15.webp",
+      "w": 480
     }
   ]
 }
