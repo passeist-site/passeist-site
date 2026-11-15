@@ -235,8 +235,8 @@ async function showNewsletter() {
         <input type="text" id="trnum" placeholder="Numéro de suivi" required><button type="submit" id="trbtn">Vérifier</button></form>
       <div class="nl-msg" id="trmsg"></div></div>
     <div class="nl-box"><h3>Bordereau Boxtal</h3>
-      <div class="nl-stat">Pour une commande passée en mode à blanc : collez la référence de la commande (cs_live_…, dans l'e-mail « À blanc ») ou l'e-mail entier. L'envoi est commandé chez Boxtal et le bordereau arrive par e-mail.</div>
-      <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="cs_live_…" required><button type="submit">Créer</button></form>
+      <div class="nl-stat">Pour une commande sans bordereau : l'e-mail du client, ou l'ID du paiement (pi_…, dans l'appli Stripe). L'envoi est commandé chez Boxtal et le bordereau arrive par e-mail.</div>
+      <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Créer</button></form>
       <div class="nl-msg" id="bxmsg"></div></div>
     <div class="nl-box"><h3>Code 10 % (pièce indisponible)</h3>
       <div class="nl-stat">Un code unique, utilisable une seule fois, valable 6 mois. À envoyer au client concerné.</div>

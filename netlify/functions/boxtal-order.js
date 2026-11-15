@@ -56,8 +56,28 @@ exports.handler = async (event) => {
   if (!isAdmin(event)) return json(401, { error: 'unauthorized' });
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch (e) {}
-  const id = String(body.session || '').trim().match(/cs_(live|test)_[A-Za-z0-9]+/);
-  if (!id) return json(400, { error: 'référence de commande introuvable (cs_live_…)' });
+  // Commande retrouvée par : référence cs_live_…, ID du paiement pi_… (appli Stripe),
+  // référence P-XXXXXXXX (e-mail de confirmation) ou e-mail du client (dernière commande payée)
+  const q = String(body.session || '').trim();
+  let sid = (q.match(/cs_(live|test)_[A-Za-z0-9]+/) || [])[0];
+  try {
+    if (!sid && /pi_[A-Za-z0-9]+/.test(q)) {
+      const r = await stripe.checkout.sessions.list({ payment_intent: q.match(/pi_[A-Za-z0-9]+/)[0], limit: 1 });
+      sid = r.data[0] && r.data[0].id;
+    } else if (!sid && /@/.test(q)) {
+      const r = await stripe.checkout.sessions.list({ customer_details: { email: q.toLowerCase() }, limit: 20 });
+      const paid = r.data.filter(x => x.payment_status === 'paid').sort((a, b) => b.created - a.created)[0];
+      sid = paid && paid.id;
+    } else if (!sid && /^P-?[A-Za-z0-9]{6,}$/i.test(q)) {
+      const ref = q.replace(/^P-?/i, '').toLowerCase();
+      for await (const x of stripe.checkout.sessions.list({ limit: 100 })) {
+        if (x.id.toLowerCase().endsWith(ref)) { sid = x.id; break; }
+        if (Date.now() / 1000 - x.created > 90 * 86400) break;
+      }
+    }
+  } catch (e) { return json(400, { error: 'Stripe : ' + String(e.message).slice(0, 120) }); }
+  const id = sid ? [sid] : null;
+  if (!id) return json(400, { error: 'commande introuvable (e-mail du client, pi_… ou cs_live_…)' });
   if (!boxtal.enabled()) return json(400, { error: 'clés Boxtal absentes' });
   if (!boxtal.live()) return json(400, { error: 'mode réel pas activé (BOXTAL_LIVE=1 sur Netlify)' });
   let session;
