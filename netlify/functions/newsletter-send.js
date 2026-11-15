@@ -172,7 +172,9 @@ function editionHtml(lang, ed, total) {
     const after = ((sec.photos || []).length || L(sec.text)) ? row(sec.photos) +
       (L(sec.caption) ? `<tr><td align="center" style="padding:12px 16px 0;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '') +
       (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:52px;"></td></tr>') : '';
-    return head + rows.join('') + after + more;
+    // sec.lead : texte d'ouverture, juste sous le titre de la partie
+    const lead = L(sec.lead) ? `<tr><td align="center" style="padding:0 16px 44px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.lead).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '';
+    return head + lead + rows.join('') + after + more;
   }).join('');
 
   return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

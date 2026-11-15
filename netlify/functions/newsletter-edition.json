@@ -216,6 +216,10 @@
       "caption": {
         "fr": "Défilé Yohji Yamamoto femme, automne-hiver 2003",
         "en": "Yohji Yamamoto women’s runway, autumn-winter 2003"
+      },
+      "lead": {
+        "fr": "Le célèbre défilé automne-hiver 2003 de Yohji Yamamoto, presque entièrement en pied-de-poule. Deux bonnets en laine de la ligne principale femme, et une grande écharpe de 2,60 m.",
+        "en": "Yohji Yamamoto’s famous autumn-winter 2003 show, almost entirely in houndstooth. Two wool beanies from the women’s main line, and a large 2.60 m scarf."
       }
     },
     {
@@ -233,11 +237,7 @@
           },
           "big": true
         }
-      ],
-      "text": {
-        "fr": "Le célèbre défilé automne-hiver 2003 de Yohji Yamamoto, presque entièrement en pied-de-poule. Deux bonnets en laine de la ligne principale femme, et une grande écharpe de 2,60 m.",
-        "en": "Yohji Yamamoto’s famous autumn-winter 2003 show, almost entirely in houndstooth. Two wool beanies from the women’s main line, and a large 2.60 m scarf."
-      }
+      ]
     }
   ]
 }
