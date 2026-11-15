@@ -100,7 +100,7 @@ function editionHtml(lang, ed, total) {
   const MONO = "'JetBrains Mono','SF Mono',Menlo,monospace";
   const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
   const [y, m, d] = todayParis().split('-').map(Number);   // date du jour de l'envoi
-  const dateTxt = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const dateTxt = new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString(en ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
   const urlOf = (id) => `${SITE}/product/${[slugify(PRODUCTS[id].brand), slugify(PRODUCTS[id].type), id].filter(Boolean).join('-')}`;
   // part : 'img' (photo seule) ou 'txt' (marque, nom, prix seuls) ; rien = les deux
   const piece = (it, big, part) => {
@@ -265,7 +265,7 @@ function buildHtml(lang, groups, total, featured, note) {
   const INK = '#1C2230', DIM = '#5b6070', MUTE = '#9a9ca3', BG = '#ffffff', LINE = '#e6e4df';
   const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
   const track = (u) => u + (u.includes('?') ? '&' : '?') + 'utm_source=newsletter&utm_medium=email';
-  const dateTxt = new Date().toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+  const dateTxt = new Date().toLocaleDateString(en ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
   const caps = (t, size, color, extra) => `<div style="font-family:${FONT};font-size:${size}px;letter-spacing:3px;text-transform:uppercase;color:${color};${extra || ''}">${t}</div>`;
   const caption = (p, big) =>
     caps(esc(title(p.brand)), big ? 10 : 9, INK, `margin-top:${big ? 22 : 16}px;`) +
