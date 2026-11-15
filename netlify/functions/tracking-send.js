@@ -4,7 +4,6 @@
 // ou par l'e-mail du client (sa dernière commande payée). Accès réservé (x-admin-key).
 const crypto = require('crypto');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const brevo = require('../lib/brevo');
 
 const json = (code, body) => ({ statusCode: code, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(body) });
 const esc = t => String(t || '').replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
@@ -60,12 +59,7 @@ exports.handler = async (event) => {
   const who = { name: cd.name || '', email: cd.email, ref, date: new Date(ses.created * 1000).toISOString().slice(0, 10) };
   if (!b.confirm) return json(200, { preview: true, ...who });   // 1er appui : on montre à qui ça part
   const url = carrier.url(number);
-  const en = String(ses.locale || '').startsWith('en');
-  const first = String(cd.name || '').trim().split(/\s+/)[0] || '';
-  await brevo.sendOne({ to: cd.email, subject: en ? 'Your passéist order is on its way' : 'Votre commande passéist est en route',
-    html: (en ? `Hello${first ? ' ' + esc(first) : ''},<br><br>Your order ${ref} has been shipped with ${carrier.label}. Follow it here: `
-              : `Bonjour${first ? ' ' + esc(first) : ''},<br><br>Votre commande ${ref} est partie par ${carrier.label}. Vous pouvez la suivre ici : `)
-      + `<a href="${esc(url)}">${esc(number)}</a><br><br>passéist` });
+  await require('../lib/ship-email').sendShipEmail({ stripe, session: ses, carrier: carrier.label, number, url });
   // Numéro de suivi sur le paiement Stripe
   try {
     const sd = ses.shipping_details || (ses.collected_information || {}).shipping_details || {};

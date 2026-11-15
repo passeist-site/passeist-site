@@ -154,7 +154,7 @@ exports.handler = async (event) => {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: `${ref.brand} — ${ref.type}`,
+            name: `${ref.brand} — ${(lang === 'en' && ref.type_en) || ref.type}`,   // nom anglais pour un client anglophone (reçu, e-mails)
             description: ref.size ? `Taille ${ref.size}` : undefined,
             // image envoyée par le client : on la filtre par host (anti SSRF / abus)
             images: stripeImage(item.image),

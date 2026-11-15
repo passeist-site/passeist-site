@@ -56,11 +56,11 @@ exports.handler = async (event) => {
               carrier: t.carrierName || t.carrier || 'Boxtal', tracking_number: t.trackingNumber || '' } });
           } catch (e) { console.error('suivi Stripe :', e.message); }
         }
-        if (info && info.email) {
-          const en = info.lang === 'en';
-          await brevo.sendOne({ to: info.email, subject: en ? 'Your passéist order is on its way' : 'Votre commande passéist est en route',
-            html: (en ? 'Hello,<br><br>Your parcel has been shipped. Follow it here: ' : 'Bonjour,<br><br>Votre colis est parti. Vous pouvez le suivre ici : ')
-              + `<a href="${esc(t.packageTrackingUrl)}">${esc(t.trackingNumber || (en ? 'tracking' : 'suivi'))}</a><br><br>passéist` });
+        if (info && info.session && process.env.STRIPE_SECRET_KEY) {
+          const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+          const ses = await stripe.checkout.sessions.retrieve(info.session);
+          if ((ses.customer_details || {}).email) await require('../lib/ship-email').sendShipEmail({ stripe, session: ses,
+            carrier: t.carrierName || t.carrier || 'Mondial Relay', number: t.trackingNumber || '', url: t.packageTrackingUrl });
         }
       }
     }
