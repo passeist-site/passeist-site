@@ -7647,7 +7647,7 @@ function renderGrid() {
   let _long = baseTitle, _short = baseTitle;
   if (showCount) { _long = _short = `${baseTitle} (${_n})`; }
   else if (activeView === 'shop') {
-    _long = _en ? `${_n} Japanese designer pieces` : `${_n} pièces de créateurs japonais`;
+    _long = _en ? `${_n} pieces` : `${_n} pièces`;   // juste le nombre (Tom, 2026-11-15)
     _short = _en ? `${_n} pieces` : `${_n} pièces`;
   } else if (activeView === 'archive') {
     _long = _short = _en ? `${_n} sold pieces` : `${_n} pièces vendues`;
