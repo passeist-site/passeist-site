@@ -1,8 +1,8 @@
 {
   "date": "2026-11-15",
   "subject": {
-    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino",
-    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino"
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino, Tsumori Chisato",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino, Tsumori Chisato"
   },
   "preheader": {
     "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
@@ -279,6 +279,28 @@
           },
           "big": true,
           "img": "nl-66437502-h.webp"
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "",
+        "en": ""
+      },
+      "items": [
+        {
+          "id": "73405095",
+          "name": {
+            "fr": "Chemise patchwork plissée",
+            "en": "Pleated patchwork shirt"
+          }
+        },
+        {
+          "id": "73734832",
+          "name": {
+            "fr": "Top plissé",
+            "en": "Pleated top"
+          }
         }
       ]
     }
