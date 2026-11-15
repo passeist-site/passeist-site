@@ -1,8 +1,8 @@
 {
   "date": "2026-11-15",
   "subject": {
-    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino, Tsumori Chisato",
-    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino, Tsumori Chisato"
+    "fr": "Nouveautés : Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino",
+    "en": "New in: Issey Miyake, Yohji Yamamoto, 45RPM, Missoni, Junko Koshino"
   },
   "preheader": {
     "fr": "Un pantalon en cuir Issey Miyake du défilé hiver 1998, une doudoune Y’s for men et le pied-de-poule de Yohji Yamamoto",
@@ -43,7 +43,7 @@
     ]
   },
   "cover": {
-    "cols": 5,
+    "cols": 6,
     "photos": [
       {
         "img": "nl-cover-73735043.webp",
@@ -78,12 +78,12 @@
         "link": "73734884"
       },
       {
-        "img": "nl-cover-73734677.webp",
+        "img": "nl-cover-73734832.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73734677"
+        "link": "73734832"
       },
       {
         "img": "nl-cover-73734969.webp",
@@ -102,14 +102,6 @@
         "link": "73734801"
       },
       {
-        "img": "nl-cover-66437502.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "66437502"
-      },
-      {
         "img": "nl-cover-73734574.webp",
         "alt": {
           "fr": "",
@@ -118,12 +110,36 @@
         "link": "73734574"
       },
       {
+        "img": "nl-cover-66437502.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "66437502"
+      },
+      {
+        "img": "nl-cover-73734677.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73734677"
+      },
+      {
         "img": "nl-cover-73734705.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
         "link": "73734705"
+      },
+      {
+        "img": "nl-cover-73405095.webp",
+        "alt": {
+          "fr": "",
+          "en": ""
+        },
+        "link": "73405095"
       }
     ]
   },
