@@ -235,6 +235,14 @@ exports.handler = async (event) => {
       locale: lang,
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: safeCancelUrl,
+      // Ce qui a été acheté, lisible directement sur le paiement (appli Stripe : la
+      // description s'affiche en tête de la commande) + liens vers les fiches (Tom, 2026-11-15)
+      payment_intent_data: {
+        description: clip(lineItems.map(li => li.price_data.product_data.name).join(' + ')
+          + (mode === 'relay' ? ' · Point relais ' + (relay.name || '') : mode === 'home' ? ' · Domicile' : ''), 900),
+        metadata: Object.fromEntries(items.slice(0, 20).map((it, k) => [
+          'piece_' + (k + 1), clip(`${(PRODUCTS[String(it.id)] || {}).brand || ''} ${(PRODUCTS[String(it.id)] || {}).type || ''} · https://passeist.com/product/${(PRODUCTS[String(it.id)] || {}).slug || it.id}`, 480)])),
+      },
       metadata: {
         passeist_ids: items.map(i => i.id).join(','),
         ...(mode ? { ship_mode: mode } : {}),
