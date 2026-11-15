@@ -27,7 +27,7 @@
         "text": "Yohji Yamamoto, hiver 2003 : deux bonnets et une écharpe"
       },
       {
-        "label": "Composition",
+        "label": "Assemblage",
         "text": "Un sweat 45RPM, une jupe Comme des Garçons et des rangers Yohji Yamamoto"
       }
     ],
@@ -45,7 +45,7 @@
         "text": "Yohji Yamamoto, winter 2003: two beanies and a scarf"
       },
       {
-        "label": "Composition",
+        "label": "Assemblage",
         "text": "A 45RPM hoodie, a Comme des Garçons skirt and Yohji Yamamoto combat boots"
       }
     ]
@@ -292,8 +292,8 @@
     },
     {
       "title": {
-        "fr": "Composition",
-        "en": "Composition"
+        "fr": "Assemblage",
+        "en": "Assemblage"
       },
       "look": true,
       "items": [
