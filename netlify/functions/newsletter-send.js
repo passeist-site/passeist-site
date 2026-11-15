@@ -105,9 +105,11 @@ function editionHtml(lang, ed, total) {
   // part : 'img' (photo seule) ou 'txt' (marque, nom, prix seuls) ; rien = les deux
   const piece = (it, big, part) => {
     const p = PRODUCTS[it.id];
-    const w = big ? 512 : 252;
+    // it.scale : photo un peu réduite pour qu'une pièce paraisse de la même taille que sa voisine
+    const sc = it.scale || 1;
+    const w = Math.round((big ? 512 : 252) * sc);
     const src = it.img ? `${SITE}/img/${it.img}` : `${SITE}/img/${it.id}-${it.photo || 0}-${big ? 'xl' : 'md'}.webp`;   // it.img : photo préparée pour la newsletter
-    const img = `<img src="${src}" width="${w}" alt="${esc(title(it.brand || p.brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`;
+    const img = `<img src="${src}" width="${w}" alt="${esc(title(it.brand || p.brand) + ', ' + L(it.name))}" style="display:block;width:${Math.round(sc * 100)}%;max-width:${w}px;height:auto;margin:0 auto;border:0;">`;
     const open = `<a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;color:${INK};">`;
     if (part === 'img') return open + img + '</a>';
     return `${open}

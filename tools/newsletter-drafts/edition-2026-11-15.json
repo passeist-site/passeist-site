@@ -155,7 +155,8 @@
           "name": {
             "fr": "Pull hexagones en mohair",
             "en": "Hexagon mohair jumper"
-          }
+          },
+          "scale": 0.86
         },
         {
           "id": "73734677",
@@ -170,7 +171,8 @@
           "name": {
             "fr": "Pull en laine",
             "en": "Wool jumper"
-          }
+          },
+          "scale": 0.86
         },
         {
           "id": "73734884",
