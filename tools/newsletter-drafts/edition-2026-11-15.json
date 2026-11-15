@@ -363,7 +363,11 @@
         }
       ],
       "img": "nl-look-2026-11-15.webp",
-      "w": 380
+      "w": 380,
+      "lead": {
+        "fr": "Trois pièces de la semaine, assemblées pour une tenue d’hiver.",
+        "en": "Three pieces from this week, put together for a winter outfit."
+      }
     }
   ]
 }
