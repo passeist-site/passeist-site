@@ -20,7 +20,7 @@
       },
       {
         "label": "Pour l’hiver",
-        "text": "Une doudoune, un manteau et quatre pulls"
+        "text": "Une doudoune, un duffle-coat et quatre pulls"
       },
       {
         "label": "Motif pied-de-poule",
@@ -38,7 +38,7 @@
       },
       {
         "label": "For winter",
-        "text": "A down jacket, a coat and four jumpers"
+        "text": "A down jacket, a duffle coat and four jumpers"
       },
       {
         "label": "Houndstooth pattern",
@@ -240,8 +240,8 @@
         {
           "id": "73734969",
           "name": {
-            "fr": "Manteau tartan à brandebourgs",
-            "en": "Tartan toggle coat"
+            "fr": "Duffle-coat tartan",
+            "en": "Tartan duffle coat"
           },
           "big": true
         }
