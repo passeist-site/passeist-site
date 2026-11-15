@@ -228,6 +228,12 @@ async function showNewsletter() {
       <textarea id="nlfeat" rows="4" class="nl-area" placeholder="https://passeist.com/product/…&#10;71642530">${esc((d.featured || []).map(f => f.id).join('\n'))}</textarea>
       <div class="nl-test"><button type="button" id="nlfeatsave">Enregistrer</button></div>
       <div class="nl-msg" id="nlfeatmsg">${(d.featured || []).map(f => '• ' + esc(f.label)).join('<br>')}</div></div>
+    <div class="nl-box"><h3>Envoyer un suivi</h3>
+      <div class="nl-stat">Pour un colis expédié à la main : la commande (e-mail du client, référence P-XXXXXXXX ou cs_live_…), le transporteur et le numéro. Le client reçoit son lien de suivi, et le numéro s'ajoute au paiement dans Stripe.</div>
+      <form class="nl-test" id="trform" style="flex-wrap:wrap"><input type="text" id="trorder" placeholder="E-mail du client ou référence" required>
+        <select id="trcarrier"><option value="mondialrelay">Mondial Relay</option><option value="colissimo">Colissimo</option><option value="chronopost">Chronopost</option><option value="ups">UPS</option><option value="dhl">DHL</option></select>
+        <input type="text" id="trnum" placeholder="Numéro de suivi" required><button type="submit" id="trbtn">Vérifier</button></form>
+      <div class="nl-msg" id="trmsg"></div></div>
     <div class="nl-box"><h3>Bordereau Boxtal</h3>
       <div class="nl-stat">Pour une commande passée en mode à blanc : collez la référence de la commande (cs_live_…, dans l'e-mail « À blanc ») ou l'e-mail entier. L'envoi est commandé chez Boxtal et le bordereau arrive par e-mail.</div>
       <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="cs_live_…" required><button type="submit">Créer</button></form>
@@ -294,6 +300,21 @@ async function showNewsletter() {
     if (!res.ok) { $('nlonemsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlonemsg').textContent = 'Envoyée ✓ (' + (j.lang === 'en' ? 'version anglaise' : 'version française') + ')';
     $('nloneto').value = '';
+  };
+  // Envoyer un suivi : 1er appui = on vérifie à qui ça part, 2e appui = envoi
+  let trReady = false;
+  ['trorder', 'trcarrier', 'trnum'].forEach(i => $(i).addEventListener('input', () => { trReady = false; $('trbtn').textContent = 'Vérifier'; }));
+  $('trform').onsubmit = async (e) => {
+    e.preventDefault();
+    $('trmsg').textContent = trReady ? 'Envoi…' : 'Recherche…';
+    const res = await fetch('/.netlify/functions/tracking-send', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: $('trorder').value, carrier: $('trcarrier').value, number: $('trnum').value, confirm: trReady }) });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) { trReady = false; $('trbtn').textContent = 'Vérifier'; $('trmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
+    if (j.preview) { trReady = true; $('trbtn').textContent = 'Envoyer'; $('trmsg').textContent = 'Commande ' + j.ref + ' du ' + j.date + ' : ' + (j.name || '') + ' (' + j.email + '). Appuyez sur Envoyer pour lui envoyer le suivi.'; return; }
+    trReady = false; $('trbtn').textContent = 'Vérifier';
+    $('trmsg').textContent = '✓ Suivi ' + j.carrier + ' envoyé à ' + j.email + ' (' + j.ref + '), et ajouté au paiement dans Stripe.';
+    $('trnum').value = '';
   };
   $('bxform').onsubmit = async (e) => {
     e.preventDefault();
