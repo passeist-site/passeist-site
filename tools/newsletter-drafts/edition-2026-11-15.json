@@ -20,7 +20,7 @@
       },
       {
         "label": "Pour l’hiver",
-        "text": "Y’s, 45RPM, Missoni, Junko Koshino"
+        "text": "Une doudoune, un manteau et quatre pulls"
       },
       {
         "label": "Motif pied-de-poule",
@@ -38,7 +38,7 @@
       },
       {
         "label": "For winter",
-        "text": "Y’s, 45RPM, Missoni, Junko Koshino"
+        "text": "A down jacket, a coat and four jumpers"
       },
       {
         "label": "Houndstooth pattern",
@@ -256,15 +256,15 @@
         {
           "id": "73734748",
           "name": {
-            "fr": "Bonnet pied-de-poule",
-            "en": "Houndstooth beanie"
+            "fr": "Bonnet pied-de-poule noir",
+            "en": "Black houndstooth beanie"
           }
         },
         {
           "id": "73734705",
           "name": {
-            "fr": "Bonnet pied-de-poule en spirale",
-            "en": "Spiral houndstooth beanie"
+            "fr": "Bonnet pied-de-poule marine",
+            "en": "Navy houndstooth beanie"
           }
         }
       ],
@@ -284,8 +284,8 @@
         "en": "Yohji Yamamoto women’s runway, autumn-winter 2003"
       },
       "lead": {
-        "fr": "Pour l’automne-hiver 2003, Yohji Yamamoto consacre presque tout son défilé au pied-de-poule. Deux bonnets en laine de la ligne principale femme et une grande écharpe de 2,60 m en sont issus.",
-        "en": "For autumn-winter 2003, Yohji Yamamoto devoted almost his entire show to houndstooth. Two wool beanies from the women’s main line and a large 2.60 m scarf come from it."
+        "fr": "En automne-hiver 2003, le pied-de-poule envahit le défilé Yohji Yamamoto. De cette saison : deux bonnets en laine et une grande écharpe de 2,60 m.",
+        "en": "In autumn-winter 2003, houndstooth took over the Yohji Yamamoto show. From that season: two wool beanies and a large 2.60 m scarf."
       }
     },
     {
@@ -323,7 +323,7 @@
         {
           "id": "73734344",
           "name": {
-            "fr": "Jupe pailletée",
+            "fr": "Jupe à fils brillants",
             "en": "Shimmer-thread skirt"
           }
         },
