@@ -51,7 +51,7 @@
     ]
   },
   "cover": {
-    "cols": 5,
+    "cols": 6,
     "photos": [
       {
         "img": "nl-cover-73735043.webp",
@@ -140,14 +140,6 @@
           "en": ""
         },
         "link": "73734344"
-      },
-      {
-        "img": "nl-cover-73734705.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73734705"
       },
       {
         "img": "nl-cover-73734504.webp",
