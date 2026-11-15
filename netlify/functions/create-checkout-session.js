@@ -230,6 +230,11 @@ exports.handler = async (event) => {
       billing_address_collection: 'required',
       // Champ « Code promo » (ex. les 10 % offerts si une pièce n'était plus disponible)
       allow_promotion_codes: true,
+      // Acheteurs ajoutés à la newsletter (Tom, 2026-11-16) : information obligatoire au
+      // moment de l'achat, désinscription en un clic (lien dans chaque e-mail)
+      custom_text: { submit: { message: lang === 'en'
+        ? 'You will also receive our new pieces by email. Unsubscribe in one click at any time.'
+        : 'Vous recevrez aussi nos nouveautés par e-mail. Désinscription en un clic à tout moment.' } },
       phone_number_collection: { enabled: true },
       // Pas de relance de panier abandonné : un client qui avait ouvert le
       // paiement deux fois recevait un « lien de paiement » après avoir payé.

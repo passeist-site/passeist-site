@@ -185,6 +185,18 @@ exports.handler = async (event) => {
     }
   }
 
+  // Acheteur ajouté à la newsletter Brevo de sa langue (Tom, 2026-11-16), prévenu au paiement.
+  // Un contact désinscrit reste désinscrit : Brevo garde sa mise en liste noire, l'ajout
+  // à la liste ne la lève pas.
+  if (stripeEvent.type === 'checkout.session.completed') {
+    const session = stripeEvent.data.object;
+    const email = ((session.customer_details || {}).email || '').trim().toLowerCase();
+    if (email && session.livemode) {
+      try { await require('../lib/brevo').addToBrevo(email, String(session.locale || '').startsWith('en') ? 'en' : 'fr'); }
+      catch (e) { console.error('newsletter acheteur :', e.message); }
+    }
+  }
+
   // Notification « Nouvelle vente » sur le téléphone de Tom (appli passéist), à chaque vente
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
