@@ -155,6 +155,22 @@ function editionHtml(lang, ed, total) {
       (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:30px;"></td></tr>');
     // sec.look : proposition de look, les photos empilées comme une silhouette (it.w = largeur),
     // puis les pièces en colonnes (marque, nom, prix)
+    // sec.rows : collage en lignes ; chaque pièce a sa photo découpée (it.img, it.w) et sa
+    // description juste en dessous, alignée sur la photo (ex. [[0], [1, 2]] : une pièce, puis deux)
+    if (sec.look && sec.rows) {
+      const leadRow = L(sec.lead) ? `<tr><td align="center" style="padding:0 16px 40px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${esc(L(sec.lead))}</td></tr>` : '';
+      const cell = (it, pct) => { const w = it.w || 250; return `<td width="${pct}%" valign="bottom" align="center" style="padding:0 4px;"><a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${it.img}" width="${w}" alt="${esc(title(PRODUCTS[it.id].brand) + ', ' + L(it.name))}" style="display:block;width:100%;max-width:${w}px;height:auto;margin:0 auto;border:0;"></a></td>`; };
+      const txt = (it, pct) => `<td width="${pct}%" valign="top" align="center" style="padding:14px 4px 0;">${piece(it, false, 'txt')}</td>`;
+      const rowsHtml = sec.rows.map((r, ri) => {
+        const its = r.map(i => items[i]).filter(Boolean); if (!its.length) return '';
+        const tot = its.reduce((a, it) => a + (it.w || 250), 0);
+        const pcts = its.map(it => Math.round(100 * (it.w || 250) / tot));
+        const tw = its.length > 1 ? '100%' : Math.round(100 * (its[0].w || 250) / 512) + '%';
+        return `<tr><td align="center" style="padding:0 0 ${ri === sec.rows.length - 1 ? 52 : 36}px;"><table role="presentation" width="${tw}" align="center" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>` +
+          its.map((it, k) => cell(it, pcts[k])).join('') + `</tr><tr>` + its.map((it, k) => txt(it, pcts[k])).join('') + `</tr></table></td></tr>`;
+      }).join('');
+      return head + leadRow + rowsHtml;
+    }
     if (sec.look) {
       // sec.img : collage déjà assemblé (pièces découpées façon papier), sinon photos empilées
       const imgs = sec.img ? `<tr><td align="center"><a href="${track(SITE + '/shop')}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${sec.img}" width="${sec.w || 380}" alt="${esc(L(sec.title))}" style="display:block;width:${Math.round(100 * (sec.w || 380) / 512)}%;max-width:${sec.w || 380}px;height:auto;margin:0 auto;border:0;"></a></td></tr>` : items.map(it => { const w = it.w || 260; return `<tr><td align="center" style="padding:0 0 ${it.gap != null ? it.gap : 4}px;"><a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${it.img || it.id + '-0-md.webp'}" width="${w}" alt="${esc(title(PRODUCTS[it.id].brand) + ', ' + L(it.name))}" style="display:block;width:${Math.round(100 * w / 512)}%;max-width:${w}px;height:auto;margin:0 auto;border:0;"></a></td></tr>`; }).join('');

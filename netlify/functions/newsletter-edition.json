@@ -303,8 +303,8 @@
             "fr": "Sweat écru et bleu ciel",
             "en": "Ecru and sky-blue hoodie"
           },
-          "w": 250,
-          "gap": 0
+          "w": 260,
+          "img": "nl-look-sweat.webp"
         },
         {
           "id": "73734344",
@@ -312,8 +312,8 @@
             "fr": "Jupe pailletée",
             "en": "Shimmer-thread skirt"
           },
-          "w": 250,
-          "gap": 0
+          "w": 300,
+          "img": "nl-look-jupe.webp"
         },
         {
           "id": "73734504",
@@ -321,15 +321,23 @@
             "fr": "Rangers à revers",
             "en": "Cuffed combat boots"
           },
-          "w": 190
+          "w": 176,
+          "img": "nl-look-rangers.webp"
         }
       ],
-      "img": "nl-look-2026-11-15.webp",
-      "w": 480,
       "lead": {
         "fr": "Trois pièces rapprochées.",
         "en": "Three pieces brought together."
-      }
+      },
+      "rows": [
+        [
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ]
     }
   ]
 }
