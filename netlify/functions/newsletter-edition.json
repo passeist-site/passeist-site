@@ -51,7 +51,7 @@
     ]
   },
   "cover": {
-    "cols": 6,
+    "cols": 5,
     "photos": [
       {
         "img": "nl-cover-73735043.webp",
@@ -86,12 +86,12 @@
         "link": "73734884"
       },
       {
-        "img": "nl-cover-73734832.webp",
+        "img": "nl-cover-73734677.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73734832"
+        "link": "73734677"
       },
       {
         "img": "nl-cover-73734969.webp",
@@ -110,14 +110,6 @@
         "link": "73734801"
       },
       {
-        "img": "nl-cover-73734574.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73734574"
-      },
-      {
         "img": "nl-cover-66437502.webp",
         "alt": {
           "fr": "",
@@ -126,12 +118,12 @@
         "link": "66437502"
       },
       {
-        "img": "nl-cover-73734677.webp",
+        "img": "nl-cover-73734574.webp",
         "alt": {
           "fr": "",
           "en": ""
         },
-        "link": "73734677"
+        "link": "73734574"
       },
       {
         "img": "nl-cover-73734705.webp",
@@ -140,14 +132,6 @@
           "en": ""
         },
         "link": "73734705"
-      },
-      {
-        "img": "nl-cover-73405095.webp",
-        "alt": {
-          "fr": "",
-          "en": ""
-        },
-        "link": "73405095"
       }
     ]
   },
@@ -308,28 +292,6 @@
     },
     {
       "title": {
-        "fr": "",
-        "en": ""
-      },
-      "items": [
-        {
-          "id": "73405095",
-          "name": {
-            "fr": "Chemise patchwork plissée",
-            "en": "Pleated patchwork shirt"
-          }
-        },
-        {
-          "id": "73734832",
-          "name": {
-            "fr": "Top plissé",
-            "en": "Pleated top"
-          }
-        }
-      ]
-    },
-    {
-      "title": {
         "fr": "Proposition de look",
         "en": "A look"
       },
@@ -363,7 +325,7 @@
         }
       ],
       "img": "nl-look-2026-11-15.webp",
-      "w": 380,
+      "w": 480,
       "lead": {
         "fr": "Trois pièces de la semaine, assemblées pour une tenue d’hiver.",
         "en": "Three pieces from this week, put together for a winter outfit."
