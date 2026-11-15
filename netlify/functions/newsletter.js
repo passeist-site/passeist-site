@@ -161,7 +161,7 @@ exports.handler = async (event) => {
   const action = (event.queryStringParameters || {}).action;
   if (action) {
     try { return await admin(event, action); }
-    catch (err) { console.error('newsletter admin :', err.message); return json(500, { error: 'server' }); }
+    catch (err) { console.error('newsletter admin :', err.stack || err.message); return json(500, { error: 'serveur : ' + String(err.message).slice(0, 160) }); }   // détail visible dans la messagerie (accès réservé)
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'method' });
   const h = event.headers || {};
