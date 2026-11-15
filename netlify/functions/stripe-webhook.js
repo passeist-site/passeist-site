@@ -177,33 +177,9 @@ exports.handler = async (event) => {
     const session = stripeEvent.data.object;
     const md = session.metadata || {};
     if ((md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled()) {
-      try {
-        connectLambda(event);
-        const store = getStore('passeist-orders');
-        if (!(await store.get('boxtal/' + session.id))) {
-          const ids = (md.passeist_ids || '').split(',').filter(Boolean);
-          const types = ids.map(id => (PRODUCTS[id] || {}).type || '');
-          const order = boxtal.buildOrder({ session, types, valueEur: (session.amount_subtotal || 0) / 100 });
-          const notify = process.env.ORDER_NOTIFY_EMAIL || 'info@passeist.com';
-          const esc = t => String(t || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
-          const resume = `${md.ship_mode === 'relay' ? 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')' : 'Domicile'}<br>Poids déclaré : ${order.shipment.packages[0].weight} kg<br>Offre : ${esc(order.shippingOfferCode)}`;
-          if (session.livemode === true && boxtal.live()) {
-            const res = await boxtal.createOrder(order);
-            const c = res.content || {};
-            await store.setJSON('boxtal/' + session.id, { id: c.id, status: c.status, at: new Date().toISOString() });
-            await store.setJSON('boxtal-order/' + c.id, { session: session.id, email: (session.customer_details || {}).email || '', name: (session.customer_details || {}).name || '', lang: session.locale || 'fr' });
-            console.log('✓ Envoi Boxtal créé :', c.id, c.status);
-            await brevo.sendOne({ to: notify, subject: 'Envoi créé — ' + (md.passeist_ids || session.id), html: `Commande ${esc(session.id)}<br>${resume}<br>Envoi Boxtal ${esc(c.id)} (${esc(c.status)}). Le bordereau arrive dans un e-mail séparé dès que Boxtal l'a généré.` });
-          } else {
-            await store.setJSON('boxtal/' + session.id, { dryRun: true, at: new Date().toISOString() });
-            await brevo.sendOne({ to: notify, subject: '[À blanc] Envoi qui aurait été créé — ' + (md.passeist_ids || session.id),
-              html: `Mode à blanc (BOXTAL_LIVE pas activé${session.livemode ? '' : ', paiement test'}) : rien n'a été commandé chez Boxtal.<br>${resume}<pre style="font-size:11px">${esc(JSON.stringify(order, null, 2))}</pre>` });
-          }
-        }
-      } catch (err) {
-        console.error('Boxtal :', err.message);
-        try { await brevo.sendOne({ to: process.env.ORDER_NOTIFY_EMAIL || 'info@passeist.com', subject: '⚠ Bordereau non créé — ' + session.id, html: 'Erreur Boxtal : ' + String(err.message).replace(/[<>&]/g, '') + '<br>À créer à la main sur boxtal.com.' }); } catch (e) {}
-      }
+      // Création de l'envoi Boxtal (ou e-mail « à blanc ») : netlify/lib/boxtal-ship.js
+      try { connectLambda(event); } catch (e) {}
+      await require('../lib/boxtal-ship').shipSession({ session, store: getStore('passeist-orders'), PRODUCTS });
     }
   }
 
