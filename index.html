@@ -7960,7 +7960,7 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     document.getElementById('ha-cta-txt').textContent = en ? 'All new arrivals' : 'Toutes les nouveautés';   // boutique sans filtre, plus récentes d'abord (Tom, 2026-11-15 : « Voir la boutique » doublait « Explorer »)
     const items = PRODUCTS.filter(p => !isSold(p) && p.n > 0).sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 12);
     const html = items.map(x => `<a class="ha-card" href="/product/${productSlug(x)}" data-id="${x.id}" draggable="false">
-      <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="(min-width: 901px) 240px, 160px" alt="${x.brand} ${x.type}" loading="eager" decoding="async" draggable="false"></div>
+      <div class="ha-img"><img src="${imgUrl(x, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(x, 0)}" sizes="(min-width: 901px) 400px, 160px" alt="${x.brand} ${x.type}" loading="eager" decoding="async" draggable="false"></div>
       <div class="ha-brand">${x.brand}</div></a>`).join('');
     // Téléphone : défilement automatique comme le carrousel du haut, le doigt peut le pousser (Tom, 2026-11-12).
     // Ordinateur : grille fixe de 4 colonnes (CSS), pas d'animation.
@@ -7994,6 +7994,11 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
       const now = performance.now(); if (now > lastT) vel = (x - lastX) * DRAG / ((now - lastT) / 1000); lastX = x; lastT = now;
     }, { passive: true });
     track.addEventListener('touchend', () => { touchX = null; setTimeout(() => { dragged = false; }, 60); });
+    // Pavé tactile (deux doigts à l'horizontale) : comme le carrousel du haut (Tom, 2026-11-15)
+    track.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      e.preventDefault(); off -= e.deltaX;
+    }, { passive: false });
     // Souris : le bandeau s'arrête sous le pointeur, et se fait glisser en cliquant-tirant
     if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     track.addEventListener('mouseenter', () => { hover = true; });

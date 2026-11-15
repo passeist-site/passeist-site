@@ -181,7 +181,7 @@
     'body[data-page="home"] #recent .product-price-wrap,body[data-page="home"] #recent .product-name-row,body[data-page="home"] #recent .product-meta{display:none!important}body[data-page="home"] #recent .product-brand{justify-content:center!important;border:0!important}body[data-page="home"] #recent .product-body{padding-top:0!important}' +
     'body[data-page="home"] .nl{display:flex!important}' +
     /* Ordinateur : grille de 4 colonnes (8 pièces), alignée sur la boutique, sans défilement */
-    '@media (min-width:901px){.ha-track{margin-bottom:36px;cursor:grab}.ha-belt{gap:24px}.ha-card{flex:0 0 240px}.ha-img{width:240px;height:320px}}' +
+    '@media (min-width:901px){.ha-track{margin-bottom:36px;cursor:grab}.ha-belt{gap:32px}.ha-card{flex:0 0 calc(var(--hero-card-h,393px)*0.9375)}.ha-img{width:calc(var(--hero-card-h,393px)*0.9375);height:calc(var(--hero-card-h,393px)*1.25)}}' +
     /* Retour tactile (téléphone) : la carte ou le bouton touché s'enfonce à peine (Tom, 2026-11-12) */
     '@media (hover:none){.product-card,.ha-card,.btn,.hero-cta,.hbs-cta,.cart-checkout,.filter-mobile-toggle,.filter-search-btn{transition:transform .15s ease}.product-card:active,.ha-card:active{transform:scale(.98)}.btn:active,.hero-cta:active,.hbs-cta:active,.cart-checkout:active,.filter-mobile-toggle:active,.filter-search-btn:active{transform:scale(.96)}}' +
     /* Compteur sous le slogan et étiquette « nouveau » (Tom, 2026-11-12) */
