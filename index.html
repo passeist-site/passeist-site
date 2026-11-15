@@ -7971,6 +7971,8 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     track.dataset.done = '1';
     const belt = track.firstElementChild;
     let hover = false;
+    // Même toucher que le carrousel du haut : le bandeau avance 1,9 fois le déplacement du doigt (Tom, 2026-11-15)
+    const DRAG = 1.9;
     let off = 0, last = 0, half = 0, touchX = null, startOff = 0, vel = 0, lastX = 0, lastT = 0;
     const SPEED = -20; // même vitesse que le carrousel du haut (-20 px/s) ; le doigt peut le pousser (Tom, 2026-11-13)
     const step = (t) => {
@@ -7987,23 +7989,23 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     track.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; startOff = off; dragged = false; vel = 0; lastX = touchX; lastT = performance.now(); }, { passive: true });
     track.addEventListener('touchmove', e => {
       if (touchX === null) return;
-      const x = e.touches[0].clientX; off = startOff + (x - touchX);
+      const x = e.touches[0].clientX; off = startOff + (x - touchX) * DRAG;
       if (Math.abs(x - touchX) > 6) dragged = true;
-      const now = performance.now(); if (now > lastT) vel = (x - lastX) / ((now - lastT) / 1000); lastX = x; lastT = now;
+      const now = performance.now(); if (now > lastT) vel = (x - lastX) * DRAG / ((now - lastT) / 1000); lastX = x; lastT = now;
     }, { passive: true });
-    track.addEventListener('touchend', () => { touchX = null; vel = Math.max(-1500, Math.min(1500, vel)); setTimeout(() => { dragged = false; }, 60); });
+    track.addEventListener('touchend', () => { touchX = null; setTimeout(() => { dragged = false; }, 60); });
     // Souris : le bandeau s'arrête sous le pointeur, et se fait glisser en cliquant-tirant
     if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     track.addEventListener('mouseenter', () => { hover = true; });
-    track.addEventListener('mouseleave', () => { hover = false; if (touchX !== null) { touchX = null; vel = Math.max(-1500, Math.min(1500, vel)); } });
+    track.addEventListener('mouseleave', () => { hover = false; if (touchX !== null) { touchX = null; } });
     track.addEventListener('mousedown', e => { if (e.button !== 0) return; e.preventDefault(); touchX = e.clientX; startOff = off; dragged = false; vel = 0; lastX = touchX; lastT = performance.now(); });
     window.addEventListener('mousemove', e => {
       if (touchX === null || !hover) return;
-      const x = e.clientX; off = startOff + (x - touchX);
+      const x = e.clientX; off = startOff + (x - touchX) * DRAG;
       if (Math.abs(x - touchX) > 6) dragged = true;
-      const now = performance.now(); if (now > lastT) vel = (x - lastX) / ((now - lastT) / 1000); lastX = x; lastT = now;
+      const now = performance.now(); if (now > lastT) vel = (x - lastX) * DRAG / ((now - lastT) / 1000); lastX = x; lastT = now;
     });
-    window.addEventListener('mouseup', () => { if (touchX === null) return; touchX = null; vel = Math.max(-1500, Math.min(1500, vel)); setTimeout(() => { dragged = false; }, 60); });
+    window.addEventListener('mouseup', () => { if (touchX === null) return; touchX = null; setTimeout(() => { dragged = false; }, 60); });
     }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => window.renderArrivals()); else setTimeout(() => window.renderArrivals(), 0);
