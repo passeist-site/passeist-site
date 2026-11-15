@@ -1,6 +1,7 @@
 // Notifications Boxtal (Tom, 2026-11-12)
 //   DOCUMENT_CREATED → bordereau envoyé par e-mail à Tom (ORDER_NOTIFY_EMAIL)
-//   TRACKING_CHANGED → lien de suivi envoyé une fois au client
+//   TRACKING_CHANGED → lien de suivi envoyé une fois au client, et numéro de suivi
+//                      enregistré sur le paiement Stripe (Paiements → la commande → Livraison)
 // Signature vérifiée (x-bxt-signature, HMAC-SHA256 avec BOXTAL_WEBHOOK_SECRET).
 // Abonnement : POST /.netlify/functions/boxtal-webhook?setup=1 avec l'en-tête x-admin-key (CHAT_ADMIN_KEY).
 const { getStore, connectLambda } = require('@netlify/blobs');
@@ -41,6 +42,20 @@ exports.handler = async (event) => {
       const t = ((ev.payload && ev.payload.trackings) || [])[0] || {};
       if (t.packageTrackingUrl && !(await done('boxtal-track/' + ev.shippingOrderId))) {
         const info = await store.get('boxtal-order/' + ev.shippingOrderId, { type: 'json' });
+        // Numéro de suivi sur le paiement Stripe (visible dans le tableau de bord, et sur le reçu)
+        if (info && info.session && process.env.STRIPE_SECRET_KEY) {
+          try {
+            const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+            const ses = await stripe.checkout.sessions.retrieve(info.session);
+            const sd = ses.shipping_details || (ses.collected_information || {}).shipping_details || {};
+            const cd = ses.customer_details || {};
+            const a = sd.address || cd.address || {};
+            if (ses.payment_intent) await stripe.paymentIntents.update(ses.payment_intent, { shipping: {
+              name: sd.name || cd.name || 'Client', phone: cd.phone || undefined,
+              address: { line1: a.line1 || '', line2: a.line2 || undefined, city: a.city || '', postal_code: a.postal_code || '', country: a.country || 'FR' },
+              carrier: t.carrierName || t.carrier || 'Boxtal', tracking_number: t.trackingNumber || '' } });
+          } catch (e) { console.error('suivi Stripe :', e.message); }
+        }
         if (info && info.email) {
           const en = info.lang === 'en';
           await brevo.sendOne({ to: info.email, subject: en ? 'Your passéist order is on its way' : 'Votre commande passéist est en route',
