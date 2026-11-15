@@ -41,4 +41,34 @@ async function shipSession({ session, store, PRODUCTS, force = false }) {
   }
 }
 
-module.exports = { shipSession };
+// Lien signé « Créer le bordereau » (e-mail et notification à Tom) : HMAC de la commande
+function signFor(sessionId) {
+  return require('crypto').createHmac('sha256', process.env.CHAT_ADMIN_KEY || 'x').update('boxtal:' + sessionId).digest('hex').slice(0, 32);
+}
+function validateUrl(sessionId) {
+  return (process.env.URL || 'https://passeist.com') + '/.netlify/functions/boxtal-order?s=' + encodeURIComponent(sessionId) + '&t=' + signFor(sessionId);
+}
+
+// Vente en relais / domicile : rien n'est commandé tout de suite. Tom reçoit un e-mail et une
+// notification avec « Créer le bordereau » (validation en un clic, Tom 2026-11-15) : il vérifie
+// que la pièce n'est pas partie ailleurs (Vestiaire, Vinted) avant de payer l'étiquette.
+async function requestValidation({ session, store, PRODUCTS }) {
+  const md = session.metadata || {};
+  const notify = process.env.ORDER_NOTIFY_EMAIL || 'info@passeist.com';
+  const prev = await store.get('boxtal/' + session.id, { type: 'json' });
+  if (prev) return { skipped: true };
+  await store.setJSON('boxtal/' + session.id, { pending: true, at: new Date().toISOString() });
+  const ids = (md.passeist_ids || '').split(',').filter(Boolean);
+  const pieces = ids.map(id => { const p = PRODUCTS[id] || {}; return esc((p.brand || '') + ' · ' + (p.type || id)); }).join('<br>');
+  const where = md.ship_mode === 'relay' ? 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')' : 'Livraison à domicile';
+  const url = validateUrl(session.id);
+  await brevo.sendOne({ to: notify, subject: 'Nouvelle commande — bordereau à valider', html:
+    `<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1C2230">`
+    + `<b>${pieces}</b><br>${((session.amount_total || 0) / 100).toLocaleString('fr-FR')} € · ${esc((session.customer_details || {}).name)}<br>${where}<br><br>`
+    + `Vérifiez que la pièce est toujours disponible (Vestiaire, Vinted), puis :<br><br>`
+    + `<a href="${url}" style="display:inline-block;background:#1C2230;color:#fff;text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600">Créer le bordereau</a>`
+    + `<br><br><span style="color:#888;font-size:13px">Pièce plus disponible : n'appuyez pas, remboursez le client dans Stripe. Rien n'est payé chez Boxtal.</span></div>` });
+  return { pending: true, url };
+}
+
+module.exports = { shipSession, requestValidation, validateUrl, signFor };

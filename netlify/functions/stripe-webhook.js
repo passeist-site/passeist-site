@@ -179,8 +179,30 @@ exports.handler = async (event) => {
     if ((md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled()) {
       // Création de l'envoi Boxtal (ou e-mail « à blanc ») : netlify/lib/boxtal-ship.js
       try { connectLambda(event); } catch (e) {}
-      await require('../lib/boxtal-ship').shipSession({ session, store: getStore('passeist-orders'), PRODUCTS });
+      // Validation en un clic par Tom (e-mail + notification « Créer le bordereau »)
+      try { await require('../lib/boxtal-ship').requestValidation({ session, store: getStore('passeist-orders'), PRODUCTS }); }
+      catch (e) { console.error('Boxtal validation :', e.message); }
     }
+  }
+
+  // Notification « Nouvelle vente » sur le téléphone de Tom (appli passéist), à chaque vente
+  if (stripeEvent.type === 'checkout.session.completed') {
+    const session = stripeEvent.data.object;
+    try {
+      connectLambda(event);
+      const md = session.metadata || {};
+      if (!(await getStore('passeist-orders').get('notif/' + session.id))) {
+        await getStore('passeist-orders').setJSON('notif/' + session.id, { at: new Date().toISOString() });
+        const ids = (md.passeist_ids || '').split(',').filter(Boolean);
+        const what = ids.map(id => { const p = PRODUCTS[id] || {}; return (p.brand || '') + ' ' + (p.type || ''); }).join(', ');
+        const relayed = (md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled();
+        await require('../lib/admin-push').notifyAdmin({
+          title: 'Nouvelle vente · ' + ((session.amount_total || 0) / 100).toLocaleString('fr-FR') + ' €',
+          body: what + (relayed ? ' · Touchez pour créer le bordereau' : ''),
+          url: relayed ? require('../lib/boxtal-ship').validateUrl(session.id) : '/messagerie/',
+          tag: 'sale-' + session.id.slice(-8) });
+      }
+    } catch (e) { console.error('notification vente :', e.message); }
   }
 
   // On retourne 200 pour Stripe (ne pas re-envoyer le webhook), mais on inclut

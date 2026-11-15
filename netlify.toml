@@ -28,8 +28,5 @@
 [functions."alerts-send"]
   schedule = "@hourly"
 
-# Rattrapage Boxtal : envoi créé pour toute commande relais / domicile qui n'en a pas encore (boxtal-catchup.js)
-[functions."boxtal-catchup"]
-  schedule = "@hourly"
 
 # Notification « nouveautés » du dimanche arrêtée (Tom, oct. 2026)
