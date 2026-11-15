@@ -9,8 +9,8 @@
     "en": "An Issey Miyake leather trouser from the winter 1998 runway, a Y’s for men down jacket and Yohji Yamamoto’s houndstooth"
   },
   "intro": {
-    "fr": "Cette semaine, passéist vous propose trois mises en avant :",
-    "en": "This week, passéist presents three highlights:"
+    "fr": "Cette semaine, passéist vous propose quatre mises en avant :",
+    "en": "This week, passéist presents four highlights:"
   },
   "introList": {
     "fr": [
@@ -25,6 +25,10 @@
       {
         "label": "Motif pied-de-poule",
         "text": "Yohji Yamamoto, hiver 2003 : deux bonnets et une écharpe"
+      },
+      {
+        "label": "Proposition de look",
+        "text": "Un sweat 45RPM, une jupe Comme des Garçons et des rangers Yohji Yamamoto"
       }
     ],
     "en": [
@@ -39,6 +43,10 @@
       {
         "label": "Houndstooth pattern",
         "text": "Yohji Yamamoto, winter 2003: two beanies and a scarf"
+      },
+      {
+        "label": "A look",
+        "text": "A 45RPM hoodie, a Comme des Garçons skirt and Yohji Yamamoto combat boots"
       }
     ]
   },
@@ -317,6 +325,41 @@
             "fr": "Top plissé",
             "en": "Pleated top"
           }
+        }
+      ]
+    },
+    {
+      "title": {
+        "fr": "Proposition de look",
+        "en": "A look"
+      },
+      "look": true,
+      "items": [
+        {
+          "id": "73734078",
+          "name": {
+            "fr": "Sweat zippé à capuche",
+            "en": "Zip hoodie"
+          },
+          "w": 250,
+          "gap": 0
+        },
+        {
+          "id": "73734344",
+          "name": {
+            "fr": "Jupe en toile",
+            "en": "Canvas skirt"
+          },
+          "w": 250,
+          "gap": 0
+        },
+        {
+          "id": "73734504",
+          "name": {
+            "fr": "Rangers en daim",
+            "en": "Suede combat boots"
+          },
+          "w": 190
         }
       ]
     }

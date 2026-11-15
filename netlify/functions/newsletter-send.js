@@ -153,6 +153,14 @@ function editionHtml(lang, ed, total) {
       row(sec.photos) +
       (L(sec.caption) ? `<tr><td align="center" style="padding:12px 16px 0;font-family:${FONT};font-size:12px;font-style:italic;font-weight:300;line-height:1.5;color:${DIM};">${esc(L(sec.caption))}</td></tr>` : '') +
       (L(sec.text) ? `<tr><td align="center" style="padding:30px 16px 36px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${L(sec.text).split('\n').filter(Boolean).map((t, i) => `<div style="${i ? 'margin-top:14px;' : ''}">${esc(t)}</div>`).join('')}</td></tr>` : '<tr><td style="height:30px;"></td></tr>');
+    // sec.look : proposition de look, les photos empilées comme une silhouette (it.w = largeur),
+    // puis les pièces en colonnes (marque, nom, prix)
+    if (sec.look) {
+      const imgs = items.map(it => { const w = it.w || 260; return `<tr><td align="center" style="padding:0 0 ${it.gap != null ? it.gap : 4}px;"><a href="${track(urlOf(it.id))}" style="text-decoration:none;display:block;"><img src="${SITE}/img/${it.img || it.id + '-0-md.webp'}" width="${w}" alt="${esc(title(PRODUCTS[it.id].brand) + ', ' + L(it.name))}" style="display:block;width:${Math.round(100 * w / 512)}%;max-width:${w}px;height:auto;margin:0 auto;border:0;"></a></td></tr>`; }).join('');
+      const cols = `<tr><td align="center" style="padding:22px 0 52px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>` +
+        items.map(it => `<td width="${Math.floor(100 / items.length)}%" valign="top" align="center" style="padding:0 4px;">${piece(it, false, 'txt')}</td>`).join('') + `</tr></table></td></tr>`;
+      return head + (L(sec.lead) ? `<tr><td align="center" style="padding:0 16px 40px;font-family:${FONT};font-size:14px;font-weight:300;line-height:1.7;color:${INK};">${esc(L(sec.lead))}</td></tr>` : '') + imgs + cols;
+    }
     if (sec.hero) return head + items.map(it => `<tr><td align="center" style="padding:0 0 26px;">${piece(it, true)}</td></tr>`).join('') + focus;
     // Rythme du site : des paires, et une pièce en grand (it.big) quand on veut
     const groups = []; let buf = [];
