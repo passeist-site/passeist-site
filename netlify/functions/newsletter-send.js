@@ -166,7 +166,8 @@ function editionHtml(lang, ed, total) {
       : `<tr><td align="center"><table role="presentation" width="${g.length > 1 ? '100%' : '50%'}" align="center" cellspacing="0" cellpadding="0" style="table-layout:fixed;"><tr>` +   // colonnes de même largeur (un nom long n'élargit plus sa photo) ; pièce seule (l'autre vendue) : centrée
         // Photos sur une ligne (calées en bas), textes sur la suivante : les noms restent
         // alignés même quand les deux photos n'ont pas la même hauteur
-        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="bottom" align="center" style="padding:0 4px;">${piece(it, false, 'img')}</td>`).join('') + `</tr><tr>` +
+        // Une photo réduite (it.scale) : photos centrées en hauteur, pour qu'elles restent alignées
+        g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="${g.some(x => x.scale) ? 'middle' : 'bottom'}" align="center" style="padding:0 4px;">${piece(it, false, 'img')}</td>`).join('') + `</tr><tr>` +
         g.map(it => `<td width="${g.length > 1 ? '50%' : '100%'}" valign="top" align="center" style="padding:0 4px 52px;">${piece(it, false, 'txt')}</td>`).join('') + `</tr></table></td></tr>`);
     // sec.more : lien sous la partie (ex. « Voir les 6 pièces Monitaly » vers /shop?brand=…)
     const more = (sec.more && L(sec.more.label)) ? `<tr><td align="center" style="padding:0 0 52px;"><a href="${track(SITE + (sec.more.href || '/shop'))}" style="font-family:${FONT};border-bottom:1px solid ${INK};color:${INK};text-decoration:none;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:0 0 6px;">${esc(L(sec.more.label))}</a></td></tr>` : '';
