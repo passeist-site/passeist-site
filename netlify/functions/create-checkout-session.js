@@ -60,6 +60,18 @@ function shippingForCountry(country) {
   return SHIPPING_RATES.WORLD;
 }
 
+
+// Photo de la pièce pour Stripe (commande, reçu, tableau de bord). Stripe n'affiche pas
+// le WebP (« ? » à la place de la photo, Tom 2026-11-15) : les photos du site passent par
+// le service d'images de Netlify qui les convertit en JPEG. Hôtes autorisés seulement.
+function stripeImage(u) {
+  u = String(u || '');
+  if (!/^https:\/\/(passeist\.com|images\.vestiairecollective\.com)/i.test(u)) return [];
+  const m = u.match(/^https:\/\/passeist\.com(\/img\/[\w.-]+\.webp)$/i);
+  if (m) return ['https://passeist.com/.netlify/images?url=' + encodeURIComponent(m[1]) + '&fm=jpg&w=800&q=85'];
+  return [u];
+}
+
 exports.handler = async (event) => {
   // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -145,9 +157,7 @@ exports.handler = async (event) => {
             name: `${ref.brand} — ${ref.type}`,
             description: ref.size ? `Taille ${ref.size}` : undefined,
             // image envoyée par le client : on la filtre par host (anti SSRF / abus)
-            images: (item.image && /^https:\/\/(passeist\.com|images\.vestiairecollective\.com)/i.test(item.image))
-              ? [item.image]
-              : [],
+            images: stripeImage(item.image),
             metadata: { passeist_id: id, slug: ref.slug || '' },
           },
           unit_amount: priceCents, // prix serveur, pas client
