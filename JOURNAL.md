@@ -339,3 +339,6 @@ Décisions de Tom :
   nouveautés » sous le bandeau. Boutique : titre « 824 pièces ».
 - Étiquette « nouveau » : registre data/first-seen.json restauré (la synchro l'avait
   redaté) ; la synchro récupère maintenant ce fichier.
+- Acheteurs ajoutés à la newsletter Brevo de leur langue (16/11) : phrase sur la page de
+  paiement Stripe, politique de confidentialité mise à jour. PayPal écarté par Tom.
+  E-mails : photos laissées en WebP (choix de Tom ; l'ancien Outlook Windows ne les affiche pas).
