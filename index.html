@@ -4287,7 +4287,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </div>
       <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
       <!-- Réf. produit (discret, pour usage interne, clic = copie ID dans presse-papier) -->
-      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div><div class="detail-ref" id="d-vref" title="Cliquer pour copier le numéro Vinted" onclick="copyProductRef(this)" hidden></div></div>
+      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div><div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div></div>
     </div>
   </div>
   <!-- Carrousel articles similaires (boucle infinie + tactile type hero-marquee) -->
@@ -7579,10 +7579,10 @@ function renderFilters() {
   if (rq) rq.hidden = !anyActive;
 }
 
-// Recherche par référence (« 73092452 », « Réf. 73092452 ») : la pièce est
+// Recherche par référence (« 73092452 », « Réf. 73092452 », « Réf. VC 73092452 ») : la pièce est
 // trouvée où qu'elle soit (boutique, vendue), sans tenir compte des filtres.
 function refQuery(q) {
-  const s = normalizeForSearch(q).replace(/^\s*ref\.?\s*:?\s*/, '').trim();
+  const s = normalizeForSearch(q).replace(/^\s*ref\.?\s*:?\s*(vc|v)?\.?\s*:?\s*/, '').trim();
   return /^\d{6,}$/.test(s) ? s : '';
 }
 function renderGrid() {
@@ -8141,7 +8141,7 @@ function openDetail(id) {
   document.getElementById('d-gender').textContent = (window.tGender ? window.tGender(p) : (getGender(p) || 'Accessoire'));
   // Réf discrète pour usage interne (clic = copie)
   const refEl = document.getElementById('d-ref');
-  if (refEl) { refEl.textContent = (window.__lang === 'en' ? 'Ref. ' : 'Réf. ') + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
+  if (refEl) { refEl.textContent = (window.__lang === 'en' ? 'Ref. VC ' : 'Réf. VC ') + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
   // Numéro de l'annonce Vinted (registre data/vinted-links.json, rempli par la synchro du soir)
   const vrefEl = document.getElementById('d-vref');
   if (vrefEl) {
@@ -8150,7 +8150,7 @@ function openDetail(id) {
     window.__vintedLinks.then(m => {
       const vid = m && m[p.id];
       if (!vid || !currentProduct || currentProduct.id !== p.id) return;
-      vrefEl.textContent = 'Vinted ' + vid; vrefEl.dataset.id = vid; vrefEl.hidden = false;
+      vrefEl.textContent = (window.__lang === 'en' ? 'Ref. V ' : 'Réf. V ') + vid; vrefEl.dataset.id = vid; vrefEl.hidden = false;
     });
   }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
@@ -9173,7 +9173,7 @@ function updateCartTotals() {
 // Stripe gère ensuite : carte (3DS), Apple/Google Pay, adresse, frais port, factures.
 // Copie la ref produit dans le presse-papier (clic sur .detail-ref)
 window.copyProductRef = function(el) {
-  const id = el.dataset.id || (el.textContent || '').replace(/^Réf\.\s*/, '').trim();
+  const id = el.dataset.id || (el.textContent || '').replace(/^R[ée]f\.\s*(VC|V)?\s*/, '').trim();
   if (!id) return;
   const fallback = () => {
     const ta = document.createElement('textarea');
@@ -11544,7 +11544,6 @@ window.subscribeNewsletter = function (e) {
       'Envoyer': 'Send', 'Discussion': 'Chat', 'Discussion avec passéist': 'Chat with passéist',
       'Ajouter aux favoris': 'Add to favourites', 'Ajouter au panier': 'Add to cart',
       'Cliquer pour copier la référence': 'Click to copy the reference',
-      'Cliquer pour copier le numéro Vinted': 'Click to copy the Vinted number',
     };
     ['aria-label', 'title'].forEach(attr => {
       document.querySelectorAll('[' + attr + ']').forEach(el => {
@@ -11559,7 +11558,9 @@ window.subscribeNewsletter = function (e) {
       if (pp) c.title = pp.brand + ', ' + ((lang === 'en' && pp.type_en) || pp.type);
     });
     const refEl0 = document.getElementById('d-ref');
-    if (refEl0 && refEl0.dataset.id) refEl0.textContent = (lang === 'en' ? 'Ref. ' : 'Réf. ') + refEl0.dataset.id;
+    if (refEl0 && refEl0.dataset.id) refEl0.textContent = (lang === 'en' ? 'Ref. VC ' : 'Réf. VC ') + refEl0.dataset.id;
+    const vrefEl0 = document.getElementById('d-vref');
+    if (vrefEl0 && vrefEl0.dataset.id) vrefEl0.textContent = (lang === 'en' ? 'Ref. V ' : 'Réf. V ') + vrefEl0.dataset.id;
 
     // Filter labels desktop
     const labelMap = {
