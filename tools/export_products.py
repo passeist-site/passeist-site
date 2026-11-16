@@ -70,43 +70,16 @@ for p in products:
     if year: lookup[str(pid)]['year'] = year
 
 # Annonce Vinted de chaque pièce (Tom, 2026-11-16) : data/vinted.json est lu par
-# tools/vinted_wardrobe.py dans la synchro. Association prudente : même marque, prix à 15 %
-# près, et au moins un mot commun entre le titre Vinted et le type / la désignation ;
-# en cas de doute (plusieurs candidates à égalité), pas de lien : Tom garde « Mon dressing Vinted ».
-import unicodedata
-def _norm(t):
-    t = unicodedata.normalize('NFKD', str(t or '')).encode('ascii', 'ignore').decode().lower()
-    return re.sub(r'[^a-z0-9]+', ' ', t).strip()
-_STOP = {'de','du','des','la','le','les','en','et','a','au','aux','pour','avec','homme','femme','taille','t','vintage','japon','japan'}
-def _words(t): return {w for w in _norm(t).split() if len(w) > 2 and w not in _STOP}
+# tools/vinted_wardrobe.py dans la synchro ; association prudente dans tools/vinted_match.py.
+# Sans lien sûr, Tom garde le bouton « Mon dressing Vinted ».
 VT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'vinted.json')
 try: vinted = json.load(open(VT))
 except Exception: vinted = []
 if vinted:
-    byid = {str(p.get('id')): p for p in products}
-    used, linked = set(), 0
-    for pid, e in lookup.items():
-        p = byid.get(pid, {})
-        b = _norm(e.get('brand'))
-        try: price = float(e.get('price') or 0)
-        except ValueError: price = 0
-        if not b or not price: continue
-        mine = _words(' '.join([e.get('type', ''), e.get('label', ''), p.get('desc', ''), p.get('color', '')]))
-        best, top, tie = None, 0, False
-        for v in vinted:
-            if str(v.get('id')) in used: continue
-            vb = _norm(v.get('brand'))
-            if not vb or not (vb in b or b in vb) and vb.split()[0] != b.split()[0]: continue
-            try: vp = float(str(v.get('price') or 0).replace(',', '.'))
-            except ValueError: continue
-            if not vp or abs(vp - price) > 0.15 * price: continue
-            sc = len(mine & _words(v.get('title'))) + (1 if abs(vp - price) < 1 else 0)
-            if sc > top: best, top, tie = v, sc, False
-            elif sc == top and sc: tie = True
-        if best and top >= 2 and not tie:
-            e['vt'] = best.get('url') or f"https://www.vinted.fr/items/{best['id']}"
-            used.add(str(best.get('id'))); linked += 1
-    print(f'Vinted : {linked} pièce(s) reliée(s) à leur annonce sur {len(vinted)} annonces')
+    from vinted_match import match
+    links = match(lookup, {str(p.get('id')): p for p in products}, vinted)
+    for pid, url in links.items(): lookup[pid]['vt'] = url
+    print(f'Vinted : {len(links)} pièce(s) reliée(s) à leur annonce sur {len(vinted)} annonces')
 
 # Date de mise en ligne de chaque pièce (étiquette « nouveau » 7 jours, Tom 2026-11-12) :
 # data/first-seen.json garde la première date où l'identifiant est apparu ; les nouvelles
