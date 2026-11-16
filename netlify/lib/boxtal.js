@@ -106,9 +106,11 @@ async function call(path, method = 'GET', body, query) {
 }
 
 // Points relais proches d'un code postal (France), Mondial Relay et Chronopost
-async function searchRelays({ postalCode, city, street, number, networks }) {
-  const nets = (networks && networks.length ? networks : Object.keys(NETWORKS)).filter(n => NETWORKS[n]);
-  const j = await call('/shipping/v3.1/parcel-point', 'GET', null, { countryIsoCode: 'FR', postalCode, city, street, number, searchNetworks: nets });
+// Points relais : France (Mondial Relay + Chronopost) ; Europe : Mondial Relay (Tom, 2026-11-16)
+const RELAY_COUNTRIES = new Set(['FR', 'BE', 'LU', 'NL', 'ES', 'PT', 'DE', 'AT', 'IT', 'PL']);
+async function searchRelays({ country = 'FR', postalCode, city, street, number, networks }) {
+  const nets = country === 'FR' ? (networks && networks.length ? networks : Object.keys(NETWORKS)).filter(n => NETWORKS[n]) : ['MONR'];
+  const j = await call('/shipping/v3.1/parcel-point', 'GET', null, { countryIsoCode: country, postalCode, city, street, number, searchNetworks: nets });
   return (j.content || []).map(x => {
     const p = x.parcelPoint || x.parcelpoint || {}; const l = p.location || {};
     return {
@@ -192,7 +194,8 @@ function buildOrder({ session, types, valueEur, pieces, carrier }) {
       weight: weightKg([p.type]), tariffNumber: hsCode(p.type), originCountry: process.env.BOXTAL_ORIGIN || 'JP' })) };
   }
   if (mode === 'relay') {
-    offer = net.offer();
+    // Relais hors de France : offre Mondial Relay Europe (à confirmer avec « Offres Boxtal » de la messagerie)
+    offer = dest === 'FR' ? net.offer() : (process.env.BOXTAL_OFFER_MONR_EU || 'MONR-CpourToi');
     shipment.pickupPointCode = md.relay_code;
     if (net.dropoff()) shipment.dropOffPointCode = net.dropoff();
   }
@@ -214,4 +217,4 @@ function verify(rawBody, signature) {
   return got.length === exp.length && crypto.timingSafeEqual(got, exp);
 }
 
-module.exports = { enabled, live, probeOffers, OFFER_CANDIDATES, carriers, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };
+module.exports = { enabled, live, RELAY_COUNTRIES, probeOffers, OFFER_CANDIDATES, carriers, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };

@@ -23,11 +23,14 @@ exports.handler = async (event) => {
     } catch (e) { console.error('Abonnements Boxtal :', e.message); }
     return { statusCode: 200, headers: { ...H, 'Cache-Control': 'no-store' }, body: JSON.stringify({ ok: true }) };
   }
-  const cp = String(q.cp || '').replace(/\s/g, '');
-  if (!/^\d{5}$/.test(cp)) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'cp' }) };
+  // Pays : France, et Europe en Mondial Relay (Tom, 2026-11-16)
+  const country = String(q.country || 'FR').toUpperCase();
+  if (!boxtal.RELAY_COUNTRIES.has(country)) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'country' }) };
+  const cp = String(q.cp || '').trim().toUpperCase();
+  if (!/^[0-9A-Z][0-9A-Z -]{2,8}$/.test(cp)) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'cp' }) };
   try {
     // Adresse complète si donnée (points les plus proches de chez soi), sinon le code postal seul
-    const points = await boxtal.searchRelays({ postalCode: cp, city: String(q.city || '').slice(0, 60), street: String(q.street || '').slice(0, 120), number: String(q.number || '').slice(0, 10) });
+    const points = await boxtal.searchRelays({ country, postalCode: cp, city: String(q.city || '').slice(0, 60), street: String(q.street || '').slice(0, 120), number: String(q.number || '').slice(0, 10) });
     return { statusCode: 200, headers: H, body: JSON.stringify({ points }) };
   } catch (e) {
     console.error('relay-points :', e.message);

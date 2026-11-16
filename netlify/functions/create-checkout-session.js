@@ -184,9 +184,12 @@ exports.handler = async (event) => {
     // France : point relais (Mondial Relay / Chronopost) ou domicile, même prix (Tom, 2026-11-12).
     // Le mode et le relais choisi voyagent dans les métadonnées → bordereau Boxtal après paiement.
     const clip = (v, n) => String(v || '').replace(/[\r\n]/g, ' ').slice(0, n);
-    const isFR = (country || 'FR') === 'FR';
-    let mode = isFR && (shipMode === 'relay' || shipMode === 'home') ? shipMode : '';
-    if (mode === 'relay' && !(relay && /^[A-Za-z0-9_-]{2,40}$/.test(String(relay.code || '')) && /^(MONR|CHRP)$/.test(String(relay.network || '')))) {
+    // Europe aussi (Tom, 2026-11-16) : point relais Mondial Relay ou domicile, au tarif de la zone
+    const dest = String(country || 'FR').toUpperCase();
+    const isFR = dest === 'FR';
+    const relayOk = require('../lib/boxtal').RELAY_COUNTRIES.has(dest);
+    let mode = relayOk && (shipMode === 'relay' || shipMode === 'home') ? shipMode : '';
+    if (mode === 'relay' && !(relay && /^[A-Za-z0-9_-]{2,40}$/.test(String(relay.code || '')) && (isFR ? /^(MONR|CHRP)$/ : /^MONR$/).test(String(relay.network || '')))) {
       return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': 'https://passeist.com', 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'relay' }) };
     }
     // Relais et domicile au même prix que le tarif France, 15 € (Tom, 2026-11-12)
@@ -218,7 +221,7 @@ exports.handler = async (event) => {
       mode: 'payment',
       payment_method_types: PAYMENT_METHODS,
       line_items: lineItems,
-      shipping_address_collection: mode ? { allowed_countries: ['FR'] } : {
+      shipping_address_collection: mode ? { allowed_countries: [dest] } : {
         allowed_countries: [
           'FR','BE','LU','DE','IT','ES','NL','GB','CH','AT','PT','IE','GR',
           'SE','DK','NO','FI','PL','CZ','HU','HR','SI','SK','EE','LV','LT',
