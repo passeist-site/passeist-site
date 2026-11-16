@@ -158,7 +158,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
         Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.
       </div>
       <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
-      <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)">Réf. ${esc(p.id)}</div>
+      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)">Réf. ${esc(p.id)}</div>${p.vinted ? `<div class="detail-ref" id="d-vref" title="Cliquer pour copier le numéro Vinted" onclick="copyProductRef(this)" data-id="${esc(p.vinted)}">Vinted ${esc(p.vinted)}</div>` : '<div class="detail-ref" id="d-vref" title="Cliquer pour copier le numéro Vinted" onclick="copyProductRef(this)" hidden></div>'}</div>
     </div>
   </div>
   <section class="similar-section" id="d-similar"${simHtml ? '' : ' hidden'}>
@@ -1095,6 +1095,11 @@ module.exports = {
     let products;
     try { products = JSON.parse('[' + prodMatch[1] + ']'); }
     catch (e) { return utils.build.failBuild('PRODUCTS parse error: ' + e.message); }
+    // Numéro de l'annonce Vinted (data/vinted-links.json) → p.vinted, affiché à côté de la réf.
+    try {
+      const vl = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'vinted-links.json'), 'utf8'));
+      for (const x of products) if (vl[x.id]) x.vinted = String(vl[x.id]);
+    } catch (e) { console.log('[generate-product-pages] vinted-links.json absent'); }
     // Date de mise en ligne (data/first-seen.json) → p.added, pour l'étiquette « nouveau » (7 jours)
     try {
       const seen = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'first-seen.json'), 'utf8'));

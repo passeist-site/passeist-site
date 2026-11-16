@@ -1578,6 +1578,10 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 .detail-ref:hover { color: rgba(244,241,236,0.65); }
 .detail-ref.copied { color: #4a9; }
 .detail-ref.copied::after { content: ' ✓'; }
+/* Numéro de l'annonce Vinted à côté de la réf. (Tom, 2026-11-16), même usage interne */
+/* Les deux sur une ligne : le parent empile ses enfants */
+.detail-refs { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
+#d-vref[hidden] { display: none; }
 
 /* Archive / sold, on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
@@ -4283,7 +4287,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </div>
       <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
       <!-- Réf. produit (discret, pour usage interne, clic = copie ID dans presse-papier) -->
-      <div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div>
+      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div><div class="detail-ref" id="d-vref" title="Cliquer pour copier le numéro Vinted" onclick="copyProductRef(this)" hidden></div></div>
     </div>
   </div>
   <!-- Carrousel articles similaires (boucle infinie + tactile type hero-marquee) -->
@@ -8138,6 +8142,17 @@ function openDetail(id) {
   // Réf discrète pour usage interne (clic = copie)
   const refEl = document.getElementById('d-ref');
   if (refEl) { refEl.textContent = (window.__lang === 'en' ? 'Ref. ' : 'Réf. ') + p.id; refEl.dataset.id = p.id; refEl.classList.remove('copied'); }
+  // Numéro de l'annonce Vinted (registre data/vinted-links.json, rempli par la synchro du soir)
+  const vrefEl = document.getElementById('d-vref');
+  if (vrefEl) {
+    vrefEl.hidden = true; vrefEl.classList.remove('copied');
+    window.__vintedLinks = window.__vintedLinks || fetch('/data/vinted-links.json').then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    window.__vintedLinks.then(m => {
+      const vid = m && m[p.id];
+      if (!vid || !currentProduct || currentProduct.id !== p.id) return;
+      vrefEl.textContent = 'Vinted ' + vid; vrefEl.dataset.id = vid; vrefEl.hidden = false;
+    });
+  }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
   if (window.foldDesc) window.foldDesc(true);
   // Phrase unique passéist (générée au build, cf plugin generate-product-pages)
@@ -11529,6 +11544,7 @@ window.subscribeNewsletter = function (e) {
       'Envoyer': 'Send', 'Discussion': 'Chat', 'Discussion avec passéist': 'Chat with passéist',
       'Ajouter aux favoris': 'Add to favourites', 'Ajouter au panier': 'Add to cart',
       'Cliquer pour copier la référence': 'Click to copy the reference',
+      'Cliquer pour copier le numéro Vinted': 'Click to copy the Vinted number',
     };
     ['aria-label', 'title'].forEach(attr => {
       document.querySelectorAll('[' + attr + ']').forEach(el => {
