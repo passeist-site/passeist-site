@@ -8151,6 +8151,10 @@ function openDetail(id) {
       const vid = m && m[p.id];
       if (!vid || !currentProduct || currentProduct.id !== p.id) return;
       vrefEl.textContent = (window.__lang === 'en' ? 'Ref. V ' : 'Réf. V ') + vid; vrefEl.dataset.id = vid; vrefEl.hidden = false;
+      // Tom connecté à la messagerie sur cet appareil : la réf. ouvre l'annonce (appli Vinted sur téléphone).
+      // Les clients gardent la copie au clic, rien n'est visible pour eux.
+      let admin = false; try { admin = !!localStorage.getItem('passeist_chat_key'); } catch (e) {}
+      vrefEl.onclick = admin ? () => { window.open('https://www.vinted.fr/items/' + encodeURIComponent(vid), '_blank', 'noopener'); } : () => copyProductRef(vrefEl);
     });
   }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;

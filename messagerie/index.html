@@ -238,6 +238,10 @@ async function showNewsletter() {
       <div class="nl-stat">Pour une commande sans bordereau : l'e-mail du client, ou l'ID du paiement (pi_…, dans l'appli Stripe). Vous choisissez ensuite le transporteur, puis le bordereau arrive par e-mail.</div>
       <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Continuer</button></form>
       <div class="nl-msg" id="bxmsg"></div></div>
+    <div class="nl-box"><h3>Ouvrir une annonce (Réf. V)</h3>
+      <div class="nl-stat">Le numéro « Réf. V » de la fiche : l'annonce s'ouvre directement (dans l'appli Vinted sur téléphone).</div>
+      <form class="nl-test" id="vform"><input type="text" id="vref" inputmode="numeric" placeholder="Réf. V, ex. 7932486434" required><button type="submit">Ouvrir</button></form>
+      <div class="nl-msg" id="vmsg"></div></div>
     <div class="nl-box"><h3>Offres Boxtal</h3>
       <div class="nl-stat">Vérifie quels transporteurs Boxtal accepte (Mondial Relay, Chronopost, Colissimo, UPS, DHL), en France et en Belgique. Lecture seule : aucun envoi n'est créé, rien n'est payé.</div>
       <div class="nl-test"><button type="button" id="bxprobe">Vérifier les offres</button></div>
@@ -327,6 +331,13 @@ async function showNewsletter() {
     const j = await res.json().catch(() => ({}));
     if (res.ok && j.link) { $('bxmsg').textContent = 'Ouverture du choix du transporteur…'; location.href = j.link; return; }
     $('bxmsg').textContent = !res.ok ? 'Échec : ' + (j.error || res.status) : j.already ? '✓ Déjà créé (envoi ' + j.id + ')' : '✓ Envoi créé (' + j.id + '). Le bordereau arrive par e-mail.';
+  };
+  $('vform').onsubmit = (e) => {
+    e.preventDefault();
+    const n = ($('vref').value.match(/\d{6,}/) || [])[0];
+    if (!n) { $('vmsg').textContent = 'Numéro introuvable.'; return; }
+    $('vmsg').textContent = '';
+    window.open('https://www.vinted.fr/items/' + n, '_blank', 'noopener');
   };
   $('bxprobe').onclick = async () => {
     $('bxprobemsg').textContent = 'Vérification… (une trentaine de secondes)';
