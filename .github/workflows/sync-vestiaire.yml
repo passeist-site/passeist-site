@@ -49,6 +49,7 @@ jobs:
             index.html
             data/first-seen.json
             data/vinted.json
+            data/vinted-links.json
             requirements.txt
             JOURNAL.md
             RULES.md
@@ -245,6 +246,7 @@ jobs:
           git add --sparse index.html netlify/functions/products.json
           [ -f data/first-seen.json ] && git add --sparse data/first-seen.json || true
           [ -f data/vinted.json ] && git add --sparse data/vinted.json || true
+          [ -f data/vinted-links.json ] && git add --sparse data/vinted-links.json || true
           # img/ seulement s'il existe et contient des fichiers (imports faits)
           if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then
             git add --sparse img/

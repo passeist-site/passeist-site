@@ -75,11 +75,27 @@ for p in products:
 VT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'vinted.json')
 try: vinted = json.load(open(VT))
 except Exception: vinted = []
+# Registre data/vinted-links.json (Tom, 2026-11-16) : numéro du site → numéro de l'annonce Vinted,
+# comme le numéro Vestiaire. Une fois trouvé, il n'est jamais recalculé ; seules les pièces pas
+# encore reliées sont cherchées, chaque soir (dont les nouveautés du site).
+VL = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'vinted-links.json')
+try: vlinks = json.load(open(VL))
+except Exception: vlinks = {}
 if vinted:
     from vinted_match import match
-    links = match(lookup, {str(p.get('id')): p for p in products}, vinted)
-    for pid, url in links.items(): lookup[pid]['vt'] = url
-    print(f'Vinted : {len(links)} pièce(s) reliée(s) à leur annonce sur {len(vinted)} annonces')
+    live = {str(v.get('id')) for v in vinted}
+    known = {pid for pid, vid in vlinks.items() if str(vid) in live}   # annonce toujours en ligne
+    new = match(lookup, {str(p.get('id')): p for p in products}, vinted,
+                skip_ids=known, used_vinted={str(vlinks[k]) for k in known})
+    for pid, url in new.items(): vlinks[pid] = url.rsplit('/', 1)[-1]
+    print(f'Vinted : {len(new)} nouvelle(s) pièce(s) reliée(s) ; registre {len(vlinks)} ; {len(vinted)} annonces')
+    with open(VL, 'w') as f: json.dump(dict(sorted(vlinks.items())), f, separators=(',', ':'))
+    live_ok = live
+else:
+    live_ok = None   # annonces non lues ce soir : on garde le registre tel quel
+for pid, vid in vlinks.items():
+    if pid in lookup and (live_ok is None or str(vid) in live_ok):
+        lookup[pid]['vt'] = f'https://www.vinted.fr/items/{vid}'
 
 # Date de mise en ligne de chaque pièce (étiquette « nouveau » 7 jours, Tom 2026-11-12) :
 # data/first-seen.json garde la première date où l'identifiant est apparu ; les nouvelles

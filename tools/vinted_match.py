@@ -71,10 +71,12 @@ def site_years(e):
     y |= years(e.get('season', ''))
     return y
 
-def match(lookup, byid, vinted):
-    """lookup: {id: entrée products.json}; byid: {id: pièce index.html}; renvoie {id: url}."""
+def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
+    """lookup: {id: entrée products.json}; byid: {id: pièce index.html}; renvoie {id: url}.
+    skip_ids : pièces déjà reliées (registre) ; used_vinted : annonces déjà attribuées."""
     out, cands_of = {}, {}
     for pid, e in lookup.items():
+        if pid in skip_ids: continue
         p = byid.get(pid, {})
         try: price = float(e.get('price') or 0)
         except ValueError: continue
@@ -109,7 +111,7 @@ def match(lookup, byid, vinted):
         cands_of[pid] = cands
     # Attribution : meilleur score d'abord ; une annonce ne sert qu'une fois
     order = sorted(((c[0][0], pid) for pid, c in cands_of.items() if c), reverse=True)
-    used = set()
+    used = {str(x) for x in used_vinted}
     for _, pid in order:
         c = [x for x in cands_of[pid] if x[1] not in used]
         if not c: continue
