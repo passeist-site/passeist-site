@@ -226,11 +226,17 @@ jobs:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: python tools/translate.py --fill 40 || true
 
-      - name: Annonces Vinted (liens « retirer l'annonce » à chaque vente, non bloquant)
+      - name: Annonces Vinted, le dimanche (liens « retirer l'annonce » à chaque vente, non bloquant)
         continue-on-error: true
         env:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
-        run: python -u tools/vinted_wardrobe.py
+        # Une fois par semaine suffit (Tom, 2026-11-16) : le dimanche, ou à la demande (lancement manuel)
+        run: |
+          if [ "$(date -u +%u)" = "7" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python -u tools/vinted_wardrobe.py
+          else
+            echo "Vinted : lecture le dimanche seulement"
+          fi
 
       - name: Régénère products.json (source de vérité prix serveur)
         if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
