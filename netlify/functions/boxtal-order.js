@@ -67,6 +67,12 @@ exports.handler = async (event) => {
   if (!isAdmin(event)) return json(401, { error: 'unauthorized' });
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch (e) {}
+  // Vérification des codes d'offre Boxtal (lecture seule, aucun envoi)
+  if (body.action === 'probe') {
+    if (!boxtal.enabled()) return json(400, { error: 'clés Boxtal absentes' });
+    try { return json(200, { ok: true, offers: await boxtal.probeOffers() }); }
+    catch (e) { return json(502, { error: String(e.message).slice(0, 300) }); }
+  }
   // Commande retrouvée par : référence cs_live_…, ID du paiement pi_… (appli Stripe),
   // référence P-XXXXXXXX (e-mail de confirmation) ou e-mail du client (dernière commande payée)
   const q = String(body.session || '').trim();

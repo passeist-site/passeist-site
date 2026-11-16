@@ -119,6 +119,38 @@ async function searchRelays({ postalCode, city, street, number, networks }) {
   }).filter(p => p.code && (p.status === undefined || p.status !== 'UNAVAILABLE')).slice(0, 12);
 }
 
+// Vérification des codes d'offre (Tom, 2026-11-16) : Boxtal ne publie pas la liste. On interroge la
+// recherche de points relais par offre, en lecture seule : un code inexistant est refusé comme tel.
+// Aucun envoi n'est créé, rien n'est payé.
+const OFFER_CANDIDATES = [
+  'MONR-CpourToi', 'MONR-CpourToiEurope', 'MONR-DomicileFrance', 'MONR-DomicileEurope', 'MONR-HomeDelivery', 'MONR-PointRelaisL',
+  'CHRP-Chrono2ShopDirect', 'CHRP-ChronoShoptoShop', 'CHRP-ChronoRelais', 'CHRP-Chrono13', 'CHRP-Chrono18', 'CHRP-Chrono10',
+  'CHRP-ChronoClassic', 'CHRP-ChronoExpress', 'CHRP-ChronoInternationalClassic', 'CHRP-ChronoRelaisEurope', 'CHRP-Chrono2ShopEurope',
+  'POFR-ColissimoAccess', 'POFR-ColissimoExpert', 'POFR-ColissimoRelais', 'POFR-ColissimoAccessInternational', 'POFR-ColissimoExpertInternational',
+  'UPSE-Standard', 'UPSE-StandardAccessPoint', 'UPSE-AccessPoint', 'UPSE-ExpressSaver', 'UPSE-Express', 'UPSE-StandardInternational',
+  'DHLE-EconomySelect', 'DHLE-ExpressWorldwide', 'DHLE-DomesticExpress', 'DHLE-Express1200', 'DHLE-ServicePoint',
+];
+async function probeOffer(code, place) {
+  try {
+    const j = await call('/shipping/v3.2/parcel-point-by-shipping-offer', 'GET', null, { shippingOfferCode: code, ...place });
+    return { code, ok: true, points: (j.content || []).length };
+  } catch (e) {
+    const t = String(e.message || '');
+    const unknown = /ValidShippingOfferCode|shipping ?offer.*(not found|unknown|invalid|inconnu)|unknown.*offer/i.test(t);
+    return { code, ok: unknown ? false : null, status: e.status, detail: t.replace(/^Boxtal GET \S+ /, '').slice(0, 220) };
+  }
+}
+async function probeOffers(codes = OFFER_CANDIDATES) {
+  const places = { FR: { countryIsoCode: 'FR', postalCode: '75011', city: 'Paris' }, BE: { countryIsoCode: 'BE', postalCode: '1000', city: 'Bruxelles' } };
+  const out = [];
+  for (let i = 0; i < codes.length; i += 8) {
+    const part = codes.slice(i, i + 8);
+    const res = await Promise.all(part.map(async c => ({ code: c, FR: await probeOffer(c, places.FR), BE: await probeOffer(c, places.BE) })));
+    out.push(...res);
+  }
+  return out;
+}
+
 // Poids déclaré (Tom) : petite pièce 499 g, grosse pièce 999 g (manteaux, vestes épaisses, chaussures, sacs)
 const HEAVY = /manteau|parka|trench|caban|doudoune|blouson|veste|chaussure|botte|bottine|sneaker|basket|mocassin|derby|sandale|escarpin|sac|cabas|valise/i;
 function weightKg(types) { return Math.round(types.reduce((g, t) => g + (HEAVY.test(t || '') ? 999 : 499), 0)) / 1000; }
@@ -182,4 +214,4 @@ function verify(rawBody, signature) {
   return got.length === exp.length && crypto.timingSafeEqual(got, exp);
 }
 
-module.exports = { enabled, live, carriers, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };
+module.exports = { enabled, live, probeOffers, OFFER_CANDIDATES, carriers, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };
