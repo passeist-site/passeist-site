@@ -59,6 +59,8 @@ for p in products:
     }
     # Genre (h / f) : alertes « nouvelles pièces » (netlify/functions/alerts-send.js)
     if p.get('gender'): lookup[str(pid)]['gender'] = p.get('gender')
+    # Annonce Vestiaire : lien « retirer l'annonce » envoyé à Tom à chaque vente
+    if p.get('path'): lookup[str(pid)]['vc'] = p.get('path')
     # Nom anglais : paiement et e-mails des clients anglophones
     if p.get('type_en'): lookup[str(pid)]['type_en'] = p.get('type_en')
     # Désignation précise + saison / année (newsletter, e-mails)

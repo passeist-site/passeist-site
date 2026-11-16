@@ -65,10 +65,26 @@ async function requestValidation({ session, store, PRODUCTS }) {
   await brevo.sendOne({ to: notify, subject: 'Nouvelle commande — bordereau à valider', html:
     `<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1C2230">`
     + `<b>${pieces}</b><br>${((session.amount_total || 0) / 100).toLocaleString('fr-FR')} € · ${esc((session.customer_details || {}).name)}<br>${where}<br><br>`
-    + `Vérifiez que la pièce est toujours disponible (Vestiaire, Vinted), puis :<br><br>`
+    + `<b>1.</b> Retirez la pièce des autres plateformes :<br>${delistHtml(ids, PRODUCTS)}<br><br>`
+    + `<b>2.</b> Si elle était toujours disponible, créez le bordereau :<br><br>`
     + `<a href="${url}" style="display:inline-block;background:#1C2230;color:#fff;text-decoration:none;padding:14px 24px;border-radius:8px;font-weight:600">Créer le bordereau</a>`
     + `<br><br><span style="color:#888;font-size:13px">Pièce plus disponible : n'appuyez pas, remboursez le client dans Stripe. Rien n'est payé chez Boxtal.</span></div>` });
   return { pending: true, url };
 }
 
-module.exports = { shipSession, requestValidation, validateUrl, signFor };
+// Liens pour retirer la pièce des autres plateformes après une vente sur le site (Tom, 2026-11-16) :
+// l'annonce Vestiaire exacte, et le dressing Vinted (pas de lien par pièce connu)
+const VINTED_URL = process.env.VINTED_URL || 'https://www.vinted.fr/member/16032770';
+function delistLinks(ids, PRODUCTS) {
+  return ids.map(id => {
+    const p = PRODUCTS[id] || {};
+    return { id, label: (p.brand || '') + ' · ' + (p.type || id),
+      vestiaire: p.vc ? 'https://fr.vestiairecollective.com' + (p.vc.startsWith('/') ? p.vc : '/' + p.vc) : '' };
+  });
+}
+function delistHtml(ids, PRODUCTS) {
+  const btn = (href, txt) => `<a href="${esc(href)}" style="display:inline-block;margin:4px 6px 4px 0;border:1px solid #1C2230;color:#1C2230;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px">${txt}</a>`;
+  return delistLinks(ids, PRODUCTS).map(l => (l.vestiaire ? btn(l.vestiaire, 'Annonce Vestiaire') : '')).join('') + btn(VINTED_URL, 'Mon dressing Vinted');
+}
+
+module.exports = { shipSession, requestValidation, validateUrl, signFor, delistLinks, delistHtml, VINTED_URL };

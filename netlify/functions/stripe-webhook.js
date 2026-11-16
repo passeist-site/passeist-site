@@ -210,8 +210,10 @@ exports.handler = async (event) => {
         const relayed = (md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled();
         await require('../lib/admin-push').notifyAdmin({
           title: 'Nouvelle vente · ' + ((session.amount_total || 0) / 100).toLocaleString('fr-FR') + ' €',
-          body: what + (relayed ? ' · Touchez pour créer le bordereau' : ''),
-          url: relayed ? require('../lib/boxtal-ship').validateUrl(session.id) : '/messagerie/',
+          body: what + (relayed ? ' · Touchez pour retirer l\'annonce et créer le bordereau' : ' · Touchez pour retirer l\'annonce Vestiaire'),
+          // Relais / domicile : page « retirer les annonces + créer le bordereau » ; sinon l'annonce Vestiaire
+          url: relayed ? require('../lib/boxtal-ship').validateUrl(session.id)
+            : ((require('../lib/boxtal-ship').delistLinks(ids, PRODUCTS)[0] || {}).vestiaire || '/messagerie/'),
           tag: 'sale-' + session.id.slice(-8) });
       }
     } catch (e) { console.error('notification vente :', e.message); }
