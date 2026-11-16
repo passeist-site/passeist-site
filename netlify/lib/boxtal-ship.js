@@ -19,8 +19,9 @@ async function shipSession({ session, store, PRODUCTS, force = false }) {
     if (prev && !force) return { skipped: true };
     const ids = (md.passeist_ids || '').split(',').filter(Boolean);
     const types = ids.map(id => (PRODUCTS[id] || {}).type || '');
-    const order = boxtal.buildOrder({ session, types, valueEur: (session.amount_subtotal || 0) / 100 });
-    const resume = `${md.ship_mode === 'relay' ? 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')' : 'Domicile'}<br>Poids déclaré : ${order.shipment.packages[0].weight} kg<br>Offre : ${esc(order.shippingOfferCode)}`;
+    const pieces = ids.map(id => ({ type: (PRODUCTS[id] || {}).type || '', price: (PRODUCTS[id] || {}).price || 0 }));
+    const order = boxtal.buildOrder({ session, types, pieces, valueEur: (session.amount_subtotal || 0) / 100 });
+    const resume = `${whereText(session)}<br>Poids déclaré : ${order.shipment.packages[0].weight} kg<br>Offre : ${esc(order.shippingOfferCode)}`;
     if (session.livemode === true && boxtal.live()) {
       const res = await boxtal.createOrder(order);
       const c = res.content || {};
@@ -39,6 +40,16 @@ async function shipSession({ session, store, PRODUCTS, force = false }) {
     try { await brevo.sendOne({ to: notify, subject: '⚠ Bordereau non créé — ' + session.id, html: 'Erreur Boxtal : ' + esc(err.message) + '<br>À créer à la main sur boxtal.com.' }); } catch (e) {}
     return { error: String(err.message).slice(0, 300) };
   }
+}
+
+// Où va le colis (e-mails et page de validation)
+const COUNTRY_FR = { FR: 'France', BE: 'Belgique', LU: 'Luxembourg', DE: 'Allemagne', IT: 'Italie', ES: 'Espagne', NL: 'Pays-Bas', GB: 'Royaume-Uni', CH: 'Suisse', AT: 'Autriche', PT: 'Portugal', IE: 'Irlande', GR: 'Grèce', SE: 'Suède', DK: 'Danemark', NO: 'Norvège', FI: 'Finlande', PL: 'Pologne', CZ: 'Tchéquie', US: 'États-Unis', CA: 'Canada', JP: 'Japon', KR: 'Corée du Sud', AU: 'Australie', HK: 'Hong Kong', SG: 'Singapour' };
+function whereText(session) {
+  const md = session.metadata || {};
+  if (md.ship_mode === 'relay') return 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')';
+  const c = boxtal.destCountry(session);
+  if (c === 'FR') return 'Livraison à domicile';
+  return 'Livraison à domicile · ' + esc(COUNTRY_FR[c] || c) + (boxtal.EU27.has(c) ? '' : ' (hors UE : déclaration de douane jointe)');
 }
 
 // Lien signé « Créer le bordereau » (e-mail et notification à Tom) : HMAC de la commande
@@ -60,7 +71,7 @@ async function requestValidation({ session, store, PRODUCTS }) {
   await store.setJSON('boxtal/' + session.id, { pending: true, at: new Date().toISOString() });
   const ids = (md.passeist_ids || '').split(',').filter(Boolean);
   const pieces = ids.map(id => { const p = PRODUCTS[id] || {}; return esc((p.brand || '') + ' · ' + (p.type || id)); }).join('<br>');
-  const where = md.ship_mode === 'relay' ? 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')' : 'Livraison à domicile';
+  const where = whereText(session);
   const url = validateUrl(session.id);
   await brevo.sendOne({ to: notify, subject: 'Nouvelle commande — bordereau à valider', html:
     `<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1C2230">`
@@ -100,4 +111,4 @@ function delistHtml(ids, PRODUCTS) {
       + btn(l.vinted || l.vintedSearch, (l.vinted ? 'Annonce Vinted' : 'Chercher sur Vinted') + (many ? ' · ' + esc(l.label) : ''))).join('');
 }
 
-module.exports = { shipSession, requestValidation, validateUrl, signFor, delistLinks, delistHtml, VINTED_URL };
+module.exports = { whereText, shipSession, requestValidation, validateUrl, signFor, delistLinks, delistHtml, VINTED_URL };

@@ -26,6 +26,32 @@ const NETWORKS = {
   CHRP: { label: 'Chronopost', offer: () => process.env.BOXTAL_OFFER_CHRP || 'CHRP-Chrono2ShopDirect', dropoff: () => process.env.BOXTAL_DROPOFF_CHRP || '' },
 };
 const homeOffer = () => process.env.BOXTAL_OFFER_HOME || 'POFR-ColissimoAccess';
+// Hors de France (Tom, 2026-11-16 : Boxtal pour toutes les commandes) : livraison à domicile
+// Colissimo International ; hors Union européenne, déclaration de douane jointe.
+const intlOffer = () => process.env.BOXTAL_OFFER_INTL || 'POFR-ColissimoExpertInternational';
+const EU27 = new Set(['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','MC']);
+// Code douanier (SH, 6 chiffres) d'après le type de pièce
+function hsCode(type) {
+  const t = String(type || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const R = [[/chaussette/, '611595'], [/pull|cardigan|gilet|sweat|maille/, '611030'], [/t-?shirt|tee|top|debardeur|polo/, '610910'],
+    [/chemise|blouse|chemisier|tunique/, '620630'], [/jupe/, '620452'], [/robe/, '620442'], [/pantalon|jean|short|bermuda|salopette/, '620462'],
+    [/veste|blouson|manteau|parka|blazer|costume|caban|doudoune|duffle|trench|kimono/, '620293'], [/echarpe|etole|foulard|cheche/, '611710'],
+    [/bonnet|casquette|chapeau|bob|beret|panama/, '650500'], [/sac|cartable|sacoche|pochette|portefeuille|porte-cartes|banane|besace/, '420292'],
+    [/chaussure|derbies|bottes|boots|baskets|sneakers|ballerines|mocassins|sandales|rangers/, '640399']];
+  for (const [re, code] of R) if (re.test(t)) return code;
+  return '621790';
+}
+// Livrable par Boxtal : relais / domicile France, ou toute commande avec une adresse de livraison
+function shippable(session) {
+  const md = session.metadata || {};
+  if (md.ship_mode === 'relay' || md.ship_mode === 'home') return true;
+  const ship = session.shipping_details || (session.collected_information || {}).shipping_details || {};
+  return !!((ship.address || {}).country);
+}
+function destCountry(session) {
+  const ship = session.shipping_details || (session.collected_information || {}).shipping_details || {};
+  return ((ship.address || (session.customer_details || {}).address || {}).country || 'FR').toUpperCase();
+}
 
 let token = null; // { value, exp } gardé entre deux appels d'une même fonction
 async function auth() {
@@ -79,7 +105,7 @@ function splitName(full) {
 }
 
 // Corps de la commande Boxtal à partir d'une session Stripe payée
-function buildOrder({ session, types, valueEur }) {
+function buildOrder({ session, types, valueEur, pieces }) {
   const md = session.metadata || {};
   const sender = JSON.parse(process.env.BOXTAL_SENDER || '{}');
   const ship = session.shipping_details || session.collected_information?.shipping_details || {};
@@ -97,7 +123,16 @@ function buildOrder({ session, types, valueEur }) {
     toAddress: { type: 'RESIDENTIAL', contact: { firstName: nm.firstName, lastName: nm.lastName, email: cust.email || '', phone: cust.phone || sender.phone },
       location: { street: [addr.line1, addr.line2].filter(Boolean).join(', '), city: addr.city, postalCode: addr.postal_code, countryIsoCode: addr.country || 'FR' } },
   };
-  let offer = homeOffer();
+  const dest = (addr.country || 'FR').toUpperCase();
+  let offer = dest === 'FR' ? homeOffer() : intlOffer();
+  if (dest !== 'FR' && !EU27.has(dest)) {
+    // Hors UE : déclaration de douane (vente de vêtements, pays d'origine Japon par défaut)
+    const list = (pieces && pieces.length ? pieces : types.map(t => ({ type: t, price: valueEur / Math.max(1, types.length) })));
+    shipment.customsDeclaration = { reason: 'SALE', currency: 'EUR', items: list.map(p => ({
+      description: String(p.type || 'Vêtement').slice(0, 60), quantity: 1,
+      unitValue: { value: Math.max(1, Math.round(Number(p.price) || 0)), currency: 'EUR' },
+      weight: weightKg([p.type]), tariffNumber: hsCode(p.type), originCountry: process.env.BOXTAL_ORIGIN || 'JP' })) };
+  }
   if (mode === 'relay') {
     offer = net.offer();
     shipment.pickupPointCode = md.relay_code;
@@ -121,4 +156,4 @@ function verify(rawBody, signature) {
   return got.length === exp.length && crypto.timingSafeEqual(got, exp);
 }
 
-module.exports = { enabled, live, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };
+module.exports = { enabled, live, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };

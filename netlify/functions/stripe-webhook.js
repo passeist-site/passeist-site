@@ -176,7 +176,7 @@ exports.handler = async (event) => {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     const md = session.metadata || {};
-    if ((md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled()) {
+    if (boxtal.shippable(session) && boxtal.enabled()) {   // France, Europe et monde (Tom, 2026-11-16)
       // Création de l'envoi Boxtal (ou e-mail « à blanc ») : netlify/lib/boxtal-ship.js
       try { connectLambda(event); } catch (e) {}
       // Validation en un clic par Tom (e-mail + notification « Créer le bordereau »)
@@ -207,7 +207,7 @@ exports.handler = async (event) => {
         await getStore('passeist-orders').setJSON('notif/' + session.id, { at: new Date().toISOString() });
         const ids = (md.passeist_ids || '').split(',').filter(Boolean);
         const what = ids.map(id => { const p = PRODUCTS[id] || {}; return (p.brand || '') + ' ' + (p.type || ''); }).join(', ');
-        const relayed = (md.ship_mode === 'relay' || md.ship_mode === 'home') && boxtal.enabled();
+        const relayed = boxtal.shippable(session) && boxtal.enabled();
         await require('../lib/admin-push').notifyAdmin({
           title: 'Nouvelle vente · ' + ((session.amount_total || 0) / 100).toLocaleString('fr-FR') + ' €',
           body: what + (relayed ? ' · Touchez pour retirer l\'annonce et créer le bordereau' : ' · Touchez pour retirer l\'annonce Vestiaire'),

@@ -34,7 +34,7 @@ async function linkFlow(event) {
   try { session = await stripe.checkout.sessions.retrieve(s); } catch (e) { return page('Commande introuvable', '<p>Commande introuvable.</p>'); }
   const md = session.metadata || {};
   const pieces = (md.passeist_ids || '').split(',').filter(Boolean).map(id => escH(((PRODUCTS[id] || {}).brand || '') + ' · ' + ((PRODUCTS[id] || {}).type || id))).join('<br>');
-  const where = md.ship_mode === 'relay' ? 'Point relais ' + escH(md.relay_name) : 'Livraison à domicile';
+  const where = require('../lib/boxtal-ship').whereText(session);
   const card = `<div style="background:#262D3C;border-radius:12px;padding:20px;line-height:1.6;margin-bottom:22px"><b>${pieces}</b><br>${((session.amount_total || 0) / 100).toLocaleString('fr-FR')} € · ${escH((session.customer_details || {}).name)}<br><span style="color:#a8a6a1">${where}</span></div>`;
   try { connectLambda(event); } catch (e) {}
   const store = getStore('passeist-orders');
@@ -91,7 +91,7 @@ exports.handler = async (event) => {
   catch (e) { return json(400, { error: 'commande Stripe introuvable : ' + String(e.message).slice(0, 120) }); }
   if (session.payment_status !== 'paid') return json(400, { error: 'commande non payée' });
   const md = session.metadata || {};
-  if (md.ship_mode !== 'relay' && md.ship_mode !== 'home') return json(400, { error: 'commande sans livraison relais ou domicile' });
+  if (!boxtal.shippable(session)) return json(400, { error: 'commande sans adresse de livraison' });
   try { connectLambda(event); } catch (e) {}
   const r = await shipSession({ session, store: getStore('passeist-orders'), PRODUCTS, force: true });
   if (r.error) return json(502, { error: 'Boxtal : ' + r.error });
