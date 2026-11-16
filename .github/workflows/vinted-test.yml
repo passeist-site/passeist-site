@@ -1,0 +1,24 @@
+name: Test Vinted (temporaire)
+on:
+  push:
+    branches: [claude/zen-davinci-8wowml]
+    paths: ['.github/workflows/vinted-test.yml', 'tools/vinted_probe.py']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/
+            data/vinted.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -q requests
+      - env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: python -u tools/vinted_probe.py
