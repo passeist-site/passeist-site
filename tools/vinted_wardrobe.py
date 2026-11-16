@@ -42,7 +42,8 @@ SETUP = (
 )
 
 
-BATCH, MAX_DESC = 40, 1000
+# ~12 pages lues par appel en 30 s : on en lit au plus MAX_DESC par soir, le reste les soirs suivants
+BATCH, MAX_DESC = 24, int(os.environ.get('VINTED_MAX_DESC', '240'))
 
 _ESC = {'n': '\n', 't': ' ', 'r': '', '/': '/'}
 def _unescape(v):
@@ -57,14 +58,14 @@ def _unescape(v):
 
 
 def fetch_descs(ids):
-    """Lit la description de chaque annonce depuis sa page (6 à la fois), renvoie {id: texte}."""
+    """Lit la description de chaque annonce depuis sa page (12 à la fois), renvoie {id: texte}."""
     js = ("window._ds={};window.GO=async function(){const ids=" + json.dumps([str(i) for i in ids]) + ";"
           "const one=async id=>{try{const t=await (await fetch('/items/'+id,{credentials:'include'})).text();"
           r"const m=t.match(/\"description\":\"((?:[^\"\\]|\\.){20,4000}?)\"/);"
           "window._ds[id]=m?m[1]:''}catch(e){window._ds[id]=''}};"
-          "for(let i=0;i<ids.length;i+=6)await Promise.all(ids.slice(i,i+6).map(one));window._dd=1};"
+          "for(let i=0;i<ids.length;i+=12)await Promise.all(ids.slice(i,i+12).map(one));window._dd=1};"
           "window.DUMP=function(){const m=document.createElement('meta');m.name='_v_ds';m.content=JSON.stringify(window._ds);document.head.appendChild(m)};")
-    sc = {'instructions': [{'evaluate': js}, {'evaluate': 'GO()'}, {'wait': 25000}, {'evaluate': 'DUMP()'}]}
+    sc = {'instructions': [{'evaluate': js}, {'evaluate': 'GO()'}, {'wait': 30000}, {'evaluate': 'DUMP()'}]}
     try:
         r = requests.get(SB_API, params={'api_key': KEY, 'url': f'https://www.vinted.fr/member/{MEMBER}',
             'premium_proxy': 'true', 'country_code': 'fr', 'render_js': 'true',

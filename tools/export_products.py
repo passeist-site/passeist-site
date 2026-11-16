@@ -85,10 +85,14 @@ if vinted:
     from vinted_match import match
     live = {str(v.get('id')) for v in vinted}
     known = {pid for pid, vid in vlinks.items() if str(vid) in live}   # annonce toujours en ligne
-    new = match(lookup, {str(p.get('id')): p for p in products}, vinted,
+    new, sure = match(lookup, {str(p.get('id')): p for p in products}, vinted,
                 skip_ids=known, used_vinted={str(vlinks[k]) for k in known})
-    for pid, url in new.items(): vlinks[pid] = url.rsplit('/', 1)[-1]
-    print(f'Vinted : {len(new)} nouvelle(s) pièce(s) reliée(s) ; registre {len(vlinks)} ; {len(vinted)} annonces')
+    # Gravé dans le registre seulement si la description le confirme ; sinon lien du soir
+    for pid in sure: vlinks[pid] = new[pid].rsplit('/', 1)[-1]
+    for pid, url in new.items():
+        if pid not in sure: lookup[pid]['vt'] = url
+    print(f'Vinted : registre {len(vlinks)} (+{len(sure)} confirmées par la description), '
+          f'{len(new) - len(sure)} reliée(s) par le titre ; {len(vinted)} annonces')
     with open(VL, 'w') as f: json.dump(dict(sorted(vlinks.items())), f, separators=(',', ':'))
     live_ok = live
 else:

@@ -28,4 +28,6 @@ jobs:
       - run: |
           git config user.name passeist-bot; git config user.email bot@passeist.com
           git add --sparse data/vinted.json
-          git commit -qm "data/vinted.json : descriptions (test)" && git push -q origin HEAD:claude/zen-davinci-8wowml
+          git commit -qm "data/vinted.json : descriptions (test 2)"
+          git pull -q --rebase origin claude/zen-davinci-8wowml
+          git push -q origin HEAD:claude/zen-davinci-8wowml

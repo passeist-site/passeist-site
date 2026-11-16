@@ -72,7 +72,7 @@ def site_years(e):
     return y
 
 def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
-    """lookup: {id: entrée products.json}; byid: {id: pièce index.html}; renvoie {id: url}.
+    """lookup: {id: entrée products.json}; byid: {id: pièce index.html}; renvoie ({id: url}, {ids confirmés par la description}).
     skip_ids : pièces déjà reliées (registre) ; used_vinted : annonces déjà attribuées."""
     out, cands_of = {}, {}
     for pid, e in lookup.items():
@@ -111,7 +111,7 @@ def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
         cands_of[pid] = cands
     # Attribution : meilleur score d'abord ; une annonce ne sert qu'une fois
     order = sorted(((c[0][0], pid) for pid, c in cands_of.items() if c), reverse=True)
-    used = {str(x) for x in used_vinted}
+    used, sure = {str(x) for x in used_vinted}, set()
     for _, pid in order:
         c = [x for x in cands_of[pid] if x[1] not in used]
         if not c: continue
@@ -120,5 +120,6 @@ def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
         if len(c) > 1 and c[1][0] >= top - 1: continue  # doute : deux annonces trop proches
         v = c[0][2]
         out[pid] = f"https://www.vinted.fr/items/{v['id']}"  # forme courte, Vinted redirige
+        if top >= 100: sure.add(pid)   # confirmé par la description
         used.add(c[0][1])
-    return out
+    return out, sure
