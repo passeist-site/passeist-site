@@ -32,6 +32,7 @@ jobs:
           import json
           v = json.load(open('data/vinted.json'))
           P = json.load(open('netlify/functions/products.json'))
+          for x in v: print('VJ', json.dumps({k: x.get(k) for k in ('id','brand','price','title','url')}, ensure_ascii=False))
           print('Annonces Vinted lues :', len(v))
           print('Pièces reliées :', sum(1 for x in P.values() if 'vt' in x), '/', len(P))
           print('63036118 :', P.get('63036118', {}).get('vt', 'PAS DE LIEN'))
