@@ -1,0 +1,41 @@
+name: Test Vinted (temporaire)
+on:
+  push:
+    branches: [claude/zen-davinci-8wowml]
+    paths: ['.github/workflows/vinted-test.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/
+            netlify/functions/products.json
+            index.html
+            data/first-seen.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -q requests
+      - name: Lecture du dressing Vinted
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: python -u tools/vinted_wardrobe.py
+      - name: Association et résultat pour 63036118
+        run: |
+          python tools/export_products.py
+          python - <<'PY'
+          import json
+          v = json.load(open('data/vinted.json'))
+          P = json.load(open('netlify/functions/products.json'))
+          print('Annonces Vinted lues :', len(v))
+          print('Pièces reliées :', sum(1 for x in P.values() if 'vt' in x), '/', len(P))
+          print('63036118 :', P.get('63036118', {}).get('vt', 'PAS DE LIEN'))
+          for x in v:
+              if 'junko' in str(x.get('brand','')).lower() and 'cardigan' in str(x.get('title','')).lower():
+                  print('  candidate :', x.get('title'), x.get('price'), x.get('url'))
+          PY
