@@ -2,23 +2,30 @@ name: Test Vinted (temporaire)
 on:
   push:
     branches: [claude/zen-davinci-8wowml]
-    paths: ['.github/workflows/vinted-test.yml', 'tools/vinted_probe.py']
+    paths: ['.github/workflows/vinted-test.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
             tools/
-            data/vinted.json
+            netlify/functions/products.json
+            index.html
+            data/
           sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
       - run: pip install -q requests
       - env:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
-        run: python -u tools/vinted_probe.py
+        run: python -u tools/vinted_wardrobe.py
+      - run: python tools/export_products.py
+      - run: |
+          git config user.name passeist-bot; git config user.email bot@passeist.com
+          git add --sparse data/vinted.json
+          git commit -qm "data/vinted.json : descriptions (test)" && git push -q origin HEAD:claude/zen-davinci-8wowml

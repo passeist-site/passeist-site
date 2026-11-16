@@ -42,6 +42,40 @@ SETUP = (
 )
 
 
+BATCH, MAX_DESC = 40, 1000
+
+_ESC = {'n': '\n', 't': ' ', 'r': '', '/': '/'}
+def _unescape(v):
+    """La description est dans du JSON lui-même échappé dans la page : on décode jusqu'au texte."""
+    def rep(m):
+        c = m.group(1)
+        return chr(int(c[1:], 16)) if c[0] == 'u' and len(c) == 5 else _ESC.get(c, c)
+    for _ in range(3):
+        if '\\' not in v: break
+        v = re.sub(r'\\(u[0-9a-fA-F]{4}|.)', rep, v, flags=re.S)
+    return v.strip()
+
+
+def fetch_descs(ids):
+    """Lit la description de chaque annonce depuis sa page (6 à la fois), renvoie {id: texte}."""
+    js = ("window._ds={};window.GO=async function(){const ids=" + json.dumps([str(i) for i in ids]) + ";"
+          "const one=async id=>{try{const t=await (await fetch('/items/'+id,{credentials:'include'})).text();"
+          r"const m=t.match(/\"description\":\"((?:[^\"\\]|\\.){20,4000}?)\"/);"
+          "window._ds[id]=m?m[1]:''}catch(e){window._ds[id]=''}};"
+          "for(let i=0;i<ids.length;i+=6)await Promise.all(ids.slice(i,i+6).map(one));window._dd=1};"
+          "window.DUMP=function(){const m=document.createElement('meta');m.name='_v_ds';m.content=JSON.stringify(window._ds);document.head.appendChild(m)};")
+    sc = {'instructions': [{'evaluate': js}, {'evaluate': 'GO()'}, {'wait': 25000}, {'evaluate': 'DUMP()'}]}
+    try:
+        r = requests.get(SB_API, params={'api_key': KEY, 'url': f'https://www.vinted.fr/member/{MEMBER}',
+            'premium_proxy': 'true', 'country_code': 'fr', 'render_js': 'true',
+            'js_scenario': json.dumps(sc, separators=(',', ':'))}, timeout=180)
+        m = re.search(r'<meta name="_v_ds" content="([^"]*)"', r.text)
+        raw = json.loads(html_lib.unescape(m.group(1))) if m else {}
+    except Exception as e:
+        print('  descriptions : erreur', e); return {}
+    return {k: _unescape(v)[:1500] for k, v in raw.items() if v}
+
+
 def main():
     if not KEY:
         print('SCRAPINGBEE_API_KEY absente : rien à faire'); return 0
@@ -66,6 +100,19 @@ def main():
     if not items:
         print('Aucune annonce lue : data/vinted.json inchangé'); return 1
     items = [x for x in items if not x.get('closed')]
+    # Descriptions (Tom, 2026-11-16) : comparées à celles du site pour relier chaque pièce à son
+    # annonce. Lues une seule fois par annonce, puis gardées dans data/vinted.json.
+    try: prev = {str(x['id']): x.get('desc') for x in json.load(open(OUT)) if x.get('desc')}
+    except Exception: prev = {}
+    for x in items:
+        if str(x['id']) in prev: x['desc'] = prev[str(x['id'])]
+    todo = [x for x in items if not x.get('desc')]
+    print(f'Descriptions : {len(items) - len(todo)} déjà connues, {len(todo)} à lire')
+    for b in range(0, min(len(todo), MAX_DESC), BATCH):
+        got = fetch_descs([x['id'] for x in todo[b:b + BATCH]])
+        for x in todo[b:b + BATCH]:
+            if got.get(str(x['id'])): x['desc'] = got[str(x['id'])]
+        print(f'  lot {b // BATCH + 1} : {sum(1 for v in got.values() if v)}/{len(todo[b:b + BATCH])} descriptions')
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w') as f:
         json.dump(sorted(items, key=lambda x: str(x['id'])), f, ensure_ascii=False, indent=0)

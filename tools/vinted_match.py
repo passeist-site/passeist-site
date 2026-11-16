@@ -1,6 +1,7 @@
 """Association pièce du site ↔ annonce Vinted (Tom, 2026-11-16). Utilisé par export_products.py.
 
-Prudent : même marque, même famille de vêtement (le mot doit figurer dans le titre Vinted),
+D'abord la description : si celle du site et celle de Vinted sont quasi identiques (80 % des mots,
+mesures comprises), c'est la bonne annonce. Sinon, prudent : même marque, même famille de vêtement (le mot doit figurer dans le titre Vinted),
 prix proche, puis départage par la saison / l'année, la couleur, la matière et les mots de la
 description. En cas de doute (deux annonces à égalité, ou signal trop faible), pas de lien."""
 import re, unicodedata
@@ -45,6 +46,16 @@ def years(t):
     for d in re.findall(r'annees (\d0)\b', n): out.add('19' + d if d != '00' else '2000')
     return out
 
+def tokens(t):
+    """Mots et nombres d'une description (les mesures « 54cm » comptent beaucoup)."""
+    return {w for w in norm(t).split() if (len(w) > 2 or w.isdigit()) and w not in STOP}
+
+def dsim(a, b):
+    """Part des mots de la description la plus courte présents dans l'autre (0 à 1)."""
+    ta, tb = tokens(a), tokens(b)
+    if len(ta) < 8 or len(tb) < 8: return None
+    return len(ta & tb) / min(len(ta), len(tb))
+
 def brand_ok(a, b):
     a, b = norm(a), norm(b)
     if not a or not b: return False
@@ -74,6 +85,11 @@ def match(lookup, byid, vinted):
         cands = []
         for v in vinted:
             if not brand_ok(e.get('brand'), v.get('brand')): continue
+            # Descriptions quasi identiques (Tom) : c'est la bonne annonce, quel que soit le titre
+            ds = dsim(p.get('desc', ''), v.get('desc', '')) if p.get('desc') and v.get('desc') else None
+            if ds is not None and ds >= 0.8:
+                cands.append((100 + round(ds * 20), str(v.get('id')), v)); continue
+            if ds is not None and ds < 0.4: continue   # descriptions différentes : autre pièce
             try: vp = float(str(v.get('price') or 0).replace(',', '.'))
             except ValueError: continue
             if not vp or abs(vp - price) > max(0.2 * price, 10): continue
