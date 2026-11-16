@@ -41,6 +41,28 @@ function hsCode(type) {
   for (const [re, code] of R) if (re.test(t)) return code;
   return '621790';
 }
+// Transporteurs proposés à Tom sur la page « Créer le bordereau » (Tom, 2026-11-16 : Colissimo,
+// Chrono, Mondial Relay, UPS, DHL). Codes d'offre Boxtal : ceux sans code confirmé ne s'affichent
+// que si leur variable Netlify est renseignée (jamais de code deviné sur une vraie commande).
+function carriers(session) {
+  const dest = destCountry(session);
+  const env = k => process.env[k] || '';
+  const list = dest === 'FR' ? [
+    { key: 'colissimo', label: 'Colissimo', code: homeOffer() },
+    { key: 'chrono', label: 'Chronopost', code: env('BOXTAL_OFFER_CHRP_HOME') },
+    { key: 'ups', label: 'UPS', code: env('BOXTAL_OFFER_UPS_FR') },
+    { key: 'dhl', label: 'DHL', code: env('BOXTAL_OFFER_DHL_FR') },
+    { key: 'mondialrelay', label: 'Mondial Relay (domicile)', code: env('BOXTAL_OFFER_MONR_HOME') },
+  ] : [
+    { key: 'colissimo', label: 'Colissimo International', code: intlOffer() },
+    { key: 'dhl', label: 'DHL Express', code: process.env.BOXTAL_OFFER_DHL_INTL || 'DHLE-EconomySelect' },
+    { key: 'ups', label: 'UPS', code: env('BOXTAL_OFFER_UPS_INTL') },
+    { key: 'chrono', label: 'Chronopost International', code: env('BOXTAL_OFFER_CHRP_INTL') },
+    { key: 'mondialrelay', label: 'Mondial Relay', code: env('BOXTAL_OFFER_MONR_INTL') },
+  ];
+  return list.filter(c => c.code);
+}
+
 // Livrable par Boxtal : relais / domicile France, ou toute commande avec une adresse de livraison
 function shippable(session) {
   const md = session.metadata || {};
@@ -105,7 +127,7 @@ function splitName(full) {
 }
 
 // Corps de la commande Boxtal à partir d'une session Stripe payée
-function buildOrder({ session, types, valueEur, pieces }) {
+function buildOrder({ session, types, valueEur, pieces, carrier }) {
   const md = session.metadata || {};
   const sender = JSON.parse(process.env.BOXTAL_SENDER || '{}');
   const ship = session.shipping_details || session.collected_information?.shipping_details || {};
@@ -125,6 +147,8 @@ function buildOrder({ session, types, valueEur, pieces }) {
   };
   const dest = (addr.country || 'FR').toUpperCase();
   let offer = dest === 'FR' ? homeOffer() : intlOffer();
+  const chosen = carrier && carriers(session).find(c => c.key === carrier);
+  if (chosen) offer = chosen.code;
   if (dest !== 'FR' && !EU27.has(dest)) {
     // Hors UE : déclaration de douane (vente de vêtements, pays d'origine Japon par défaut)
     const list = (pieces && pieces.length ? pieces : types.map(t => ({ type: t, price: valueEur / Math.max(1, types.length) })));
@@ -156,4 +180,4 @@ function verify(rawBody, signature) {
   return got.length === exp.length && crypto.timingSafeEqual(got, exp);
 }
 
-module.exports = { enabled, live, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };
+module.exports = { enabled, live, carriers, shippable, destCountry, hsCode, EU27, NETWORKS, searchRelays, weightKg, buildOrder, createOrder, documents, subscriptions, subscribe, verify, BASE };

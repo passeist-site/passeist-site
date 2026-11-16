@@ -10,7 +10,7 @@ const brevo = require('./brevo');
 const esc = t => String(t || '').replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
 // force : recrée l'envoi même si un passage « à blanc » a déjà eu lieu (jamais si un vrai envoi existe)
-async function shipSession({ session, store, PRODUCTS, force = false }) {
+async function shipSession({ session, store, PRODUCTS, force = false, carrier = '' }) {
   const md = session.metadata || {};
   const notify = process.env.ORDER_NOTIFY_EMAIL || 'info@passeist.com';
   try {
@@ -20,7 +20,7 @@ async function shipSession({ session, store, PRODUCTS, force = false }) {
     const ids = (md.passeist_ids || '').split(',').filter(Boolean);
     const types = ids.map(id => (PRODUCTS[id] || {}).type || '');
     const pieces = ids.map(id => ({ type: (PRODUCTS[id] || {}).type || '', price: (PRODUCTS[id] || {}).price || 0 }));
-    const order = boxtal.buildOrder({ session, types, pieces, valueEur: (session.amount_subtotal || 0) / 100 });
+    const order = boxtal.buildOrder({ session, types, pieces, carrier, valueEur: (session.amount_subtotal || 0) / 100 });
     const resume = `${whereText(session)}<br>Poids déclaré : ${order.shipment.packages[0].weight} kg<br>Offre : ${esc(order.shippingOfferCode)}`;
     if (session.livemode === true && boxtal.live()) {
       const res = await boxtal.createOrder(order);

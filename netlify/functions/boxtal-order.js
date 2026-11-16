@@ -28,7 +28,8 @@ const escH = t => String(t || '').replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '
 async function linkFlow(event) {
   const q = event.queryStringParameters || {};
   let s = q.s, t = q.t;
-  if (event.httpMethod === 'POST') { const f = new URLSearchParams(event.body || ''); s = f.get('s'); t = f.get('t'); }
+  let carrier = '';
+  if (event.httpMethod === 'POST') { const f = new URLSearchParams(event.body || ''); s = f.get('s'); t = f.get('t'); carrier = f.get('o') || ''; }
   if (!s || !t || t.length !== 32 || !crypto.timingSafeEqual(Buffer.from(t), Buffer.from(signFor(s)))) return page('Lien invalide', '<p>Lien invalide ou expiré.</p>');
   let session;
   try { session = await stripe.checkout.sessions.retrieve(s); } catch (e) { return page('Commande introuvable', '<p>Commande introuvable.</p>'); }
@@ -48,10 +49,14 @@ async function linkFlow(event) {
     + `<p style="margin:22px 0 10px;font-size:14px;color:#d6d2cc">2. Si elle était toujours disponible :</p>`;
   if (event.httpMethod !== 'POST') return page('Créer le bordereau', card + delist
     + `<form method="post"><input type="hidden" name="s" value="${escH(s)}"><input type="hidden" name="t" value="${escH(t)}">`
-    + `<button style="width:100%;background:#5a7593;color:#fff;border:0;border-radius:10px;padding:16px;font-size:16px;font-weight:600">Créer le bordereau</button></form>`
+    // Point relais : transporteur imposé par le relais choisi ; sinon, un bouton par transporteur
+    + (md.ship_mode === 'relay' || !boxtal.carriers(session).length
+      ? `<button style="width:100%;background:#5a7593;color:#fff;border:0;border-radius:10px;padding:16px;font-size:16px;font-weight:600">Créer le bordereau</button>`
+      : boxtal.carriers(session).map((c, i) => `<button name="o" value="${escH(c.key)}" style="width:100%;margin-bottom:10px;background:${i ? 'transparent' : '#5a7593'};color:#fff;border:${i ? '1px solid #5a7593' : '0'};border-radius:10px;padding:15px;font-size:16px;font-weight:600">Créer avec ${escH(c.label)}</button>`).join(''))
+    + `</form>`
     + `<p style="color:#a8a6a1;font-size:13px;line-height:1.6;margin-top:18px">Pièce plus disponible ? N'appuyez pas : remboursez le client dans Stripe. Rien n'est payé chez Boxtal.</p>`);
   if (!boxtal.live()) return page('Mode réel inactif', card + '<p>Le mode réel Boxtal n\'est pas activé (BOXTAL_LIVE=1).</p>');
-  const r = await shipSession({ session, store, PRODUCTS, force: true });
+  const r = await shipSession({ session, store, PRODUCTS, force: true, carrier });
   if (r.error) return page('Refusé par Boxtal', card + '<p>Boxtal a refusé l\'envoi :</p><p style="color:#a8a6a1">' + escH(r.error) + '</p><p>Envoyez-moi ce message pour corriger.</p>');
   return page('Bordereau créé', card + '<p>✓ Envoi créé chez Boxtal. Le bordereau arrive dans vos e-mails dans quelques minutes.</p>');
 }
