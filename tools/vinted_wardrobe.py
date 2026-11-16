@@ -43,7 +43,8 @@ SETUP = (
 
 
 # ~12 pages lues par appel en 30 s : on en lit au plus MAX_DESC par soir, le reste les soirs suivants
-BATCH, MAX_DESC = 24, int(os.environ.get('VINTED_MAX_DESC', '240'))
+BATCH, MAX_DESC = 12, int(os.environ.get('VINTED_MAX_DESC', '240'))
+PAR = int(os.environ.get('VINTED_PAR', '3'))   # appels ScrapingBee en parallèle
 
 _ESC = {'n': '\n', 't': ' ', 'r': '', '/': '/'}
 def _unescape(v):
@@ -109,11 +110,13 @@ def main():
         if str(x['id']) in prev: x['desc'] = prev[str(x['id'])]
     todo = [x for x in items if not x.get('desc')]
     print(f'Descriptions : {len(items) - len(todo)} déjà connues, {len(todo)} à lire')
-    for b in range(0, min(len(todo), MAX_DESC), BATCH):
-        got = fetch_descs([x['id'] for x in todo[b:b + BATCH]])
-        for x in todo[b:b + BATCH]:
-            if got.get(str(x['id'])): x['desc'] = got[str(x['id'])]
-        print(f'  lot {b // BATCH + 1} : {sum(1 for v in got.values() if v)}/{len(todo[b:b + BATCH])} descriptions')
+    from concurrent.futures import ThreadPoolExecutor
+    lots = [todo[b:b + BATCH] for b in range(0, min(len(todo), MAX_DESC), BATCH)]
+    with ThreadPoolExecutor(PAR) as ex:
+        for n, (lot, got) in enumerate(zip(lots, ex.map(lambda l: fetch_descs([x['id'] for x in l]), lots)), 1):
+            for x in lot:
+                if got.get(str(x['id'])): x['desc'] = got[str(x['id'])]
+            print(f'  lot {n}/{len(lots)} : {sum(1 for x in lot if x.get("desc"))}/{len(lot)} descriptions')
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w') as f:
         json.dump(sorted(items, key=lambda x: str(x['id'])), f, ensure_ascii=False, indent=0)
