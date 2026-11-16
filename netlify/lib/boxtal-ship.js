@@ -74,22 +74,30 @@ async function requestValidation({ session, store, PRODUCTS }) {
 
 // Liens pour retirer la pièce des autres plateformes après une vente sur le site (Tom, 2026-11-16) :
 // l'annonce Vestiaire exacte, et l'annonce Vinted quand la synchro l'a retrouvée (champ vt),
-// sinon le dressing Vinted
+// sinon une recherche Vinted pré-remplie
 const VINTED_URL = process.env.VINTED_URL || 'https://www.vinted.fr/member/16032770';
+function vintedSearch(p) {
+  const price = Number(p.price) || 0;
+  const type = String(p.type || '').replace(/\s+en\s+.*$/i, '');   // « Pull en laine » → « Pull »
+  const q = new URLSearchParams({ search_text: ((p.brand || '') + ' ' + type).trim().toLowerCase(), order: 'newest_first' });
+  if (price) { q.set('price_from', String(Math.max(0, Math.round(price * 0.8)))); q.set('price_to', String(Math.round(price * 1.2 + 10))); q.set('currency', 'EUR'); }
+  return 'https://www.vinted.fr/catalog?' + q.toString();
+}
 function delistLinks(ids, PRODUCTS) {
   return ids.map(id => {
     const p = PRODUCTS[id] || {};
     return { id, label: (p.brand || '') + ' · ' + (p.type || id),
       vestiaire: p.vc ? 'https://fr.vestiairecollective.com' + (p.vc.startsWith('/') ? p.vc : '/' + p.vc) : '',
-      vinted: /^https:\/\/www\.vinted\.fr\//.test(p.vt || '') ? p.vt : '' };
+      vinted: /^https:\/\/www\.vinted\.fr\//.test(p.vt || '') ? p.vt : '',
+      // Sans annonce reliée : recherche Vinted pré-remplie (marque + type, prix proche du site)
+      vintedSearch: vintedSearch(p) };
   });
 }
 function delistHtml(ids, PRODUCTS) {
   const btn = (href, txt) => `<a href="${esc(href)}" style="display:inline-block;margin:4px 6px 4px 0;border:1px solid #1C2230;color:#1C2230;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px">${txt}</a>`;
   const ls = delistLinks(ids, PRODUCTS), many = ls.length > 1;
   return ls.map(l => (l.vestiaire ? btn(l.vestiaire, 'Annonce Vestiaire' + (many ? ' · ' + esc(l.label) : '')) : '')
-      + (l.vinted ? btn(l.vinted, 'Annonce Vinted' + (many ? ' · ' + esc(l.label) : '')) : '')).join('')
-    + (ls.every(l => l.vinted) ? '' : btn(VINTED_URL, 'Mon dressing Vinted'));
+      + btn(l.vinted || l.vintedSearch, (l.vinted ? 'Annonce Vinted' : 'Chercher sur Vinted') + (many ? ' · ' + esc(l.label) : ''))).join('');
 }
 
 module.exports = { shipSession, requestValidation, validateUrl, signFor, delistLinks, delistHtml, VINTED_URL };

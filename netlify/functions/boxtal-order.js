@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { getStore, connectLambda } = require('@netlify/blobs');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const boxtal = require('../lib/boxtal');
-const { shipSession, signFor, delistLinks, VINTED_URL } = require('../lib/boxtal-ship');
+const { shipSession, signFor, delistLinks } = require('../lib/boxtal-ship');
 const PRODUCTS = require('./products.json');
 
 const json = (code, body) => ({ statusCode: code, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(body) });
@@ -44,8 +44,7 @@ async function linkFlow(event) {
   const lk = (href, txt) => `<a href="${escH(href)}" style="display:block;text-align:center;border:1px solid rgba(244,241,236,.35);color:#f4f1ec;text-decoration:none;border-radius:10px;padding:13px;margin-bottom:10px;font-size:15px">${txt}</a>`;
   const delist = `<p style="margin:0 0 10px;font-size:14px;color:#d6d2cc">1. Retirez la pièce des autres plateformes :</p>`
     + delistLinks(ids, PRODUCTS).map(l => (l.vestiaire ? lk(l.vestiaire, 'Annonce Vestiaire' + (ids.length > 1 ? ' · ' + escH(l.label) : '')) : '')
-      + (l.vinted ? lk(l.vinted, 'Annonce Vinted' + (ids.length > 1 ? ' · ' + escH(l.label) : '')) : '')).join('')
-    + (delistLinks(ids, PRODUCTS).every(l => l.vinted) ? '' : lk(VINTED_URL, 'Mon dressing Vinted'))
+      + lk(l.vinted || l.vintedSearch, (l.vinted ? 'Annonce Vinted' : 'Chercher sur Vinted') + (ids.length > 1 ? ' · ' + escH(l.label) : ''))).join('')
     + `<p style="margin:22px 0 10px;font-size:14px;color:#d6d2cc">2. Si elle était toujours disponible :</p>`;
   if (event.httpMethod !== 'POST') return page('Créer le bordereau', card + delist
     + `<form method="post"><input type="hidden" name="s" value="${escH(s)}"><input type="hidden" name="t" value="${escH(t)}">`
