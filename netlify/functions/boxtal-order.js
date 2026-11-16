@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { getStore, connectLambda } = require('@netlify/blobs');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const boxtal = require('../lib/boxtal');
-const { shipSession, signFor, delistLinks } = require('../lib/boxtal-ship');
+const { shipSession, signFor, delistLinks, validateUrl } = require('../lib/boxtal-ship');
 const PRODUCTS = require('./products.json');
 
 const json = (code, body) => ({ statusCode: code, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(body) });
@@ -104,6 +104,13 @@ exports.handler = async (event) => {
   const md = session.metadata || {};
   if (!boxtal.shippable(session)) return json(400, { error: 'commande sans adresse de livraison' });
   try { connectLambda(event); } catch (e) {}
+  // Messagerie (Tom, 2026-11-16) : pas de création directe, on ouvre la page « Créer le bordereau »
+  // avec le choix du transporteur, comme depuis l'e-mail. body.direct garde l'ancien comportement.
+  if (!body.direct) {
+    const prev = await getStore('passeist-orders').get('boxtal/' + session.id, { type: 'json' });
+    if (prev && prev.id) return json(200, { ok: true, already: true, id: prev.id });
+    return json(200, { ok: true, link: validateUrl(session.id) });
+  }
   const r = await shipSession({ session, store: getStore('passeist-orders'), PRODUCTS, force: true });
   if (r.error) return json(502, { error: 'Boxtal : ' + r.error });
   if (r.already) return json(200, { ok: true, already: true, id: r.id });

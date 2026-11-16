@@ -235,8 +235,8 @@ async function showNewsletter() {
         <input type="text" id="trnum" placeholder="Numéro de suivi" required><button type="submit" id="trbtn">Vérifier</button></form>
       <div class="nl-msg" id="trmsg"></div></div>
     <div class="nl-box"><h3>Bordereau Boxtal</h3>
-      <div class="nl-stat">Pour une commande sans bordereau : l'e-mail du client, ou l'ID du paiement (pi_…, dans l'appli Stripe). L'envoi est commandé chez Boxtal et le bordereau arrive par e-mail.</div>
-      <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Créer</button></form>
+      <div class="nl-stat">Pour une commande sans bordereau : l'e-mail du client, ou l'ID du paiement (pi_…, dans l'appli Stripe). Vous choisissez ensuite le transporteur, puis le bordereau arrive par e-mail.</div>
+      <form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Continuer</button></form>
       <div class="nl-msg" id="bxmsg"></div></div>
     <div class="nl-box"><h3>Offres Boxtal</h3>
       <div class="nl-stat">Vérifie quels transporteurs Boxtal accepte (Mondial Relay, Chronopost, Colissimo, UPS, DHL), en France et en Belgique. Lecture seule : aucun envoi n'est créé, rien n'est payé.</div>
@@ -322,9 +322,10 @@ async function showNewsletter() {
   };
   $('bxform').onsubmit = async (e) => {
     e.preventDefault();
-    $('bxmsg').textContent = 'Création…';
+    $('bxmsg').textContent = 'Recherche de la commande…';
     const res = await fetch('/.netlify/functions/boxtal-order', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ session: $('bxsess').value }) });
     const j = await res.json().catch(() => ({}));
+    if (res.ok && j.link) { $('bxmsg').textContent = 'Ouverture du choix du transporteur…'; location.href = j.link; return; }
     $('bxmsg').textContent = !res.ok ? 'Échec : ' + (j.error || res.status) : j.already ? '✓ Déjà créé (envoi ' + j.id + ')' : '✓ Envoi créé (' + j.id + '). Le bordereau arrive par e-mail.';
   };
   $('bxprobe').onclick = async () => {
