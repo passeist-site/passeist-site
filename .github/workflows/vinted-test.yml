@@ -4,7 +4,7 @@ on:
     branches: [claude/zen-davinci-8wowml]
     paths: ['.github/workflows/vinted-test.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -32,7 +32,6 @@ jobs:
           import json
           v = json.load(open('data/vinted.json'))
           P = json.load(open('netlify/functions/products.json'))
-          for x in v: print('VJ', json.dumps({k: x.get(k) for k in ('id','brand','price','title','url')}, ensure_ascii=False))
           print('Annonces Vinted lues :', len(v))
           print('Pièces reliées :', sum(1 for x in P.values() if 'vt' in x), '/', len(P))
           print('63036118 :', P.get('63036118', {}).get('vt', 'PAS DE LIEN'))
@@ -40,3 +39,8 @@ jobs:
               if 'junko' in str(x.get('brand','')).lower() and 'cardigan' in str(x.get('title','')).lower():
                   print('  candidate :', x.get('title'), x.get('price'), x.get('url'))
           PY
+      - name: Dépose data/vinted.json sur la branche
+        run: |
+          git config user.name passeist-bot; git config user.email bot@passeist.com
+          git add --sparse -f data/vinted.json
+          git commit -qm "data/vinted.json (test)" && git push -q origin HEAD:claude/zen-davinci-8wowml
