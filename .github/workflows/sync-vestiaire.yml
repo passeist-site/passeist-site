@@ -48,6 +48,7 @@ jobs:
             netlify/
             index.html
             data/first-seen.json
+            data/vinted.json
             requirements.txt
             JOURNAL.md
             RULES.md
@@ -224,6 +225,12 @@ jobs:
           SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
         run: python tools/translate.py --fill 40 || true
 
+      - name: Annonces Vinted (liens « retirer l'annonce » à chaque vente, non bloquant)
+        continue-on-error: true
+        env:
+          SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+        run: python -u tools/vinted_wardrobe.py
+
       - name: Régénère products.json (source de vérité prix serveur)
         if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
@@ -237,6 +244,7 @@ jobs:
           # Toujours add index.html + products.json (présents)
           git add --sparse index.html netlify/functions/products.json
           [ -f data/first-seen.json ] && git add --sparse data/first-seen.json || true
+          [ -f data/vinted.json ] && git add --sparse data/vinted.json || true
           # img/ seulement s'il existe et contient des fichiers (imports faits)
           if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then
             git add --sparse img/

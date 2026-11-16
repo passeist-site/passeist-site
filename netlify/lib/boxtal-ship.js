@@ -73,18 +73,23 @@ async function requestValidation({ session, store, PRODUCTS }) {
 }
 
 // Liens pour retirer la pièce des autres plateformes après une vente sur le site (Tom, 2026-11-16) :
-// l'annonce Vestiaire exacte, et le dressing Vinted (pas de lien par pièce connu)
+// l'annonce Vestiaire exacte, et l'annonce Vinted quand la synchro l'a retrouvée (champ vt),
+// sinon le dressing Vinted
 const VINTED_URL = process.env.VINTED_URL || 'https://www.vinted.fr/member/16032770';
 function delistLinks(ids, PRODUCTS) {
   return ids.map(id => {
     const p = PRODUCTS[id] || {};
     return { id, label: (p.brand || '') + ' · ' + (p.type || id),
-      vestiaire: p.vc ? 'https://fr.vestiairecollective.com' + (p.vc.startsWith('/') ? p.vc : '/' + p.vc) : '' };
+      vestiaire: p.vc ? 'https://fr.vestiairecollective.com' + (p.vc.startsWith('/') ? p.vc : '/' + p.vc) : '',
+      vinted: /^https:\/\/www\.vinted\.fr\//.test(p.vt || '') ? p.vt : '' };
   });
 }
 function delistHtml(ids, PRODUCTS) {
   const btn = (href, txt) => `<a href="${esc(href)}" style="display:inline-block;margin:4px 6px 4px 0;border:1px solid #1C2230;color:#1C2230;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px">${txt}</a>`;
-  return delistLinks(ids, PRODUCTS).map(l => (l.vestiaire ? btn(l.vestiaire, 'Annonce Vestiaire') : '')).join('') + btn(VINTED_URL, 'Mon dressing Vinted');
+  const ls = delistLinks(ids, PRODUCTS), many = ls.length > 1;
+  return ls.map(l => (l.vestiaire ? btn(l.vestiaire, 'Annonce Vestiaire' + (many ? ' · ' + esc(l.label) : '')) : '')
+      + (l.vinted ? btn(l.vinted, 'Annonce Vinted' + (many ? ' · ' + esc(l.label) : '')) : '')).join('')
+    + (ls.every(l => l.vinted) ? '' : btn(VINTED_URL, 'Mon dressing Vinted'));
 }
 
 module.exports = { shipSession, requestValidation, validateUrl, signFor, delistLinks, delistHtml, VINTED_URL };
