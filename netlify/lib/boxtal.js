@@ -49,7 +49,9 @@ function carriers(session) {
   const env = k => process.env[k] || '';
   const list = dest === 'FR' ? [
     { key: 'colissimo', label: 'Colissimo', code: homeOffer() },
-    { key: 'chrono', label: 'Chronopost', code: env('BOXTAL_OFFER_CHRP_HOME') },
+    // CHRP-Chrono18 : code relevé dans une intégration Boxtal publiée (pas dans la doc officielle) ;
+    // s'il est refusé, Boxtal l'affiche sur la page et rien n'est payé
+    { key: 'chrono', label: 'Chronopost', code: process.env.BOXTAL_OFFER_CHRP_HOME || 'CHRP-Chrono18' },
     { key: 'ups', label: 'UPS', code: env('BOXTAL_OFFER_UPS_FR') },
     { key: 'dhl', label: 'DHL', code: env('BOXTAL_OFFER_DHL_FR') },
     { key: 'mondialrelay', label: 'Mondial Relay (domicile)', code: env('BOXTAL_OFFER_MONR_HOME') },
