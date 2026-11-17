@@ -229,13 +229,9 @@
     '.hero-cta,.hbs-cta{background:' + N + '!important;color:' + C + '!important;box-shadow:0 10px 22px -10px rgba(28,34,48,.45)!important}' +
     '.hero-cta *,.hbs-cta *{color:' + C + '!important}' +
     '.hero-cta:hover,.hbs-cta:hover{background:#2c3446!important}' +
-    /* Accueil moins chargé (Tom, 2026-11-17) : « Explorer » seul bouton plein, sans ombre, plus
-       compact ; « Tout voir » et « Voir plus » en liens bleu nuit soulignés. */
-    '.hero-cta{box-shadow:none!important;height:40px!important;padding:0 22px!important;min-width:0!important;font-size:11px!important;font-weight:500!important;letter-spacing:.2em!important;border-radius:4px!important;gap:12px!important}' +
-    '.hbs-cta{background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;min-width:0!important;height:auto!important;padding:4px 0 6px!important;gap:10px!important;font-size:11px!important;font-weight:500!important;letter-spacing:.2em!important;' +
-      'background-image:linear-gradient(' + N + ',' + N + ')!important;background-size:100% 1px!important;background-repeat:no-repeat!important;background-position:0 100%!important;transition:background-size .2s ease!important}' +
-    '.hbs-cta,.hbs-cta *{color:' + N + '!important}' +
-    '.hbs-cta:hover{background:transparent linear-gradient(' + N + ',' + N + ') no-repeat 0 100%/100% 2px!important;transform:none!important;opacity:1!important}' +
+    /* Accueil moins chargé (Tom, 2026-11-17, version « unifiée ») : les trois boutons pareils, bleu nuit
+       plein, sans ombre, plus compacts */
+    '.hero-cta,.hbs-cta{box-shadow:none!important;height:40px!important;padding:0 22px!important;min-width:0!important;font-size:11px!important;font-weight:500!important;letter-spacing:.2em!important;border-radius:4px!important;gap:12px!important;transform:none}' +
     /* Grille boutique mobile : sans cadre autour des photos, 10 px entre colonnes
        collait les textes (prix de gauche contre la marque de droite). 24 px (Tom, 2026-11-09) */
     '@media (max-width:900px){.grid{column-gap:24px!important;row-gap:30px!important;margin-top:0!important}.grid .product-card:nth-child(5n) .product-img{aspect-ratio:1/1!important}.grid .product-card:nth-child(5n) .product-img-primary{padding-bottom:22px!important;box-sizing:border-box!important;object-fit:contain!important}body[data-page="favorites"] .grid .product-card:nth-child(5n) .product-img,body[data-page="archive"] .grid .product-card:nth-child(5n) .product-img{aspect-ratio:3/4!important}.grid .product-body{padding-top:10px!important}}' +
