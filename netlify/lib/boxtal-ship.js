@@ -48,8 +48,13 @@ function whereText(session) {
   const md = session.metadata || {};
   if (md.ship_mode === 'relay') return 'Point relais : ' + esc(md.relay_name) + ' (' + esc(md.relay_address) + ')';
   const c = boxtal.destCountry(session);
-  if (c === 'FR') return 'Livraison à domicile';
-  return 'Livraison à domicile · ' + esc(COUNTRY_FR[c] || c) + (boxtal.EU27.has(c) ? '' : ' (hors UE : déclaration de douane jointe)');
+  const head = c === 'FR' ? 'Livraison à domicile' : 'Livraison à domicile · ' + esc(COUNTRY_FR[c] || c) + (boxtal.EU27.has(c) ? '' : ' (hors UE : déclaration de douane jointe)');
+  // Adresse complète, pour la vérifier avant de créer le bordereau (Tom, 2026-11-17)
+  const ship = session.shipping_details || (session.collected_information || {}).shipping_details || {};
+  const a = ship.address || (session.customer_details || {}).address || {};
+  const lines = [ship.name, a.line1, a.line2, [a.postal_code, a.city].filter(Boolean).join(' '), a.state, COUNTRY_FR[a.country] || a.country].filter(Boolean).map(esc);
+  const phone = (session.customer_details || {}).phone;
+  return head + (lines.length ? '<br>' + lines.join('<br>') : '') + (phone ? '<br>Tél. ' + esc(phone) : '');
 }
 
 // Lien signé « Créer le bordereau » (e-mail et notification à Tom) : HMAC de la commande
