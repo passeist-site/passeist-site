@@ -56,6 +56,17 @@ def dsim(a, b):
     if len(ta) < 8 or len(tb) < 8: return None
     return len(ta & tb) / min(len(ta), len(tb))
 
+def nums(t):
+    """Nombres d'une description (mesures surtout) : ce qui distingue deux pièces de même marque."""
+    return set(re.findall(r'\d+(?:[.,]\d+)?', str(t or '')))
+
+def brand_in(brand, v):
+    """Marque du site citée dans le titre ou la description Vinted (marque Vinted différente,
+    ex. « Vintage Dressing »)."""
+    w = [x for x in norm(brand).split() if len(x) > 2]
+    txt = norm(str(v.get('title', '')) + ' ' + str(v.get('desc', '')))
+    return bool(w) and any(x in txt for x in w)
+
 def brand_ok(a, b):
     a, b = norm(a), norm(b)
     if not a or not b: return False
@@ -85,12 +96,18 @@ def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
         mine = words(' '.join([e.get('label', ''), e.get('type', ''), p.get('desc', ''), p.get('color', '')]))
         sy = site_years(e)
         cands = []
+        pn = nums(p.get('desc', ''))
         for v in vinted:
-            if not brand_ok(e.get('brand'), v.get('brand')): continue
-            # Descriptions quasi identiques (Tom) : c'est la bonne annonce, quel que soit le titre
+            same_brand = brand_ok(e.get('brand'), v.get('brand'))
+            # Descriptions quasi identiques (Tom) : c'est la bonne annonce, quel que soit le titre.
+            # Les mesures départagent les annonces d'une même marque au texte d'introduction commun.
             ds = dsim(p.get('desc', ''), v.get('desc', '')) if p.get('desc') and v.get('desc') else None
-            if ds is not None and ds >= 0.8:
-                cands.append((100 + round(ds * 20), str(v.get('id')), v)); continue
+            if ds is not None and ds >= 0.8 and (same_brand or brand_in(e.get('brand'), v)):
+                vn = nums(v.get('desc', ''))
+                nr = len(pn & vn) / len(pn) if len(pn) >= 3 else 1.0
+                if (ds >= 0.9 and nr >= 0.7) or nr >= 0.9:   # texte quasi identique ET mesures concordantes
+                    cands.append((100 + round(ds * 20) + round(nr * 30), str(v.get('id')), v)); continue
+            if not same_brand: continue
             if ds is not None and ds < 0.4: continue   # descriptions différentes : autre pièce
             try: vp = float(str(v.get('price') or 0).replace(',', '.'))
             except ValueError: continue

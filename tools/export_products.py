@@ -85,12 +85,20 @@ if vinted:
     from vinted_match import match
     live = {str(v.get('id')) for v in vinted}
     known = {pid for pid, vid in vlinks.items() if str(vid) in live}   # annonce toujours en ligne
-    new, sure = match(lookup, {str(p.get('id')): p for p in products}, vinted,
+    # Toutes les pièces, vendues comprises : leur annonce Vinted est justement à retirer après la vente
+    every = {}
+    for p in products:
+        pid = str(p.get('id') or '')
+        if not pid: continue
+        if pid in lookup: every[pid] = lookup[pid]; continue
+        lab, sea, yr = designation(p)
+        every[pid] = {'brand': p.get('brand', ''), 'type': p.get('type', ''), 'price': str(p.get('price', '')), 'label': lab, 'season': sea or '', 'year': yr or ''}
+    new, sure = match(every, {str(p.get('id')): p for p in products}, vinted,
                 skip_ids=known, used_vinted={str(vlinks[k]) for k in known})
     # Gravé dans le registre seulement si la description le confirme ; sinon lien du soir
     for pid in sure: vlinks[pid] = new[pid].rsplit('/', 1)[-1]
     for pid, url in new.items():
-        if pid not in sure: lookup[pid]['vt'] = url
+        if pid not in sure and pid in lookup: lookup[pid]['vt'] = url
     print(f'Vinted : registre {len(vlinks)} (+{len(sure)} confirmées par la description), '
           f'{len(new) - len(sure)} reliée(s) par le titre ; {len(vinted)} annonces')
     with open(VL, 'w') as f: json.dump(dict(sorted(vlinks.items())), f, separators=(',', ':'))
