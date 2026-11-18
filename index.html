@@ -7607,12 +7607,35 @@ function renderFilters() {
 
 // Recherche par référence (« 73092452 », « Réf. 73092452 », « Réf. VC 73092452 ») : la pièce est
 // trouvée où qu'elle soit (boutique, vendue), sans tenir compte des filtres.
+// Lien ou numéro Vinted / Vestiaire collé dans la recherche (Tom, 2026-11-18) : on retrouve la pièce
+// grâce au registre data/vinted-links.json. Rien de visible pour les clients.
+let vtRev = null, vtLoading = false;
+function vintedToId(n) {
+  if (vtRev) return vtRev[n] || '';
+  if (!vtLoading) {
+    vtLoading = true;
+    (window.__vintedLinks = window.__vintedLinks || fetch('/data/vinted-links.json').then(r => r.ok ? r.json() : {}).catch(() => ({})))
+      .then(m => { vtRev = {}; for (const k in (m || {})) vtRev[String(m[k])] = k; if (activeSearch) renderGrid(); });
+  }
+  return '';
+}
 function refQuery(q) {
-  const s = normalizeForSearch(q).replace(/^\s*ref\.?\s*:?\s*(vc|v)?\.?\s*:?\s*/, '').trim();
+  const raw = String(q || '');
+  const vc = raw.match(/vestiairecollective\.[a-z.]+\/\S*?-(\d{6,})\.shtml/i);
+  if (vc) return vc[1];
+  const vt = raw.match(/vinted\.[a-z.]+\/items\/(\d{6,})/i);
+  const s = normalizeForSearch(raw).replace(/^\s*ref\.?\s*:?\s*(vc|v)?\.?\s*:?\s*/, '').trim();
+  const vnum = vt ? vt[1] : (/^\d{9,}$/.test(s) ? s : '');
+  if (vnum) return vintedToId(vnum) || (vt ? 'aucune' : s);
   return /^\d{6,}$/.test(s) ? s : '';
 }
 function renderGrid() {
   const _ref = refQuery(activeSearch);
+  // Lien collé et pièce retrouvée : on ouvre directement sa fiche
+  if (_ref && /^\d+$/.test(_ref) && /vinted\.|vestiairecollective\./i.test(activeSearch) && window.__refOpened !== activeSearch
+      && PRODUCTS.some(p => String(p.id) === _ref) && typeof openDetail === 'function') {
+    window.__refOpened = activeSearch; setTimeout(() => openDetail(_ref), 0);
+  }
   let filtered = _ref ? PRODUCTS.filter(p => String(p.id).includes(_ref)) : viewProducts().filter(p =>
     (activeBrand === 'all' || p.brand === activeBrand) &&
     (activeCat === 'all' || getCategory(p.type) === activeCat) &&
