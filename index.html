@@ -3370,6 +3370,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
 }
 #chat-overlay .chat-form, #chat-overlay .chat-start { margin-right: 54px; }
+/* Écran de départ (prénom, e-mail) centré ; la croix reste dessous (Tom, 2026-11-18) */
+#chat-overlay:not(.chat-ready) .chat-start { margin-right: 0; }
+#chat-overlay:not(.chat-ready) .checkout-close { top: 12px; bottom: auto; width: 32px; height: 32px; font-size: 12px; }
 @media (max-width: 600px) {
   #chat-overlay { padding: 0 8px 8px; }
   #chat-overlay .chat-box { max-width: 100%; padding: 16px 14px 12px; }
