@@ -83,60 +83,35 @@ def site_years(e):
     return y
 
 def match(lookup, byid, vinted, skip_ids=(), used_vinted=()):
-    """lookup: {id: entrée products.json}; byid: {id: pièce index.html}; renvoie ({id: url}, {ids confirmés par la description}).
-    skip_ids : pièces déjà reliées (registre) ; used_vinted : annonces déjà attribuées."""
-    out, cands_of = {}, {}
-    for pid, e in lookup.items():
+    """Rapprochement par la DESCRIPTION seulement (Tom, 2026-11-18) : c'est le seul point commun
+    fiable entre Vinted, Vestiaire et le site. Marque, prix et titre ne comptent pas.
+    Texte quasi identique, et mesures concordantes pour départager deux annonces qui partagent
+    le même texte d'introduction. En cas de doute (deux annonces trop proches), pas de lien.
+    Renvoie ({id: url}, {ids reliés}) ; tous les liens sont « confirmés par la description »."""
+    vs = [(str(v.get('id')), v, v.get('desc') or '') for v in vinted if (v.get('desc') or '')]
+    used = {str(x) for x in used_vinted}
+    best_of = {}
+    for pid in lookup:
         if pid in skip_ids: continue
-        p = byid.get(pid, {})
-        try: price = float(e.get('price') or 0)
-        except ValueError: continue
-        fam = families(e.get('type', '')) or families(e.get('label', ''))
-        if not price or not fam: continue
-        mine = words(' '.join([e.get('label', ''), e.get('type', ''), p.get('desc', ''), p.get('color', '')]))
-        sy = site_years(e)
+        d = (byid.get(pid) or {}).get('desc') or ''
+        if not d: continue
+        pn = nums(d)
         cands = []
-        pn = nums(p.get('desc', ''))
-        for v in vinted:
-            same_brand = brand_ok(e.get('brand'), v.get('brand'))
-            # Descriptions quasi identiques (Tom) : c'est la bonne annonce, quel que soit le titre.
-            # Les mesures départagent les annonces d'une même marque au texte d'introduction commun.
-            ds = dsim(p.get('desc', ''), v.get('desc', '')) if p.get('desc') and v.get('desc') else None
-            if ds is not None and ds >= 0.8 and (same_brand or brand_in(e.get('brand'), v)):
-                vn = nums(v.get('desc', ''))
-                nr = len(pn & vn) / len(pn) if len(pn) >= 3 else 1.0
-                if (ds >= 0.9 and nr >= 0.7) or nr >= 0.9:   # texte quasi identique ET mesures concordantes
-                    cands.append((100 + round(ds * 20) + round(nr * 30), str(v.get('id')), v)); continue
-            if not same_brand: continue
-            if ds is not None and ds < 0.4: continue   # descriptions différentes : autre pièce
-            try: vp = float(str(v.get('price') or 0).replace(',', '.'))
-            except ValueError: continue
-            if not vp or abs(vp - price) > max(0.2 * price, 10): continue
-            vf = families(v.get('title', ''))
-            okfam = fam & vf or any(CLOSE.get(f, set()) & vf for f in fam)
-            if not okfam: continue
-            vy = years(v.get('title', ''))
-            if sy and vy and not (sy & vy): continue   # années contradictoires
-            ss, vs = saison(e.get('season', '')), saison(v.get('title', ''))
-            if ss and vs and ss != vs: continue        # été / hiver contradictoires
-            sc = len(mine & words(v.get('title', '')))
-            sc += 3 if (sy and sy & vy) else 0
-            sc += 2 if fam & vf else 0
-            sc += 2 if abs(vp - price - 5) < 1 or abs(vp - price) < 1 else (1 if abs(vp - price) <= 0.06 * price else 0)  # Vinted = prix du site + 5 € le plus souvent
-            cands.append((sc, str(v.get('id')), v))
-        cands.sort(key=lambda c: -c[0])
-        cands_of[pid] = cands
-    # Attribution : meilleur score d'abord ; une annonce ne sert qu'une fois
-    order = sorted(((c[0][0], pid) for pid, c in cands_of.items() if c), reverse=True)
-    used, sure = {str(x) for x in used_vinted}, set()
-    for _, pid in order:
-        c = [x for x in cands_of[pid] if x[1] not in used]
+        for vid, v, vd in vs:
+            ds = dsim(d, vd)
+            if ds is None or ds < 0.8: continue
+            nr = len(pn & nums(vd)) / len(pn) if len(pn) >= 3 else 1.0
+            if not ((ds >= 0.9 and nr >= 0.7) or (ds >= 0.8 and nr >= 0.9)): continue
+            cands.append((round(ds * 100 + nr * 30, 2), vid, v))
+        if cands:
+            cands.sort(key=lambda c: -c[0])
+            best_of[pid] = cands
+    out = {}
+    # Les rapprochements les plus nets d'abord ; une annonce ne sert qu'une fois
+    for pid in sorted(best_of, key=lambda k: -best_of[k][0][0]):
+        c = [x for x in best_of[pid] if x[1] not in used]
         if not c: continue
-        top = c[0][0]
-        if top < 4: continue
-        if len(c) > 1 and c[1][0] >= top - 1: continue  # doute : deux annonces trop proches
-        v = c[0][2]
-        out[pid] = f"https://www.vinted.fr/items/{v['id']}"  # forme courte, Vinted redirige
-        if top >= 100: sure.add(pid)   # confirmé par la description
+        if len(c) > 1 and c[1][0] >= c[0][0] - 3: continue   # doute
+        out[pid] = f"https://www.vinted.fr/items/{c[0][1]}"
         used.add(c[0][1])
-    return out, sure
+    return out, set(out)
