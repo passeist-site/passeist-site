@@ -249,7 +249,7 @@ jobs:
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
           # Toujours add index.html + products.json (présents)
-          git add --sparse index.html netlify/functions/products.json
+          git add --sparse index.html netlify/functions/products.json netlify/functions/refs.json
           [ -f data/first-seen.json ] && git add --sparse data/first-seen.json || true
           [ -f data/vinted.json ] && git add --sparse data/vinted.json || true
           [ -f data/vinted-links.json ] && git add --sparse data/vinted-links.json || true

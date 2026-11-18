@@ -33,12 +33,49 @@ function step(st) {
   return { key: 'transit', text: st.label || st.status || 'Suivi reçu' };
 }
 
+let REFS = {}; try { REFS = require('./refs.json'); } catch (e) {}
+const VC = 'https://fr.vestiairecollective.com';
+function delist(ids) {
+  return ids.map(id => {
+    const r = REFS[id] || {};
+    const q = new URLSearchParams({ search_text: ((r.b || '') + ' ' + String(r.t || '').replace(/\s+en\s+.*$/i, '')).trim().toLowerCase() });
+    return { id, label: [r.b, r.t].filter(Boolean).join(' · ') || id,
+      vestiaire: r.vc ? VC + (r.vc.startsWith('/') ? r.vc : '/' + r.vc) : '',
+      vinted: r.vt ? 'https://www.vinted.fr/items/' + r.vt : 'https://www.vinted.fr/catalog?' + q.toString(), vintedExact: !!r.vt };
+  });
+}
+
 exports.handler = async (event) => {
   if (!isAdmin(event)) return json(401, { error: 'unauthorized' });
   try { connectLambda(event); } catch (e) {}
   const store = getStore('passeist-orders');
-  const r = await stripe.checkout.sessions.list({ limit: 40, expand: ['data.payment_intent'] });
-  const paid = r.data.filter(s => s.payment_status === 'paid' && s.livemode).slice(0, 25);
+  const q = event.queryStringParameters || {};
+
+  // Pièce citée dans une discussion : photo et fiche
+  if (q.piece) {
+    const id = String(q.piece).replace(/\D/g, '');
+    const r = REFS[id];
+    if (!r) return json(404, { error: 'pièce inconnue' });
+    return json(200, { id, title: [r.b, r.t].filter(Boolean).join(' · '), img: '/img/' + id + '-0-md.webp', url: '/product/' + (r.s || id) });
+  }
+  // « Annonces retirées » cochées par Tom
+  if (event.httpMethod === 'POST') {
+    let b = {}; try { b = JSON.parse(event.body || '{}'); } catch (e) {}
+    if (!/^cs_(live|test)_[A-Za-z0-9]+$/.test(String(b.session || ''))) return json(400, { error: 'session' });
+    if (b.done) await store.setJSON('delisted/' + b.session, { at: new Date().toISOString() });
+    else await store.delete('delisted/' + b.session);
+    return json(200, { ok: true });
+  }
+
+  const r = await stripe.checkout.sessions.list({ limit: 60, expand: ['data.payment_intent'] });
+  const all = r.data.filter(s => s.payment_status === 'paid' && s.livemode);
+  const paid = all.slice(0, 25);
+  // Chiffres du mois (heure de Paris approximée par l'UTC du serveur)
+  const now = new Date(); const m0 = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1) / 1000;
+  const p0 = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1) / 1000;
+  const sum = arr => arr.reduce((t, s) => t + (s.amount_total || 0) / 100, 0);
+  const month = all.filter(s => s.created >= m0), prev = all.filter(s => s.created >= p0 && s.created < m0);
+  const stats = { month: { total: sum(month), count: month.length }, prev: { total: sum(prev), count: prev.length, partial: all.length >= 60 } };
   const out = await Promise.all(paid.map(async s => {
     const pi = s.payment_intent && typeof s.payment_intent === 'object' ? s.payment_intent : {};
     const sd = s.shipping_details || (s.collected_information || {}).shipping_details || {};
@@ -57,12 +94,19 @@ exports.handler = async (event) => {
     else state = { key: 'todo', text: 'À expédier' };
     const number = (st && st.number) || ship.tracking_number || '';
     const carrier = (st && st.carrier) || ship.carrier || '';
+    const ids = (md.passeist_ids || '').split(',').filter(Boolean);
+    let delisted = null; try { delisted = await store.get('delisted/' + s.id, { type: 'json' }); } catch (e) {}
+    const boxtal = require('../lib/boxtal');
+    const canLabel = boxtal.enabled() && boxtal.shippable(s) && !(bx && bx.id) && !ship.tracking_number;
     return {
+      id: s.id, email: (s.customer_details || {}).email || '',
+      link: canLabel ? require('../lib/boxtal-ship').validateUrl(s.id) : '',
+      delist: delist(ids), delisted: !!delisted,
       at: s.created * 1000, name: (s.customer_details || {}).name || sd.name || '', what,
       where: md.ship_mode === 'relay' ? 'Point relais' + (md.relay_name ? ' ' + md.relay_name : '') : [a.city, a.country].filter(Boolean).join(', '),
       amount: (s.amount_total || 0) / 100, state, carrier, number,
       url: (st && st.url) || trackUrl(carrier, number),
     };
   }));
-  return json(200, { orders: out });
+  return json(200, { orders: out, stats });
 };

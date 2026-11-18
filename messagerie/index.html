@@ -113,6 +113,37 @@ header .pill { flex: 0 1 auto; white-space: nowrap; padding: 9px 10px; }
 .ord-what { color: var(--dim); }
 .ord a { color: var(--ink); }
 .nl-none { margin: 4px 16px 0; font-size: 14px; color: var(--dim); }
+.todo { padding: 4px 0; }
+.todo-it { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: 0; color: var(--ink); font-size: 15px; padding: 12px 16px; text-align: left; cursor: pointer; }
+.todo-it + .todo-it { border-top: 1px solid rgba(244,241,236,.08); }
+.todo-it b { min-width: 26px; height: 26px; border-radius: 13px; background: rgba(244,241,236,.12); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+.todo-it b.red { background: #e07a5f; color: #1C2230; }
+.todo-it span { margin-left: auto; color: var(--dim); font-size: 20px; }
+.sale-stats { display: flex; justify-content: space-between; padding: 14px 16px; }
+.sale-stats div { display: flex; flex-direction: column; gap: 2px; }
+.sale-stats b { font-size: 18px; }
+.sale-stats span { font-size: 12px; color: var(--dim); }
+.sale { padding: 14px 16px; font-size: 13px; line-height: 1.5; transition: box-shadow .3s; }
+.sale.flash { box-shadow: 0 0 0 2px #8fa9c7; }
+.sale-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sa { border: 1px solid rgba(244,241,236,.22); background: none; color: var(--ink); border-radius: 6px; padding: 8px 12px; font-size: 13px; text-decoration: none; cursor: pointer; }
+.sa-main { background: #f4f1ec; color: #1C2230; border-color: #f4f1ec; font-weight: 600; }
+.sa-warn { border-color: #e0b85c; color: #e0b85c; }
+.sa-more { display: block; margin: 8px 16px 0; width: calc(100% - 32px); }
+.sale-panel { margin-top: 10px; }
+.sale-panel[hidden] { display: none !important; }
+.sale a { color: var(--ink); }
+.nl-test select { min-height: 42px; padding: 0 10px; border-radius: 6px; border: 1px solid rgba(244,241,236,0.16); background: rgba(244,241,236,0.06); color: var(--ink); font-size: 15px; -webkit-appearance: none; appearance: none; }
+.sale-panel input[name=number] { flex: 1 1 140px; }
+.sp-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid rgba(244,241,236,.08); }
+.sp-row a { color: var(--ink); margin-left: 12px; }
+.sp-done { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--dim); }
+.piece { display: flex; gap: 12px; align-items: center; margin: 12px 0; padding: 10px; border-radius: 10px; background: rgba(244,241,236,.06); color: var(--ink); text-decoration: none; }
+.piece img { width: 56px; height: 74px; object-fit: contain; background: #e6e6e6; border-radius: 6px; }
+.piece span { display: flex; flex-direction: column; font-size: 14px; }
+.piece em { font-style: normal; font-size: 12px; color: var(--dim); margin-top: 2px; }
+.qr { display: flex; gap: 8px; overflow-x: auto; padding: 8px 16px 4px; scrollbar-width: none; }
+.qr button { flex: 0 0 auto; border: 1px solid rgba(244,241,236,.22); background: none; color: var(--ink); border-radius: 16px; padding: 7px 12px; font-size: 13px; }
 #convs .card:first-child { margin-top: 6px; }
 .nl-sub { font-size: 13px; color: var(--dim); padding: 6px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; }
 .nl-sub span:last-child { color: var(--mute); flex: 0 0 auto; }
@@ -196,15 +227,121 @@ async function showList() {
   const { convs } = await api('list');
   if (current) return;
   if (!$('convs')) {
-    $('main').innerHTML = '<div class="nl-sec">Discussions</div><div id="convs"></div><div id="tools"></div>';
+    $('main').innerHTML = '<div id="todo"></div><div class="nl-sec">Discussions</div><div id="convs"></div>'
+      + '<div class="nl-sec">Ventes</div><div id="sales"><p class="nl-none">Chargement…</p></div><div id="tools"></div>';
     showNewsletter().catch(() => {});
+    loadSales();
   }
+  window.__convs = convs;
   $('convs').innerHTML = convs.length ? convs.map(c => `
     <div class="card${c.unread ? ' unread' : ''}" data-id="${c.id}">
       <div class="top"><span class="who">${c.unread ? '<span class="dot"></span>' : ''}${esc(c.name || c.email || 'Visiteur')}${c.product ? ' · ' + esc(c.product) : ''}</span><span>${when(c.updatedAt)}</span></div>
       <div class="last">${c.lastFrom === 'passeist' ? 'Vous : ' : ''}${esc(c.last)}</div>
     </div>`).join('') : '<p class="nl-none">Aucune discussion pour l\'instant.</p>';
   document.querySelectorAll('.card').forEach(el => el.onclick = () => { location.hash = el.dataset.id; });
+  renderTodo();
+}
+
+// ---------- Ventes (Tom, 2026-11-18) : chiffres, état du colis et actions sur chaque vente ----------
+let salesAt = 0, salesAll = false;
+const eur = n => Math.round(n).toLocaleString('fr-FR') + ' €';
+const day = t => new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+async function loadSales() {
+  salesAt = Date.now();
+  try {
+    const res = await fetch('/.netlify/functions/orders', { headers: { 'x-admin-key': key } });
+    const j = await res.json();
+    if (!res.ok) throw new Error(j.error || res.status);
+    window.__sales = j;
+  } catch (e) { if ($('sales')) $('sales').innerHTML = '<p class="nl-none">Ventes indisponibles : ' + esc(e.message) + '</p>'; return; }
+  renderSales(); renderTodo();
+}
+const DOT = { delivered: '#7fbf8a', pickup: '#e0b85c', out: '#e0b85c', transit: '#8fa9c7', label: '#a8a6a1', todo: '#e07a5f', problem: '#e07a5f' };
+function renderSales() {
+  const box = $('sales'); const j = window.__sales; if (!box || !j) return;
+  const st = j.stats || { month: { total: 0, count: 0 } };
+  const mName = new Date().toLocaleDateString('fr-FR', { month: 'long' });
+  const head = `<div class="nl-box sale-stats"><div><b>${eur(st.month.total)}</b><span>${mName}</span></div><div><b>${st.month.count}</b><span>vente${st.month.count > 1 ? 's' : ''}</span></div><div><b>${st.month.count ? eur(st.month.total / st.month.count) : '–'}</b><span>panier moyen</span></div></div>`;
+  const list = (j.orders || []);
+  const shown = salesAll ? list : list.slice(0, 6);
+  box.innerHTML = head + (!list.length ? '<p class="nl-none">Aucune vente.</p>' : shown.map(o => {
+    const toDelist = o.delist.length && !o.delisted;
+    return `<div class="nl-box sale" id="sale-${esc(o.id)}" data-id="${esc(o.id)}">
+      <div class="ord-top"><span class="ord-st" style="color:${DOT[o.state.key] || '#a8a6a1'}">● ${esc(o.state.text)}${o.state.key === 'delivered' && o.state.at ? ' le ' + day(o.state.at) : ''}</span><span>${day(o.at)}</span></div>
+      <div class="ord-who">${esc(o.name)} · ${eur(o.amount)}</div>
+      <div class="ord-what">${esc(o.what)}</div>
+      <div class="ord-what">${esc(o.where)}${o.number ? ' · ' + esc(o.carrier) + ' ' + (o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.number)}</a>` : esc(o.number)) : ''}</div>
+      <div class="sale-acts">
+        ${o.link ? `<a class="sa sa-main" href="${esc(o.link)}">Créer le bordereau</a>` : ''}
+        ${!o.number ? `<button class="sa" data-act="track">Envoyer un suivi</button>` : ''}
+        ${o.delist.length ? `<button class="sa ${toDelist ? 'sa-warn' : ''}" data-act="delist">${toDelist ? 'Annonces à retirer' : 'Annonces retirées ✓'}</button>` : ''}
+      </div>
+      <div class="sale-panel" data-panel="delist" hidden>
+        ${o.delist.map(l => `<div class="sp-row"><span>${esc(l.label)}</span><span>${l.vestiaire ? `<a href="${esc(l.vestiaire)}" target="_blank" rel="noopener">Vestiaire</a>` : ''}<a href="${esc(l.vinted)}" target="_blank" rel="noopener">${l.vintedExact ? 'Vinted' : 'Chercher sur Vinted'}</a></span></div>`).join('')}
+        <label class="sp-done"><input type="checkbox" data-act="done" ${o.delisted ? 'checked' : ''}> Annonces retirées partout</label>
+      </div>
+      <form class="sale-panel nl-test" data-panel="track" hidden style="flex-wrap:wrap">
+        <select name="carrier"><option value="mondialrelay">Mondial Relay</option><option value="colissimo">Colissimo</option><option value="chronopost">Chronopost</option><option value="ups">UPS</option><option value="dhl">DHL</option></select>
+        <input name="number" placeholder="Numéro de suivi" required><button type="submit">Vérifier</button>
+        <div class="nl-msg" style="flex-basis:100%"></div>
+      </form>
+    </div>`; }).join('') + (list.length > 6 && !salesAll ? `<button class="sa sa-more" data-act="more">Voir les ${list.length - 6} autres ventes</button>` : ''));
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('#sales [data-act]'); if (!b || b.tagName === 'INPUT') return;
+  if (b.dataset.act === 'more') { salesAll = true; return renderSales(); }
+  const card = b.closest('.sale'); if (!card) return;
+  const pnl = card.querySelector('[data-panel="' + b.dataset.act + '"]');
+  if (pnl) { const open = pnl.hidden; card.querySelectorAll('.sale-panel').forEach(x => { x.hidden = true; }); pnl.hidden = !open; }
+});
+document.addEventListener('change', async (e) => {
+  const c = e.target.closest('#sales input[data-act="done"]'); if (!c) return;
+  const id = c.closest('.sale').dataset.id;
+  await fetch('/.netlify/functions/orders', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ session: id, done: c.checked }) });
+  const o = (window.__sales.orders || []).find(x => x.id === id); if (o) o.delisted = c.checked;
+  renderSales(); renderTodo();
+});
+document.addEventListener('submit', async (e) => {
+  const f = e.target.closest('#sales form[data-panel="track"]'); if (!f) return;
+  e.preventDefault();
+  const id = f.closest('.sale').dataset.id, msg = f.querySelector('.nl-msg'), btn = f.querySelector('button');
+  const confirmIt = f.dataset.ready === '1';
+  msg.textContent = confirmIt ? 'Envoi…' : 'Vérification…';
+  const res = await fetch('/.netlify/functions/tracking-send', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ order: id, carrier: f.carrier.value, number: f.number.value, confirm: confirmIt }) });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) { f.dataset.ready = ''; btn.textContent = 'Vérifier'; msg.textContent = 'Échec : ' + (j.error || res.status); return; }
+  if (j.preview) { f.dataset.ready = '1'; btn.textContent = 'Envoyer'; msg.textContent = 'Le suivi partira à ' + (j.name || '') + ' (' + j.email + '). Appuyez sur Envoyer.'; return; }
+  msg.textContent = '✓ Suivi envoyé à ' + j.email + ' et ajouté au paiement dans Stripe.';
+  setTimeout(loadSales, 1500);
+});
+document.addEventListener('input', (e) => { const f = e.target.closest('#sales form[data-panel="track"]'); if (f) { f.dataset.ready = ''; f.querySelector('button').textContent = 'Vérifier'; } });
+
+// ---------- À faire : ce qui attend une action, en haut de la page ----------
+function renderTodo() {
+  const box = $('todo'); if (!box) return;
+  const items = [];
+  const unread = (window.__convs || []).filter(c => c.unread);
+  if (unread.length) items.push({ n: unread.length, t: unread.length > 1 ? 'messages non lus' : 'message non lu', go: () => { location.hash = unread[0].id; }, red: true });
+  const orders = (window.__sales && window.__sales.orders) || [];
+  const recent = orders.filter(o => Date.now() - o.at < 30 * 86400e3);
+  const label = recent.filter(o => o.link);
+  if (label.length) items.push({ n: label.length, t: label.length > 1 ? 'bordereaux à créer' : 'bordereau à créer', go: () => scrollSale(label[0].id), red: true });
+  const late = recent.filter(o => !o.link && !o.number && o.state.key === 'todo' && Date.now() - o.at > 2 * 86400e3);
+  if (late.length) items.push({ n: late.length, t: (late.length > 1 ? 'ventes' : 'vente') + ' sans suivi depuis 2 jours', go: () => scrollSale(late[0].id), red: true });
+  const del = recent.filter(o => o.delist.length && !o.delisted);
+  if (del.length) items.push({ n: del.length, t: (del.length > 1 ? 'ventes' : 'vente') + ' : annonces à retirer', go: () => scrollSale(del[0].id) });
+  const pb = orders.filter(o => o.state.key === 'problem');
+  if (pb.length) items.push({ n: pb.length, t: (pb.length > 1 ? 'colis' : 'colis') + ' en problème', go: () => scrollSale(pb[0].id), red: true });
+  box.innerHTML = '<div class="nl-sec">À faire</div>' + (items.length
+    ? '<div class="nl-box todo">' + items.map((it, i) => `<button class="todo-it" data-i="${i}"><b class="${it.red ? 'red' : ''}">${it.n}</b>${esc(it.t)}<span>›</span></button>`).join('') + '</div>'
+    : (window.__sales ? '<p class="nl-none">Rien à faire ✓</p>' : '<p class="nl-none">…</p>'));
+  box.querySelectorAll('.todo-it').forEach(el => el.onclick = () => items[+el.dataset.i].go());
+}
+function scrollSale(id) {
+  if (!document.getElementById('sale-' + id)) { salesAll = true; renderSales(); }
+  const el = document.getElementById('sale-' + id); if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1500);
 }
 
 async function showConv(id) {
@@ -215,8 +352,21 @@ async function showConv(id) {
   const atBottom = $('main').scrollHeight - $('main').scrollTop - $('main').clientHeight < 80;
   const ctx = [conv.name ? '<strong>' + esc(conv.name) + '</strong>' : '', conv.product ? 'Pièce : ' + esc(conv.product) : '', conv.email ? 'E-mail : <a href="mailto:' + esc(conv.email) + '">' + esc(conv.email) + '</a>' : 'Pas d\'e-mail laissé']
     .filter(Boolean).join('<br>');
-  $('main').innerHTML = `<div class="msgs"><p class="ctx">${ctx}</p>${conv.messages.map(m =>
+  const pid = (String(conv.product || '').match(/réf\.\s*(\d{6,})/) || [])[1];
+  const lang = conv.lang === 'en' ? 'en' : 'fr';
+  const QR = lang === 'en'
+    ? ['Hello, yes it is still available!', 'Here are the exact measurements: ', 'I can send you photos of it worn.', 'Thank you very much, have a lovely day!']
+    : ['Bonjour, oui, la pièce est toujours disponible !', 'Voici les mesures exactes : ', 'Je peux vous envoyer des photos portées.', 'Merci beaucoup, belle journée !'];
+  $('main').innerHTML = `<div class="msgs">${pid ? `<a class="piece" id="piece" href="https://passeist.com/product/${pid}" target="_blank" rel="noopener"></a>` : ''}<p class="ctx">${ctx}</p>${conv.messages.map(m =>
     `<div class="m ${m.from}">${esc(m.text)}<time>${when(m.at)}${m.mailed ? ' · envoyé aussi par e-mail' : ''}</time></div>`).join('')}</div>`;
+  $('main').insertAdjacentHTML('beforeend', `<div class="qr">${QR.map(t => `<button type="button">${esc(t)}</button>`).join('')}</div>`);
+  $('main').querySelectorAll('.qr button').forEach(b => b.onclick = () => { $('reply').value = ($('reply').value ? $('reply').value + ' ' : '') + b.textContent; $('reply').focus(); });
+  window.__pieces = window.__pieces || {};
+  if (pid) (window.__pieces[pid] = window.__pieces[pid] || fetch('/.netlify/functions/orders?piece=' + pid, { headers: { 'x-admin-key': key } }).then(r => r.ok ? r.json() : null)).then(p => {
+    if (!p || !$('piece')) return;
+    $('piece').href = 'https://passeist.com' + p.url;
+    $('piece').innerHTML = `<img src="https://passeist.com${esc(p.img)}" alt=""><span>${esc(p.title)}<em>Réf. ${esc(p.id)} · voir la fiche</em></span>`;
+  }).catch(() => {});
   if (atBottom || !$('main').dataset.conv || $('main').dataset.conv !== id) $('main').scrollTop = $('main').scrollHeight;
   $('main').dataset.conv = id;
 }
@@ -233,27 +383,6 @@ async function showNewsletter() {
   const tool = (title, hint, body, open) => `<details class="nl-box nl-tool"${open ? ' open' : ''}><summary><span class="nl-t">${title}</span><span class="nl-h">${hint}</span></summary>${body}</details>`;
   if (!$('tools')) return;
   $('tools').innerHTML = `
-    <div class="nl-sec">Commandes</div>
-    ${tool('Suivi des ventes', 'Où en sont les colis, livrés ou pas',
-      `<div class="nl-msg" id="ordlist">Chargement…</div>`)}
-    ${tool('Bordereau Boxtal', 'E-mail du client ou pi_…, puis choix du transporteur',
-      `<form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Continuer</button></form>
-      <div class="nl-msg" id="bxmsg"></div>`)}
-    ${tool('Envoyer un suivi', 'Colis envoyé à la main : le client reçoit son lien',
-      `<form class="nl-test" id="trform" style="flex-wrap:wrap"><input type="text" id="trorder" placeholder="E-mail du client ou référence" required>
-        <select id="trcarrier"><option value="mondialrelay">Mondial Relay</option><option value="colissimo">Colissimo</option><option value="chronopost">Chronopost</option><option value="ups">UPS</option><option value="dhl">DHL</option></select>
-        <input type="text" id="trnum" placeholder="Numéro de suivi" required><button type="submit" id="trbtn">Vérifier</button></form>
-      <div class="nl-msg" id="trmsg"></div>`)}
-    ${tool('Ouvrir une annonce', 'La Réf. V de la fiche',
-      `<form class="nl-test" id="vform"><input type="text" id="vref" inputmode="numeric" placeholder="Réf. V, ex. 7932486434" required><button type="submit">Ouvrir</button></form>
-      <div class="nl-msg" id="vmsg"></div>`)}
-    ${tool('Code 10 %', 'Pièce indisponible : code unique, valable 6 mois',
-      `<div class="nl-test"><button type="button" id="promobtn">Créer un code</button></div>
-      <div class="nl-msg" id="promomsg"></div>`)}
-    ${tool('Offres Boxtal', 'Transporteurs acceptés, sans rien commander',
-      `<div class="nl-test"><button type="button" id="bxprobe">Vérifier les offres</button></div>
-      <div class="nl-msg" id="bxprobemsg"></div>`)}
-
     <div class="nl-sec">Newsletter</div>
     <div class="nl-box"><div class="nl-stat"><b>${d.count}</b> abonné${d.count > 1 ? 's' : ''} sur le site · ${lists}${d.pending ? ' · ' + d.pending + ' en attente' : ''}<br>
       ${d.composed ? (d.editionSent ? '<b>Sélection envoyée ✓</b>' : 'Sélection <b>prête</b>, rien ne part sans vous') : 'Aucune sélection prête'}${d.brevo ? '' : ' · Brevo : <b>clé absente</b>'}</div>
@@ -270,15 +399,21 @@ async function showNewsletter() {
       `<textarea id="nlnote" rows="3" class="nl-area" placeholder="Cette semaine…">${esc(d.note || '')}</textarea>
       <div class="nl-test"><button type="button" id="nlnotesave">Enregistrer</button></div>
       <div class="nl-msg" id="nlnotemsg"></div>`)}
-    ${d.composed ? tool('Envoyer à une personne', 'Pour un inscrit arrivé après l\'envoi',
-      `<form class="nl-test" id="nlone"><input type="email" id="nloneto" placeholder="Son e-mail" required><button type="submit">Envoyer</button></form>
-      <div class="nl-msg" id="nlonemsg"></div>`) : ''}
-    ${tool('Derniers inscrits', d.subs.length ? d.subs.length + ' récents' : 'Personne pour l\'instant',
-      d.subs.map(x => `<div class="nl-sub"><span>${esc(x.email)}</span><span>${x.lang.toUpperCase()} · ${when(Date.parse(x.at))}</span></div>`).join(''))}
+    ${tool('Abonnés', d.subs.length ? 'Derniers inscrits, envoi à une personne' : 'Personne pour l\'instant',
+      (d.composed ? `<div class="nl-h" style="margin-top:2px">Inscrit après l'envoi : lui envoyer la sélection de la semaine</div>
+      <form class="nl-test" id="nlone"><input type="email" id="nloneto" placeholder="Son e-mail" required><button type="submit">Envoyer</button></form>
+      <div class="nl-msg" id="nlonemsg"></div>` : '')
+      + d.subs.map(x => `<div class="nl-sub"><span>${esc(x.email)}</span><span>${x.lang.toUpperCase()} · ${when(Date.parse(x.at))}</span></div>`).join(''))}
     <div class="nl-sec">Réglages</div>
     ${tool('Notifications', 'Vérifier que le téléphone reçoit bien les alertes',
       `<div class="nl-test"><button type="button" id="pushtest">Envoyer une notification de test</button></div>
-      <div class="nl-msg" id="pushmsg"></div>`)}`;
+      <div class="nl-msg" id="pushmsg"></div>`)}
+    ${tool('Code 10 %', 'Pièce indisponible : code unique, valable 6 mois',
+      `<div class="nl-test"><button type="button" id="promobtn">Créer un code</button></div>
+      <div class="nl-msg" id="promomsg"></div>`)}
+    ${tool('Offres Boxtal', 'Transporteurs acceptés, sans rien commander',
+      `<div class="nl-test"><button type="button" id="bxprobe">Vérifier les offres</button></div>
+      <div class="nl-msg" id="bxprobemsg"></div>`)}`;
   $('pushtest').onclick = testPush;
   $('nlfeatsave').onclick = async () => {
     $('nlfeatmsg').textContent = 'Enregistrement…';
@@ -329,52 +464,6 @@ async function showNewsletter() {
     if (!res.ok) { $('nlonemsg').textContent = 'Échec : ' + (j.error || res.status); return; }
     $('nlonemsg').textContent = 'Envoyée ✓ (' + (j.lang === 'en' ? 'version anglaise' : 'version française') + ')';
     $('nloneto').value = '';
-  };
-  // Envoyer un suivi : 1er appui = on vérifie à qui ça part, 2e appui = envoi
-  let trReady = false;
-  ['trorder', 'trcarrier', 'trnum'].forEach(i => $(i).addEventListener('input', () => { trReady = false; $('trbtn').textContent = 'Vérifier'; }));
-  $('trform').onsubmit = async (e) => {
-    e.preventDefault();
-    $('trmsg').textContent = trReady ? 'Envoi…' : 'Recherche…';
-    const res = await fetch('/.netlify/functions/tracking-send', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order: $('trorder').value, carrier: $('trcarrier').value, number: $('trnum').value, confirm: trReady }) });
-    const j = await res.json().catch(() => ({}));
-    if (!res.ok) { trReady = false; $('trbtn').textContent = 'Vérifier'; $('trmsg').textContent = 'Échec : ' + (j.error || res.status); return; }
-    if (j.preview) { trReady = true; $('trbtn').textContent = 'Envoyer'; $('trmsg').textContent = 'Commande ' + j.ref + ' du ' + j.date + ' : ' + (j.name || '') + ' (' + j.email + '). Appuyez sur Envoyer pour lui envoyer le suivi.'; return; }
-    trReady = false; $('trbtn').textContent = 'Vérifier';
-    $('trmsg').textContent = '✓ Suivi ' + j.carrier + ' envoyé à ' + j.email + ' (' + j.ref + '), et ajouté au paiement dans Stripe.';
-    $('trnum').value = '';
-  };
-  // Suivi des ventes : chargé à l'ouverture
-  const ordBox = $('ordlist').closest('details');
-  ordBox.addEventListener('toggle', async () => {
-    if (!ordBox.open || ordBox.dataset.loaded) return;
-    ordBox.dataset.loaded = '1';
-    const res = await fetch('/.netlify/functions/orders', { headers: { 'x-admin-key': key } });
-    const j = await res.json().catch(() => ({}));
-    if (!res.ok) { $('ordlist').textContent = 'Échec : ' + (j.error || res.status); ordBox.dataset.loaded = ''; return; }
-    const dot = { delivered: '#7fbf8a', pickup: '#e0b85c', out: '#e0b85c', transit: '#8fa9c7', label: '#a8a6a1', todo: '#e07a5f', problem: '#e07a5f' };
-    const ords = Array.isArray(j.orders) ? j.orders : [];
-    $('ordlist').innerHTML = !ords.length ? 'Aucune vente.' : ords.map(o => `<div class="ord">
-      <div class="ord-top"><span class="ord-st" style="color:${dot[o.state.key] || '#a8a6a1'}">● ${esc(o.state.text)}${o.state.key === 'delivered' && o.state.at ? ' le ' + new Date(o.state.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}</span><span>${new Date(o.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span></div>
-      <div class="ord-who">${esc(o.name)} · ${o.amount.toLocaleString('fr-FR')} €</div>
-      <div class="ord-what">${esc(o.what)}</div>
-      <div class="ord-what">${esc(o.where)}${o.number ? ' · ' + esc(o.carrier) + ' ' + (o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.number)}</a>` : esc(o.number)) : ''}</div></div>`).join('');
-  });
-  $('bxform').onsubmit = async (e) => {
-    e.preventDefault();
-    $('bxmsg').textContent = 'Recherche de la commande…';
-    const res = await fetch('/.netlify/functions/boxtal-order', { method: 'POST', headers: { 'x-admin-key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ session: $('bxsess').value }) });
-    const j = await res.json().catch(() => ({}));
-    if (res.ok && j.link) { $('bxmsg').textContent = 'Ouverture du choix du transporteur…'; location.href = j.link; return; }
-    $('bxmsg').textContent = !res.ok ? 'Échec : ' + (j.error || res.status) : j.already ? '✓ Déjà créé (envoi ' + j.id + ')' : '✓ Envoi créé (' + j.id + '). Le bordereau arrive par e-mail.';
-  };
-  $('vform').onsubmit = (e) => {
-    e.preventDefault();
-    const n = ($('vref').value.match(/\d{6,}/) || [])[0];
-    if (!n) { $('vmsg').textContent = 'Numéro introuvable.'; return; }
-    $('vmsg').textContent = '';
-    window.open('https://www.vinted.fr/items/' + n, '_blank', 'noopener');
   };
   $('bxprobe').onclick = async () => {
     $('bxprobemsg').textContent = 'Vérification… (une trentaine de secondes)';
@@ -437,6 +526,7 @@ $('reply').addEventListener('input', function () { this.style.height = 'auto'; t
 
 // Rafraîchissement : toutes les 4 s page visible, et dès qu'une notification arrive
 setInterval(() => { if (key && document.visibilityState === 'visible') route(); }, 4000);
+setInterval(() => { if (key && document.visibilityState === 'visible' && $('sales') && Date.now() - salesAt > 300000) loadSales(); }, 30000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') route(); });
 
 // ---- Notifications (Web Push) ----

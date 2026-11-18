@@ -125,4 +125,20 @@ if added: print(f'first-seen : {added} nouvelle(s) pièce(s) datée(s) {today}')
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
     json.dump(lookup, f, ensure_ascii=False, separators=(',', ':'))
+
+# Références de TOUTES les pièces, vendues comprises (messagerie : retirer les annonces après une
+# vente, photo de la pièce dans une discussion). Tom, 2026-11-18.
+REFS = os.path.join(ROOT, 'netlify', 'functions', 'refs.json')
+refs = {}
+for p in products:
+    pid = str(p.get('id') or '')
+    if not pid: continue
+    r = {'b': p.get('brand', ''), 't': p.get('type', '')}
+    if p.get('path'): r['vc'] = p['path']
+    if p.get('slug'): r['s'] = p['slug']
+    if pid in vlinks: r['vt'] = str(vlinks[pid])
+    refs[pid] = r
+with open(REFS, 'w') as f:
+    json.dump(refs, f, ensure_ascii=False, separators=(',', ':'))
+print(f'refs.json : {len(refs)} pièces ({os.path.getsize(REFS) // 1024} Ko)')
 print(f'Wrote {len(lookup)} entries to {OUT} ({os.path.getsize(OUT)} bytes)')
