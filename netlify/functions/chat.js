@@ -102,6 +102,30 @@ async function notifyPhone(store, conv, text) {
   }));
 }
 
+// E-mail « passéist vous a répondu » : la question du client, la réponse, et un lien qui rouvre
+// la même discussion sur le site (sur n'importe quel appareil). Répondre à l'e-mail arrive à info@.
+async function mailReply(conv, text) {
+  const brevo = require('../lib/brevo');
+  const en = conv.lang === 'en';
+  const e = t => String(t || '').replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+  const br = t => e(t).replace(/\n/g, '<br>');
+  const q = [...conv.messages].reverse().find(m => m.from === 'client');
+  const url = (process.env.URL || 'https://passeist.com') + '/?chat=' + encodeURIComponent(conv.id);
+  const hello = conv.name ? (en ? 'Hello ' : 'Bonjour ') + e(conv.name) + ',' : (en ? 'Hello,' : 'Bonjour,');
+  const html = `<div style="background:#f4f1ec;padding:28px 12px;font-family:Helvetica,Arial,sans-serif;color:#1C2230">
+  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:14px;padding:28px 26px">
+    <div style="font-size:26px;letter-spacing:-1px;margin-bottom:22px">passéist<span style="color:#5a7593">.</span></div>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 14px">${hello}</p>
+    ${q ? `<p style="font-size:13px;line-height:1.6;color:#8a8780;margin:0 0 6px">${en ? 'Your message' : 'Votre message'}</p>
+    <div style="font-size:14px;line-height:1.6;color:#55534f;border-left:2px solid #e3e0da;padding:2px 0 2px 12px;margin:0 0 18px">${br(q.text)}</div>` : ''}
+    <p style="font-size:13px;line-height:1.6;color:#8a8780;margin:0 0 6px">${en ? 'Our reply' : 'Notre réponse'}</p>
+    <div style="font-size:15px;line-height:1.65;margin:0 0 24px">${br(text)}</div>
+    <a href="${e(url)}" style="display:inline-block;background:#1C2230;color:#fff;text-decoration:none;padding:13px 22px;border-radius:6px;font-size:13px;letter-spacing:.08em">${en ? 'Continue the conversation' : 'Continuer la discussion'}</a>
+    <p style="font-size:13px;line-height:1.6;color:#8a8780;margin:20px 0 0">${en ? 'You can also simply reply to this email.' : 'Vous pouvez aussi répondre directement à cet e-mail.'}</p>
+  </div></div>`;
+  return brevo.sendOne({ to: conv.email, subject: en ? 'passéist replied to your message' : 'passéist a répondu à votre message', html });
+}
+
 exports.handler = async (event) => {
   let store;
   try {
@@ -139,6 +163,7 @@ exports.handler = async (event) => {
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) conv.email = email;
       const product = clean(body.product, 200);
       if (product) conv.product = product;
+      if (body.lang === 'en' || body.lang === 'fr') conv.lang = body.lang;
       conv.messages.push({ from: 'client', text, at: now });
       conv.updatedAt = now;
       conv.unread = (conv.unread || 0) + 1;
@@ -151,6 +176,8 @@ exports.handler = async (event) => {
       const id = String(q.conv || '');
       if (!CONV_RE.test(id)) return json(400, { error: 'invalid' });
       const conv = await store.get('conv/' + id, { type: 'json' });
+      // Client présent sur le site (au plus une écriture par minute) : pas besoin d'e-mail
+      if (conv && Date.now() - (conv.seenAt || 0) > 60000) { conv.seenAt = Date.now(); try { await store.setJSON('conv/' + id, conv); } catch (e) {} }
       const since = Number(q.since) || 0;
       const messages = conv ? conv.messages.filter(m => m.at > since) : [];
       return json(200, { messages });
@@ -190,9 +217,16 @@ exports.handler = async (event) => {
       const conv = await store.get('conv/' + id, { type: 'json' });
       if (!conv) return json(404, { error: 'not found' });
       const now = Date.now();
-      conv.messages.push({ from: 'passeist', text, at: now });
+      const msg = { from: 'passeist', text, at: now };
+      conv.messages.push(msg);
       conv.updatedAt = now;
       conv.unread = 0;
+      // Client parti du site (Tom, 2026-11-18) : la réponse part aussi par e-mail, s'il en a laissé un
+      let mailed = false;
+      if (conv.email && now - (conv.seenAt || 0) > 90000) {
+        try { mailed = await mailReply(conv, text); } catch (err) { console.error('e-mail réponse :', err.message); }
+      }
+      if (mailed) msg.mailed = true;
       await store.setJSON('conv/' + id, conv);
       // Le client a demandé à être prévenu de la réponse : notification
       try {
@@ -205,7 +239,7 @@ exports.handler = async (event) => {
           }))));
         }
       } catch (err) { console.error('push client :', err.message); }
-      return json(200, { ok: true, at: now });
+      return json(200, { ok: true, at: now, mailed });
     }
 
     if (action === 'delete' && event.httpMethod === 'POST') {

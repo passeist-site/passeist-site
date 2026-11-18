@@ -4603,8 +4603,9 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     <h2 class="checkout-title chat-title"><span class="chat-title-txt">Votre discussion avec</span> passéist<span class="chat-dot">.</span></h2>
     <div class="chat-msgs" id="chat-msgs"></div>
     <form class="chat-start" id="chat-start">
-      <p class="chat-start-txt" id="chat-start-txt">Pour commencer, inscrivez votre prénom</p>
-      <input type="text" id="chat-name" class="chat-name" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required enterkeyhint="go">
+      <p class="chat-start-txt" id="chat-start-txt">Votre prénom et votre e-mail : si je ne suis pas disponible tout de suite, je vous réponds par e-mail.</p>
+      <input type="text" id="chat-name" class="chat-name" placeholder="Votre prénom" autocomplete="given-name" maxlength="60" required enterkeyhint="next">
+      <input type="email" id="chat-mail" class="chat-name" placeholder="Votre e-mail" autocomplete="email" maxlength="200" required enterkeyhint="go">
       <button type="submit" class="chat-start-go" id="chat-start-btn">Commencer</button>
     </form>
     <form class="chat-form" id="chat-form">
@@ -9521,15 +9522,19 @@ function openChat() {
   const box = document.getElementById('chat-msgs');
   document.getElementById('chat-text').placeholder = en ? 'Your message…' : 'Votre message…';
   document.getElementById('chat-name').placeholder = en ? 'Your first name' : 'Votre prénom';
-  document.getElementById('chat-start-txt').textContent = en ? 'To start, enter your first name' : 'Pour commencer, inscrivez votre prénom';
+  document.getElementById('chat-start-txt').textContent = en ? "Your first name and email: if I'm not available right away, I'll reply by email." : 'Votre prénom et votre e-mail : si je ne suis pas disponible tout de suite, je vous réponds par e-mail.';
+  document.getElementById('chat-mail').placeholder = en ? 'Your email' : 'Votre e-mail';
   document.getElementById('chat-start-btn').textContent = en ? 'Start' : 'Commencer';
   try {
     let n = localStorage.getItem('passeist_chat_name');
     if (n && chatLooksLikeMessage(n)) { localStorage.removeItem('passeist_chat_name'); n = ''; }   // ancienne phrase gardée comme prénom
     if (n && !document.getElementById('chat-name').value) document.getElementById('chat-name').value = n;
+    const m = localStorage.getItem('passeist_chat_email');
+    if (m && !document.getElementById('chat-mail').value) document.getElementById('chat-mail').value = m;
   } catch (e) {}
   const ov = document.getElementById('chat-overlay');
-  ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim());
+  // Discussion ouverte seulement avec prénom ET e-mail (Tom, 2026-11-18 : réponse par e-mail si absent)
+  ov.classList.toggle('chat-ready', !!document.getElementById('chat-name').value.trim() && document.getElementById('chat-mail').checkValidity() && !!document.getElementById('chat-mail').value.trim());
   // Client qui revient (prénom connu) : directement la discussion
   if (ov.classList.contains('chat-ready') && !box.children.length) {
     chatAdd({ from: 'passeist', at: 0, text: (en ? 'Hello ' : 'Bonjour ') + document.getElementById('chat-name').value.trim() + (en ? ', your question?' : ', votre question ?') });
@@ -9564,7 +9569,9 @@ document.getElementById('chat-start').addEventListener('submit', e => {
     field.reportValidity();
     return;
   }
-  try { localStorage.setItem('passeist_chat_name', v); } catch (err) {}
+  const mail = document.getElementById('chat-mail');
+  if (!mail.value.trim() || !mail.checkValidity()) { mail.reportValidity(); mail.focus(); return; }
+  try { localStorage.setItem('passeist_chat_name', v); localStorage.setItem('passeist_chat_email', mail.value.trim()); } catch (err) {}
   document.querySelectorAll('#chat-msgs .chat-who.client').forEach(w => { w.textContent = v; });
   chatAdd({ from: 'passeist', at: 1, text: (EN ? 'Hello ' : 'Bonjour ') + v + (EN ? ', your question?' : ', votre question ?') });
   document.getElementById('chat-overlay').classList.add('chat-ready');
@@ -9591,6 +9598,7 @@ document.getElementById('chat-form').addEventListener('submit', e => {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ conv, text, product,
       name: document.getElementById('chat-name').value.trim(),
+      email: document.getElementById('chat-mail').value.trim(), lang: window.__lang === 'en' ? 'en' : 'fr',
     }),
   }).then(r => r.json()).then(d => {
     if (!d.ok) throw new Error(d.error || 'send');
@@ -10863,7 +10871,10 @@ fetch('/.netlify/functions/sold-ids', { cache: 'no-store' })
 document.addEventListener('DOMContentLoaded', function(){
   var u;
   try { u = new URL(location.href); } catch(e){ return; }
-  if (u.searchParams.get('chat') !== '1') return;
+  var cv = u.searchParams.get('chat') || new URLSearchParams(window.__qs0 || '').get('chat');
+  // Lien de l'e-mail « passéist vous a répondu » : /?chat=<discussion> rouvre cette discussion ici
+  if (cv && /^[a-z0-9]{16,40}$/i.test(cv) && cv !== '1') { try { localStorage.setItem('passeist_chat_conv', cv); } catch(e){} cv = '1'; }
+  if (cv !== '1') return;
   u.searchParams.delete('chat');
   try { history.replaceState(history.state, '', u.pathname + u.search + u.hash); } catch(e){}
   if (typeof openChat === 'function') openChat();

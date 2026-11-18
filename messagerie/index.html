@@ -210,7 +210,7 @@ async function showConv(id) {
   const ctx = [conv.name ? '<strong>' + esc(conv.name) + '</strong>' : '', conv.product ? 'Pièce : ' + esc(conv.product) : '', conv.email ? 'E-mail : <a href="mailto:' + esc(conv.email) + '">' + esc(conv.email) + '</a>' : 'Pas d\'e-mail laissé']
     .filter(Boolean).join('<br>');
   $('main').innerHTML = `<div class="msgs"><p class="ctx">${ctx}</p>${conv.messages.map(m =>
-    `<div class="m ${m.from}">${esc(m.text)}<time>${when(m.at)}</time></div>`).join('')}</div>`;
+    `<div class="m ${m.from}">${esc(m.text)}<time>${when(m.at)}${m.mailed ? ' · envoyé aussi par e-mail' : ''}</time></div>`).join('')}</div>`;
   if (atBottom || !$('main').dataset.conv || $('main').dataset.conv !== id) $('main').scrollTop = $('main').scrollHeight;
   $('main').dataset.conv = id;
 }
