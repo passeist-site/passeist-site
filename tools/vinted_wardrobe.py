@@ -62,7 +62,7 @@ def fetch_descs(ids):
     """Lit la description de chaque annonce depuis sa page (12 à la fois), renvoie {id: texte}."""
     js = ("window._ds={};window.GO=async function(){const ids=" + json.dumps([str(i) for i in ids]) + ";"
           "const one=async id=>{try{const t=await (await fetch('/items/'+id,{credentials:'include'})).text();"
-          r"const m=t.match(/\"description\":\"((?:[^\"\\]|\\.){20,4000}?)\"/);"
+          r"const m=t.match(/\"description\":\"((?:[^\"\\]|\\.){20,16000}?)\"/);"
           "window._ds[id]=m?m[1]:''}catch(e){window._ds[id]=''}};"
           "for(let i=0;i<ids.length;i+=12)await Promise.all(ids.slice(i,i+12).map(one));window._dd=1};"
           "window.DUMP=function(){const m=document.createElement('meta');m.name='_v_ds';m.content=JSON.stringify(window._ds);document.head.appendChild(m)};")
@@ -75,7 +75,7 @@ def fetch_descs(ids):
         raw = json.loads(html_lib.unescape(m.group(1))) if m else {}
     except Exception as e:
         print('  descriptions : erreur', e); return {}
-    return {k: _unescape(v)[:1500] for k, v in raw.items() if v}
+    return {k: _unescape(v)[:8000] for k, v in raw.items() if v}
 
 
 def main():
@@ -104,7 +104,8 @@ def main():
     items = [x for x in items if not x.get('closed')]
     # Descriptions (Tom, 2026-11-16) : comparées à celles du site pour relier chaque pièce à son
     # annonce. Lues une seule fois par annonce, puis gardées dans data/vinted.json.
-    try: prev = {str(x['id']): x.get('desc') for x in json.load(open(OUT)) if x.get('desc')}
+    # Descriptions coupées à 1 500 caractères par l'ancienne version : relues en entier (Tom, 2026-11-18)
+    try: prev = {str(x['id']): x.get('desc') for x in json.load(open(OUT)) if x.get('desc') and len(x['desc']) < 1490}
     except Exception: prev = {}
     for x in items:
         if str(x['id']) in prev: x['desc'] = prev[str(x['id'])]

@@ -84,6 +84,20 @@ except Exception: vlinks = {}
 if vinted:
     from vinted_match import match
     live = {str(v.get('id')) for v in vinted}
+    # Le registre se vérifie lui-même : un lien dont la description ou les mesures ne correspondent
+    # pas (ex. annonces d'une même marque au long texte commun) est retiré puis recalculé.
+    from vinted_match import dsim, nums
+    vdesc = {str(v.get('id')): v.get('desc') or '' for v in vinted}
+    pdesc = {str(p.get('id')): p.get('desc') or '' for p in products}
+    dropped = 0
+    for pid, vid in list(vlinks.items()):
+        a, b = pdesc.get(pid, ''), vdesc.get(str(vid), '')
+        if not a or not b or len(b) >= 1490: continue
+        ds = dsim(a, b); pn = nums(a)
+        nr = len(pn & nums(b)) / len(pn) if len(pn) >= 3 else 1.0
+        if ds is not None and (ds < 0.8 or nr < 0.7):
+            del vlinks[pid]; dropped += 1
+    if dropped: print(f'Vinted : {dropped} lien(s) du registre retiré(s) (description ou mesures différentes)')
     known = {pid for pid, vid in vlinks.items() if str(vid) in live}   # annonce toujours en ligne
     # Toutes les pièces, vendues comprises : leur annonce Vinted est justement à retirer après la vente
     every = {}
