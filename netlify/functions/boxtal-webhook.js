@@ -40,6 +40,16 @@ exports.handler = async (event) => {
         html: `Le bordereau de la commande ${esc(ev.shipmentExternalId)} est prêt :<br>${links}<br><br>À imprimer, coller sur le colis et déposer.` });
     } else if (ev.type === 'TRACKING_CHANGED') {
       const t = ((ev.payload && ev.payload.trackings) || [])[0] || {};
+      // Dernier état du colis, à chaque mise à jour (messagerie « Suivi des ventes », Tom 2026-11-18)
+      try {
+        const evs = t.events || t.trackingEvents || t.history || [];
+        const lastEv = Array.isArray(evs) && evs.length ? evs[evs.length - 1] : {};
+        await store.setJSON('boxtal-status/' + ev.shippingOrderId, {
+          status: String(t.status || t.packageStatus || (ev.payload && ev.payload.status) || lastEv.status || lastEv.code || ''),
+          label: String(t.statusLabel || t.label || lastEv.label || lastEv.description || ''),
+          number: t.trackingNumber || '', url: t.packageTrackingUrl || '', carrier: t.carrierName || t.carrier || '',
+          at: new Date().toISOString(), raw: JSON.stringify(t).slice(0, 1500) });
+      } catch (e) { console.error('état colis :', e.message); }
       if (t.packageTrackingUrl && !(await done('boxtal-track/' + ev.shippingOrderId))) {
         const info = await store.get('boxtal-order/' + ev.shippingOrderId, { type: 'json' });
         // Numéro de suivi sur le paiement Stripe (visible dans le tableau de bord, et sur le reçu)

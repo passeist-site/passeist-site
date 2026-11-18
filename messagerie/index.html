@@ -105,6 +105,13 @@ header .pill { flex: 0 1 auto; white-space: nowrap; padding: 9px 10px; }
 .nl-tool > :not(summary) { margin-left: 16px; margin-right: 16px; }
 .nl-tool[open] { padding-bottom: 14px; }
 .nl-tool .nl-test + .nl-test { margin-top: 8px; }
+.ord { padding: 12px 0; border-top: 1px solid rgba(244,241,236,.08); font-size: 13px; line-height: 1.5; }
+.ord:first-child { border-top: 0; padding-top: 4px; }
+.ord-top { display: flex; justify-content: space-between; color: var(--dim); }
+.ord-st { font-weight: 600; }
+.ord-who { color: var(--ink); font-size: 14px; margin-top: 2px; }
+.ord-what { color: var(--dim); }
+.ord a { color: var(--ink); }
 .nl-sub { font-size: 13px; color: var(--dim); padding: 6px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; }
 .nl-sub span:last-child { color: var(--mute); flex: 0 0 auto; }
 </style>
@@ -223,6 +230,8 @@ async function showNewsletter() {
   const tool = (title, hint, body, open) => `<details class="nl-box nl-tool"${open ? ' open' : ''}><summary><span class="nl-t">${title}</span><span class="nl-h">${hint}</span></summary>${body}</details>`;
   $('main').innerHTML = `
     <div class="nl-sec">Commandes</div>
+    ${tool('Suivi des ventes', 'Où en sont les colis, livrés ou pas',
+      `<div class="nl-msg" id="ordlist">Chargement…</div>`)}
     ${tool('Bordereau Boxtal', 'E-mail du client ou pi_…, puis choix du transporteur',
       `<form class="nl-test" id="bxform"><input type="text" id="bxsess" placeholder="E-mail du client ou pi_…" required><button type="submit">Continuer</button></form>
       <div class="nl-msg" id="bxmsg"></div>`)}
@@ -327,6 +336,21 @@ async function showNewsletter() {
     $('trmsg').textContent = '✓ Suivi ' + j.carrier + ' envoyé à ' + j.email + ' (' + j.ref + '), et ajouté au paiement dans Stripe.';
     $('trnum').value = '';
   };
+  // Suivi des ventes : chargé à l'ouverture
+  const ordBox = $('ordlist').closest('details');
+  ordBox.addEventListener('toggle', async () => {
+    if (!ordBox.open || ordBox.dataset.loaded) return;
+    ordBox.dataset.loaded = '1';
+    const res = await fetch('/.netlify/functions/orders', { headers: { 'x-admin-key': key } });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) { $('ordlist').textContent = 'Échec : ' + (j.error || res.status); ordBox.dataset.loaded = ''; return; }
+    const dot = { delivered: '#7fbf8a', pickup: '#e0b85c', out: '#e0b85c', transit: '#8fa9c7', label: '#a8a6a1', todo: '#e07a5f', problem: '#e07a5f' };
+    $('ordlist').innerHTML = !j.orders.length ? 'Aucune vente.' : j.orders.map(o => `<div class="ord">
+      <div class="ord-top"><span class="ord-st" style="color:${dot[o.state.key] || '#a8a6a1'}">● ${esc(o.state.text)}${o.state.key === 'delivered' && o.state.at ? ' le ' + new Date(o.state.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}</span><span>${new Date(o.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span></div>
+      <div class="ord-who">${esc(o.name)} · ${o.amount.toLocaleString('fr-FR')} €</div>
+      <div class="ord-what">${esc(o.what)}</div>
+      <div class="ord-what">${esc(o.where)}${o.number ? ' · ' + esc(o.carrier) + ' ' + (o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.number)}</a>` : esc(o.number)) : ''}</div></div>`).join('');
+  });
   $('bxform').onsubmit = async (e) => {
     e.preventDefault();
     $('bxmsg').textContent = 'Recherche de la commande…';
