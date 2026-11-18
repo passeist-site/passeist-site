@@ -8,13 +8,33 @@ const { chromium } = require('playwright');
 const BASE = process.argv[2] || 'http://localhost:8765';
 const WIDTHS = [[360, 740, true], [393, 852, true], [430, 932, true], [1440, 900, false]];
 
+const avail = "PRODUCTS.find(q => !isSold(q))";
 const SCREENS = {
   accueil: async p => {},
+  'menu ouvert': async p => { const t = await p.$('#nav-toggle'); if (t && await t.isVisible()) await t.click(); },
   boutique: async p => { await p.evaluate(() => goPage('shop')); },
-  fiche: async p => { await p.evaluate(() => { const x = PRODUCTS.find(q => !isSold(q)); openDetail(x.id); }); },
-  panier: async p => { await p.evaluate(() => { const x = PRODUCTS.find(q => !isSold(q)); addToCart(x.id); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart(); }); },
+  'boutique recherche': async p => { await p.evaluate(() => { goPage('shop'); const i = document.getElementById('search-input'); i.value = 'yohji'; i.dispatchEvent(new Event('input', { bubbles: true })); }); },
+  vendu: async p => { await p.evaluate(() => goPage('archive')); },
+  favoris: async p => { await p.evaluate(() => { const ids = PRODUCTS.filter(q => !isSold(q)).slice(0, 3).map(q => q.id); localStorage.setItem('passeist_favorites', JSON.stringify(ids)); favorites = ids; goPage('favorites'); }); },
+  'favoris vides': async p => { await p.evaluate(() => { localStorage.setItem('passeist_favorites', '[]'); favorites = []; goPage('favorites'); }); },
+  'à propos': async p => { await p.evaluate(() => goPage('about')); },
+  contact: async p => { await p.evaluate(() => goPage('contact')); },
+  cgv: async p => { await p.evaluate(() => goPage('cgv')); },
+  confidentialité: async p => { await p.evaluate(() => goPage('privacy')); },
+  fiche: async p => { await p.evaluate(`openDetail(${avail}.id)`); },
+  'fiche bas de page': async p => { await p.evaluate(`openDetail(${avail}.id)`); await p.waitForTimeout(500); await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); },
+  'fiche vendue': async p => { await p.evaluate(() => { const x = PRODUCTS.find(q => isSold(q)); openDetail(x.id); }); },
+  'alerte': async p => { await p.evaluate(`openDetail(${avail}.id)`); await p.waitForTimeout(400); const a = await p.$('#d-alert'); if (a && await a.isVisible()) await a.click(); },
+  'panier France': async p => { await p.evaluate(`addToCart(${avail}.id); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart();`); },
+  'panier Belgique': async p => { await p.evaluate(`localStorage.setItem('passeist_country','BE'); addToCart(${avail}.id); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart(); const s = document.getElementById('cart-country'); s.value = 'BE'; s.dispatchEvent(new Event('change'));`); },
+  'panier États-Unis': async p => { await p.evaluate(`addToCart(${avail}.id); if (!document.getElementById('cart-panel').classList.contains('open')) toggleCart(); const s = document.getElementById('cart-country'); s.value = 'US'; s.dispatchEvent(new Event('change'));`); },
   'chat départ': async p => { await p.evaluate(() => { localStorage.removeItem('passeist_chat_name'); localStorage.removeItem('passeist_chat_email'); openChat(); }); },
   'chat discussion': async p => { await p.evaluate(() => { localStorage.setItem('passeist_chat_name', 'Julie'); localStorage.setItem('passeist_chat_email', 'julie@example.com'); openChat(); }); },
+  'page Auteurs': { url: '/marques.html' },
+  'page auteur': { url: '/marques/issey-miyake.html' },
+  'paiement réussi': { url: '/success.html' },
+  'paiement annulé': { url: '/cancel.html' },
+  'page introuvable': { url: '/404.html' },
 };
 
 function audit() {
@@ -29,7 +49,10 @@ function audit() {
   // 2. éléments cliquables qui se chevauchent (dans la même couche visible)
   const top = (r) => document.elementFromPoint(Math.min(W - 1, Math.max(0, r.left + r.width / 2)), Math.min(innerHeight - 1, Math.max(0, r.top + r.height / 2)));
   const ctl = [...document.querySelectorAll('button, a[href], input:not([type=hidden]), select, textarea')]
-    .filter(vis).filter(el => { const t = top(el.getBoundingClientRect()); return t && (t === el || el.contains(t) || t.contains(el)); });
+    .filter(vis).filter(el => {   // visible au moins en partie (centre ou coins), pas caché dans une rubrique repliée
+      const r = el.getBoundingClientRect(), g = [.06, .25, .5, .75, .94], pts = g.flatMap(x => g.map(y => [x, y]));
+      return pts.some(([fx, fy]) => { const t = document.elementFromPoint(Math.min(W - 1, Math.max(0, r.left + r.width * fx)), Math.min(innerHeight - 1, Math.max(0, r.top + r.height * fy))); return t && (t === el || el.contains(t)); });
+    });
   for (let i = 0; i < ctl.length; i++) for (let j = i + 1; j < ctl.length; j++) {
     const a = ctl[i], b = ctl[j]; if (a.contains(b) || b.contains(a)) continue;
     // ligne par ligne (un lien qui passe à la ligne a plusieurs morceaux)
@@ -65,12 +88,13 @@ function audit() {
     const c = await b.newContext({ viewport: { width: w, height: h }, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: 1 });
     await c.addInitScript(l => { try { localStorage.setItem('passeist_lang', l); localStorage.setItem('passeist_cookie_consent', 'rejected'); localStorage.setItem('passeist_country', 'FR'); } catch (e) {} }, lang);
     await c.route('**/.netlify/functions/chat**', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"messages":[],"ok":true}' }));
+    await c.route('**/.netlify/functions/sold-ids*', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"ids":[]}' }));
     await c.route('**/.netlify/functions/relay-points*', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));
     for (const [nm, go] of Object.entries(SCREENS)) {
       const p = await c.newPage(); const errs = [];
       p.on('pageerror', e => errs.push(e.message));
-      await p.goto(BASE + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
-      try { await go(p); } catch (e) { errs.push('ouverture : ' + e.message); }
+      await p.goto(BASE + (go.url || '/'), { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
+      if (typeof go === 'function') { try { await go(p); } catch (e) { errs.push('ouverture : ' + e.message.split('\n')[0]); } }
       await p.waitForTimeout(700);
       const pb = (await p.evaluate(audit)).concat(errs.map(e => 'erreur JS : ' + e));
       if (pb.length) { total += pb.length; console.log(`✗ ${nm} · ${lang} · ${w}px\n   - ` + pb.join('\n   - ')); }
@@ -79,6 +103,6 @@ function audit() {
     await c.close();
   }
   await b.close();
-  console.log(total ? `\n${total} problème(s) de mise en page` : 'Mise en page : aucun problème détecté (6 écrans × 2 langues × 4 largeurs)');
+  console.log(total ? `\n${total} problème(s) de mise en page` : `Mise en page : aucun problème détecté (${Object.keys(SCREENS).length} écrans × 2 langues × 4 largeurs)`);
   process.exit(total ? 1 : 0);
 })();

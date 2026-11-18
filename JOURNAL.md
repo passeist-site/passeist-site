@@ -342,3 +342,7 @@ Décisions de Tom :
 - Acheteurs ajoutés à la newsletter Brevo de leur langue (16/11) : phrase sur la page de
   paiement Stripe, politique de confidentialité mise à jour. PayPal écarté par Tom.
   E-mails : photos laissées en WebP (choix de Tom ; l'ancien Outlook Windows ne les affiche pas).
+
+## À venir (Tom, 2026-11-18)
+- Page « bijoux anciens en argent », surtout de collection (ex. Gaëtan de Percin). À cadrer avec Tom :
+  nom de la page et place dans le menu, fiches (poinçons, poids, époque, signature), photos, prix.
