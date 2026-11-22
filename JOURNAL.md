@@ -360,5 +360,7 @@ Maquettes faites avec les photos de Tom (bracelet turquoises japonais années 50
 - Grille = la vraie boutique ; filtres Type / Orfèvre / Poinçon / Époque ; ligne poinçon · époque sous chaque pièce.
 - Fiche : Poinçon / Pierres (ou Poids) / Époque à la place de Taille / Genre ; similaires = bijoux uniquement.
 - Ombre portée (fond blanc rendu transparent + drop-shadow) : uniquement sur les photos où le bijou est entier ; gros plans (bijou coupé par le cadre) sans ombre.
+- Circuit décidé : source directe (pas Vestiaire), saisie sur le site.
 - Photos de bijoux en entier, sans le cover 3:4 des vêtements : exception à PHOTOS.md, accord de Tom requis.
-À décider par Tom quand il sera prêt : nom du menu (Argent / Bijoux / Orfèvrerie), circuit (Vestiaire ou direct), infos et prix par pièce.
+À décider par Tom quand il sera prêt : nom du menu (Argent / Bijoux / Orfèvrerie), infos et prix par pièce. Prévu dans quelques semaines.
+Maquettes et scripts de capture : docs/maquettes/bijoux/ (les photos ne sont pas dans le dépôt public : les redemander à Tom).
