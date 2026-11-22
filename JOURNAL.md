@@ -354,3 +354,11 @@ Décisions de Tom :
 - Profil d'expédition : France seulement (4 à 8 jours), sans prix affiché ; volontairement pas d'Europe/Monde.
 - But : pouvoir « Associer un produit » dans les publications Instagram.
 - Google Images : les photos xl (indexées) reprennent une adresse fixe sans ?v= ; les changements IMG_V 2→3→4 du 10 nov. avaient changé l'adresse des ~4 800 photos indexées (baisse constatée par Tom). Ne plus mettre de ?v= sur les xl. sm/md gardent ?v=.
+
+## 2026-11-22 : page bijoux argent (phase test, rien en ligne)
+Maquettes faites avec les photos de Tom (bracelet turquoises japonais années 50, Gucci clou, bague cristal, etc.) :
+- Grille = la vraie boutique ; filtres Type / Orfèvre / Poinçon / Époque ; ligne poinçon · époque sous chaque pièce.
+- Fiche : Poinçon / Pierres (ou Poids) / Époque à la place de Taille / Genre ; similaires = bijoux uniquement.
+- Ombre portée (fond blanc rendu transparent + drop-shadow) : uniquement sur les photos où le bijou est entier ; gros plans (bijou coupé par le cadre) sans ombre.
+- Photos de bijoux en entier, sans le cover 3:4 des vêtements : exception à PHOTOS.md, accord de Tom requis.
+À décider par Tom quand il sera prêt : nom du menu (Argent / Bijoux / Orfèvrerie), circuit (Vestiaire ou direct), infos et prix par pièce.
