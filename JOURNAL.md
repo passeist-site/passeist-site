@@ -346,3 +346,10 @@ Décisions de Tom :
 ## À venir (Tom, 2026-11-18)
 - Page « bijoux anciens en argent », surtout de collection (ex. Gaëtan de Percin). À cadrer avec Tom :
   nom de la page et place dans le menu, fiches (poinçons, poids, époque, signature), photos, prix.
+
+## 2026-11-22 : boutique Meta / Instagram
+- Catalogue Meta « Catalogue_Produits » (portefeuille Tom dagnas) alimenté par https://passeist.com/feed.xml, relu chaque heure, 800 produits.
+- Boutique créée : Page Facebook Passeist + Instagram passéist_paris (masqué tant que les produits ne sont pas approuvés).
+- Domaine passeist.com vérifié (balise facebook-domain-verification dans index.html, ne pas la retirer).
+- Profil d'expédition : France seulement (4 à 8 jours), sans prix affiché ; volontairement pas d'Europe/Monde.
+- But : pouvoir « Associer un produit » dans les publications Instagram.
