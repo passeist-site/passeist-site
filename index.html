@@ -10245,6 +10245,71 @@ window.startSimilarMarqueeLoop = function() {
   updateCountBadge();
 })();
 
+// ============ PANNEAU FILTRES : PASTILLES (Tom, 2026-11-22) ============
+// Les menus déroulants du panneau restent la source (mêmes options, mêmes
+// chiffres, même logique) ; on les cache et on dessine une pastille par
+// option. Toucher une pastille = choisir l'option dans le menu caché.
+(function(){
+  const sheet = document.getElementById('filter-sheet');
+  if (!sheet) return;
+  const IDS = ['m-gender-select', 'm-brand-select', 'm-cat-select', 'm-color-select', 'm-sort-select'];
+  const SW = { 'Noir':'#1a1a1a','Anthracite':'#3b3d42','Marine':'#1f2a44','Bleu':'#2c4a7a','Gris':'#9a9a9a','Blanc':'#ffffff',
+    'Beige':'#d8c7a8','Camel':'#b8874e','Écru':'#efe7d4','Ivoire':'#fbf6e9','Marron':'#6b4a32','Bordeaux':'#6d1f2c','Rouge':'#a8322d',
+    'Rose':'#e3a6b4','Violet':'#6c4a8a','Vert':'#4f6b45','Kaki':'#6f6a43','Jaune':'#d7b23a','Orange':'#d9782d',
+    'Métal':'linear-gradient(135deg,#eee,#9a9a9a)','Multicolore':'conic-gradient(#a8322d,#d7b23a,#4f6b45,#2c4a7a,#6c4a8a,#a8322d)' };
+  const BRANDS_SHOWN = 6;
+  let brandsOpen = false;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const nice = s => /[a-z]/.test(s) ? s : s.split(' ').map(w => /\d/.test(w) ? w : (/^(DES|DE|BY|DU)$/.test(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
+  function draw() {
+    IDS.forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.classList.add('fchips-src');
+      let box = sel.nextElementSibling;
+      if (!box || !box.classList.contains('fchips')) {
+        box = document.createElement('div'); box.className = 'fchips'; box.setAttribute('role', 'group');
+        sel.after(box);
+        box.addEventListener('click', e => {
+          const b = e.target.closest('button'); if (!b) return;
+          if (b.dataset.more) { brandsOpen = !brandsOpen; draw(); return; }
+          if (sel.value === b.dataset.v) return;
+          sel.value = b.dataset.v;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          draw();
+        });
+      }
+      let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()));
+      let hidden = 0;
+      if (id === 'm-brand-select' && !brandsOpen) {
+        const n = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
+        const all = opts.filter(o => o.value === 'all');
+        const rest = opts.filter(o => o.value !== 'all').sort((a, b) => n(b) - n(a));
+        const keep = rest.slice(0, BRANDS_SHOWN);
+        const cur = rest.find(o => o.value === sel.value);
+        if (cur && !keep.includes(cur)) keep.push(cur);
+        hidden = rest.length - keep.length;
+        opts = all.concat(keep);
+      }
+      box.innerHTML = opts.map(o => {
+        const m = o.textContent.trim().match(/^(.*?)\s*\((\d+)\)$/);
+        const label = m ? m[1] : o.textContent.trim();
+        const cnt = m ? m[2] : '';
+        const on = o.value === sel.value;
+        const sw = id === 'm-color-select' && SW[o.value] ? '<span class="fchip-sw" style="background:' + SW[o.value] + '"></span>' : '';
+        return '<button type="button" class="fchip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-v="' + esc(o.value) + '">' + sw +
+          esc(id === 'm-brand-select' && o.value !== 'all' ? nice(label) : label) + (cnt ? '<span class="fchip-n">' + cnt + '</span>' : '') + '</button>';
+      }).join('') + (id === 'm-brand-select' && (hidden > 0 || brandsOpen)
+        ? '<button type="button" class="fchip fchip-more" data-more="1">' + (brandsOpen ? (window.__lang === 'en' ? 'Fewer' : 'Moins') : '+ ' + hidden + (window.__lang === 'en' ? ' more' : ' autres')) + '</button>' : '');
+    });
+  }
+  window.__drawFilterChips = draw;
+  const prev = window.renderFilters;
+  window.renderFilters = function () { const r = prev.apply(this, arguments); try { draw(); } catch (e) {} return r; };
+  document.getElementById('filter-mobile-toggle')?.addEventListener('click', () => setTimeout(draw, 0));
+  draw();
+})();
+
 // ============ HERO MARQUEE, pause offscreen ============
 (function(){
   const marquee = document.getElementById('hero-marquee');

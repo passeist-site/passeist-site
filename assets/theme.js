@@ -243,7 +243,23 @@
     '.cookie-banner-card{background:' + N + '!important;color:' + C + '!important;border:0!important;box-shadow:0 12px 30px rgba(28,34,48,.25)!important}' +
     '.cookie-banner-card *{color:' + C + '!important}' +
     '.cookie-banner-actions button{background:transparent!important;border:1px solid rgba(244,241,236,.35)!important}' +
-    '.cookie-banner-actions button:last-child,.cookie-banner-actions button:last-child *{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}';
+    '.cookie-banner-actions button:last-child,.cookie-banner-actions button:last-child *{background:' + C + '!important;color:' + N + '!important;border-color:' + C + '!important}' +
+    /* Panneau « Filtres & tri » clair, choix en pastilles (Tom, 2026-11-22) */
+    '.filter-sheet{background:#eeeeee!important;box-shadow:0 -10px 30px rgba(28,34,48,.18)!important}' +
+    '.filter-sheet,.filter-sheet *{color:' + N + '!important}.filter-sheet svg{stroke:' + N + '!important}' +
+    '.filter-sheet .filter-label{color:#8a8e97!important}.filter-sheet .filter-sheet-handle{background:rgba(28,34,48,.18)!important}' +
+    '.filter-sheet .filter-sheet-header{border-color:rgba(28,34,48,.12)!important}.filter-sheet .filter-sheet-close{color:#5c6270!important}' +
+    '.filter-sheet .filter-search-box{background:#fff!important;border:1px solid rgba(28,34,48,.12)!important}' +
+    '.filter-sheet .filter-search-box input::placeholder,.filter-sheet .filter-input::placeholder{color:#8a8e97!important}' +
+    '.filter-sheet select.fchips-src{display:none!important}' +
+    '.filter-sheet .fchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}' +
+    '.filter-sheet .fchip{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:7px 13px;border:1px solid rgba(28,34,48,.2)!important;border-radius:999px!important;background:transparent!important;font:inherit;margin:0!important;font-size:13px;line-height:1.2;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+    '.filter-sheet .fchip-n{font-size:11px;color:#8a8e97!important}' +
+    '.filter-sheet .fchip.on{background:' + N + '!important;border-color:' + N + '!important}.filter-sheet .fchip.on,.filter-sheet .fchip.on *{color:' + C + '!important}.filter-sheet .fchip.on .fchip-n{color:rgba(244,241,236,.6)!important}' +
+    '.filter-sheet .fchip-sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(28,34,48,.18);flex:none}' +
+    '.filter-sheet .fchip-more{border-style:dashed!important}' +
+    '.filter-sheet .filter-field{margin-bottom:18px!important}' +
+    '.filter-sheet .filter-sheet-apply{background:' + N + '!important}.filter-sheet .filter-sheet-apply,.filter-sheet .filter-sheet-apply *{color:' + C + '!important}';
   document.head.appendChild(extra);
   document.documentElement.classList.add('theme-blanc');
   var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', N);
