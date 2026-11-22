@@ -51,7 +51,11 @@ function productImgUrl(product, i, w, imgReorder, imgSuffix, validatedLocal, pub
   if (validatedLocal.has(product.id)) {
     const size     = w >= 1200 ? 'xl' : 'md';
     const localRel = 'img/' + product.id + '-' + i + '-' + size + '.webp';
-    if (fs.existsSync(path.join(publishDir, localRel))) return '/' + localRel + '?v=' + IMG_V;
+    // xl = photos indexées par Google Images (fiche, og:image, JSON-LD, plan du
+    // site, flux) : adresse FIXE, sans ?v=. Chaque changement de ?v= faisait
+    // voir à Google 4 800 photos « nouvelles » et perdre leur classement
+    // (IMG_V 2, 3, 4 le 10 nov. 2026). sm/md gardent ?v= (non indexées).
+    if (fs.existsSync(path.join(publishDir, localRel))) return '/' + localRel + (size === 'xl' ? '' : '?v=' + IMG_V);
   }
   return vestiaireUrl(product, photoNum, w, suffix);
 }
@@ -101,9 +105,9 @@ function buildGalleryHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publis
   const thumbsHtml = photos.length < 2 ? '' : photos.map((src, i) => {
     const sm = productImgUrl(p, i, 400, imgReorder, imgSuffix, validatedLocal, publishDir);
     const md = productImgUrl(p, i, 800, imgReorder, imgSuffix, validatedLocal, publishDir);
-    const local = /-xl\.webp(\?|$)/.test(src);
-    const small = local ? src.replace(/-xl\.webp(\?|$)/, '-sm.webp$1') : sm;
-    const medium = local ? src.replace(/-xl\.webp(\?|$)/, '-md.webp$1') : md;
+    const local = /-xl\.webp(\?v=\w+)?$/.test(src);
+    const small = local ? src.replace(/-xl\.webp(\?v=\w+)?$/, '-sm.webp?v=' + IMG_V) : sm;
+    const medium = local ? src.replace(/-xl\.webp(\?v=\w+)?$/, '-md.webp?v=' + IMG_V) : md;
     return `<div class="thumb${i === 0 ? ' is-active' : ''}" data-idx="${i}"><img src="${small}" srcset="${small} 400w, ${medium} 800w" sizes="(max-width: 920px) 110px, 360px" loading="lazy" decoding="async" alt="${altBase} — photo ${i + 1}" onerror="this.parentElement.remove()"></div>`;
   }).join('');
   const badges = sold ? '<span class="sold-stamp">VENDU</span><span class="sold-badge">VENDU</span>' : '';

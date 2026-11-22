@@ -353,3 +353,4 @@ Décisions de Tom :
 - Domaine passeist.com vérifié (balise facebook-domain-verification dans index.html, ne pas la retirer).
 - Profil d'expédition : France seulement (4 à 8 jours), sans prix affiché ; volontairement pas d'Europe/Monde.
 - But : pouvoir « Associer un produit » dans les publications Instagram.
+- Google Images : les photos xl (indexées) reprennent une adresse fixe sans ?v= ; les changements IMG_V 2→3→4 du 10 nov. avaient changé l'adresse des ~4 800 photos indexées (baisse constatée par Tom). Ne plus mettre de ?v= sur les xl. sm/md gardent ?v=.

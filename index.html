@@ -6540,7 +6540,8 @@ function imgUrl(product, i, opts) {
     // mêmes fichiers réduits) ; sinon xl comme la fiche produit.
     // REGLE FIGEE par Tom, voir PHOTOS.md : cartes = même fichier que la photo 1 de la fiche
     const localSize = (product.id.length < 10 && !(opts && opts.exactSize)) ? 'xl' : size;
-    return '/img/' + product.id + '-' + i + '-' + localSize + '.webp?v=' + IMG_V;
+    // xl sans ?v= : adresse fixe pour Google Images (voir le plugin generate-product-pages)
+    return '/img/' + product.id + '-' + i + '-' + localSize + '.webp' + (localSize === 'xl' ? '' : '?v=' + IMG_V);
   }
   return _vestiaireUrl(product, i, IMG_WIDTHS[size] || 800);
 }
