@@ -359,7 +359,7 @@ Décisions de Tom :
 Maquettes faites avec les photos de Tom (bracelet turquoises japonais années 50, Gucci clou, bague cristal, etc.) :
 - Grille = la vraie boutique ; filtres Type / Orfèvre / Poinçon / Époque ; ligne poinçon · époque sous chaque pièce.
 - Fiche : Poinçon / Pierres (ou Poids) / Époque à la place de Taille / Genre ; similaires = bijoux uniquement.
-- Ombre portée LÉGÈRE retenue par Tom (la marquée est « trop ») : drop-shadow(0 16px 16px rgba(28,34,48,.22)) + drop-shadow(0 3px 3px rgba(28,34,48,.18)), fond blanc rendu transparent ; uniquement sur les photos où le bijou est entier ; gros plans (bijou coupé par le cadre) sans ombre.
+- Ombre portée LÉGÈRE retenue par Tom (confirmée face à « un poil plus » et « marquée », sur le bracelet japonais et le Gucci) : drop-shadow(0 16px 16px rgba(28,34,48,.22)) + drop-shadow(0 3px 3px rgba(28,34,48,.18)), fond blanc rendu transparent ; uniquement sur les photos où le bijou est entier ; gros plans (bijou coupé par le cadre) sans ombre.
 - Circuit décidé : source directe (pas Vestiaire), saisie sur le site.
 - Photos de bijoux en entier, sans le cover 3:4 des vêtements : exception à PHOTOS.md, accord de Tom requis.
 À décider par Tom quand il sera prêt : nom du menu (Argent / Bijoux / Orfèvrerie), infos et prix par pièce. Prévu dans quelques semaines.
