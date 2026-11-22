@@ -10296,8 +10296,10 @@ window.startSimilarMarqueeLoop = function() {
         const label = m ? m[1] : o.textContent.trim();
         const cnt = m ? m[2] : '';
         const on = o.value === sel.value;
+        // « Tous… » choisi = pas de filtre : contour seulement, pas de pavé foncé
+        const cls = on ? (o.value === 'all' ? ' cur' : ' on') : '';
         const sw = id === 'm-color-select' && SW[o.value] ? '<span class="fchip-sw" style="background:' + SW[o.value] + '"></span>' : '';
-        return '<button type="button" class="fchip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-v="' + esc(o.value) + '">' + sw +
+        return '<button type="button" class="fchip' + cls + '" aria-pressed="' + on + '" data-v="' + esc(o.value) + '">' + sw +
           esc(id === 'm-brand-select' && o.value !== 'all' ? nice(label) : label) + (cnt ? '<span class="fchip-n">' + cnt + '</span>' : '') + '</button>';
       }).join('') + (id === 'm-brand-select' && (hidden > 0 || brandsOpen)
         ? '<button type="button" class="fchip fchip-more" data-more="1">' + (brandsOpen ? (window.__lang === 'en' ? 'Fewer' : 'Moins') : '+ ' + hidden + (window.__lang === 'en' ? ' more' : ' autres')) + '</button>' : '');

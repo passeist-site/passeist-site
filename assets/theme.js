@@ -256,7 +256,7 @@
     '.filter-sheet .fchip{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:7px 13px;border:1px solid rgba(28,34,48,.2)!important;border-radius:999px!important;background:transparent!important;font:inherit;margin:0!important;font-size:13px;line-height:1.2;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
     '.filter-sheet .fchip-n{font-size:11px;color:#8a8e97!important}' +
     '.filter-sheet .fchip.on{background:' + N + '!important;border-color:' + N + '!important}.filter-sheet .fchip.on,.filter-sheet .fchip.on *{color:' + C + '!important}.filter-sheet .fchip.on .fchip-n{color:rgba(244,241,236,.6)!important}' +
-    '.filter-sheet .fchip-sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(28,34,48,.18);flex:none}' +
+    '.filter-sheet .fchip.cur{border-color:' + N + '!important}.filter-sheet .fchip-sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(28,34,48,.18);flex:none}' +
     '.filter-sheet .fchip-more{border-style:dashed!important}' +
     '.filter-sheet .filter-field{margin-bottom:18px!important}' +
     '.filter-sheet .filter-sheet-apply{background:' + N + '!important}.filter-sheet .filter-sheet-apply,.filter-sheet .filter-sheet-apply *{color:' + C + '!important}';
