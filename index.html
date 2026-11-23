@@ -1914,6 +1914,7 @@ html[lang="fr"] .cookie-banner .lang-en { display: none !important; }
   border-top: 1px solid var(--line);
   display: flex; flex-direction: column; gap: 8px;
 }
+.cart-customs { margin: 2px 0 6px; font-size: 12px; line-height: 1.5; opacity: .75; }
 .cart-shipping-row {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 6px;
@@ -4331,6 +4332,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <label for="cart-country">Livraison vers</label>
       <select id="cart-country" onchange="updateCartTotals()"></select>
     </div>
+    <!-- Hors Union européenne : information douane, non engageante (Tom, 2026-11-23) -->
+    <p class="cart-customs" id="cart-customs" hidden></p>
     <!-- Point relais ou domicile, même prix : France (Mondial Relay / Chronopost), Europe (Mondial Relay) (Tom, 2026-11-12, 2026-11-16) -->
     <div class="cart-ship-mode" id="cart-ship-mode" hidden>
       <div class="csm-opts" role="radiogroup">
@@ -9250,7 +9253,16 @@ function updateCartTotals() {
   if (totEl) totEl.textContent = total + ' €';
   // Cache l'encart total + bouton si panier vide
   if (footerEl) footerEl.style.display = cart.length === 0 ? 'none' : 'flex';
+  const cuEl = document.getElementById('cart-customs');
+  if (cuEl) {
+    const outEU = cart.length > 0 && !!country && !EU27_COUNTRIES.has(country);
+    cuEl.hidden = !outEU;
+    if (outEU) cuEl.textContent = window.__lang === 'en'
+      ? 'Shipping outside the European Union: depending on your country, import duties and local taxes may be charged on delivery. They are not included in the price and are payable by the recipient.'
+      : 'Livraison hors Union européenne : selon votre pays, des droits de douane et taxes locales peuvent être demandés à la réception. Ils ne sont pas inclus dans le prix et restent à la charge du destinataire.';
+  }
 }
+const EU27_COUNTRIES = new Set(['FR','AT','BE','BG','HR','CY','CZ','DK','EE','FI','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','MC']);
 
 // === STRIPE CHECKOUT ===
 // Crée une session Stripe via Netlify Function et redirige vers Stripe Checkout.
