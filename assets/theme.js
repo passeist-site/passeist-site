@@ -255,7 +255,7 @@
     '.filter-sheet .fchip.cur{border-color:' + C + '!important}' +
     '.filter-sheet .fchip.on{background:' + C + '!important;border-color:' + C + '!important}.filter-sheet .fchip.on,.filter-sheet .fchip.on *{color:' + N + '!important}.filter-sheet .fchip.on .fchip-n{color:rgba(28,34,48,.55)!important}' +
     '.filter-sheet .fchip-sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(244,241,236,.35);flex:none}' +
-    '.filter-sheet .fchip-more{border-style:dashed!important}' +
+    '.filter-sheet .fchip-more{border-style:dashed!important}.filter-sheet .fchip[hidden]{display:none!important}.filter-sheet #m-color-select+.fchips .fchip{padding:7px 11px;gap:6px}' +
     '.filter-sheet .filter-field{margin-bottom:18px!important}' +
     /* Titres de rubrique (Genre, Auteur…) plus lisibles : plus grands, plus clairs */
     '.filter-sheet .filter-field>.filter-label{font-size:12px!important;letter-spacing:.16em!important;color:rgba(244,241,236,.88)!important;font-weight:500!important;margin-bottom:6px!important}';

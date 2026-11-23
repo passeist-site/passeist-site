@@ -1914,7 +1914,7 @@ html[lang="fr"] .cookie-banner .lang-en { display: none !important; }
   border-top: 1px solid var(--line);
   display: flex; flex-direction: column; gap: 8px;
 }
-.cart-customs { margin: 2px 0 6px; font-size: 12px; line-height: 1.5; opacity: .75; }
+.cart-customs { margin: -2px 0 4px; font-size: 11.5px; line-height: 1.5; opacity: .7; }
 .cart-shipping-row {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 6px;
@@ -4332,8 +4332,6 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       <label for="cart-country">Livraison vers</label>
       <select id="cart-country" onchange="updateCartTotals()"></select>
     </div>
-    <!-- Hors Union européenne : information douane, non engageante (Tom, 2026-11-23) -->
-    <p class="cart-customs" id="cart-customs" hidden></p>
     <!-- Point relais ou domicile, même prix : France (Mondial Relay / Chronopost), Europe (Mondial Relay) (Tom, 2026-11-12, 2026-11-16) -->
     <div class="cart-ship-mode" id="cart-ship-mode" hidden>
       <div class="csm-opts" role="radiogroup">
@@ -4351,6 +4349,8 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
     </div>
     <div class="cart-line"><span class="cart-line-label">Sous-total</span><span id="cart-subtotal">0 €</span></div>
     <div class="cart-line"><span class="cart-line-label" id="cart-shipping-label">Frais de port</span><span id="cart-shipping">,</span></div>
+    <!-- Hors Union européenne : information douane, non engageante (Tom, 2026-11-23) : astérisque sur les frais de port -->
+    <p class="cart-customs" id="cart-customs" hidden></p>
     <div class="cart-total"><span>Total</span><span id="cart-total">0 €</span></div>
     <button class="btn btn-primary cart-checkout" id="cart-checkout-btn" onclick="checkoutWithStripe()">Procéder au paiement</button>
   </div>
@@ -9248,18 +9248,18 @@ function updateCartTotals() {
   const totEl = document.getElementById('cart-total');
   const footerEl = document.getElementById('cart-footer');
   if (subEl) subEl.textContent = subtotal + ' €';
-  if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' : ',');
+  const outEU = cart.length > 0 && !!country && !EU27_COUNTRIES.has(country);
+  if (shipEl) shipEl.textContent = (cart.length > 0 ? ship.amount + ' €' + (outEU ? '*' : '') : ',');
   if (shipLblEl) shipLblEl.textContent = (cart.length > 0 && ship.label ? 'Frais de port · ' + ship.label : 'Frais de port');
   if (totEl) totEl.textContent = total + ' €';
   // Cache l'encart total + bouton si panier vide
   if (footerEl) footerEl.style.display = cart.length === 0 ? 'none' : 'flex';
   const cuEl = document.getElementById('cart-customs');
   if (cuEl) {
-    const outEU = cart.length > 0 && !!country && !EU27_COUNTRIES.has(country);
     cuEl.hidden = !outEU;
     if (outEU) cuEl.textContent = window.__lang === 'en'
-      ? 'Shipping outside the European Union: depending on your country, import duties and local taxes may be charged on delivery. They are not included in the price and are payable by the recipient.'
-      : 'Livraison hors Union européenne : selon votre pays, des droits de douane et taxes locales peuvent être demandés à la réception. Ils ne sont pas inclus dans le prix et restent à la charge du destinataire.';
+      ? '* Shipping only. Import duties, local taxes and any carrier fees of the destination country are not included: depending on your country, they may be charged on delivery and are payable by the recipient.'
+      : '* Frais de port seuls. Les droits de douane, taxes du pays de destination et frais éventuels du transporteur ne sont pas inclus : selon votre pays, ils peuvent être demandés à la réception et restent à la charge du destinataire.';
   }
 }
 const EU27_COUNTRIES = new Set(['FR','AT','BE','BG','HR','CY','CZ','DK','EE','FI','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','MC']);
@@ -10274,7 +10274,7 @@ window.startSimilarMarqueeLoop = function() {
     'Rose':'#e3a6b4','Violet':'#6c4a8a','Vert':'#4f6b45','Kaki':'#6f6a43','Jaune':'#d7b23a','Orange':'#d9782d',
     'Métal':'linear-gradient(135deg,#eee,#9a9a9a)','Multicolore':'conic-gradient(#a8322d,#d7b23a,#4f6b45,#2c4a7a,#6c4a8a,#a8322d)' };
   const BRANDS_SHOWN = 6;
-  let brandsOpen = false;
+  let brandsOpen = false, colorsOpen = false;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const nice = s => /[a-z]/.test(s) ? s : s.split(' ').map(w => /\d/.test(w) ? w : (/^(DES|DE|BY|DU)$/.test(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
   function draw() {
@@ -10288,7 +10288,7 @@ window.startSimilarMarqueeLoop = function() {
         sel.after(box);
         box.addEventListener('click', e => {
           const b = e.target.closest('button'); if (!b) return;
-          if (b.dataset.more) { brandsOpen = !brandsOpen; draw(); return; }
+          if (b.dataset.more) { if (id === 'm-color-select') colorsOpen = !colorsOpen; else brandsOpen = !brandsOpen; draw(); return; }
           if (sel.value === b.dataset.v) return;
           sel.value = b.dataset.v;
           sel.dispatchEvent(new Event('change', { bubbles: true }));
@@ -10297,6 +10297,10 @@ window.startSimilarMarqueeLoop = function() {
       }
       let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()));
       let hidden = 0;
+      if (id === 'm-color-select') {   // couleurs les plus fournies d'abord
+        const n = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
+        opts = opts.filter(o => o.value === 'all').concat(opts.filter(o => o.value !== 'all').sort((a, b) => n(b) - n(a)));
+      }
       if (id === 'm-brand-select' && !brandsOpen) {
         const n = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
         const all = opts.filter(o => o.value === 'all');
@@ -10309,16 +10313,38 @@ window.startSimilarMarqueeLoop = function() {
       }
       box.innerHTML = opts.map(o => {
         const m = o.textContent.trim().match(/^(.*?)\s*\((\d+)\)$/);
-        const label = m ? m[1] : o.textContent.trim();
-        const cnt = m ? m[2] : '';
+        let label = m ? m[1] : o.textContent.trim();
+        let cnt = m ? m[2] : '';
+        // Couleurs sur une ligne : « Toutes » court, sans chiffre
+        if (id === 'm-color-select' && o.value === 'all') { label = window.__lang === 'en' ? 'All' : 'Toutes'; cnt = ''; }
         const on = o.value === sel.value;
         // « Tous… » choisi = pas de filtre : contour seulement, pas de pavé foncé
-        const cls = on ? (o.value === 'all' ? ' cur' : ' on') : '';
+        const cls = on ? ((o.value === 'all' || (id === 'm-sort-select' && o.value === 'newest')) ? ' cur' : ' on') : '';
         const sw = id === 'm-color-select' && SW[o.value] ? '<span class="fchip-sw" style="background:' + SW[o.value] + '"></span>' : '';
         return '<button type="button" class="fchip' + cls + '" aria-pressed="' + on + '" data-v="' + esc(o.value) + '">' + sw +
           esc(id === 'm-brand-select' && o.value !== 'all' ? nice(label) : label) + (cnt ? '<span class="fchip-n">' + cnt + '</span>' : '') + '</button>';
       }).join('') + (id === 'm-brand-select' && (hidden > 0 || brandsOpen)
-        ? '<button type="button" class="fchip fchip-more" data-more="1">' + (brandsOpen ? (window.__lang === 'en' ? 'Fewer' : 'Moins') : '+ ' + hidden + (window.__lang === 'en' ? ' more' : ' autres')) + '</button>' : '');
+        ? '<button type="button" class="fchip fchip-more" data-more="1">' + (brandsOpen ? (window.__lang === 'en' ? 'Fewer' : 'Moins') : '+ ' + hidden + (window.__lang === 'en' ? ' more' : ' autres')) + '</button>' : '')
+        + (id === 'm-color-select' && colorsOpen ? '<button type="button" class="fchip fchip-more" data-more="1">' + (window.__lang === 'en' ? 'Fewer' : 'Moins') + '</button>' : '');
+      // Couleurs : une seule ligne, puis « + N autres » (Tom, 2026-11-23). Mesuré à l'affichage :
+      // on retire des couleurs en fin de ligne jusqu'à ce que tout tienne sur la première ligne.
+      if (id === 'm-color-select' && !colorsOpen && box.offsetParent) {
+        const chips = [...box.querySelectorAll('.fchip')];
+        if (chips.length && chips[chips.length - 1].offsetTop > chips[0].offsetTop) {
+          const more = document.createElement('button');
+          more.type = 'button'; more.className = 'fchip fchip-more'; more.dataset.more = '1';
+          box.appendChild(more);
+          let n = 0;
+          const label = () => { more.textContent = '+' + n; more.setAttribute('aria-label', n + (window.__lang === 'en' ? ' more colours' : ' autres couleurs')); };
+          for (let k = chips.length - 1; k > 0; k--) {
+            label();
+            if (more.offsetTop === chips[0].offsetTop) break;
+            if (chips[k].classList.contains('on') || chips[k].classList.contains('cur')) continue;
+            chips[k].hidden = true; n++;
+          }
+          label();
+        }
+      }
     });
   }
   window.__drawFilterChips = draw;
