@@ -5241,6 +5241,8 @@ const PRODUCTS = [
 // ============ STATE ============
 let activeView = 'shop';          // 'shop' = available only  |  'archive' = sold only
 let activeBrand = 'all';
+// Choix multiples (Tom, 2026-11-23) : plusieurs valeurs jointes par « | », ex. « 45RPM|YOHJI YAMAMOTO »
+const inSel = (v, act) => act === 'all' || act === v || (String(act).includes('|') && String(act).split('|').includes(v));
 let activeCat = 'all';
 let activeGender = 'all';
 let activeColor = 'all';
@@ -7557,10 +7559,10 @@ function renderFilters() {
     const g = getGender(p);
     const c = getCategory(p.type);
     const col = p.color || 'Autre';
-    const matchBrand  = (activeBrand  === 'all' || p.brand === activeBrand);
-    const matchCat    = (activeCat    === 'all' || c === activeCat);
-    const matchGender = (activeGender === 'all' || g === activeGender);
-    const matchColor  = (activeColor  === 'all' || col === activeColor);
+    const matchBrand  = inSel(p.brand, activeBrand);
+    const matchCat    = inSel(c, activeCat);
+    const matchGender = inSel(g, activeGender);
+    const matchColor  = inSel(col, activeColor);
     if (matchBrand && matchCat && matchColor) genderCounts[g] = (genderCounts[g] || 0) + 1;
     if (matchGender && matchCat && matchColor) brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1;
     if (matchBrand && matchGender && matchColor) catCounts[c] = (catCounts[c] || 0) + 1;
@@ -7572,10 +7574,10 @@ function renderFilters() {
       const g = getGender(p);
       const c = getCategory(p.type);
       const col = p.color || 'Autre';
-      const matchBrand  = skipDim === 'brand'  || (activeBrand  === 'all' || p.brand === activeBrand);
-      const matchCat    = skipDim === 'cat'    || (activeCat    === 'all' || c === activeCat);
-      const matchGender = skipDim === 'gender' || (activeGender === 'all' || g === activeGender);
-      const matchColor  = skipDim === 'color'  || (activeColor  === 'all' || col === activeColor);
+      const matchBrand  = skipDim === 'brand'  || inSel(p.brand, activeBrand);
+      const matchCat    = skipDim === 'cat'    || inSel(c, activeCat);
+      const matchGender = skipDim === 'gender' || inSel(g, activeGender);
+      const matchColor  = skipDim === 'color'  || inSel(col, activeColor);
       if (matchBrand && matchCat && matchGender && matchColor) n++;
     });
     return n;
@@ -7598,7 +7600,9 @@ function renderFilters() {
       const count = k === 'all' ? (counts.__allTotal || base.length) : (counts[k] || 0);
       const sel = active === k ? ' selected' : '';
       return `<option value="${k.replace(/"/g,'&quot;')}"${sel}>${label} (${count})</option>`;
-    }).join('');
+    }).join('') + (String(active).includes('|')
+      // Choix multiple : option propre, sélectionnée, pour que les menus gardent la valeur
+      ? `<option value="${String(active).replace(/"/g,'&quot;')}" selected>${String(active).split('|').map(k => k === '' ? (labelMap ? labelMap(k) : k) : (labelMap ? labelMap(k) : k)).join(' + ')}</option>` : '');
   }
   genderCounts.__allTotal = totalGender;
   brandCounts.__allTotal  = totalBrand;
@@ -7664,10 +7668,10 @@ function renderGrid() {
     window.__refOpened = activeSearch; setTimeout(() => openDetail(_ref), 0);
   }
   let filtered = _ref ? PRODUCTS.filter(p => String(p.id).includes(_ref)) : viewProducts().filter(p =>
-    (activeBrand === 'all' || p.brand === activeBrand) &&
-    (activeCat === 'all' || getCategory(p.type) === activeCat) &&
-    (activeGender === 'all' || getGender(p) === activeGender) &&
-    (activeColor === 'all' || (p.color || 'Autre') === activeColor) &&
+    inSel(p.brand, activeBrand) &&
+    inSel(getCategory(p.type), activeCat) &&
+    inSel(getGender(p), activeGender) &&
+    inSel(p.color || 'Autre', activeColor) &&
     matchesSearch(p, activeSearch)
   );
   // Helper Fisher-Yates shuffle (muté en place)
@@ -7717,17 +7721,17 @@ function renderGrid() {
     });
   }
   let parts = [];
-  if (activeGender !== 'all') parts.push(activeGender || 'Accessoires');
-  if (activeBrand !== 'all') parts.push(activeBrand);
-  if (activeCat !== 'all') parts.push(activeCat);
+  if (activeGender !== 'all') parts.push(String(activeGender).split('|').map(g => g || 'Accessoires'));
+  if (activeBrand !== 'all') parts.push(String(activeBrand).split('|'));
+  if (activeCat !== 'all') parts.push(String(activeCat).split('|'));
   const _t = (typeof window.t === 'function') ? window.t : null;
   const _tx = (key, fallback) => _t ? _t(key) : fallback;
-  // Re-traduit les parts (genre, catégorie) selon la langue active
-  parts = parts.map(part => {
+  // Re-traduit les parts (genre, catégorie) selon la langue active ; choix multiples joints par « + »
+  parts = parts.map(group => group.map(part => {
     if (part === 'Femme' || part === 'Homme' || part === 'Accessoires') return _tx('gender.' + (part === 'Accessoires' ? '' : part), part);
     if (CAT_ORDER.includes(part)) return (window.__lang === 'en') ? (CAT_EN_ALL[part] || part) : part;
     return part;
-  });
+  }).join(' + '));
   const defaultTitle = activeView === 'archive'
       ? _tx('archive.title', 'Pièces vendues')
     : activeView === 'favorites'
@@ -8001,9 +8005,9 @@ document.getElementById('sort-select').addEventListener('change',   e => { activ
     if (!show) return;
     $('alert-cta-txt').textContent = en() ? 'Create your personalised alert' : 'Créer votre alerte personnalisée';
     b.onclick = () => window.openAlert({
-      brands: activeBrand !== 'all' ? [activeBrand] : [],
-      cats: activeCat !== 'all' && CATS.includes(activeCat) ? [activeCat] : [],
-      gender: activeGender !== 'all' ? activeGender : '' });
+      brands: activeBrand !== 'all' ? String(activeBrand).split('|') : [],
+      cats: activeCat !== 'all' ? String(activeCat).split('|').filter(c => CATS.includes(c)) : [],
+      gender: activeGender !== 'all' && !String(activeGender).includes('|') ? activeGender : '' });
   };
   // Fiche : préremplie avec la marque et le type de la pièce
   window.updateDetailAlert = function(p) {
@@ -10277,6 +10281,7 @@ window.startSimilarMarqueeLoop = function() {
   // (Tom, 2026-11-23). Les plus fournis d'abord ; un choix actif reste toujours visible.
   const ONE_LINE = { 'm-gender-select': ['Tous', 'All'], 'm-brand-select': ['Tous', 'All'], 'm-cat-select': ['Toutes', 'All'], 'm-color-select': ['Toutes', 'All'] };
   const BY_COUNT = new Set(['m-brand-select', 'm-cat-select', 'm-color-select']);
+  const MULTI = new Set(['m-gender-select', 'm-brand-select', 'm-cat-select', 'm-color-select']);
   const open = {};
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const nice = s => /[a-z]/.test(s) ? s : s.split(' ').map(w => /\d/.test(w) ? w : (/^(DES|DE|BY|DU)$/.test(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
@@ -10294,13 +10299,21 @@ window.startSimilarMarqueeLoop = function() {
         box.addEventListener('click', e => {
           const b = e.target.closest('button'); if (!b) return;
           if (b.dataset.more) { open[id] = !open[id]; draw(); return; }
-          if (sel.value === b.dataset.v) return;
-          sel.value = b.dataset.v;
+          let v = b.dataset.v;
+          if (MULTI.has(id) && v !== 'all') {
+            // Choix multiple : chaque pastille s'ajoute ou se retire de la sélection
+            const cur = sel.value === 'all' ? [] : String(sel.value).split('|');
+            const set = cur.includes(v) ? cur.filter(x => x !== v) : cur.concat(v);
+            v = set.length ? set.join('|') : 'all';
+            if (![...sel.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); }
+          }
+          if (sel.value === v) return;
+          sel.value = v;
           sel.dispatchEvent(new Event('change', { bubbles: true }));
           draw();
         });
       }
-      let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()));
+      let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()) && !String(o.value).includes('|'));
       if (BY_COUNT.has(id)) opts = opts.filter(o => o.value === 'all').concat(opts.filter(o => o.value !== 'all').sort((a, b) => count(b) - count(a)));
       const short = ONE_LINE[id];
       box.innerHTML = opts.map(o => {
@@ -10308,7 +10321,7 @@ window.startSimilarMarqueeLoop = function() {
         let label = m ? m[1] : o.textContent.trim();
         let cnt = m ? m[2] : '';
         if (short && o.value === 'all') { label = short[en ? 1 : 0]; cnt = ''; }
-        const on = o.value === sel.value;
+        const on = o.value === sel.value || (o.value !== 'all' && String(sel.value).split('|').includes(o.value));
         // « Tous… » ou tri par défaut = pas de filtre : contour seulement, pas de pavé plein
         const cls = on ? ((o.value === 'all' || (id === 'm-sort-select' && o.value === 'newest')) ? ' cur' : ' on') : '';
         const sw = id === 'm-color-select' && SW[o.value] ? '<span class="fchip-sw" style="background:' + SW[o.value] + '"></span>' : '';
@@ -10337,8 +10350,7 @@ window.startSimilarMarqueeLoop = function() {
       }
       label();
       // Choix actif placé loin dans la liste : il passe juste après « Tous »
-      const act = box.querySelector('.fchip.on');
-      if (act && act !== chips[1]) chips[0].after(act);
+      [...box.querySelectorAll('.fchip.on')].reverse().forEach(a => chips[0].after(a));
       for (let guard = 0; more.offsetTop !== chips[0].offsetTop && guard < 40; guard++) {
         const vis = [...box.querySelectorAll('.fchip:not(.fchip-more):not([hidden])')].filter(c => c !== chips[0] && !c.classList.contains('on'));
         if (!vis.length) break;
