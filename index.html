@@ -10286,6 +10286,18 @@ window.startSimilarMarqueeLoop = function() {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const nice = s => /[a-z]/.test(s) ? s : s.split(' ').map(w => /\d/.test(w) ? w : (/^(DES|DE|BY|DU)$/.test(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
   const count = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
+  // Déplacement fluide des pastilles quand l'ordre change (technique FLIP) : chaque
+  // pastille part de son ancienne place et glisse vers la nouvelle. Pas d'apparition en fondu.
+  const snap = box => { const m = {}; box.querySelectorAll('.fchip[data-v]').forEach(c => { if (!c.hidden) m[c.dataset.v] = c.getBoundingClientRect(); }); return m; };
+  function glide(box, before) {
+    if (!before || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    box.querySelectorAll('.fchip[data-v]').forEach(c => {
+      const a = before[c.dataset.v]; if (!a || c.hidden) return;
+      const b = c.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      if (c.animate) c.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    });
+  }
   function draw() {
     const en = window.__lang === 'en';
     IDS.forEach(id => {
@@ -10308,9 +10320,11 @@ window.startSimilarMarqueeLoop = function() {
             if (![...sel.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o); }
           }
           if (sel.value === v) return;
+          const before = snap(box);
           sel.value = v;
           sel.dispatchEvent(new Event('change', { bubbles: true }));
           draw();
+          glide(box, before);
         });
       }
       let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()) && !String(o.value).includes('|'));
@@ -10329,6 +10343,8 @@ window.startSimilarMarqueeLoop = function() {
           esc(id === 'm-brand-select' && o.value !== 'all' ? nice(label) : label) + (cnt ? '<span class="fchip-n">' + cnt + '</span>' : '') + '</button>';
       }).join('');
       if (!short) return;
+      // Choix actifs en tête de liste, juste après « Tous » (Tom, 2026-11-23)
+      { const first = box.querySelector('.fchip'); [...box.querySelectorAll('.fchip.on')].reverse().forEach(a => first.after(a)); }
       const chips = [...box.querySelectorAll('.fchip')];
       if (open[id]) {
         box.insertAdjacentHTML('beforeend', '<button type="button" class="fchip fchip-more" data-more="1">' + (en ? 'Fewer' : 'Moins') + '</button>');
@@ -10350,7 +10366,6 @@ window.startSimilarMarqueeLoop = function() {
       }
       label();
       // Choix actif placé loin dans la liste : il passe juste après « Tous »
-      [...box.querySelectorAll('.fchip.on')].reverse().forEach(a => chips[0].after(a));
       for (let guard = 0; more.offsetTop !== chips[0].offsetTop && guard < 40; guard++) {
         const vis = [...box.querySelectorAll('.fchip:not(.fchip-more):not([hidden])')].filter(c => c !== chips[0] && !c.classList.contains('on'));
         if (!vis.length) break;
