@@ -19,7 +19,7 @@ async function shipSession({ session, store, PRODUCTS, force = false, carrier = 
     if (prev && !force) return { skipped: true };
     const ids = (md.passeist_ids || '').split(',').filter(Boolean);
     const types = ids.map(id => (PRODUCTS[id] || {}).type || '');
-    const pieces = ids.map(id => ({ type: (PRODUCTS[id] || {}).type || '', price: (PRODUCTS[id] || {}).price || 0 }));
+    const pieces = ids.map(id => ({ type: (PRODUCTS[id] || {}).type || '', type_en: (PRODUCTS[id] || {}).type_en || '', price: (PRODUCTS[id] || {}).price || 0 }));
     const order = boxtal.buildOrder({ session, types, pieces, carrier, valueEur: (session.amount_subtotal || 0) / 100 });
     const resume = `${whereText(session)}<br>Poids déclaré : ${order.shipment.packages[0].weight} kg<br>Offre : ${esc(order.shippingOfferCode)}`;
     if (session.livemode === true && boxtal.live()) {

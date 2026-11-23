@@ -198,11 +198,16 @@ function buildOrder({ session, types, valueEur, pieces, carrier }) {
   if (chosen) offer = chosen.code;
   if (dest !== 'FR' && !EU27.has(dest)) {
     // Hors UE : déclaration de douane (vente de vêtements, pays d'origine Japon par défaut)
-    const list = (pieces && pieces.length ? pieces : types.map(t => ({ type: t, price: valueEur / Math.max(1, types.length) })));
-    shipment.customsDeclaration = { reason: 'SALE', currency: 'EUR', items: list.map(p => ({
-      description: String(p.type || 'Vêtement').slice(0, 60), quantity: 1,
+    // Pièce déjà retirée du catalogue (vendue) : type et valeur repris de la commande, jamais 0 €
+    const share = valueEur / Math.max(1, (pieces && pieces.length) || types.length);
+    const list = (pieces && pieces.length ? pieces : types.map(t => ({ type: t })))
+      .map((p, i) => ({ ...p, type: p.type || types[i] || '', price: Number(p.price) > 0 ? p.price : share }));
+    // Schéma Boxtal API v3 (spécification officielle, 2026-11-23) : { reason, articles: [{ description,
+    // quantity, unitValue {value, currency}, unitWeight (kg), tariffNumber, originCountry }] }
+    shipment.customsDeclaration = { reason: 'SALE', articles: list.map(p => ({
+      description: ('Second-hand ' + String(p.type_en || p.type || 'clothing')).slice(0, 60), quantity: 1,
       unitValue: { value: Math.max(1, Math.round(Number(p.price) || 0)), currency: 'EUR' },
-      weight: weightKg([p.type]), tariffNumber: hsCode(p.type), originCountry: process.env.BOXTAL_ORIGIN || 'JP' })) };
+      unitWeight: weightKg([p.type]), tariffNumber: hsCode(p.type), originCountry: process.env.BOXTAL_ORIGIN || 'JP' })) };
   }
   if (mode === 'relay') {
     // Relais hors de France : offre Mondial Relay Europe (à confirmer avec « Offres Boxtal » de la messagerie)
