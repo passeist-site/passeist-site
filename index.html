@@ -10273,11 +10273,16 @@ window.startSimilarMarqueeLoop = function() {
     'Beige':'#d8c7a8','Camel':'#b8874e','Écru':'#efe7d4','Ivoire':'#fbf6e9','Marron':'#6b4a32','Bordeaux':'#6d1f2c','Rouge':'#a8322d',
     'Rose':'#e3a6b4','Violet':'#6c4a8a','Vert':'#4f6b45','Kaki':'#6f6a43','Jaune':'#d7b23a','Orange':'#d9782d',
     'Métal':'linear-gradient(135deg,#eee,#9a9a9a)','Multicolore':'conic-gradient(#a8322d,#d7b23a,#4f6b45,#2c4a7a,#6c4a8a,#a8322d)' };
-  const BRANDS_SHOWN = 6;
-  let brandsOpen = false, colorsOpen = false;
+  // Genre, auteur, catégorie, couleur : une seule ligne, puis « +N » qui déplie le reste
+  // (Tom, 2026-11-23). Les plus fournis d'abord ; un choix actif reste toujours visible.
+  const ONE_LINE = { 'm-gender-select': ['Tous', 'All'], 'm-brand-select': ['Tous', 'All'], 'm-cat-select': ['Toutes', 'All'], 'm-color-select': ['Toutes', 'All'] };
+  const BY_COUNT = new Set(['m-brand-select', 'm-cat-select', 'm-color-select']);
+  const open = {};
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const nice = s => /[a-z]/.test(s) ? s : s.split(' ').map(w => /\d/.test(w) ? w : (/^(DES|DE|BY|DU)$/.test(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
+  const count = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
   function draw() {
+    const en = window.__lang === 'en';
     IDS.forEach(id => {
       const sel = document.getElementById(id);
       if (!sel) return;
@@ -10288,7 +10293,7 @@ window.startSimilarMarqueeLoop = function() {
         sel.after(box);
         box.addEventListener('click', e => {
           const b = e.target.closest('button'); if (!b) return;
-          if (b.dataset.more) { if (id === 'm-color-select') colorsOpen = !colorsOpen; else brandsOpen = !brandsOpen; draw(); return; }
+          if (b.dataset.more) { open[id] = !open[id]; draw(); return; }
           if (sel.value === b.dataset.v) return;
           sel.value = b.dataset.v;
           sel.dispatchEvent(new Event('change', { bubbles: true }));
@@ -10296,54 +10301,48 @@ window.startSimilarMarqueeLoop = function() {
         });
       }
       let opts = [...sel.options].filter(o => !o.disabled && !/\(0\)$/.test(o.textContent.trim()));
-      let hidden = 0;
-      if (id === 'm-color-select') {   // couleurs les plus fournies d'abord
-        const n = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
-        opts = opts.filter(o => o.value === 'all').concat(opts.filter(o => o.value !== 'all').sort((a, b) => n(b) - n(a)));
-      }
-      if (id === 'm-brand-select' && !brandsOpen) {
-        const n = o => +((o.textContent.match(/\((\d+)\)\s*$/) || [0, 0])[1]);
-        const all = opts.filter(o => o.value === 'all');
-        const rest = opts.filter(o => o.value !== 'all').sort((a, b) => n(b) - n(a));
-        const keep = rest.slice(0, BRANDS_SHOWN);
-        const cur = rest.find(o => o.value === sel.value);
-        if (cur && !keep.includes(cur)) keep.push(cur);
-        hidden = rest.length - keep.length;
-        opts = all.concat(keep);
-      }
+      if (BY_COUNT.has(id)) opts = opts.filter(o => o.value === 'all').concat(opts.filter(o => o.value !== 'all').sort((a, b) => count(b) - count(a)));
+      const short = ONE_LINE[id];
       box.innerHTML = opts.map(o => {
         const m = o.textContent.trim().match(/^(.*?)\s*\((\d+)\)$/);
         let label = m ? m[1] : o.textContent.trim();
         let cnt = m ? m[2] : '';
-        // Couleurs sur une ligne : « Toutes » court, sans chiffre
-        if (id === 'm-color-select' && o.value === 'all') { label = window.__lang === 'en' ? 'All' : 'Toutes'; cnt = ''; }
+        if (short && o.value === 'all') { label = short[en ? 1 : 0]; cnt = ''; }
         const on = o.value === sel.value;
-        // « Tous… » choisi = pas de filtre : contour seulement, pas de pavé foncé
+        // « Tous… » ou tri par défaut = pas de filtre : contour seulement, pas de pavé plein
         const cls = on ? ((o.value === 'all' || (id === 'm-sort-select' && o.value === 'newest')) ? ' cur' : ' on') : '';
         const sw = id === 'm-color-select' && SW[o.value] ? '<span class="fchip-sw" style="background:' + SW[o.value] + '"></span>' : '';
         return '<button type="button" class="fchip' + cls + '" aria-pressed="' + on + '" data-v="' + esc(o.value) + '">' + sw +
           esc(id === 'm-brand-select' && o.value !== 'all' ? nice(label) : label) + (cnt ? '<span class="fchip-n">' + cnt + '</span>' : '') + '</button>';
-      }).join('') + (id === 'm-brand-select' && (hidden > 0 || brandsOpen)
-        ? '<button type="button" class="fchip fchip-more" data-more="1">' + (brandsOpen ? (window.__lang === 'en' ? 'Fewer' : 'Moins') : '+ ' + hidden + (window.__lang === 'en' ? ' more' : ' autres')) + '</button>' : '')
-        + (id === 'm-color-select' && colorsOpen ? '<button type="button" class="fchip fchip-more" data-more="1">' + (window.__lang === 'en' ? 'Fewer' : 'Moins') + '</button>' : '');
-      // Couleurs : une seule ligne, puis « + N autres » (Tom, 2026-11-23). Mesuré à l'affichage :
-      // on retire des couleurs en fin de ligne jusqu'à ce que tout tienne sur la première ligne.
-      if (id === 'm-color-select' && !colorsOpen && box.offsetParent) {
-        const chips = [...box.querySelectorAll('.fchip')];
-        if (chips.length && chips[chips.length - 1].offsetTop > chips[0].offsetTop) {
-          const more = document.createElement('button');
-          more.type = 'button'; more.className = 'fchip fchip-more'; more.dataset.more = '1';
-          box.appendChild(more);
-          let n = 0;
-          const label = () => { more.textContent = '+' + n; more.setAttribute('aria-label', n + (window.__lang === 'en' ? ' more colours' : ' autres couleurs')); };
-          for (let k = chips.length - 1; k > 0; k--) {
-            label();
-            if (more.offsetTop === chips[0].offsetTop) break;
-            if (chips[k].classList.contains('on') || chips[k].classList.contains('cur')) continue;
-            chips[k].hidden = true; n++;
-          }
-          label();
-        }
+      }).join('');
+      if (!short) return;
+      const chips = [...box.querySelectorAll('.fchip')];
+      if (open[id]) {
+        box.insertAdjacentHTML('beforeend', '<button type="button" class="fchip fchip-more" data-more="1">' + (en ? 'Fewer' : 'Moins') + '</button>');
+        return;
+      }
+      // Mesuré à l'affichage : on retire des pastilles en fin de ligne jusqu'à ce que tout,
+      // « +N » compris, tienne sur la première ligne (panneau ouvert uniquement).
+      if (!box.offsetParent || chips.length < 2 || chips[chips.length - 1].offsetTop === chips[0].offsetTop) return;
+      const more = document.createElement('button');
+      more.type = 'button'; more.className = 'fchip fchip-more'; more.dataset.more = '1';
+      box.appendChild(more);
+      let n = 0;
+      const label = () => { more.textContent = '+' + n; more.setAttribute('aria-label', n + (en ? ' more' : ' de plus')); };
+      for (let k = chips.length - 1; k > 0; k--) {
+        label();
+        if (more.offsetTop === chips[0].offsetTop) break;
+        if (chips[k].classList.contains('on')) continue;
+        chips[k].hidden = true; n++;
+      }
+      label();
+      // Choix actif placé loin dans la liste : il passe juste après « Tous »
+      const act = box.querySelector('.fchip.on');
+      if (act && act !== chips[1]) chips[0].after(act);
+      for (let guard = 0; more.offsetTop !== chips[0].offsetTop && guard < 40; guard++) {
+        const vis = [...box.querySelectorAll('.fchip:not(.fchip-more):not([hidden])')].filter(c => c !== chips[0] && !c.classList.contains('on'));
+        if (!vis.length) break;
+        vis[vis.length - 1].hidden = true; n++; label();
       }
     });
   }
