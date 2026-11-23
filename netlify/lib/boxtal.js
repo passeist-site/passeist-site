@@ -163,6 +163,17 @@ function splitName(full) {
 }
 
 // Corps de la commande Boxtal à partir d'une session Stripe payée
+// Code postal au format attendu par les transporteurs. Royaume-Uni : espace
+// avant les 3 derniers caractères (« W105QZ » -> « W10 5QZ »), sinon refus possible.
+function fmtPostal(pc, country) {
+  const v = String(pc || '').trim().toUpperCase();
+  if ((country || '').toUpperCase() === 'GB') {
+    const c = v.replace(/\s+/g, '');
+    if (/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(c)) return c.slice(0, -3) + ' ' + c.slice(-3);
+  }
+  return String(pc || '').trim();
+}
+
 function buildOrder({ session, types, valueEur, pieces, carrier }) {
   const md = session.metadata || {};
   const sender = JSON.parse(process.env.BOXTAL_SENDER || '{}');
@@ -179,7 +190,7 @@ function buildOrder({ session, types, valueEur, pieces, carrier }) {
     fromAddress: { type: 'BUSINESS', contact: { firstName: sender.firstName, lastName: sender.lastName, email: sender.email, phone: sender.phone, company: 'passéist' },
       location: { number: sender.number, street: sender.street, city: sender.city, postalCode: sender.postalCode, countryIsoCode: 'FR' } },
     toAddress: { type: 'RESIDENTIAL', contact: { firstName: nm.firstName, lastName: nm.lastName, email: cust.email || '', phone: cust.phone || sender.phone },
-      location: { street: [addr.line1, addr.line2].filter(Boolean).join(', '), city: addr.city, postalCode: addr.postal_code, countryIsoCode: addr.country || 'FR' } },
+      location: { street: [addr.line1, addr.line2].filter(Boolean).join(', '), city: addr.city, postalCode: fmtPostal(addr.postal_code, addr.country), countryIsoCode: addr.country || 'FR' } },
   };
   const dest = (addr.country || 'FR').toUpperCase();
   let offer = dest === 'FR' ? homeOffer() : intlOffer();
