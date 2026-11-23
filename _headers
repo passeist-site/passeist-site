@@ -16,3 +16,10 @@
 # Avant : aucune règle, chaque photo était redemandée à chaque visite.
 /img/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+
+# Vignettes (grilles, carrousels, pièces similaires) : jamais dans Google
+# Images, pour qu'une photo n'y renvoie que vers la fiche de SA pièce.
+/img/*-sm.webp
+  X-Robots-Tag: noindex
+/img/*-md.webp
+  X-Robots-Tag: noindex
