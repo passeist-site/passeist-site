@@ -1197,7 +1197,19 @@ module.exports = {
     }
     // Accueil : versions FR/EN déclarées (uniquement sur l'accueil ; les
     // fiches produits ont les leurs, cf applyProductSEO)
-    const homeHtml = slimHtml.replace(/<link\s+rel="canonical"[^>]*>/, (m) => m +
+    // Bandeau de photos de l'accueil (Tom, 2026-11-24 : « très long l'arrivée des photos ») :
+    // le tirage au hasard se fait dès l'en-tête, sur une petite liste des pièces en vente
+    // hébergées sur passeist.com, et les 6 premières photos partent en priorité haute,
+    // en même temps que le catalogue (400 Ko) au lieu d'attendre qu'il soit chargé.
+    const heroIds = products.filter(p => p.id && p.n > 0 && !soldIds.has(p.id) && p.sold !== true
+      && validatedLocal.has(p.id) && fs.existsSync(path.join(publishDir, 'img', p.id + '-0-md.webp'))).map(p => String(p.id));
+    const heroScript = heroIds.length < 12 ? '' : '<script>(function(){try{var a=' + JSON.stringify(heroIds) + ';' +
+      'for(var k=a.length-1;k>0;k--){var r=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[r];a[r]=t}' +
+      'var pick=a.slice(0,40);window.__heroPick=pick;' +
+      'pick.slice(0,6).forEach(function(id){var b="/img/"+id+"-0-",l=document.createElement("link");l.rel="preload";l.as="image";' +
+      'l.setAttribute("imagesrcset",b+"sm.webp?v=' + IMG_V + ' 400w, "+b+"md.webp?v=' + IMG_V + ' 800w");l.setAttribute("imagesizes","200px");' +
+      'l.setAttribute("fetchpriority","high");l.href=b+"md.webp?v=' + IMG_V + '";document.head.appendChild(l)})}catch(e){}})();</script>\n';
+    const homeHtml = slimHtml.replace('</head>', () => heroScript + '</head>').replace(/<link\s+rel="canonical"[^>]*>/, (m) => m +
       '\n<link rel="alternate" hreflang="fr" href="https://passeist.com/">' +
       '\n<link rel="alternate" hreflang="en" href="https://passeist.com/?lang=en">' +
       '\n<link rel="alternate" hreflang="x-default" href="https://passeist.com/">');

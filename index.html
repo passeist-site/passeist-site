@@ -9783,10 +9783,17 @@ function renderHeroMarquee() {
     [pool[k], pool[r]] = [pool[r], pool[k]];
   }
   const target = 40;
-  const order = pool.slice(0, target);
+  // Tirage déjà fait dans l'en-tête de la page (photos préchargées en parallèle du catalogue)
+  let order = pool.slice(0, target);
+  if (Array.isArray(window.__heroPick) && window.__heroPick.length) {
+    const byId = new Map(pool.map(p => [String(p.id), p]));
+    const picked = window.__heroPick.map(id => byId.get(id)).filter(Boolean);
+    const seen = new Set(picked.map(p => p.id));
+    order = picked.concat(pool.filter(p => !seen.has(p.id))).slice(0, target);
+  }
   const cards = order.map((p, i) => `
     <div class="hero-marquee-card" data-id="${p.id}" title="${p.brand}, ${(window.__lang === 'en' && p.type_en) || p.type}">
-      <img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="200px" alt="${p.brand} ${p.type}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" fetchpriority="low" draggable="false">
+      <img src="${imgUrl(p, 0, {size: 'md', exactSize: true})}" srcset="${imgSrcset(p, 0)}" sizes="200px" alt="${p.brand} ${p.type}" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async" fetchpriority="${i < 6 ? 'high' : 'low'}" draggable="false">
     </div>
   `).join('');
   const track = document.getElementById('hero-marquee-track');
