@@ -134,6 +134,10 @@ html, body {
 body { position: relative; display: flow-root; }
 body.no-scroll { overflow: hidden; }
 img { -webkit-user-drag: none; user-select: none; }
+/* Appui long sur une carte (boutique, pièces similaires) : le téléphone doit proposer
+   le LIEN de la fiche (Ouvrir, Copier le lien, Partager), pas « Copier » la photo (Tom, 2026-11-24).
+   La photo laisse passer le toucher à la carte-lien ; le glissé vers la 2e vue reste géré par .product-img. */
+a.product-card img, a.similar-card img { pointer-events: none; -webkit-touch-callout: default; }
 
 ::selection { background: var(--ink); color: var(--bg); }
 
