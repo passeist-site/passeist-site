@@ -267,7 +267,7 @@ script « Version blanche en essai » dans index.html.
 - Ordinateur : menu de l'en-tête (Accueil, Boutique, Auteurs…) et FR/EN en crème, ils étaient invisibles sur l'en-tête bleu nuit.
 - Pages auteurs : rouleau « Notre sélection » aligné sur les rouleaux des fiches (pièces qui flottent, prix sans étiquette), bouton « Voir toutes les pièces » bleu nuit (Tom).
 - Accueil ordinateur : photos du carrousel 25 % plus grandes, moins de vide sous Explorer (Tom).
-- 34 photos 1 de plus détourées (fond gris au bas/au bord non vu par le premier tri, ex. jeans 45rpm et Yohji). Sweat blanc 64206614 et chemise 55692186 laissés tels quels (halo). Chemise 55692186, t-shirt Yohji 67738187 et sweat Mr. Junko 64206614 (détourage hybride : modèle + luminosité pour les poignets) détourés le 2026-11-24 à la demande de Tom (bords décontaminés du gris, ourlets gardés, aucun liseré).
+- 34 photos 1 de plus détourées (fond gris au bas/au bord non vu par le premier tri, ex. jeans 45rpm et Yohji). Sweat blanc 64206614 et chemise 55692186 laissés tels quels (halo). Chemise 55692186, t-shirt Yohji 67738187 sweat Mr. Junko 64206614 (détourage hybride : modèle + luminosité pour les poignets) et pantalon 56368579 (halo gris) détourés le 2026-11-24 à la demande de Tom (bords décontaminés du gris, ourlets gardés, aucun liseré).
 - Gilet Issey Miyake PE 2010 (66122852) : photo du gilet passée en photo 1 et détourée, la photo défilé passe en 2e (Tom).
 - Portefeuille Y's 65393849 : 3e photo (portefeuille seul) passée en photo 1 et détourée (Tom).
 - Fenêtre « Ajouté au panier » en bleu nuit, texte crème (Tom).
