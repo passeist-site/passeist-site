@@ -50,6 +50,8 @@ jobs:
             data/first-seen.json
             data/vinted.json
             data/vinted-links.json
+            data/style-refs.json
+            data/ocr-refs-raw.json
             requirements.txt
             JOURNAL.md
             RULES.md
@@ -243,6 +245,14 @@ jobs:
         run: |
           python tools/export_products.py
 
+      - name: Références modèle des nouvelles pièces Yohji / Issey (étiquettes, non bloquant)
+        if: steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != ''
+        continue-on-error: true
+        timeout-minutes: 20
+        run: |
+          pip install -q rapidocr-onnxruntime
+          python -u tools/ocr_refs.py --ids "${{ steps.import_e.outputs.imported_ids }}"
+
       - name: Commit + push (bascules SOLD + reverts + imports + products.json)
         if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
         run: |
@@ -253,6 +263,8 @@ jobs:
           [ -f data/first-seen.json ] && git add --sparse data/first-seen.json || true
           [ -f data/vinted.json ] && git add --sparse data/vinted.json || true
           [ -f data/vinted-links.json ] && git add --sparse data/vinted-links.json || true
+          [ -f data/style-refs.json ] && git add --sparse data/style-refs.json || true
+          [ -f data/ocr-refs-raw.json ] && git add --sparse data/ocr-refs-raw.json || true
           # img/ seulement s'il existe et contient des fichiers (imports faits)
           if [ -d img ] && [ -n "$(ls -A img/ 2>/dev/null)" ]; then
             git add --sparse img/
