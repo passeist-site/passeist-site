@@ -364,3 +364,12 @@ Maquettes faites avec les photos de Tom (bracelet turquoises japonais années 50
 - Photos de bijoux en entier, sans le cover 3:4 des vêtements : exception à PHOTOS.md, accord de Tom requis.
 À décider par Tom quand il sera prêt : nom du menu (Argent / Bijoux / Orfèvrerie), infos et prix par pièce. Prévu dans quelques semaines.
 Maquettes et scripts de capture : docs/maquettes/bijoux/ (les photos ne sont pas dans le dépôt public : les redemander à Tom).
+
+## 2026-11-26 : références modèle (étiquettes Yohji / Issey)
+- data/style-refs.json : {id site: référence modèle}, 233 pièces sur 377 Yohji/Issey en vente (127 Yohji, 106 Issey).
+  Lues par OCR (tools/ocr_refs.py, RapidOCR, 20 machines GitHub), puis relues à l'œil par Claude (cas douteux et pièces sans résultat).
+  data/ocr-refs-raw.json = résultats bruts de l'OCR (archive).
+- Fiche : « Réf. modèle ME03FA108 » (EN « Style ref. ») à côté des réf. VC / V ; recherche du site par référence (avec ou sans tirets).
+- Google : référence à la fin du <title>, « mpn » dans le JSON-LD Product, <g:mpn> dans feed.xml (sinon identifier_exists=no).
+- Années : laissées de côté (Tom s'en occupe). Issey : le 3e chiffre code la saison (1-2 PE, 3-4 AH), le 4e le dernier chiffre de l'année.
+- Nouvelles pièces : pas encore automatique ; relancer tools/ocr_refs.py sur les nouveautés.

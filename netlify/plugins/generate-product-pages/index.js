@@ -162,7 +162,7 @@ function buildDetailHtml(p, sold, imgReorder, imgSuffix, validatedLocal, publish
         Chaque pièce étant unique et référencée sur plusieurs plateformes, votre commande sera validée après une courte vérification de disponibilité.
       </div>
       <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
-      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" data-id="${esc(p.id)}">Réf. VC ${esc(p.id)}</div>${p.vinted ? `<div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" data-id="${esc(p.vinted)}">Réf. V ${esc(p.vinted)}</div>` : '<div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div>'}</div>
+      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" data-id="${esc(p.id)}">Réf. VC ${esc(p.id)}</div>${p.vinted ? `<div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" data-id="${esc(p.vinted)}">Réf. V ${esc(p.vinted)}</div>` : '<div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div>'}${p.styleRef ? `<div class="detail-ref" id="d-sref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" data-id="${esc(p.styleRef)}">Réf. modèle ${esc(p.styleRef)}</div>` : '<div class="detail-ref" id="d-sref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div>'}</div>
     </div>
   </div>
   <section class="similar-section" id="d-similar"${simHtml ? '' : ' hidden'}>
@@ -605,7 +605,7 @@ function buildFeed(products, soldIds, imgReorder, imgSuffix, validatedLocal, pub
       <g:availability>in stock</g:availability>
       <g:condition>used</g:condition>
       <g:brand>${xmlesc(p.brand)}</g:brand>
-      <g:identifier_exists>no</g:identifier_exists>
+${p.styleRef ? '      <g:mpn>' + xmlesc(p.styleRef) + '</g:mpn>' : '      <g:identifier_exists>no</g:identifier_exists>'}
       <g:google_product_category>${xmlesc(googleCategory(p.type, kind))}</g:google_product_category>
       <g:product_type>${productType}</g:product_type>
       <g:gender>${genderFeed}</g:gender>
@@ -913,7 +913,7 @@ function seoTitle(p, brandTC, line, sy) {
   const g = p.gender === 'h' ? 'homme' : p.gender === 'f' ? 'femme' : '';
   const lineHasG = /homme|femme/i.test(line || '');
   return brandTC + (line ? ' ' + line : '') + ' ' + p.type + (mat ? ' en ' + mat : '') + (col ? ' ' + col : '')
-    + ', vintage' + (g && !lineHasG ? ' ' + g : '') + (sy ? ' ' + sy.fr : '') + ' · passéist';
+    + ', vintage' + (g && !lineHasG ? ' ' + g : '') + (sy ? ' ' + sy.fr : '') + (p.styleRef ? ' ' + p.styleRef : '') + ' · passéist';
 }
 
 // ── Apply product-specific SEO to the full HTML string ────────────────────
@@ -950,7 +950,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
   const partsEN    = matEN ? [matEN, baseTypeEN] : [baseTypeEN];
   if (genderEN) partsEN.push(genderEN);
   if (sy)       partsEN.push(sy.en);
-  const titleEN = brandTC + (line ? ' ' + line : '') + ' vintage ' + baseTypeEN + (matEN ? ' in ' + matEN.toLowerCase() : '') + (sy ? ' ' + sy.en : '') + ' · passéist';
+  const titleEN = brandTC + (line ? ' ' + line : '') + ' vintage ' + baseTypeEN + (matEN ? ' in ' + matEN.toLowerCase() : '') + (sy ? ' ' + sy.en : '') + (p.styleRef ? ' ' + p.styleRef : '') + ' · passéist';
 
   // Meta description: brand at top, then raw description text
   const descRaw  = (p.desc || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -977,6 +977,7 @@ function applyProductSEO(html, p, sold, imgReorder, imgSuffix, validatedLocal, p
     image:      imgAbs ? [imgAbs] : undefined,
     description: descLong,
     sku:        p.id,
+    mpn:        p.styleRef || undefined,
     color:      p.color ? colorFR(p.color) : undefined,
     size:       sizeFR(p.size),
     offers: {
@@ -1104,6 +1105,11 @@ module.exports = {
       const vl = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'vinted-links.json'), 'utf8'));
       for (const x of products) if (vl[x.id]) x.vinted = String(vl[x.id]);
     } catch (e) { console.log('[generate-product-pages] vinted-links.json absent'); }
+    // Référence modèle lue sur l'étiquette (data/style-refs.json, Yohji et Issey, Tom 2026-11-26) → p.styleRef
+    try {
+      const sr = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'style-refs.json'), 'utf8'));
+      for (const x of products) if (sr[x.id]) x.styleRef = String(sr[x.id]);
+    } catch (e) { console.log('[generate-product-pages] style-refs.json absent'); }
     // Date de mise en ligne (data/first-seen.json) → p.added, pour l'étiquette « nouveau » (7 jours)
     try {
       const seen = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'first-seen.json'), 'utf8'));

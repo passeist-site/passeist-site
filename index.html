@@ -1586,7 +1586,7 @@ body[data-page="favorites"] { overflow-x: clip; overflow-y: visible; height: aut
 /* Numéro de l'annonce Vinted à côté de la réf. (Tom, 2026-11-16), même usage interne */
 /* Les deux sur une ligne : le parent empile ses enfants */
 .detail-refs { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 14px; }
-#d-vref[hidden] { display: none; }
+#d-vref[hidden], #d-sref[hidden] { display: none; }
 
 /* Archive / sold, on garde les attributs + description visibles (Tom 25/04).
    Seule la note de réservation/négo disparaît. */
@@ -4296,7 +4296,7 @@ html[lang="en"] .chat-sub .lang-fr, html[lang="fr"] .chat-sub .lang-en { display
       </div>
       <button class="detail-alert" id="d-alert" type="button" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span id="d-alert-txt"></span></button>
       <!-- Réf. produit (discret, pour usage interne, clic = copie ID dans presse-papier) -->
-      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div><div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div></div>
+      <div class="detail-refs"><div class="detail-ref" id="d-ref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)"></div><div class="detail-ref" id="d-vref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div><div class="detail-ref" id="d-sref" title="Cliquer pour copier la référence" onclick="copyProductRef(this)" hidden></div></div>
     </div>
   </div>
   <!-- Carrousel articles similaires (boucle infinie + tactile type hero-marquee) -->
@@ -7657,8 +7657,23 @@ function vintedToId(n) {
   }
   return '';
 }
+// Recherche par référence modèle (étiquette Yohji / Issey) : « ME03FA108 », « HC-T32-078 »
+let srRev = null, srLoading = false;
+const srKey = x => String(x || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+function styleRefToId(q) {
+  if (srRev) return srRev[srKey(q)] || '';
+  if (!srLoading) {
+    srLoading = true;
+    (window.__styleRefs = window.__styleRefs || fetch('/data/style-refs.json').then(r => r.ok ? r.json() : {}).catch(() => ({})))
+      .then(m => { srRev = {}; for (const k in (m || {})) srRev[srKey(m[k])] = k; if (activeSearch) renderGrid(); });
+  }
+  return '';
+}
 function refQuery(q) {
   const raw = String(q || '');
+  // Une référence modèle : lettres + chiffres, 7 à 13 caractères, avec ou sans tirets
+  const t = raw.trim().replace(/^r[ée]f\.?\s*(mod[èe]le)?\s*:?\s*/i, '');
+  if (/^[A-Za-z]{1,3}[A-Za-z0-9-]{4,12}$/.test(t) && /\d/.test(t) && /[A-Za-z]{2}/.test(t)) { const id = styleRefToId(t); if (id) return id; }
   const vc = raw.match(/vestiairecollective\.[a-z.]+\/\S*?-(\d{6,})\.shtml/i);
   if (vc) return vc[1];
   const vt = raw.match(/vinted\.[a-z.]+\/items\/(\d{6,})/i);
@@ -8242,6 +8257,17 @@ function openDetail(id) {
       // Les clients gardent la copie au clic, rien n'est visible pour eux.
       let admin = false; try { admin = !!localStorage.getItem('passeist_chat_key'); } catch (e) {}
       vrefEl.onclick = admin ? () => { window.open('https://www.vinted.fr/items/' + encodeURIComponent(vid), '_blank', 'noopener'); } : () => copyProductRef(vrefEl);
+    });
+  }
+  // Référence modèle lue sur l'étiquette (data/style-refs.json, Yohji et Issey)
+  const srefEl = document.getElementById('d-sref');
+  if (srefEl) {
+    srefEl.hidden = true; srefEl.classList.remove('copied');
+    window.__styleRefs = window.__styleRefs || fetch('/data/style-refs.json').then(r => r.ok ? r.json() : {}).catch(() => ({}));
+    window.__styleRefs.then(m => {
+      const sr = m && m[p.id];
+      if (!sr || !currentProduct || currentProduct.id !== p.id) return;
+      srefEl.textContent = (window.__lang === 'en' ? 'Style ref. ' : 'Réf. modèle ') + sr; srefEl.dataset.id = sr; srefEl.hidden = false;
     });
   }
   document.getElementById('d-desc').textContent = (window.__lang === 'en' && p.desc_en) ? p.desc_en : p.desc;
@@ -11800,6 +11826,8 @@ window.subscribeNewsletter = function (e) {
     if (refEl0 && refEl0.dataset.id) refEl0.textContent = (lang === 'en' ? 'Ref. VC ' : 'Réf. VC ') + refEl0.dataset.id;
     const vrefEl0 = document.getElementById('d-vref');
     if (vrefEl0 && vrefEl0.dataset.id) vrefEl0.textContent = (lang === 'en' ? 'Ref. V ' : 'Réf. V ') + vrefEl0.dataset.id;
+    const srefEl0 = document.getElementById('d-sref');
+    if (srefEl0 && srefEl0.dataset.id) srefEl0.textContent = (lang === 'en' ? 'Style ref. ' : 'Réf. modèle ') + srefEl0.dataset.id;
 
     // Filter labels desktop
     const labelMap = {
