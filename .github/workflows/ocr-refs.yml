@@ -1,0 +1,60 @@
+name: OCR références (temporaire)
+on:
+  push:
+    branches: [claude/zen-davinci-8wowml]
+    paths: ['.github/workflows/ocr-refs.yml', 'tools/ocr_refs.py']
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools
+            netlify/functions/products.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -q rapidocr-onnxruntime pillow numpy
+      - name: Photos de cette part
+        run: |
+          python - <<'PY' > patterns.txt
+          import json
+          d = json.load(open('netlify/functions/products.json'))
+          ids = [k for k, p in d.items() if p.get('brand') in ('YOHJI YAMAMOTO', 'ISSEY MIYAKE')][${{ matrix.part }}::20]
+          print('tools/'); print('netlify/functions/products.json')
+          for i in ids: print(f'img/{i}-*-xl.webp')
+          PY
+          git sparse-checkout set --no-cone --stdin < patterns.txt
+          ls img | wc -l
+      - run: python tools/ocr_refs.py part-${{ matrix.part }}.json ${{ matrix.part }} 20
+      - uses: actions/upload-artifact@v4
+        with: { name: 'part-${{ matrix.part }}', path: 'part-${{ matrix.part }}.json' }
+  collect:
+    needs: scan
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: data
+      - uses: actions/download-artifact@v4
+        with: { path: parts, merge-multiple: true }
+      - run: |
+          python - <<'PY'
+          import json, glob
+          out = {}
+          for f in glob.glob('parts/*.json'): out.update(json.load(open(f)))
+          json.dump(out, open('data/ocr-refs-raw.json', 'w'), ensure_ascii=False, indent=0, sort_keys=True)
+          print(len(out), 'pièces')
+          PY
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ocr-refs-raw.json
+          git commit -m "OCR références : résultats bruts (temporaire)"
+          for i in 1 2 3 4; do git pull --rebase -q && git push -q && break; sleep 5; done
