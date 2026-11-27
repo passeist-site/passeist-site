@@ -378,4 +378,5 @@ Maquettes et scripts de capture : docs/maquettes/bijoux/ (les photos ne sont pas
 - Search Console (12 mois) : « kansai yamamoto » 4 207 apparitions, 0 clic (position 9,7) ; « junko koshino » position 3,5, 0 clic ; « limi feu » 745, 0 clic.
 - Au build (enrichBrandSeo) : titre « <Auteur> vintage : pièces d'archive en vente · passéist » ; description = 1re phrase de la biographie si elle tient + « N pièces <Auteur> vintage en vente, de X à Y €, choisies et vérifiées à Paris par passéist » (chiffres réels). Même texte en og/twitter et JSON-LD Brand (n'est plus coupé au milieu d'un mot).
 - image:title / image:caption du plan du site : non faits, Google ne les lit plus (abandonnés en 2022).
+- Portraits des pages Auteurs : texte « <Auteur>, portrait · passéist » ; portrait hébergé chez nous = image de partage. 5 portraits restent sur des sites tiers (CDG, Fumito Ganryu, Issey, Junko Koshino, Yohji) : Google les attribue à ces sites.
 - À suivre dans 3-4 semaines : clics sur ces requêtes.

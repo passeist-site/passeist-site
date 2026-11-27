@@ -750,6 +750,11 @@ function enrichBrandSeo(products, soldIds, publishDir) {
       .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${attr(title)}">`)
       .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${attr(desc)}">`)
       .replace(/("@type": "Brand", "name": "[^"]*", "description": ")[^"]*(")/, (m, a, b) => a + desc.replace(/"/g, '\\"') + b);
+    // Portrait : texte de l'image lisible par Google Images (« Junko Koshino, portrait · passéist ») ;
+    // portrait hébergé sur passeist.com = image de partage (og:image) au lieu du visuel générique
+    html = html.replace(/(<img src="[^"]*" alt=")Portrait, [^"]*(")/, (m, a, b) => a + attr(name) + ', portrait · passéist' + b);
+    const pm = html.match(/<img src="(\/img\/portrait-[^"]+)" alt=/);
+    if (pm) html = html.replace(/<meta property="og:image" content="[^"]*">/, `<meta property="og:image" content="https://passeist.com${pm[1]}">`);
     fs.writeFileSync(file, html, 'utf8');
     n++;
   }
