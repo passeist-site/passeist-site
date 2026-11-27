@@ -709,6 +709,52 @@ function buildBrandCarousels(products, soldIds, imgReorder, imgSuffix, validated
 // "COMME DES GARÇONS" -> "Comme des Garçons", "PORTER BY YOSHIDA KABAN" ->
 // "Porter by Yoshida Kaban" ; les sigles avec chiffres restent en majuscules.
 const SMALL_WORDS = new Set(['des', 'de', 'du', 'by', 'la', 'le', 'les', 'et', 'of', 'the', 'pour']);
+
+// ── Pages Auteurs : titre et description Google (Tom, 2026-11-27) ──────────
+// Search Console : « kansai yamamoto » 4 200 apparitions en 1re page, 0 clic ;
+// « junko koshino » position 3,5, 0 clic. L'ancien titre « KANSAI YAMAMOTO,
+// passéist » et une description coupée au milieu d'une phrase ne donnaient pas
+// envie de cliquer. Nouveau titre : ce que cherchent les gens (vintage, pièces
+// en vente) ; description : une phrase de la biographie + l'offre réelle.
+function enrichBrandSeo(products, soldIds, publishDir) {
+  const dir = path.join(publishDir, 'marques');
+  if (!fs.existsSync(dir)) return 0;
+  let n = 0;
+  const attr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.html'))) {
+    const file = path.join(dir, f), slug = f.replace(/\.html$/, '');
+    let html = fs.readFileSync(file, 'utf8');
+    const tm = html.match(/<title>([^<]*?),\s*passéist<\/title>/);
+    if (!tm) continue;
+    const raw = tm[1].trim();
+    const name = /[a-z]/.test(raw) ? raw : raw.split('/').map(x => titleCaseBrand(x.trim())).join(' / ');
+    const avail = products.filter(p => slugify(p.brand) === slug && !soldIds.has(p.id) && p.sold !== true);
+    const prices = avail.map(p => +p.price).filter(x => x > 0).sort((a, b) => a - b);
+    const dm = html.match(/<meta name="description" content="([^"]*)"/);
+    const bio = dm ? dm[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
+    // Première phrase complète de la biographie (jamais coupée au milieu d'un mot)
+    let first = (bio.match(/^.*?[.!?](\s|$)/) || [bio])[0].trim();
+    if (first.length > 110 || !/[.!?]$/.test(first)) first = '';
+    const many = avail.length > 1;
+    const range = !prices.length ? '' : prices[0] === prices[prices.length - 1] ? `, ${prices[0]} €` : `, de ${prices[0]} à ${prices[prices.length - 1]} €`;
+    const offer = avail.length
+      ? `${avail.length} pièce${many ? 's' : ''} ${name} vintage en vente${range}, choisie${many ? 's' : ''} et vérifiée${many ? 's' : ''} à Paris par passéist.`
+      : `Pièces d'archive ${name} choisies et vérifiées à Paris par passéist.`;
+    const title = `${name} vintage : pièces d'archive en vente · passéist`;
+    // L'offre passe toujours en entier ; la phrase de biographie seulement si elle tient
+    const desc = (first && (first + ' ' + offer).length <= 160) ? first + ' ' + offer : clip(offer, 160);
+    html = html.replace(/<title>[^<]*<\/title>/, `<title>${attr(title)}</title>`)
+      .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${attr(desc)}">`)
+      .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${attr(title)}">`)
+      .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${attr(desc)}">`)
+      .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${attr(title)}">`)
+      .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${attr(desc)}">`)
+      .replace(/("@type": "Brand", "name": "[^"]*", "description": ")[^"]*(")/, (m, a, b) => a + desc.replace(/"/g, '\\"') + b);
+    fs.writeFileSync(file, html, 'utf8');
+    n++;
+  }
+  return n;
+}
 // ── Pages Auteurs intégrées au site (Tom, 2026-11-10) ─────────────────────
 // Avant : marques.html et marques/*.html étaient des pages à part (leur propre
 // copie de l'en-tête, panier qui renvoyait vers l'accueil…). Maintenant chaque
@@ -1308,6 +1354,8 @@ module.exports = {
     console.log('[generate-product-pages] Updated brand carousels (' + brandPages + ' pages)');
     const spaPages = buildBrandSpaPages(slimHtml, publishDir);
     console.log('[generate-product-pages] Pages Auteurs intégrées au site : ' + spaPages);
+    const seoBrands = enrichBrandSeo(products, soldIds, publishDir);
+    console.log('[generate-product-pages] Pages Auteurs, titre et description Google : ' + seoBrands);
 
     utils.status.show({ summary: 'Generated ' + count + ' product pages + feed.xml + sitemap.xml' });
   }
