@@ -372,6 +372,7 @@ Maquettes et scripts de capture : docs/maquettes/bijoux/ (les photos ne sont pas
 - Fiche : « Réf. modèle ME03FA108 » (EN « Style ref. ») à côté des réf. VC / V ; recherche du site par référence (avec ou sans tirets).
 - Google : référence à la fin du <title>, « mpn » dans le JSON-LD Product, <g:mpn> dans feed.xml (sinon identifier_exists=no).
 - Années : laissées de côté (Tom s'en occupe). Issey : le 3e chiffre code la saison (1-2 PE, 3-4 AH), le 4e le dernier chiffre de l'année.
+- 2026-11-27 : rattrapage ajouté (pièces importées avant l automatisation, ex. jean 74189656) : chaque soir, lecture des pièces importées + jusqu à 15 pièces Yohji/Issey jamais lues.
 - Nouvelles pièces : automatique dans sync-vestiaire (étape « Références modèle », non bloquante) : tools/ocr_refs.py --ids sur les pièces importées ; seule une référence unique au format de la marque est ajoutée, le reste va dans ocr-refs-raw.json.
 
 ## 2026-11-27 : pages Auteurs, titre et description Google

@@ -245,16 +245,35 @@ jobs:
         run: |
           python tools/export_products.py
 
-      - name: Références modèle des nouvelles pièces Yohji / Issey (étiquettes, non bloquant)
-        if: steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != ''
+      - name: Références modèle Yohji / Issey (étiquettes, non bloquant)
+        # Pièces importées ce soir + rattrapage de celles jamais lues (max 15 par soir)
+        id: ocr_refs
         continue-on-error: true
-        timeout-minutes: 20
+        timeout-minutes: 25
         run: |
+          IDS=$(python - <<'PY'
+          import json
+          d = json.load(open('netlify/functions/products.json'))
+          def load(p):
+              try: return json.load(open(p))
+              except Exception: return {}
+          raw, refs = load('data/ocr-refs-raw.json'), load('data/style-refs.json')
+          new = "${{ steps.import_e.outputs.imported_ids }}".split()
+          miss = [k for k, p in d.items() if p.get('brand') in ('YOHJI YAMAMOTO', 'ISSEY MIYAKE') and k not in raw and k not in refs]
+          ids = list(dict.fromkeys(new + miss))[:15]
+          print(' '.join(i for i in ids if i in d and d[i].get('brand') in ('YOHJI YAMAMOTO', 'ISSEY MIYAKE')))
+          PY
+          )
+          if [ -z "$IDS" ]; then echo "Rien à lire"; echo "count=0" >> $GITHUB_OUTPUT; exit 0; fi
+          echo "Pièces à lire : $IDS"
+          # Photos de ces pièces (le dossier img/ n'est pas extrait en entier)
+          for i in $IDS; do git sparse-checkout add "img/$i-*-xl.webp"; done
           pip install -q rapidocr-onnxruntime
-          python -u tools/ocr_refs.py --ids "${{ steps.import_e.outputs.imported_ids }}"
+          python -u tools/ocr_refs.py --ids "$IDS"
+          echo "count=$(echo $IDS | wc -w)" >> $GITHUB_OUTPUT
 
       - name: Commit + push (bascules SOLD + reverts + imports + products.json)
-        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '')
+        if: (steps.bascule.outputs.count != '0' && steps.bascule.outputs.count != '') || (steps.bascule.outputs.reverted != '0' && steps.bascule.outputs.reverted != '') || (steps.import_e.outputs.imported != '0' && steps.import_e.outputs.imported != '') || (steps.ocr_refs.outputs.count != '0' && steps.ocr_refs.outputs.count != '')
         run: |
           git config user.name "passeist-bot"
           git config user.email "bot@passeist.com"
