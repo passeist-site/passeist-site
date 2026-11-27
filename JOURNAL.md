@@ -373,3 +373,9 @@ Maquettes et scripts de capture : docs/maquettes/bijoux/ (les photos ne sont pas
 - Google : référence à la fin du <title>, « mpn » dans le JSON-LD Product, <g:mpn> dans feed.xml (sinon identifier_exists=no).
 - Années : laissées de côté (Tom s'en occupe). Issey : le 3e chiffre code la saison (1-2 PE, 3-4 AH), le 4e le dernier chiffre de l'année.
 - Nouvelles pièces : automatique dans sync-vestiaire (étape « Références modèle », non bloquante) : tools/ocr_refs.py --ids sur les pièces importées ; seule une référence unique au format de la marque est ajoutée, le reste va dans ocr-refs-raw.json.
+
+## 2026-11-27 : pages Auteurs, titre et description Google
+- Search Console (12 mois) : « kansai yamamoto » 4 207 apparitions, 0 clic (position 9,7) ; « junko koshino » position 3,5, 0 clic ; « limi feu » 745, 0 clic.
+- Au build (enrichBrandSeo) : titre « <Auteur> vintage : pièces d'archive en vente · passéist » ; description = 1re phrase de la biographie si elle tient + « N pièces <Auteur> vintage en vente, de X à Y €, choisies et vérifiées à Paris par passéist » (chiffres réels). Même texte en og/twitter et JSON-LD Brand (n'est plus coupé au milieu d'un mot).
+- image:title / image:caption du plan du site : non faits, Google ne les lit plus (abandonnés en 2022).
+- À suivre dans 3-4 semaines : clics sur ces requêtes.
